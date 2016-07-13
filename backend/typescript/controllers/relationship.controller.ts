@@ -3,17 +3,19 @@ import {security} from './security.middleware';
 import {
     sendResource, sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema, REGULAR_CHARS
 } from './helpers';
+import {IPartyModel} from '../models/party.model';
 import {IRelationshipModel, RelationshipStatus} from '../models/relationship.model';
 import {RelationshipAddDTO, CreateIdentityDTO, AttributeDTO} from '../../../commons/RamAPI';
 import {FilterParams} from '../../../commons/RamAPI2';
 import {PartyModel} from '../models/party.model';
 import {ProfileProvider} from '../models/profile.model';
 import {IdentityType} from '../models/identity.model';
+import {Headers} from './headers';
 
 // todo add data security
 export class RelationshipController {
 
-    constructor(private relationshipModel:IRelationshipModel) {
+    constructor(private relationshipModel:IRelationshipModel, private partyModel:IPartyModel) {
     }
 
     private findByIdentifier = async(req:Request, res:Response) => {
@@ -200,6 +202,14 @@ export class RelationshipController {
         };
         const filterParams = FilterParams.decode(req.query.filter);
         validateReqSchema(req, schema)
+            .then(async (req:Request) => {
+                const me = res.locals[Headers.Identity];
+                const hasAccess = await this.partyModel.hasAccess(me.party, req.params.identity_id);
+                if (!hasAccess) {
+                    throw new Error('You do not have access to this party.');
+                }
+                return req;
+            })
             .then((req:Request) => this.relationshipModel.searchByIdentity(
                 req.params.identity_id,
                 filterParams.get('partyType'),

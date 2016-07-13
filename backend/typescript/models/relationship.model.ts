@@ -48,11 +48,11 @@ export class RelationshipStatus extends RAMEnum {
         RelationshipStatus.Pending
     ];
 
-    constructor(name:string, shortDecodeText:string) {
+    constructor(name: string, shortDecodeText: string) {
         super(name, shortDecodeText);
     }
 
-    public toHrefValue(includeValue:boolean): HrefValue<RelationshipStatusDTO> {
+    public toHrefValue(includeValue: boolean): HrefValue<RelationshipStatusDTO> {
         return new HrefValue(
             '/api/v1/relationshipStatus/' + this.name,
             includeValue ? this.toDTO() : undefined
@@ -166,7 +166,7 @@ const RelationshipSchema = RAMSchema({
     }]
 });
 
-RelationshipSchema.pre('validate', function (next:() => void) {
+RelationshipSchema.pre('validate', function (next: () => void) {
     if (this.relationshipType) {
         this._relationshipTypeCode = this.relationshipType.code;
     }
@@ -202,7 +202,7 @@ RelationshipSchema.pre('validate', function (next:() => void) {
         .then(() => {
             next();
         })
-        .catch((err:Error) => {
+        .catch((err: Error) => {
             next();
         });
 });
@@ -230,12 +230,12 @@ export interface IRelationship extends IRAMObject {
     _subjectProfileProviderCodes:string[];
     _delegateProfileProviderCodes:string[];
     statusEnum():RelationshipStatus;
-    toHrefValue(includeValue:boolean):Promise<HrefValue<DTO>>;
-    toDTO(invitationCode:string):Promise<DTO>;
-    claimPendingInvitation(claimingDelegateIdentity:IIdentity):Promise<IRelationship>;
-    acceptPendingInvitation(acceptingDelegateIdentity:IIdentity):Promise<IRelationship>;
-    rejectPendingInvitation(rejectingDelegateIdentity:IIdentity):Promise<IRelationship>;
-    notifyDelegate(email:string, notifyingIdentity:IIdentity):Promise<IRelationship>;
+    toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
+    toDTO(invitationCode: string):Promise<DTO>;
+    claimPendingInvitation(claimingDelegateIdentity: IIdentity):Promise<IRelationship>;
+    acceptPendingInvitation(acceptingDelegateIdentity: IIdentity):Promise<IRelationship>;
+    rejectPendingInvitation(rejectingDelegateIdentity: IIdentity):Promise<IRelationship>;
+    notifyDelegate(email: string, notifyingIdentity: IIdentity):Promise<IRelationship>;
 }
 
 export interface IRelationshipModel extends mongoose.Model<IRelationship> {
@@ -246,10 +246,11 @@ export interface IRelationshipModel extends mongoose.Model<IRelationship> {
          startTimestamp: Date,
          endTimestamp: Date,
          attributes: IRelationshipAttribute[]) => Promise<IRelationship>;
-    findByIdentifier:(id:string) => Promise<IRelationship>;
-    findByInvitationCode:(invitationCode:string) => Promise<IRelationship>;
-    findPendingByInvitationCodeInDateRange:(invitationCode:string, date:Date) => Promise<IRelationship>;
-    search:(subjectIdentityIdValue:string, delegateIdentityIdValue:string, page:number, pageSize:number)
+    findByIdentifier:(id: string) => Promise<IRelationship>;
+    findByInvitationCode:(invitationCode: string) => Promise<IRelationship>;
+    findPendingByInvitationCodeInDateRange:(invitationCode: string, date: Date) => Promise<IRelationship>;
+    findStrongestActiveDirectOrIndirect:(requestingParty: IParty, requestedIdValue: string) => Promise<IRelationship>;
+    search:(subjectIdentityIdValue: string, delegateIdentityIdValue: string, page: number, pageSize: number)
         => Promise<SearchResult<IRelationship>>;
     searchByIdentity:(identityIdValue: string,
                       partyType: string,
@@ -259,7 +260,7 @@ export interface IRelationshipModel extends mongoose.Model<IRelationship> {
                       text: string,
                       sort: string,
                       page: number, pageSize: number) => Promise<SearchResult<IRelationship>>;
-    searchDistinctSubjectsBySubjectOrDelegateIdentity:(identityIdValue:string, page:number, pageSize:number)
+    searchDistinctSubjectsBySubjectOrDelegateIdentity:(identityIdValue: string, page: number, pageSize: number)
         => Promise<SearchResult<IParty>>;
 }
 
@@ -269,16 +270,16 @@ RelationshipSchema.method('statusEnum', function () {
     return RelationshipStatus.valueOf(this.status);
 });
 
-RelationshipSchema.method('toHrefValue', async function (includeValue:boolean) {
-    const relationshipId:string = this._id.toString();
+RelationshipSchema.method('toHrefValue', async function (includeValue: boolean) {
+    const relationshipId: string = this._id.toString();
     return new HrefValue(
         '/api/v1/relationship/' + encodeURIComponent(relationshipId),
         includeValue ? await this.toDTO(null) : undefined
     );
 });
 
-RelationshipSchema.method('toDTO', async function (invitationCode?:string) {
-    const links:Link[] = [];
+RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
+    const links: Link[] = [];
     // links.push(new Link('self', `/api/v1/relationship/${this.id}`));
 
     // TODO what other logic around when to add links?
@@ -300,13 +301,13 @@ RelationshipSchema.method('toDTO', async function (invitationCode?:string) {
         this.endEventTimestamp,
         this.status,
         await Promise.all<RelationshipAttributeDTO>(this.attributes.map(
-            async(attribute:IRelationshipAttribute) => {
+            async (attribute: IRelationshipAttribute) => {
                 return await attribute.toDTO();
             }))
     );
 });
 
-RelationshipSchema.method('claimPendingInvitation', async function (claimingDelegateIdentity:IIdentity) {
+RelationshipSchema.method('claimPendingInvitation', async function (claimingDelegateIdentity: IIdentity) {
     try {
         /* validate */
 
@@ -314,7 +315,7 @@ RelationshipSchema.method('claimPendingInvitation', async function (claimingDele
         Assert.assertTrue(this.statusEnum() === RelationshipStatus.Pending, 'Unable to accept a non-pending relationship');
 
         // if the user is already the delegate then there is nothing to do
-        if(this.delegate.id === claimingDelegateIdentity.party.id) {
+        if (this.delegate.id === claimingDelegateIdentity.party.id) {
             return this;
         }
 
@@ -384,8 +385,10 @@ RelationshipSchema.method('claimPendingInvitation', async function (claimingDele
     }
 });
 
-RelationshipSchema.method('acceptPendingInvitation', async function (acceptingDelegateIdentity:IIdentity) {
+RelationshipSchema.method('acceptPendingInvitation', async function (acceptingDelegateIdentity: IIdentity) {
+
     logger.debug('Attempting to accept relationship by ', acceptingDelegateIdentity.idValue);
+
     Assert.assertTrue(this.statusEnum() === RelationshipStatus.Pending, 'Unable to accept a non-pending relationship');
 
     // confirm the delegate is the user accepting
@@ -400,7 +403,7 @@ RelationshipSchema.method('acceptPendingInvitation', async function (acceptingDe
     return Promise.resolve(this);
 });
 
-RelationshipSchema.method('rejectPendingInvitation', async function (rejectingDelegateIdentity:IIdentity) {
+RelationshipSchema.method('rejectPendingInvitation', async function (rejectingDelegateIdentity: IIdentity) {
 
     Assert.assertTrue(this.statusEnum() === RelationshipStatus.Pending, 'Unable to reject a non-pending relationship');
 
@@ -416,7 +419,7 @@ RelationshipSchema.method('rejectPendingInvitation', async function (rejectingDe
     return this;
 });
 
-RelationshipSchema.method('notifyDelegate', async function (email: string, notifyingIdentity:IIdentity) {
+RelationshipSchema.method('notifyDelegate', async function (email: string, notifyingIdentity: IIdentity) {
 
     const identity = this.invitationIdentity;
     // TODO Assert that the user is an administrator of the subject
@@ -467,7 +470,7 @@ RelationshipSchema.static('add', async (relationshipType: IRelationshipType,
     });
 });
 
-RelationshipSchema.static('findByIdentifier', (id:string) => {
+RelationshipSchema.static('findByIdentifier', (id: string) => {
     // TODO migrate from _id to another id
     return this.RelationshipModel
         .findOne({
@@ -485,7 +488,7 @@ RelationshipSchema.static('findByIdentifier', (id:string) => {
         .exec();
 });
 
-RelationshipSchema.static('findByInvitationCode', async(invitationCode:string) => {
+RelationshipSchema.static('findByInvitationCode', async (invitationCode: string) => {
     const identity = await IdentityModel.findByInvitationCode(invitationCode);
     if (identity) {
         const delegate = identity.party;
@@ -507,7 +510,7 @@ RelationshipSchema.static('findByInvitationCode', async(invitationCode:string) =
     return null;
 });
 
-RelationshipSchema.static('findPendingByInvitationCodeInDateRange', async(invitationCode:string, date:Date) => {
+RelationshipSchema.static('findPendingByInvitationCodeInDateRange', async (invitationCode: string, date: Date) => {
     const identity = await IdentityModel.findPendingByInvitationCodeInDateRange(invitationCode, date);
     if (identity) {
         const delegate = identity.party;
@@ -529,10 +532,44 @@ RelationshipSchema.static('findPendingByInvitationCodeInDateRange', async(invita
     return null;
 });
 
+// todo this currently only handles DIRECT relationships, need to accommodate 2nd level too
+// todo this isn't currently finding the STRONGEST, really just returning the first one
+RelationshipSchema.static('findStrongestActiveDirectOrIndirect', async (requestingParty: IParty,
+                                                                        requestedIdValue: string) => {
+
+    const subject = await PartyModel.findByIdentityIdValue(requestedIdValue);
+
+    if (!subject) {
+        return Promise.resolve(null);
+    } else {
+        return this.RelationshipModel
+            .findOne({
+                subject: subject,
+                delegate: requestingParty,
+                status: RelationshipStatus.Active.name
+            })
+            .deepPopulate([
+                'relationshipType',
+                'subject',
+                'subjectNickName',
+                'delegate',
+                'delegateNickName',
+                'invitationIdentity.profile.name',
+                'attributes.attributeName'
+            ])
+            //.sort({name: 1})
+            .exec();
+    }
+
+});
+
 // todo this search might no longer be useful from SS2
-RelationshipSchema.static('search', (subjectIdentityIdValue:string, delegateIdentityIdValue:string, page:number, reqPageSize:number) => {
-    return new Promise<SearchResult<IRelationship>>(async(resolve, reject) => {
-        const pageSize:number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
+RelationshipSchema.static('search', (subjectIdentityIdValue: string,
+                                     delegateIdentityIdValue: string,
+                                     page: number,
+                                     reqPageSize: number) => {
+    return new Promise<SearchResult<IRelationship>>(async (resolve, reject) => {
+        const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
         try {
             const query = await (new Query()
                 .when(subjectIdentityIdValue, 'subject', () => PartyModel.findByIdentityIdValue(subjectIdentityIdValue))
@@ -572,7 +609,7 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                                                sort: string,
                                                page: number,
                                                reqPageSize: number) => {
-    return new Promise<SearchResult<IRelationship>>(async(resolve, reject) => {
+    return new Promise<SearchResult<IRelationship>>(async (resolve, reject) => {
         const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
         try {
             const party = await PartyModel.findByIdentityIdValue(identityIdValue);
@@ -630,7 +667,6 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                 })
                 .skip((page - 1) * pageSize)
                 .limit(pageSize)
-                .sort({name: 1})
                 .exec();
             resolve(new SearchResult<IRelationship>(page, count, pageSize, list));
         } catch (e) {
@@ -648,9 +684,9 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
  */
 /* tslint:disable:max-func-body-length */
 RelationshipSchema.static('searchDistinctSubjectsBySubjectOrDelegateIdentity',
-    (identityIdValue:string, page:number, reqPageSize:number) => {
-        return new Promise<SearchResult<IParty>>(async(resolve, reject) => {
-            const pageSize:number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
+    (identityIdValue: string, page: number, reqPageSize: number) => {
+        return new Promise<SearchResult<IParty>>(async (resolve, reject) => {
+            const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
             try {
                 const party = await PartyModel.findByIdentityIdValue(identityIdValue);
                 const listForCount = await this.RelationshipModel
@@ -677,7 +713,7 @@ RelationshipSchema.static('searchDistinctSubjectsBySubjectOrDelegateIdentity',
                         {'$limit': pageSize}
                     ])
                     .exec();
-                const inflatedList = (await PartyModel.populate(listOfIds, {path: '_id'})).map((item:{_id:string}) => item._id);
+                const inflatedList = (await PartyModel.populate(listOfIds, {path: '_id'})).map((item: {_id:string}) => item._id);
                 resolve(new SearchResult<IParty>(page, count, pageSize, inflatedList));
             } catch (e) {
                 reject(e);
