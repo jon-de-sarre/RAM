@@ -256,7 +256,7 @@ case "$1" in
     echo "Seeding database with $DEFAULT_CONF"
     echo ""
     cd backend
-    RAM_CONF=$DEFAULT_CONF gulp seed
+    RAM_CONF=$DEFAULT_CONF gulp seed --no-lint
     echo ""
     ;;
 

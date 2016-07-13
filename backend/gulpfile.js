@@ -20,11 +20,15 @@ gulp.task("clean", function () {
 });
 
 gulp.task("ts:lint", function () {
-    return gulp.src(["typescript/**/*.ts", "test/**/*.ts"])
-        .pipe(tslint())
-        .pipe(tslint.report("verbose", {
-            emitError: false
-        }));
+    if (args['lint'] === false) {
+        console.log('           Skipping \'ts:lint\' via --no-lint');
+    } else {
+        return gulp.src(["typescript/**/*.ts", "test/**/*.ts"])
+            .pipe(tslint())
+            .pipe(tslint.report("verbose", {
+                emitError: false
+            }));
+    }
 });
 
 gulp.task("ts:compile", ["ts:lint"], function () {
