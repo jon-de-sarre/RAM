@@ -43,17 +43,21 @@ export const doResetDataInMongo = (done?:() => void) => {
                 }
             });
         });
-        Promise.all(promises)
-            .then(() => {
-                if (done) {
-                    done();
-                }
-            })
-            .catch((err:Error) => {
-                console.log('\nUnable to drop mongo:', err);
-                if (done) {
-                    done();
-                }
-            });
+        if (done) {
+            Promise.all(promises)
+                .then(() => {
+                    if (done) {
+                        done();
+                    }
+                })
+                .catch((err:Error) => {
+                    console.log('\nUnable to drop mongo:', err);
+                    if (done) {
+                        done();
+                    }
+                });
+        } else {
+            return Promise.all(promises);
+        }
     });
 };
