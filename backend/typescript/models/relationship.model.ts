@@ -249,7 +249,7 @@ export interface IRelationshipModel extends mongoose.Model<IRelationship> {
     findByIdentifier:(id: string) => Promise<IRelationship>;
     findByInvitationCode:(invitationCode: string) => Promise<IRelationship>;
     findPendingByInvitationCodeInDateRange:(invitationCode: string, date: Date) => Promise<IRelationship>;
-    findStrongestActiveDirectOrIndirect:(requestingParty: IParty, requestedIdValue: string) => Promise<IRelationship>;
+    findStrongestActive1stOr2ndLevel:(requestingParty: IParty, requestedIdValue: string) => Promise<IRelationship>;
     search:(subjectIdentityIdValue: string, delegateIdentityIdValue: string, page: number, pageSize: number)
         => Promise<SearchResult<IRelationship>>;
     searchByIdentity:(identityIdValue: string,
@@ -534,8 +534,8 @@ RelationshipSchema.static('findPendingByInvitationCodeInDateRange', async (invit
 
 // todo this currently only handles DIRECT relationships, need to accommodate 2nd level too
 // todo this isn't currently finding the STRONGEST, really just returning the first one
-RelationshipSchema.static('findStrongestActiveDirectOrIndirect', async (requestingParty: IParty,
-                                                                        requestedIdValue: string) => {
+RelationshipSchema.static('findStrongestActive1stOr2ndLevel', async (requestingParty: IParty,
+                                                                     requestedIdValue: string) => {
 
     const subject = await PartyModel.findByIdentityIdValue(requestedIdValue);
 
