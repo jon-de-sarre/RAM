@@ -159,7 +159,7 @@ PartySchema.static('hasAccess', async (requestingParty: IParty, requestedIdValue
             return true;
         } else {
             // todo find strongest relationship
-            return true
+            return true;
         }
     }
     return false;
