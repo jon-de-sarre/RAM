@@ -546,7 +546,7 @@ RelationshipSchema.static('findStrongestActive1stOr2ndLevel', async (requestingP
             .findOne({
                 subject: subject,
                 delegate: requestingParty,
-                status: RelationshipStatus.Active.name
+                status: RelationshipStatus.Active.code
             })
             .deepPopulate([
                 'relationshipType',
