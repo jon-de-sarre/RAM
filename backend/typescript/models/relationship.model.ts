@@ -48,19 +48,19 @@ export class RelationshipStatus extends RAMEnum {
         RelationshipStatus.Pending
     ];
 
-    constructor(name:string, shortDecodeText:string) {
-        super(name, shortDecodeText);
+    constructor(code:string, shortDecodeText:string) {
+        super(code, shortDecodeText);
     }
 
     public toHrefValue(includeValue:boolean): HrefValue<RelationshipStatusDTO> {
         return new HrefValue(
-            '/api/v1/relationshipStatus/' + this.name,
+            '/api/v1/relationshipStatus/' + this.code,
             includeValue ? this.toDTO() : undefined
         );
     }
 
     public toDTO(): RelationshipStatusDTO {
-        return new RelationshipStatusDTO(this.name, this.shortDecodeText);
+        return new RelationshipStatusDTO(this.code, this.shortDecodeText);
     }
 }
 
@@ -183,7 +183,7 @@ RelationshipSchema.pre('validate', function (next:() => void) {
             this._subjectProfileProviderCodes = [];
             for (let identity of identities) {
                 this._subjectProfileProviderCodes.push(identity.profile.provider);
-                if (identity.publicIdentifierScheme === IdentityPublicIdentifierScheme.ABN.name) {
+                if (identity.publicIdentifierScheme === IdentityPublicIdentifierScheme.ABN.code) {
                     this._subjectABNString = identity.rawIdValue;
                 }
             }
@@ -193,7 +193,7 @@ RelationshipSchema.pre('validate', function (next:() => void) {
             this._delegateProfileProviderCodes = [];
             for (let identity of identities) {
                 this._delegateProfileProviderCodes.push(identity.profile.provider);
-                if (identity.publicIdentifierScheme === IdentityPublicIdentifierScheme.ABN.name) {
+                if (identity.publicIdentifierScheme === IdentityPublicIdentifierScheme.ABN.code) {
                     this._delegateABNString = identity.rawIdValue;
                 }
             }
@@ -371,7 +371,7 @@ RelationshipSchema.method('claimPendingInvitation', async function (claimingDele
         /* complete claim */
 
         // mark invitation code identity as claimed
-        invitationIdentity.invitationCodeStatus = IdentityInvitationCodeStatus.Claimed.name;
+        invitationIdentity.invitationCodeStatus = IdentityInvitationCodeStatus.Claimed.code;
         invitationIdentity.invitationCodeClaimedTimestamp = new Date();
         await invitationIdentity.save();
 
@@ -392,7 +392,7 @@ RelationshipSchema.method('acceptPendingInvitation', async function (acceptingDe
     Assert.assertTrue(acceptingDelegateIdentity.party.id === this.delegate.id, 'Not allowed');
 
     // mark relationship as active
-    this.status = RelationshipStatus.Active.name;
+    this.status = RelationshipStatus.Active.code;
     await this.save();
 
     // TODO notify relevant parties
@@ -408,7 +408,7 @@ RelationshipSchema.method('rejectPendingInvitation', async function (rejectingDe
     Assert.assertTrue(rejectingDelegateIdentity.party.id === this.delegate.id, 'Not allowed');
 
     // mark relationship as invalid
-    this.status = RelationshipStatus.Invalid.name;
+    this.status = RelationshipStatus.Invalid.code;
     await this.save();
 
     // TODO notify relevant parties
@@ -462,7 +462,7 @@ RelationshipSchema.static('add', async (relationshipType: IRelationshipType,
         invitationIdentity: invitationCodeIdentity,
         startTimestamp: startTimestamp,
         endTimestamp: endTimestamp,
-        status: RelationshipStatus.Pending.name,
+        status: RelationshipStatus.Pending.code,
         attributes: attributes
     });
 });

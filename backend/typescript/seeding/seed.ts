@@ -332,8 +332,8 @@ export class Seeder {
                 shortDecodeText: 'Permission Customisation Allowed Indicator',
                 longDecodeText: 'Permission Customisation Allowed Indicator',
                 startDate: now,
-                domain: RelationshipAttributeNameDomain.Boolean.name,
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                domain: RelationshipAttributeNameDomain.Boolean.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: null,
                 purposeText: 'Indicator of whether a relationship type allows the user to customise permission levels'
             } as any);
@@ -343,8 +343,8 @@ export class Seeder {
                 shortDecodeText: 'Do you want this representative to manage authorisations for this organisation?',
                 longDecodeText: '(This includes the ability to create, view, modify and cancel authorisations)',
                 startDate: now,
-                domain: RelationshipAttributeNameDomain.Boolean.name,
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                domain: RelationshipAttributeNameDomain.Boolean.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: null,
                 purposeText: 'Indicator of whether a relationship allows the delegate to manage authorisations'
             } as any);
@@ -354,8 +354,8 @@ export class Seeder {
                 shortDecodeText: 'Delegate Relationship Type Declaration',
                 longDecodeText: 'Delegate Relationship Type Declaration',
                 startDate: now,
-                domain: RelationshipAttributeNameDomain.Markdown.name,
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                domain: RelationshipAttributeNameDomain.Markdown.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: null,
                 purposeText: 'Delegate specific declaration in Markdown for a relationship type'
             } as any);
@@ -365,8 +365,8 @@ export class Seeder {
                 shortDecodeText: 'Subject Relationship Type Declaration',
                 longDecodeText: 'Subject Relationship Type Declaration',
                 startDate: now,
-                domain: RelationshipAttributeNameDomain.Markdown.name,
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                domain: RelationshipAttributeNameDomain.Markdown.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: null,
                 purposeText: 'Subject specific declaration in Markdown for a relationship type'
             } as any);
@@ -389,8 +389,8 @@ export class Seeder {
                 shortDecodeText: 'Australian Securities and Investments Commission (ASIC)',
                 longDecodeText: 'ABN / BN Project (limited release)',
                 startDate: now,
-                domain: RelationshipAttributeNameDomain.SelectSingle.name,
-                classifier: RelationshipAttributeNameClassifier.Permission.name,
+                domain: RelationshipAttributeNameDomain.SelectSingle.code,
+                classifier: RelationshipAttributeNameClassifier.Permission.code,
                 category: administrativeServices_category,
                 purposeText: 'A permission for a relationship',
                 permittedValues: Seeder.accessLevels
@@ -401,8 +401,8 @@ export class Seeder {
                 shortDecodeText: 'Workplace Gender Equality Agency (WGEA)',
                 longDecodeText: 'Activate',
                 startDate: now,
-                domain: RelationshipAttributeNameDomain.SelectSingle.name,
-                classifier: RelationshipAttributeNameClassifier.Permission.name,
+                domain: RelationshipAttributeNameDomain.SelectSingle.code,
+                classifier: RelationshipAttributeNameClassifier.Permission.code,
                 category: administrativeServices_category,
                 purposeText: 'A permission for a relationship',
                 permittedValues: Seeder.accessLevels
@@ -413,8 +413,8 @@ export class Seeder {
                 shortDecodeText: 'Department of Industry',
                 longDecodeText: 'Australian Business Account (ABA) - ABLIS',
                 startDate: now,
-                domain: RelationshipAttributeNameDomain.SelectSingle.name,
-                classifier: RelationshipAttributeNameClassifier.Permission.name,
+                domain: RelationshipAttributeNameDomain.SelectSingle.code,
+                classifier: RelationshipAttributeNameClassifier.Permission.code,
                 category: administrativeServices_category,
                 purposeText: 'A permission for a relationship',
                 permittedValues: Seeder.accessLevels
@@ -425,8 +425,8 @@ export class Seeder {
                 shortDecodeText: 'Australian Business Register (ABR)',
                 longDecodeText: 'Australian Business Register',
                 startDate: now,
-                domain: RelationshipAttributeNameDomain.SelectSingle.name,
-                classifier: RelationshipAttributeNameClassifier.Permission.name,
+                domain: RelationshipAttributeNameDomain.SelectSingle.code,
+                classifier: RelationshipAttributeNameClassifier.Permission.code,
                 category: administrativeServices_category,
                 purposeText: 'A permission for a relationship',
                 permittedValues: Seeder.accessLevels
@@ -437,8 +437,8 @@ export class Seeder {
                 shortDecodeText: 'Department of Industry',
                 longDecodeText: 'Automotive Transformation Scheme (ATS)',
                 startDate: now,
-                domain: RelationshipAttributeNameDomain.SelectSingle.name,
-                classifier: RelationshipAttributeNameClassifier.Permission.name,
+                domain: RelationshipAttributeNameDomain.SelectSingle.code,
+                classifier: RelationshipAttributeNameClassifier.Permission.code,
                 category: administrativeServices_category,
                 purposeText: 'A permission for a relationship',
                 permittedValues: Seeder.accessLevels
@@ -449,8 +449,8 @@ export class Seeder {
                 shortDecodeText: 'NT Department of Business',
                 longDecodeText: 'AVETMISS Training Portal',
                 startDate: now,
-                domain: RelationshipAttributeNameDomain.SelectSingle.name,
-                classifier: RelationshipAttributeNameClassifier.Permission.name,
+                domain: RelationshipAttributeNameDomain.SelectSingle.code,
+                classifier: RelationshipAttributeNameClassifier.Permission.code,
                 category: administrativeServices_category,
                 purposeText: 'A permission for a relationship',
                 permittedValues: Seeder.accessLevels
@@ -461,8 +461,8 @@ export class Seeder {
                 shortDecodeText: 'NT Department of Corporate & Information Services - DCIS',
                 longDecodeText: 'Identity Management System (IMS) - Invoice Portal – Invoice NTG',
                 startDate: now,
-                domain: RelationshipAttributeNameDomain.SelectSingle.name,
-                classifier: RelationshipAttributeNameClassifier.Permission.name,
+                domain: RelationshipAttributeNameDomain.SelectSingle.code,
+                classifier: RelationshipAttributeNameClassifier.Permission.code,
                 category: administrativeServices_category,
                 purposeText: 'A permission for a relationship',
                 permittedValues: Seeder.accessLevels
@@ -473,8 +473,8 @@ export class Seeder {
                 shortDecodeText: 'Department of Human Services - Centrelink',
                 longDecodeText: 'Paid Parental Leave',
                 startDate: now,
-                domain: RelationshipAttributeNameDomain.SelectSingle.name,
-                classifier: RelationshipAttributeNameClassifier.Permission.name,
+                domain: RelationshipAttributeNameDomain.SelectSingle.code,
+                classifier: RelationshipAttributeNameClassifier.Permission.code,
                 category: administrativeServices_category,
                 purposeText: 'A permission for a relationship',
                 permittedValues: Seeder.accessLevels
@@ -485,8 +485,8 @@ export class Seeder {
                 shortDecodeText: 'Department of Immigration and Border Protection',
                 longDecodeText: 'Skill Select',
                 startDate: now,
-                domain: RelationshipAttributeNameDomain.SelectSingle.name,
-                classifier: RelationshipAttributeNameClassifier.Permission.name,
+                domain: RelationshipAttributeNameDomain.SelectSingle.code,
+                classifier: RelationshipAttributeNameClassifier.Permission.code,
                 category: administrativeServices_category,
                 purposeText: 'A permission for a relationship',
                 permittedValues: Seeder.accessLevels
@@ -497,8 +497,8 @@ export class Seeder {
                 shortDecodeText: 'Department of Employment',
                 longDecodeText: 'Wage Connect',
                 startDate: now,
-                domain: RelationshipAttributeNameDomain.SelectSingle.name,
-                classifier: RelationshipAttributeNameClassifier.Permission.name,
+                domain: RelationshipAttributeNameDomain.SelectSingle.code,
+                classifier: RelationshipAttributeNameClassifier.Permission.code,
                 category: administrativeServices_category,
                 purposeText: 'A permission for a relationship',
                 permittedValues: Seeder.accessLevels

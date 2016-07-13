@@ -67,8 +67,8 @@ export class IdentityType extends RAMEnum {
 
     public buildIdValue:(identity:IIdentity) => String;
 
-    constructor(name:string, shortDecodeText:string) {
-        super(name, shortDecodeText);
+    constructor(code:string, shortDecodeText:string) {
+        super(code, shortDecodeText);
     }
 
     public withIdValueBuilder(builder:(identity:IIdentity) => String):IdentityType {
@@ -89,8 +89,8 @@ export class IdentityInvitationCodeStatus extends RAMEnum {
         IdentityInvitationCodeStatus.Rejected
     ];
 
-    constructor(name:string, shortDecodeText:string) {
-        super(name, shortDecodeText);
+    constructor(code:string, shortDecodeText:string) {
+        super(code, shortDecodeText);
     }
 }
 
@@ -102,8 +102,8 @@ export class IdentityAgencyScheme extends RAMEnum {
         IdentityAgencyScheme.Medicare
     ];
 
-    constructor(name:string, shortDecodeText:string) {
-        super(name, shortDecodeText);
+    constructor(code:string, shortDecodeText:string) {
+        super(code, shortDecodeText);
     }
 }
 
@@ -115,8 +115,8 @@ export class IdentityPublicIdentifierScheme extends RAMEnum {
         IdentityPublicIdentifierScheme.ABN
     ];
 
-    constructor(name:string, shortDecodeText:string) {
-        super(name, shortDecodeText);
+    constructor(code:string, shortDecodeText:string) {
+        super(code, shortDecodeText);
     }
 }
 
@@ -132,8 +132,8 @@ export class IdentityLinkIdScheme extends RAMEnum {
         IdentityLinkIdScheme.MyGov
     ];
 
-    constructor(name:string, shortDecodeText:string) {
-        super(name, shortDecodeText);
+    constructor(code:string, shortDecodeText:string) {
+        super(code, shortDecodeText);
     }
 }
 
@@ -165,7 +165,7 @@ const IdentitySchema = RAMSchema({
         type: String,
         trim: true,
         required: [function () {
-            return this.identityType === IdentityType.AgencyProvidedToken.name;
+            return this.identityType === IdentityType.AgencyProvidedToken.code;
         }, 'Agency Scheme is required'],
         enum: IdentityAgencyScheme.valueStrings()
     },
@@ -173,28 +173,28 @@ const IdentitySchema = RAMSchema({
         type: String,
         trim: true,
         required: [function () {
-            return this.identityType === IdentityType.AgencyProvidedToken.name;
+            return this.identityType === IdentityType.AgencyProvidedToken.code;
         }, 'Agency Token is required']
     },
     invitationCodeStatus: {
         type: String,
         trim: true,
         required: [function () {
-            return this.identityType === IdentityType.InvitationCode.name;
+            return this.identityType === IdentityType.InvitationCode.code;
         }, 'Invitation Code Status is required'],
         enum: IdentityInvitationCodeStatus.valueStrings()
     },
     invitationCodeExpiryTimestamp: {
         type: Date,
         required: [function () {
-            return this.identityType === IdentityType.InvitationCode.name;
+            return this.identityType === IdentityType.InvitationCode.code;
         }, 'Invitation Code Expiry is required']
     },
     invitationCodeClaimedTimestamp: {
         type: Date,
         required: [function () {
-            return this.identityType === IdentityType.InvitationCode.name &&
-                this.invitationCodeStatus === IdentityInvitationCodeStatus.Claimed.name;
+            return this.identityType === IdentityType.InvitationCode.code &&
+                this.invitationCodeStatus === IdentityInvitationCodeStatus.Claimed.code;
         }, 'Invitation Code Claimed Timestamp is required']
     },
     invitationCodeTemporaryEmailAddress: {
@@ -205,7 +205,7 @@ const IdentitySchema = RAMSchema({
         type: String,
         trim: true,
         required: [function () {
-            return this.identityType === IdentityType.LinkId.name;
+            return this.identityType === IdentityType.LinkId.code;
         }, 'Link Id Scheme is required'],
         enum: IdentityLinkIdScheme.valueStrings()
     },
@@ -217,7 +217,7 @@ const IdentitySchema = RAMSchema({
         type: String,
         trim: true,
         required: [function () {
-            return this.identityType === IdentityType.PublicIdentifier.name;
+            return this.identityType === IdentityType.PublicIdentifier.code;
         }, 'Public Identifier Scheme is required'],
         enum: IdentityPublicIdentifierScheme.valueStrings()
     },
@@ -356,7 +356,7 @@ IdentitySchema.static('findByInvitationCode', (invitationCode:string) => {
     return this.IdentityModel
         .findOne({
             rawIdValue: invitationCode,
-            identityType: IdentityType.InvitationCode.name
+            identityType: IdentityType.InvitationCode.code
         })
         .deepPopulate([
             'profile.name',
@@ -370,8 +370,8 @@ IdentitySchema.static('findPendingByInvitationCodeInDateRange', (invitationCode:
     return this.IdentityModel
         .findOne({
             rawIdValue: invitationCode,
-            identityType: IdentityType.InvitationCode.name,
-            invitationCodeStatus: IdentityInvitationCodeStatus.Pending.name,
+            identityType: IdentityType.InvitationCode.code,
+            invitationCodeStatus: IdentityInvitationCodeStatus.Pending.code,
             invitationCodeExpiryTimestamp: {$gte: date}
         })
         .deepPopulate([
@@ -416,7 +416,7 @@ IdentitySchema.static('searchLinkIds', (page:number, reqPageSize:number) => {
         const pageSize:number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
         try {
             const query = {
-                identityType: IdentityType.LinkId.name
+                identityType: IdentityType.LinkId.code
             };
             const count = await this.IdentityModel
                 .count(query)
@@ -450,13 +450,13 @@ IdentitySchema.static('createInvitationCodeIdentity',
             undefined,
             'DATE_OF_BIRTH',
             dateOfBirth,
-            IdentityType.InvitationCode.name,
+            IdentityType.InvitationCode.code,
             undefined,
             undefined,
             undefined,
             undefined,
             undefined,
-            ProfileProvider.Invitation.name
+            ProfileProvider.Invitation.code
         ));
 });
 
@@ -496,9 +496,9 @@ IdentitySchema.static('createFromDTO', async(dto:CreateIdentityDTO):Promise<IIde
         defaultInd: true,
         agencyScheme: dto.agencyScheme,
         agencyToken: dto.agencyToken,
-        invitationCodeStatus: dto.identityType === IdentityType.InvitationCode.name ?
-            IdentityInvitationCodeStatus.Pending.name : undefined,
-        invitationCodeExpiryTimestamp: dto.identityType === IdentityType.InvitationCode.name ?
+        invitationCodeStatus: dto.identityType === IdentityType.InvitationCode.code ?
+            IdentityInvitationCodeStatus.Pending.code : undefined,
+        invitationCodeExpiryTimestamp: dto.identityType === IdentityType.InvitationCode.code ?
             getNewInvitationCodeExpiry() : undefined,
         invitationCodeClaimedTimestamp: undefined,
         publicIdentifierScheme: dto.publicIdentifierScheme,

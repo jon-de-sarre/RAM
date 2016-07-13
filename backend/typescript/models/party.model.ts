@@ -25,19 +25,19 @@ export class PartyType extends RAMEnum {
         PartyType.Individual,
     ];
 
-    constructor(name:string, shortDecodeText:string) {
-        super(name, shortDecodeText);
+    constructor(code:string, shortDecodeText:string) {
+        super(code, shortDecodeText);
     }
 
     public toHrefValue(includeValue:boolean): HrefValue<PartyTypeDTO> {
         return new HrefValue(
-            '/api/v1/partyType/' + this.name,
+            '/api/v1/partyType/' + this.code,
             includeValue ? this.toDTO() : undefined
         );
     }
 
     public toDTO(): PartyTypeDTO {
-        return new PartyTypeDTO(this.name, this.shortDecodeText);
+        return new PartyTypeDTO(this.code, this.shortDecodeText);
     }
 }
 
