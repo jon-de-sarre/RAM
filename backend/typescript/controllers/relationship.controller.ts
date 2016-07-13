@@ -350,13 +350,13 @@ export class RelationshipController {
                         req.body.delegate.unstructuredName,
                         req.body.delegate.sharedSecretTypeCode,
                         req.body.delegate.sharedSecretValue,
-                        IdentityType.InvitationCode.name,
+                        IdentityType.InvitationCode.code,
                         undefined,
                         undefined,
                         undefined,
                         undefined,
                         undefined,
-                        ProfileProvider.Invitation.name
+                        ProfileProvider.Invitation.code
                     ),
                     req.body.startTimestamp ? new Date(req.body.startTimestamp) : undefined,
                     req.body.endTimestamp ? new Date(req.body.endTimestamp) : undefined,
@@ -379,7 +379,7 @@ export class RelationshipController {
             }
         };
         validateReqSchema(req, schema)
-            .then((req:Request) => RelationshipStatus.valueOf(req.params.name))
+            .then((req:Request) => RelationshipStatus.valueOf(req.params.code))
             .then((model) => model ? model.toDTO() : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
@@ -438,7 +438,7 @@ export class RelationshipController {
             security.isAuthenticated,
             this.create);
 
-        router.get('/v1/relationshipStatus/:name',
+        router.get('/v1/relationshipStatus/:code',
             this.findStatusByName);
 
         router.get('/v1/relationshipStatuses',

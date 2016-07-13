@@ -32,22 +32,22 @@ export class JenniferMaximsIdentitySeeder {
                 } as any);
 
                 Seeder.jennifermaxims_profile = await Seeder.createProfileModel({
-                    provider: ProfileProvider.MyGov.name,
+                    provider: ProfileProvider.MyGov.code,
                     name: Seeder.jennifermaxims_name,
                     sharedSecrets: [Seeder.jennifermaxims_dob]
                 } as any);
 
                 Seeder.jennifermaxims_party = await Seeder.createPartyModel({
-                    partyType: PartyType.Individual.name
+                    partyType: PartyType.Individual.code
                 } as any);
 
                 Seeder.log('');
 
                 Seeder.jennifermaxims_identity_1 = await Seeder.createIdentityModel({
                     rawIdValue: 'jennifermaxims_identity_1',
-                    identityType: IdentityType.LinkId.name,
+                    identityType: IdentityType.LinkId.code,
                     defaultInd: true,
-                    linkIdScheme: IdentityLinkIdScheme.MyGov.name,
+                    linkIdScheme: IdentityLinkIdScheme.MyGov.code,
                     profile: Seeder.jennifermaxims_profile,
                     party: Seeder.jennifermaxims_party
                 } as any);

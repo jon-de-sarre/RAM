@@ -7,16 +7,16 @@ export class ProfileController {
     constructor(private profileModel:IProfileModel) {
     }
 
-    private findProviderByName = (req:Request, res:Response) => {
+    private findProviderByCode = (req:Request, res:Response) => {
         const schema = {
-            'name': {
+            'code': {
                 in: 'params',
                 notEmpty: true,
-                errorMessage: 'Name is not valid'
+                errorMessage: 'Code is not valid'
             }
         };
         validateReqSchema(req, schema)
-            .then((req:Request) => ProfileProvider.valueOf(req.params.name))
+            .then((req:Request) => ProfileProvider.valueOf(req.params.code))
             .then((model) => model ? model.toDTO() : null)
             .then(sendResource(res), sendError(res))
             .then(sendNotFoundError(res));
@@ -34,8 +34,8 @@ export class ProfileController {
 
     public assignRoutes = (router:Router) => {
 
-        router.get('/v1/profileProvider/:name',
-            this.findProviderByName);
+        router.get('/v1/profileProvider/:code',
+            this.findProviderByCode);
 
         router.get('/v1/profileProviders',
             this.listProviders);

@@ -43,7 +43,7 @@ export class PartyController {
             }
         };
         validateReqSchema(req, schema)
-            .then((req:Request) => PartyType.valueOf(req.params.name))
+            .then((req:Request) => PartyType.valueOf(req.params.code))
             .then((model) => model ? model.toDTO() : null)
             .then(sendResource(res), sendError(res))
             .then(sendNotFoundError(res));
@@ -69,7 +69,7 @@ export class PartyController {
             security.isAuthenticated,
             this.findByIdentityIdValue);
 
-        router.get('/v1/partyType/:name',
+        router.get('/v1/partyType/:code',
             this.findTypeByName);
 
         router.get('/v1/partyTypes',

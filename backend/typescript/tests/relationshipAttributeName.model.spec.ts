@@ -29,8 +29,8 @@ describe('RAM Relationship Attribute Name', () => {
                 shortDecodeText: 'Attribute Name',
                 longDecodeText: 'Attribute Name',
                 startDate: new Date(),
-                domain: RelationshipAttributeNameDomain.String.name,
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                domain: RelationshipAttributeNameDomain.String.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: 'category',
                 purposeText: 'This attribute purpose text'
             });
@@ -41,8 +41,8 @@ describe('RAM Relationship Attribute Name', () => {
                 longDecodeText: 'Attribute Name',
                 startDate: new Date(),
                 endDate: new Date(2099, 1, 1),
-                domain: RelationshipAttributeNameDomain.String.name,
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                domain: RelationshipAttributeNameDomain.String.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: 'category',
                 purposeText: 'This attribute purpose text'
             });
@@ -53,8 +53,8 @@ describe('RAM Relationship Attribute Name', () => {
                 longDecodeText: 'Attribute Name',
                 startDate: new Date(2016, 1, 1),
                 endDate: new Date(2016, 1, 2),
-                domain: RelationshipAttributeNameDomain.String.name,
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                domain: RelationshipAttributeNameDomain.String.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: 'category',
                 purposeText: 'This attribute purpose text'
             });
@@ -64,8 +64,8 @@ describe('RAM Relationship Attribute Name', () => {
                 shortDecodeText: 'Attribute Name',
                 longDecodeText: 'Attribute Name',
                 startDate: new Date(),
-                domain: RelationshipAttributeNameDomain.SelectSingle.name,
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                domain: RelationshipAttributeNameDomain.SelectSingle.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: 'category',
                 purposeText: 'This attribute purpose text',
                 permittedValues: ['Choice 1', 'Choice 2', 'Choice 3']
@@ -206,8 +206,8 @@ describe('RAM Relationship Attribute Name', () => {
             await RelationshipAttributeNameModel.create({
                 shortDecodeText: 'Some short decode text',
                 longDecodeText: 'Some long decode text',
-                domain: RelationshipAttributeNameDomain.String.name,
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                domain: RelationshipAttributeNameDomain.String.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: 'category',
                 purposeText: 'This attribute purpose text',
                 startDate: new Date()
@@ -227,8 +227,8 @@ describe('RAM Relationship Attribute Name', () => {
                 shortDecodeText: 'Some short decode text',
                 longDecodeText: 'Some long decode text',
                 startDate: new Date(),
-                domain: RelationshipAttributeNameDomain.String.name,
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                domain: RelationshipAttributeNameDomain.String.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: 'category',
                 purposeText: 'This attribute purpose text'
             });
@@ -248,7 +248,7 @@ describe('RAM Relationship Attribute Name', () => {
                 shortDecodeText: 'Some short decode text',
                 longDecodeText: 'Some long decode text',
                 startDate: new Date(),
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: 'category'
             });
             fail('should not have inserted with null domain');
@@ -268,7 +268,7 @@ describe('RAM Relationship Attribute Name', () => {
                 longDecodeText: 'Some long decode text',
                 startDate: new Date(),
                 domain: '__BOGUS__',
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: 'category',
                 purposeText: 'This attribute purpose text'
             });
@@ -288,7 +288,7 @@ describe('RAM Relationship Attribute Name', () => {
                 shortDecodeText: 'Some short decode text',
                 longDecodeText: 'Some long decode text',
                 startDate: new Date(),
-                domain: RelationshipAttributeNameDomain.String.name,
+                domain: RelationshipAttributeNameDomain.String.code,
                 category: 'category'
             });
             fail('should not have inserted with null domain');
@@ -307,7 +307,7 @@ describe('RAM Relationship Attribute Name', () => {
                 shortDecodeText: 'Some short decode text',
                 longDecodeText: 'Some long decode text',
                 startDate: new Date(),
-                domain: RelationshipAttributeNameDomain.String.name,
+                domain: RelationshipAttributeNameDomain.String.code,
                 classifier: '__BOGUS__',
                 category: 'category'
             });
@@ -327,8 +327,8 @@ describe('RAM Relationship Attribute Name', () => {
                 shortDecodeText: 'Some short decode text',
                 longDecodeText: 'Some long decode text',
                 startDate: new Date(),
-                domain: RelationshipAttributeNameDomain.String.name,
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                domain: RelationshipAttributeNameDomain.String.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: 'category'
             });
             fail('should not have inserted with null purpose text');
@@ -347,8 +347,8 @@ describe('RAM Relationship Attribute Name', () => {
                 shortDecodeText: 'Some short decode text',
                 longDecodeText: 'Some long decode text',
                 startDate: new Date(),
-                domain: RelationshipAttributeNameDomain.String.name,
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                domain: RelationshipAttributeNameDomain.String.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: 'category',
                 purposeText: ''
             });
@@ -371,8 +371,8 @@ describe('RAM Relationship Attribute Name', () => {
                 shortDecodeText: 'Some short decode text',
                 longDecodeText: 'Some long decode text',
                 startDate: new Date(),
-                domain: RelationshipAttributeNameDomain.String.name,
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                domain: RelationshipAttributeNameDomain.String.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: 'category',
                 purposeText: 'This attribute purpose text'
             });
@@ -382,8 +382,8 @@ describe('RAM Relationship Attribute Name', () => {
                 shortDecodeText: 'Some short decode text',
                 longDecodeText: 'Some long decode text',
                 startDate: new Date(),
-                domain: RelationshipAttributeNameDomain.String.name,
-                classifier: RelationshipAttributeNameClassifier.Other.name,
+                domain: RelationshipAttributeNameDomain.String.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: 'category',
                 purposeText: 'This attribute purpose text'
             });
@@ -402,7 +402,7 @@ describe('RAM Relationship Attribute Name', () => {
     it('converts domain to enum', async (done) => {
         try {
             expect(stringRelationshipAttributeNameNoEndDate).not.toBeNull();
-            expect(stringRelationshipAttributeNameNoEndDate.domain).toBe(RelationshipAttributeNameDomain.String.name);
+            expect(stringRelationshipAttributeNameNoEndDate.domain).toBe(RelationshipAttributeNameDomain.String.code);
             expect(stringRelationshipAttributeNameNoEndDate.domainEnum()).toBe(RelationshipAttributeNameDomain.String);
             done();
         } catch (e) {

@@ -79,6 +79,8 @@ export class RelationshipsComponent extends AbstractPageComponent {
             this.addGlobalMessage('You have declined the relationship.');
         } else if (msg === 'ACCEPTED_RELATIONSHIP') {
             this.addGlobalMessage('You have accepted the relationship.');
+        } else if (msg === 'CANCEL_ACCEPT_RELATIONSHIP') {
+            this.addGlobalMessage('You cancelled without accepting or declining the relationship');
         }
 
         // identity in focus

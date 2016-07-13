@@ -26,22 +26,22 @@ export class JMFoodPackagingIdentitySeeder {
                 } as any);
 
                 Seeder.jmfoodpackaging_profile = await Seeder.createProfileModel({
-                    provider: ProfileProvider.ABR.name,
+                    provider: ProfileProvider.ABR.code,
                     name: Seeder.jmfoodpackaging_name,
                     sharedSecrets: []
                 } as any);
 
                 Seeder.jmfoodpackaging_party = await Seeder.createPartyModel({
-                    partyType: PartyType.ABN.name
+                    partyType: PartyType.ABN.code
                 } as any);
 
                 Seeder.log('');
 
                 Seeder.jmfoodpackaging_identity_1 = await Seeder.createIdentityModel({
                     rawIdValue: 'jmfoodpackaging_identity_1',
-                    identityType: IdentityType.PublicIdentifier.name,
+                    identityType: IdentityType.PublicIdentifier.code,
                     defaultInd: true,
-                    publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.name,
+                    publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.code,
                     profile: Seeder.jmfoodpackaging_profile,
                     party: Seeder.jmfoodpackaging_party
                 } as any);
