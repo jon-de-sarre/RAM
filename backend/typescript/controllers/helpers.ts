@@ -3,7 +3,7 @@ import {Response, Request} from 'express';
 import {IResponse, ErrorResponse, SearchResult, HrefValue} from '../../../commons/RamAPI';
 import * as _ from 'lodash';
 
-export const REGULAR_CHARS = '^[A-Za-z0-9 +&\'\*\-]+$';
+export const REGULAR_CHARS = '^([A-Za-z0-9 +&\'\*\-]+)?$';
 
 export function sendResource<T>(res: Response) {
     'use strict';
