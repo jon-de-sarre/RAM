@@ -18,8 +18,9 @@ export class ProfileController {
         validateReqSchema(req, schema)
             .then((req:Request) => ProfileProvider.valueOf(req.params.code))
             .then((model) => model ? model.toDTO() : null)
-            .then(sendResource(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     private listProviders = (req:Request, res:Response) => {
@@ -28,8 +29,9 @@ export class ProfileController {
         validateReqSchema(req, schema)
             .then((req:Request) => ProfileProvider.values())
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
-            .then(sendList(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendList(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     public assignRoutes = (router:Router) => {

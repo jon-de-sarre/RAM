@@ -15,8 +15,9 @@ export class PartyController {
         validateReqSchema(req, schema)
             .then((req:Request) => identity ? this.partyModel.findByIdentityIdValue(identity.idValue) : null)
             .then((model) => model ? model.toDTO() : null)
-            .then(sendResource(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     private findByIdentityIdValue = (req:Request, res:Response) => {
@@ -30,8 +31,9 @@ export class PartyController {
         validateReqSchema(req, schema)
             .then((req:Request) => this.partyModel.findByIdentityIdValue(req.params.idValue))
             .then((model) => model ? model.toDTO() : null)
-            .then(sendResource(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     private findTypeByName = (req:Request, res:Response) => {
@@ -45,8 +47,9 @@ export class PartyController {
         validateReqSchema(req, schema)
             .then((req:Request) => PartyType.valueOf(req.params.code))
             .then((model) => model ? model.toDTO() : null)
-            .then(sendResource(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     private listTypes = (req:Request, res:Response) => {
@@ -55,8 +58,9 @@ export class PartyController {
         validateReqSchema(req, schema)
             .then((req:Request) => PartyType.values())
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
-            .then(sendList(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendList(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     public assignRoutes = (router:Router) => {

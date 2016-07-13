@@ -31,7 +31,7 @@ export class RelationshipController {
             .then((model) => model ? model.toDTO(null) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     private findByInvitationCode = async(req:Request, res:Response) => {
@@ -47,7 +47,7 @@ export class RelationshipController {
             .then((model) => model ? model.toDTO(invitationCode) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     private claimByInvitationCode = async(req:Request, res:Response) => {
@@ -64,7 +64,7 @@ export class RelationshipController {
             .then((model) => model ? model.toDTO(invitationCode) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     private acceptByInvitationCode = async(req:Request, res:Response) => {
@@ -84,7 +84,7 @@ export class RelationshipController {
             .then((model) => model ? model.toDTO(null) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     private rejectByInvitationCode = async(req:Request, res:Response) => {
@@ -100,7 +100,7 @@ export class RelationshipController {
             .then((model) => model ? Promise.resolve({}) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     private notifyDelegateByInvitationCode = async(req:Request, res:Response) => {
@@ -125,7 +125,7 @@ export class RelationshipController {
             .then((model) => model ? model.toDTO(null) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     /* tslint:disable:max-func-body-length */
@@ -171,7 +171,7 @@ export class RelationshipController {
             .then((results) => (results.map((model) => model.toHrefValue(true))))
             .then(sendSearchResult(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     /* tslint:disable:max-func-body-length */
@@ -224,7 +224,7 @@ export class RelationshipController {
             .then((results) => (results.map((model) => model.toHrefValue(true))))
             .then(sendSearchResult(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
     //
     // private searchDistinctSubjectsBySubjectOrDelegateIdentity = async (req:Request, res:Response) => {
@@ -367,7 +367,7 @@ export class RelationshipController {
             .then((model) => model ? model.toDTO(null) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     private findStatusByName = (req:Request, res:Response) => {
@@ -393,7 +393,7 @@ export class RelationshipController {
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
             .then(sendList(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     public assignRoutes = (router:Router) => {
