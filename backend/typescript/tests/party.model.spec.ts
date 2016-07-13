@@ -55,20 +55,20 @@ describe('RAM Party', () => {
                     });
 
                     profile1 = await ProfileModel.create({
-                        provider: ProfileProvider.MyGov.name,
+                        provider: ProfileProvider.MyGov.code,
                         name: name1
                     });
 
                     party1 = await PartyModel.create({
-                        partyType: PartyType.Individual.name,
+                        partyType: PartyType.Individual.code,
                         name: name1
                     });
 
                     identity1 = await IdentityModel.create({
                         rawIdValue: 'uuid_1',
-                        identityType: IdentityType.LinkId.name,
+                        identityType: IdentityType.LinkId.code,
                         defaultInd: false,
-                        linkIdScheme: IdentityLinkIdScheme.MyGov.name,
+                        linkIdScheme: IdentityLinkIdScheme.MyGov.code,
                         profile: profile1,
                         party: party1
                     });
@@ -109,19 +109,19 @@ describe('RAM Party', () => {
                 identity1.idValue,
                 new CreateIdentityDTO(
                     undefined,
-                    PartyType.Individual.name,
+                    PartyType.Individual.code,
                     'John',
                     'Doe',
                     undefined,
                     Seeder.dob_sharedSecretType.code,
                     '2015-12-31',
-                    IdentityType.InvitationCode.name,
+                    IdentityType.InvitationCode.code,
                     undefined,
                     undefined,
                     undefined,
                     undefined,
                     undefined,
-                    ProfileProvider.Invitation.name),
+                    ProfileProvider.Invitation.code),
                 new Date(),
                 new Date(),
                 [

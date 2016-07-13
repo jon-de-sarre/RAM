@@ -66,7 +66,7 @@ describe('RAM Relationship Attribute', () => {
                     });
 
                     subjectParty1 = await PartyModel.create({
-                        partyType: PartyType.Individual.name
+                        partyType: PartyType.Individual.code
                     });
 
                     delegateNickName1 = await NameModel.create({
@@ -75,18 +75,18 @@ describe('RAM Relationship Attribute', () => {
                     });
 
                     delegateProfile1 = await ProfileModel.create({
-                        provider: ProfileProvider.MyGov.name,
+                        provider: ProfileProvider.MyGov.code,
                         name: delegateNickName1
                     });
 
                     delegateParty1 = await PartyModel.create({
-                        partyType: PartyType.Individual.name
+                        partyType: PartyType.Individual.code
                     });
 
                     delegateIdentity1 = await IdentityModel.create({
-                        identityType: IdentityType.InvitationCode.name,
+                        identityType: IdentityType.InvitationCode.code,
                         defaultInd: true,
-                        invitationCodeStatus: IdentityInvitationCodeStatus.Pending.name,
+                        invitationCodeStatus: IdentityInvitationCodeStatus.Pending.code,
                         invitationCodeExpiryTimestamp: new Date(2055, 1, 1),
                         profile: delegateProfile1,
                         party: delegateParty1
@@ -104,7 +104,7 @@ describe('RAM Relationship Attribute', () => {
                         delegate: delegateParty1,
                         delegateNickName: delegateNickName1,
                         startTimestamp: new Date(),
-                        status: RelationshipStatus.Pending.name,
+                        status: RelationshipStatus.Pending.code,
                         attributes: [relationshipAttribute1]
                     });
 

@@ -25,19 +25,19 @@ export class PartyType extends RAMEnum {
         PartyType.Individual,
     ];
 
-    constructor(name:string, shortDecodeText:string) {
-        super(name, shortDecodeText);
+    constructor(code: string, shortDecodeText: string) {
+        super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue:boolean): HrefValue<PartyTypeDTO> {
+    public toHrefValue(includeValue: boolean): HrefValue<PartyTypeDTO> {
         return new HrefValue(
-            '/api/v1/partyType/' + this.name,
+            '/api/v1/partyType/' + this.code,
             includeValue ? this.toDTO() : undefined
         );
     }
 
     public toDTO(): PartyTypeDTO {
-        return new PartyTypeDTO(this.name, this.shortDecodeText);
+        return new PartyTypeDTO(this.code, this.shortDecodeText);
     }
 }
 
@@ -57,14 +57,15 @@ const PartySchema = RAMSchema({
 export interface IParty extends IRAMObject {
     partyType:string;
     partyTypeEnum():PartyType;
-    toHrefValue(includeValue:boolean):Promise<HrefValue<DTO>>;
+    toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
     toDTO():Promise<DTO>;
-    addRelationship(dto:RelationshipAddDTO):Promise<IRelationship>;
+    addRelationship(dto: RelationshipAddDTO):Promise<IRelationship>;
 }
 
 /* tslint:disable:no-empty-interfaces */
 export interface IPartyModel extends mongoose.Model<IParty> {
-    findByIdentityIdValue:(idValue:string) => Promise<IParty>;
+    findByIdentityIdValue:(idValue: string) => Promise<IParty>;
+    hasAccess:(requestingParty: IParty, requestedIdValue: string) => Promise<boolean>;
 }
 
 // instance methods ...................................................................................................
@@ -73,7 +74,7 @@ PartySchema.method('partyTypeEnum', function () {
     return PartyType.valueOf(this.partyType);
 });
 
-PartySchema.method('toHrefValue', async function (includeValue:boolean) {
+PartySchema.method('toHrefValue', async function (includeValue: boolean) {
     const defaultIdentity = await IdentityModel.findDefaultByPartyId(this.id);
     if (defaultIdentity) {
         return new HrefValue(
@@ -90,7 +91,7 @@ PartySchema.method('toDTO', async function () {
     return new DTO(
         this.partyType,
         await Promise.all<HrefValue<IdentityDTO>>(identities.map(
-            async (identity:IIdentity) => {
+            async (identity: IIdentity) => {
                 return await identity.toHrefValue(true);
             }))
     );
@@ -101,7 +102,7 @@ PartySchema.method('toDTO', async function () {
  * the relationship will be transferred to the authorised identity.
  */
 /* tslint:disable:max-func-body-length */
-PartySchema.method('addRelationship', async (dto:RelationshipAddDTO) => {
+PartySchema.method('addRelationship', async (dto: RelationshipAddDTO) => {
 
     // TODO improve handling of lookups that return null outside of the date range
 
@@ -116,7 +117,7 @@ PartySchema.method('addRelationship', async (dto:RelationshipAddDTO) => {
         dto.delegate.sharedSecretValue
     );
 
-    const attributes:IRelationshipAttribute[] = [];
+    const attributes: IRelationshipAttribute[] = [];
 
     for (let attr of dto.attributes) {
         const attributeName = await RelationshipAttributeNameModel.findByCodeInDateRange(attr.code, new Date());
@@ -145,9 +146,23 @@ PartySchema.method('addRelationship', async (dto:RelationshipAddDTO) => {
 
 // static methods .....................................................................................................
 
-PartySchema.static('findByIdentityIdValue', async(idValue:string) => {
+PartySchema.static('findByIdentityIdValue', async (idValue: string) => {
     const identity = await IdentityModel.findByIdValue(idValue);
     return identity ? identity.party : null;
+});
+
+PartySchema.static('hasAccess', async (requestingParty: IParty, requestedIdValue: string) => {
+    const requestedIdentity = await IdentityModel.findByIdValue(requestedIdValue);
+    if (requestedIdentity) {
+        const requestedParty = requestedIdentity.party;
+        if (requestingParty.id === requestedParty.id) {
+            return true;
+        } else {
+            // todo find strongest relationship
+            return true;
+        }
+    }
+    return false;
 });
 
 // concrete model .....................................................................................................
