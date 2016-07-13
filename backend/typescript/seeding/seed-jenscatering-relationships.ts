@@ -286,11 +286,11 @@ export class JensCateringRelationshipsSeeder {
 
             } else {
 
-                Seeder.log('\nInserting Jen\'s Catering Pty Ltd / Zoe Zombie:\n'.underline);
-
                 for (let i = 1; i <= 50; i = i + 1) {
 
                     const suffix = lpad(i, 3, '0');
+
+                    Seeder.log(('\nInserting Jen\'s Catering Pty Ltd / Zoe Zombie: ' + suffix + '\n').underline);
 
                     const delegateName = await Seeder.createNameModel({
                         givenName: 'Zoe',
