@@ -204,7 +204,7 @@ export class AddRelationshipComponent extends AbstractPageComponent {
         if (repDetails.organisation) {
             return repDetails.organisation.abn;
         } else {
-            return repDetails.individual.givenName + ' ' + repDetails.individual.familyName;
+            return repDetails.individual.givenName + (repDetails.individual.familyName ? ' ' + repDetails.individual.familyName : '');
         }
     }
 
