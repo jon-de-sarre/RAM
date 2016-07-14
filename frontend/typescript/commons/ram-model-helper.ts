@@ -72,14 +72,14 @@ export class RAMModelHelper {
         return '';
     }
 
-    public relationshipStatusLabel(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], name: string) {
-        const status = this.getRelationshipStatus(relationshipStatusRefs, name);
+    public relationshipStatusLabel(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], code: string) {
+        const status = this.getRelationshipStatus(relationshipStatusRefs, code);
         console.log(status);
         return status ? status.shortDecodeText : '';
     }
 
-    public profileProviderLabel(profileProviderRefs: IHrefValue<IProfileProvider>[], name: string) {
-        const profileProvider = this.getProfileProvider(profileProviderRefs, name);
+    public profileProviderLabel(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string) {
+        const profileProvider = this.getProfileProvider(profileProviderRefs, code);
         return profileProvider ? profileProvider.shortDecodeText : '';
     }
 
