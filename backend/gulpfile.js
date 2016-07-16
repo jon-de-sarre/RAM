@@ -79,6 +79,19 @@ gulp.task('seed', ["ts:compile"], function (cb) {
     });
 });
 
+gulp.task('export', ["ts:compile"], function (cb) {
+    exec('node dist/backend/typescript/seeding/example-data-export.js --color', function (err, stdout, stderr) {
+        if (stdout) {
+            console.log(stdout);
+            cb();
+        }
+        if (err) {
+            console.log(err);
+            cb(err);
+        }
+    });
+});
+
 gulp.task("copy:resources", function (params) {
     return gulp.src(["package.json", "pm2.json"])
         .pipe(gulp.dest("dist/"));

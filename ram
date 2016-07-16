@@ -260,6 +260,15 @@ case "$1" in
     echo ""
     ;;
 
+  'db:export')
+    echo ""
+    echo "Exporting example data"
+    echo ""
+    cd backend
+    RAM_CONF=$DEFAULT_CONF gulp export --no-lint
+    echo ""
+    ;;
+
 # OTHER
 
   'clean')
