@@ -65,6 +65,8 @@ import {JohnMaximsIdentitySeeder} from './seed-johnmaxims-identity';
 import {JensCateringIdentitySeeder} from './seed-jenscatering-identity';
 import {JensCateringRelationshipsSeeder} from './seed-jenscatering-relationships';
 
+import {LDIFExporter} from './ldifExporter';
+
 const now = new Date();
 
 const truncateString = (input:String):String => {
@@ -77,6 +79,7 @@ const truncateString = (input:String):String => {
 /* tslint:disable:max-func-body-length */
 export class Seeder {
     private static verboseMode:boolean = true;
+    private static exportLDIFMode:boolean = true;
 
     public static permissionCustomisationAllowedInd_attributeName:IRelationshipAttributeName;
     public static delegateManageAuthorisationAllowedInd_attributeName:IRelationshipAttributeName;
@@ -175,6 +178,14 @@ export class Seeder {
         Seeder.log(`\nConnected to the db: ${conf.mongoURL}`);
     }
 
+    public static async connectIdentityExporters() {
+        if(conf.exportLDIFFileName !== undefined) {
+            await LDIFExporter.open(conf.exportLDIFFileName);
+        } else {
+          Seeder.exportLDIF(false);
+        }
+    }
+
     public static async resetDataInMongo() {
         if (conf.devMode) {
             Seeder.log('Dropping database in dev mode (starting fresh)');
@@ -188,8 +199,18 @@ export class Seeder {
         mongoose.connection.close();
     }
 
+    public static async disconnectIdentityExporters() {
+        if(Seeder.exportLDIFMode) {
+            await LDIFExporter.close();
+        }
+    }
+
     public static verbose(verbose:boolean) {
         Seeder.verboseMode = verbose;
+    }
+
+    public static exportLDIF(exportLDIF:boolean) {
+        Seeder.exportLDIFMode = exportLDIF;
     }
 
     public static async createRelationshipAttributeNameModel(values:IRelationshipAttributeName) {
@@ -290,7 +311,14 @@ export class Seeder {
     public static async createIdentityModel(values:IIdentity) {
         const model = await IdentityModel.create(values);
         Seeder.log(`- Identity  : ${model.idValue}`.cyan);
+        Seeder.exportIdentity(values);
         return model;
+    }
+
+    public static async exportIdentity(identity:IIdentity) {
+        if(Seeder.exportLDIFMode) {
+            await LDIFExporter.exportIdentity(identity);
+        }
     }
 
     public static async createRelationshipAttributeModel(values:IRelationshipAttribute) {
@@ -631,6 +659,7 @@ export class Seeder {
     public static loadMock() {
 
         return Promise.resolve(null)
+            .then(Seeder.connectIdentityExporters)
 
             // identities
             .then(BobSmithIdentitySeeder.load)
@@ -643,8 +672,9 @@ export class Seeder {
             // relationships
             .then(CakeryBakeryRelationshipsSeeder.load)
             .then(JensCateringRelationshipsSeeder.load)
-            .then(JMFoodPackagingRelationshipsSeeder.load);
+            .then(JMFoodPackagingRelationshipsSeeder.load)
 
+            .then(Seeder.disconnectIdentityExporters);
     }
 
 }
