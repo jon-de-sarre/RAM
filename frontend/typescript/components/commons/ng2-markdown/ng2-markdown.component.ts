@@ -3,43 +3,25 @@
  * Attempting to turn transpiler on causes an internal
  * error.
  */
-import { Directive, ElementRef, OnInit } from '@angular/core';
-import { HTTP_PROVIDERS, Http } from '@angular/http';
+import { Directive, ElementRef, OnInit, Attribute } from '@angular/core';
 import Showdown from 'showdown';
+import { RelationshipTypesService } from '../../../services/relationship-types.service';
 
-const temporaryMd=`
-### By clicking authorise button below you agree:
-
-* Terms and conditions / declaration item 1.
-* Terms and conditions / declaration item 2.
-* Terms and conditions / declaration item 3.
-* Terms and conditions / declaration item 4.
-* Terms and conditions / declaration item 5.
-`;
-
-//@Directive({
 @Directive({
   selector: 'ng2-markdown',
-  inputs: [ 'href', 'data' ],
-  providers: [ HTTP_PROVIDERS ]
+  providers: [RelationshipTypesService]
 })
 export class MarkdownComponent implements OnInit {
-  constructor (private elementRef:ElementRef, private http:Http) {
-  }
+  constructor (
+    private elementRef:ElementRef,
+    private relationshipTypesService:RelationshipTypesService,
+    @Attribute('type') private type:string,
+    @Attribute('code') private code:string
+  ) { }
 
   public ngOnInit () {
-    this.fromFile('');
-  }
-
-  private fromFile(href:string) {
-    // this.http.get(href).toPromise()
-    // .then((res) => {
-    //    return this.prepare(res._body);
-    // })
-    // .then((markdown:string) => {
-    //   return this.process(markdown);
-    // })
-    this.process(temporaryMd);
+    const prms = this.relationshipTypesService.getByCode(this.type, this.code);
+    prms.subscribe((data) => this.process(data.defaultValue));
   }
 
 private process(markdown:string) {

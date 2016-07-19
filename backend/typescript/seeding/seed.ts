@@ -554,7 +554,13 @@ export class Seeder {
                 {attribute: Seeder.delegateRelationshipTypeDeclaration_attributeName, optionalInd: false,
                     defaultValue: 'Markdown for Delegate Universal Representative Declaration'},
                 {attribute: Seeder.subjectRelationshipTypeDeclaration_attributeName, optionalInd: false,
-                    defaultValue: 'Markdown for Subject Universal Representative Declaration'},
+                    defaultValue: `# This is declaration text
+
+* written in markdown
+* kept in database
+* relationshipTypeUsage.defaultValue
+* Use seed or admin UI to change it
+                    `},
                 {attribute: Seeder.asic_abn_attributeName, optionalInd: false, defaultValue: Seeder.full_accessLevel},
                 {attribute: Seeder.wgea_activate_attributeName, optionalInd: false, defaultValue: Seeder.full_accessLevel},
                 {attribute: Seeder.deptindustry_aba_attributeName, optionalInd: false, defaultValue: Seeder.full_accessLevel},
