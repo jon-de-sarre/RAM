@@ -13,6 +13,8 @@ class Security {
 
     public prepareRequest():(req:Request, res:Response, next:() => void) => void {
         return (req:Request, res:Response, next:() => void) => {
+            //this.logHeaders(req);
+
             const idValue = this.getIdValue(req, res);
             if (idValue) {
                 // id supplied, try to lookup and if not found create a new identity before carrying on
@@ -25,6 +27,14 @@ class Security {
                     .then(this.prepareResponseLocals(req, res, next), this.reject(res, next));
             }
         };
+    }
+
+    private logHeaders(req:Request) {
+        for(let header in req.headers) {
+            if(Headers.isXRAMHeader(header)) {
+                logger.debug(header, '=', req.headers[header]);
+            }
+        }
     }
 
     /**

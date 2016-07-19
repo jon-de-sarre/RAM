@@ -105,7 +105,7 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
     };
 
     public goToRelationshipsPage = () => {
-        this.routeHelper.goToRelationshipsPage(this.idValue);
+        this.routeHelper.goToRelationshipsPage(this.idValue, null, 1, 'CANCEL_ACCEPT_RELATIONSHIP');
     };
 
     // TODO: not sure how to set the locale, Implement as a pipe

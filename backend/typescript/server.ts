@@ -104,7 +104,7 @@ server.use('/api/',
         .assignRoutes(express.Router()));
 
 server.use('/api/',
-    new RelationshipController(RelationshipModel)
+    new RelationshipController(RelationshipModel, PartyModel)
         .assignRoutes(express.Router()));
 
 // setup error handlers ...............................................................................................

@@ -3,17 +3,19 @@ import {security} from './security.middleware';
 import {
     sendResource, sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema, REGULAR_CHARS
 } from './helpers';
+import {IPartyModel} from '../models/party.model';
 import {IRelationshipModel, RelationshipStatus} from '../models/relationship.model';
 import {RelationshipAddDTO, CreateIdentityDTO, AttributeDTO} from '../../../commons/RamAPI';
 import {FilterParams} from '../../../commons/RamAPI2';
 import {PartyModel} from '../models/party.model';
 import {ProfileProvider} from '../models/profile.model';
 import {IdentityType} from '../models/identity.model';
+import {Headers} from './headers';
 
 // todo add data security
 export class RelationshipController {
 
-    constructor(private relationshipModel:IRelationshipModel) {
+    constructor(private relationshipModel:IRelationshipModel, private partyModel:IPartyModel) {
     }
 
     private findByIdentifier = async(req:Request, res:Response) => {
@@ -29,7 +31,7 @@ export class RelationshipController {
             .then((model) => model ? model.toDTO(null) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     private findByInvitationCode = async(req:Request, res:Response) => {
@@ -45,7 +47,7 @@ export class RelationshipController {
             .then((model) => model ? model.toDTO(invitationCode) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     private claimByInvitationCode = async(req:Request, res:Response) => {
@@ -62,7 +64,7 @@ export class RelationshipController {
             .then((model) => model ? model.toDTO(invitationCode) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     private acceptByInvitationCode = async(req:Request, res:Response) => {
@@ -82,7 +84,7 @@ export class RelationshipController {
             .then((model) => model ? model.toDTO(null) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     private rejectByInvitationCode = async(req:Request, res:Response) => {
@@ -98,7 +100,7 @@ export class RelationshipController {
             .then((model) => model ? Promise.resolve({}) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     private notifyDelegateByInvitationCode = async(req:Request, res:Response) => {
@@ -123,7 +125,7 @@ export class RelationshipController {
             .then((model) => model ? model.toDTO(null) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     /* tslint:disable:max-func-body-length */
@@ -169,7 +171,7 @@ export class RelationshipController {
             .then((results) => (results.map((model) => model.toHrefValue(true))))
             .then(sendSearchResult(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     /* tslint:disable:max-func-body-length */
@@ -200,6 +202,14 @@ export class RelationshipController {
         };
         const filterParams = FilterParams.decode(req.query.filter);
         validateReqSchema(req, schema)
+            .then(async (req:Request) => {
+                const me = res.locals[Headers.Identity];
+                const hasAccess = await this.partyModel.hasAccess(me.party, req.params.identity_id);
+                if (!hasAccess) {
+                    throw new Error('You do not have access to this party.');
+                }
+                return req;
+            })
             .then((req:Request) => this.relationshipModel.searchByIdentity(
                 req.params.identity_id,
                 filterParams.get('partyType'),
@@ -214,7 +224,7 @@ export class RelationshipController {
             .then((results) => (results.map((model) => model.toHrefValue(true))))
             .then(sendSearchResult(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
     //
     // private searchDistinctSubjectsBySubjectOrDelegateIdentity = async (req:Request, res:Response) => {
@@ -340,13 +350,13 @@ export class RelationshipController {
                         req.body.delegate.unstructuredName,
                         req.body.delegate.sharedSecretTypeCode,
                         req.body.delegate.sharedSecretValue,
-                        IdentityType.InvitationCode.name,
+                        IdentityType.InvitationCode.code,
                         undefined,
                         undefined,
                         undefined,
                         undefined,
                         undefined,
-                        ProfileProvider.Invitation.name
+                        ProfileProvider.Invitation.code
                     ),
                     req.body.startTimestamp ? new Date(req.body.startTimestamp) : undefined,
                     req.body.endTimestamp ? new Date(req.body.endTimestamp) : undefined,
@@ -357,7 +367,7 @@ export class RelationshipController {
             .then((model) => model ? model.toDTO(null) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     private findStatusByName = (req:Request, res:Response) => {
@@ -369,7 +379,7 @@ export class RelationshipController {
             }
         };
         validateReqSchema(req, schema)
-            .then((req:Request) => RelationshipStatus.valueOf(req.params.name))
+            .then((req:Request) => RelationshipStatus.valueOf(req.params.code))
             .then((model) => model ? model.toDTO() : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
@@ -383,7 +393,7 @@ export class RelationshipController {
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
             .then(sendList(res))
             .then(sendNotFoundError(res))
-            .catch((err) => sendError(res)(err));
+            .catch(sendError(res));
     };
 
     public assignRoutes = (router:Router) => {
@@ -428,7 +438,7 @@ export class RelationshipController {
             security.isAuthenticated,
             this.create);
 
-        router.get('/v1/relationshipStatus/:name',
+        router.get('/v1/relationshipStatus/:code',
             this.findStatusByName);
 
         router.get('/v1/relationshipStatuses',

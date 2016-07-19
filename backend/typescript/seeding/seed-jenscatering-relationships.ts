@@ -37,7 +37,7 @@ export class JensCateringRelationshipsSeeder {
                     delegate: Seeder.jennifermaxims_party,
                     delegateNickName: Seeder.jennifermaxims_name,
                     startTimestamp: new Date(),
-                    status: RelationshipStatus.Active.name,
+                    status: RelationshipStatus.Active.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
@@ -86,7 +86,7 @@ export class JensCateringRelationshipsSeeder {
                     delegate: Seeder.johnmaxims_party,
                     delegateNickName: Seeder.johnmaxims_name,
                     startTimestamp: new Date(),
-                    status: RelationshipStatus.Active.name,
+                    status: RelationshipStatus.Active.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
@@ -139,21 +139,21 @@ export class JensCateringRelationshipsSeeder {
                 } as any);
 
                 Seeder.robertsmith_profile = await Seeder.createProfileModel({
-                    provider: ProfileProvider.Invitation.name,
+                    provider: ProfileProvider.Invitation.code,
                     name: Seeder.robertsmith_name,
                     sharedSecrets: [Seeder.robertsmith_dob]
                 } as any);
 
                 Seeder.robertsmith_party = await Seeder.createPartyModel({
-                    partyType: PartyType.Individual.name
+                    partyType: PartyType.Individual.code
                 } as any);
 
                 Seeder.log('');
 
                 Seeder.robertsmith_identity_1 = await Seeder.createIdentityModel({
-                    identityType: IdentityType.InvitationCode.name,
+                    identityType: IdentityType.InvitationCode.code,
                     defaultInd: true,
-                    invitationCodeStatus: IdentityInvitationCodeStatus.Pending.name,
+                    invitationCodeStatus: IdentityInvitationCodeStatus.Pending.code,
                     invitationCodeExpiryTimestamp: new Date(2055, 1, 1),
                     profile: Seeder.robertsmith_profile,
                     party: Seeder.robertsmith_party
@@ -168,7 +168,7 @@ export class JensCateringRelationshipsSeeder {
                     delegate: Seeder.robertsmith_party,
                     delegateNickName: Seeder.robertsmith_name,
                     startTimestamp: new Date(),
-                    status: RelationshipStatus.Pending.name,
+                    status: RelationshipStatus.Pending.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
@@ -219,21 +219,21 @@ export class JensCateringRelationshipsSeeder {
                 } as any);
 
                 Seeder.fredjohnson_profile = await Seeder.createProfileModel({
-                    provider: ProfileProvider.Invitation.name,
+                    provider: ProfileProvider.Invitation.code,
                     name: Seeder.fredjohnson_name,
                     sharedSecrets: [Seeder.fredjohnson_dob]
                 } as any);
 
                 Seeder.fredjohnson_party = await Seeder.createPartyModel({
-                    partyType: PartyType.Individual.name
+                    partyType: PartyType.Individual.code
                 } as any);
 
                 Seeder.log('');
 
                 Seeder.fredjohnson_identity_1 = await Seeder.createIdentityModel({
-                    identityType: IdentityType.InvitationCode.name,
+                    identityType: IdentityType.InvitationCode.code,
                     defaultInd: true,
-                    invitationCodeStatus: IdentityInvitationCodeStatus.Pending.name,
+                    invitationCodeStatus: IdentityInvitationCodeStatus.Pending.code,
                     invitationCodeExpiryTimestamp: new Date(2055, 1, 1),
                     profile: Seeder.fredjohnson_profile,
                     party: Seeder.fredjohnson_party
@@ -248,7 +248,7 @@ export class JensCateringRelationshipsSeeder {
                     delegate: Seeder.fredjohnson_party,
                     delegateNickName: Seeder.fredjohnson_name,
                     startTimestamp: new Date(),
-                    status: RelationshipStatus.Pending.name,
+                    status: RelationshipStatus.Pending.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
@@ -286,11 +286,11 @@ export class JensCateringRelationshipsSeeder {
 
             } else {
 
-                Seeder.log('\nInserting Jen\'s Catering Pty Ltd / Zoe Zombie:\n'.underline);
-
                 for (let i = 1; i <= 50; i = i + 1) {
 
                     const suffix = lpad(i, 3, '0');
+
+                    Seeder.log(('\nInserting Jen\'s Catering Pty Ltd / Zoe Zombie: ' + suffix + '\n').underline);
 
                     const delegateName = await Seeder.createNameModel({
                         givenName: 'Zoe',
@@ -303,22 +303,22 @@ export class JensCateringRelationshipsSeeder {
                     } as any);
 
                     const delegateProfile = await Seeder.createProfileModel({
-                        provider: ProfileProvider.MyGov.name,
+                        provider: ProfileProvider.MyGov.code,
                         name: delegateName,
                         sharedSecrets: [delegateDob]
                     } as any);
 
                     const delegateParty = await Seeder.createPartyModel({
-                        partyType: PartyType.Individual.name
+                        partyType: PartyType.Individual.code
                     } as any);
 
                     Seeder.log('');
 
                     await Seeder.createIdentityModel({
                         rawIdValue: 'zoezombie_identity_' + suffix,
-                        identityType: IdentityType.LinkId.name,
+                        identityType: IdentityType.LinkId.code,
                         defaultInd: true,
-                        linkIdScheme: IdentityLinkIdScheme.MyGov.name,
+                        linkIdScheme: IdentityLinkIdScheme.MyGov.code,
                         profile: delegateProfile,
                         party: delegateParty
                     } as any);
@@ -332,7 +332,7 @@ export class JensCateringRelationshipsSeeder {
                         delegate: delegateParty,
                         delegateNickName: delegateName,
                         startTimestamp: new Date(),
-                        status: RelationshipStatus.Active.name,
+                        status: RelationshipStatus.Active.code,
                         attributes: [
                             await Seeder.createRelationshipAttributeModel({
                                 value: true,

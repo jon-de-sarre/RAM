@@ -26,22 +26,22 @@ export class JensCateringIdentitySeeder {
                 } as any);
 
                 Seeder.jenscatering_profile = await Seeder.createProfileModel({
-                    provider: ProfileProvider.ABR.name,
+                    provider: ProfileProvider.ABR.code,
                     name: Seeder.jenscatering_name,
                     sharedSecrets: []
                 } as any);
 
                 Seeder.jenscatering_party = await Seeder.createPartyModel({
-                    partyType: PartyType.ABN.name
+                    partyType: PartyType.ABN.code
                 } as any);
 
                 Seeder.log('');
 
                 Seeder.jenscatering_identity_1 = await Seeder.createIdentityModel({
                     rawIdValue: 'jenscatering_identity_1',
-                    identityType: IdentityType.PublicIdentifier.name,
+                    identityType: IdentityType.PublicIdentifier.code,
                     defaultInd: true,
-                    publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.name,
+                    publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.code,
                     profile: Seeder.jenscatering_profile,
                     party: Seeder.jenscatering_party
                 } as any);

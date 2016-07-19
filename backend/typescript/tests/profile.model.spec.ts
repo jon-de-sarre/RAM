@@ -59,21 +59,21 @@ describe('RAM Profile', () => {
             });
 
             profile1 = await ProfileModel.create({
-                provider: ProfileProvider.MyGov.name,
+                provider: ProfileProvider.MyGov.code,
                 name: name1,
                 sharedSecrets: [sharedSecret1]
             });
 
             party1 = await PartyModel.create({
-                partyType: PartyType.Individual.name,
+                partyType: PartyType.Individual.code,
                 name: name1
             });
 
             identity1 = await IdentityModel.create({
                 rawIdValue: 'uuid_1',
-                identityType: IdentityType.LinkId.name,
+                identityType: IdentityType.LinkId.code,
                 defaultInd: false,
-                linkIdScheme: IdentityLinkIdScheme.MyGov.name,
+                linkIdScheme: IdentityLinkIdScheme.MyGov.code,
                 profile: profile1,
                 party: party1
             });
@@ -93,7 +93,7 @@ describe('RAM Profile', () => {
             const provider = ProfileProvider.MyGov;
 
             const instance = await ProfileModel.create({
-                provider: provider.name,
+                provider: provider.code,
                 name: name1
             });
 
@@ -142,7 +142,7 @@ describe('RAM Profile', () => {
     it('fails insert with null name', async (done) => {
         try {
             await ProfileModel.create({
-                provider: ProfileProvider.MyGov.name
+                provider: ProfileProvider.MyGov.code
             });
             fail('should not have inserted with null name');
             done();
@@ -156,7 +156,7 @@ describe('RAM Profile', () => {
     it('converts provider to enum', async (done) => {
         try {
             expect(profile1).not.toBeNull();
-            expect(profile1.provider).toBe(ProfileProvider.MyGov.name);
+            expect(profile1.provider).toBe(ProfileProvider.MyGov.code);
             expect(profile1.providerEnum()).toBe(ProfileProvider.MyGov);
             done();
         } catch (e) {

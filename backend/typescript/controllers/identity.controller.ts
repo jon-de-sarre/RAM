@@ -16,8 +16,9 @@ export class IdentityController {
         validateReqSchema(req, schema)
             .then((req:Request) => identity ? identity : null)
             .then((model) => model ? model.toDTO() : null)
-            .then(sendResource(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     private findByIdentityIdValue = async (req:Request, res:Response) => {
@@ -31,8 +32,9 @@ export class IdentityController {
         validateReqSchema(req, schema)
             .then((req:Request) => this.identityModel.findByIdValue(req.params.idValue))
             .then((model) => model ? model.toDTO() : null)
-            .then(sendResource(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     private findPendingByInvitationCodeInDateRange = async (req:Request, res:Response) => {
@@ -45,8 +47,9 @@ export class IdentityController {
         validateReqSchema(req, schema)
             .then((req:Request) => this.identityModel.findPendingByInvitationCodeInDateRange(req.params.invitationCode, new Date()))
             .then((model) => model ? model.toDTO() : null)
-            .then(sendResource(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     private search = async (req:Request, res:Response) => {
@@ -72,8 +75,9 @@ export class IdentityController {
                 req.query.pageSize ? parseInt(req.query.pageSize) : null)
             )
             .then((results) => (results.map((model) => model.toHrefValue(true))))
-            .then(sendSearchResult(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendSearchResult(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     public assignRoutes = (router:Router) => {

@@ -29,7 +29,7 @@ export interface IParty {
 }
 
 export interface IPartyType {
-    name: string;
+    code: string;
     shortDecodeText: string;
 }
 
@@ -55,7 +55,7 @@ export interface IRelationship {
 }
 
 export interface IRelationshipStatus {
-    name: string;
+    code: string;
     shortDecodeText: string;
 }
 
@@ -99,7 +99,7 @@ export interface IProfile {
 }
 
 export interface IProfileProvider {
-    name: string;
+    code: string;
     shortDecodeText: string;
 }
 

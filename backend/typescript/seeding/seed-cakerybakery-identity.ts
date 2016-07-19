@@ -26,22 +26,22 @@ export class CakeryBakeryIdentitySeeder {
                 } as any);
 
                 Seeder.cakerybakery_profile = await Seeder.createProfileModel({
-                    provider: ProfileProvider.ABR.name,
+                    provider: ProfileProvider.ABR.code,
                     name: Seeder.cakerybakery_name,
                     sharedSecrets: []
                 } as any);
 
                 Seeder.cakerybakery_party = await Seeder.createPartyModel({
-                    partyType: PartyType.ABN.name
+                    partyType: PartyType.ABN.code
                 } as any);
 
                 Seeder.log('');
 
                 Seeder.cakerybakery_identity_1 = await Seeder.createIdentityModel({
                     rawIdValue: 'cakerybakery_identity_1',
-                    identityType: IdentityType.PublicIdentifier.name,
+                    identityType: IdentityType.PublicIdentifier.code,
                     defaultInd: true,
-                    publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.name,
+                    publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.code,
                     profile: Seeder.cakerybakery_profile,
                     party: Seeder.cakerybakery_party
                 } as any);

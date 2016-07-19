@@ -18,8 +18,9 @@ export class RelationshipAttributeNameController {
         validateReqSchema(req, schema)
             .then((req:Request) => this.relationshipAttributeNameModel.findByCodeIgnoringDateRange(req.params.code))
             .then((model) => model ? model.toDTO() : null)
-            .then(sendResource(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     private listIgnoringDateRange = async (req:Request, res:Response) => {
@@ -27,8 +28,9 @@ export class RelationshipAttributeNameController {
         validateReqSchema(req, schema)
             .then((req:Request) => this.relationshipAttributeNameModel.listIgnoringDateRange())
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
-            .then(sendList(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendList(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     public assignRoutes = (router:Router) => {
