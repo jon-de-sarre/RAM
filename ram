@@ -253,10 +253,16 @@ case "$1" in
 
   'db:seed')
     echo ""
-    echo "Seeding database with $DEFAULT_CONF"
-    echo ""
     cd backend
-    RAM_CONF=$DEFAULT_CONF gulp seed
+    if [ -z "$2" ]; then
+      echo "Seeding database with $DEFAULT_CONF"
+      echo ""
+      RAM_CONF=$DEFAULT_CONF gulp seed
+    else
+      echo "Seeding database with $2"
+      echo ""
+      RAM_CONF="$2" gulp seed
+    fi
     echo ""
     ;;
 
@@ -381,4 +387,3 @@ case "$1" in
     ;;
 
 esac
-
