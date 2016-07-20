@@ -10,6 +10,7 @@ export class ExampleDataExport {
     private toc: string[] = [];
     private content: string[] = [];
 
+    /* tslint:disable:max-func-body-length */
     public async dump() {
 
         await mongoose.connect(conf.mongoURL);
