@@ -26,7 +26,10 @@ export class ExampleDataExport {
         this.add(await IdentityModel.findByIdValue('PUBLIC_IDENTIFIER:ABN:cakerybakery_identity_1'), 'Identity : ABN');
 
         // RelationshipType
-        this.add(await RelationshipTypeModel.findByCodeIgnoringDateRange('UNIVERSAL_REPRESENTATIVE'), 'RelationshipType : UNIVERSAL_REPRESENTATIVE');
+        this.add(
+            await RelationshipTypeModel.findByCodeIgnoringDateRange('UNIVERSAL_REPRESENTATIVE'),
+            'RelationshipType : UNIVERSAL_REPRESENTATIVE'
+        );
 
         // Relationship
         const associate:IRelationship = await RelationshipModel.findOne({
@@ -50,7 +53,6 @@ export class ExampleDataExport {
         }).exec();
         this.add(await RelationshipModel.findByIdentifier(universal.id), 'Relationship : Universal Representative');
 
-
         this.printData();
 
         await mongoose.connection.close();
@@ -67,7 +69,7 @@ export class ExampleDataExport {
         }
     }
 
-    private add(data:any, name:string) {
+    private add(data:Object, name:string) {
         this.toc.push(`1. [${name}](#${name.split(' ').join('-')})`);
         this.content.push(`## ${name}`);
         this.content.push('```');
@@ -76,6 +78,5 @@ export class ExampleDataExport {
         this.content.push('');
     }
 }
-
 
 new ExampleDataExport().dump();
