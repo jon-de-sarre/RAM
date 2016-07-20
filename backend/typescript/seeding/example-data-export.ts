@@ -1,11 +1,10 @@
 import {conf} from '../bootstrap';
 import * as mongoose from 'mongoose';
 import {
-    IRelationshipType,
     RelationshipTypeModel
 } from '../models/relationshipType.model';
 import {IdentityModel} from '../models/identity.model';
-import {RelationshipModel, IRelationshipModel, IRelationship} from '../models/relationship.model';
+import {RelationshipModel, IRelationship} from '../models/relationship.model';
 
 export class ExampleDataExport {
     private toc: string[] = [];
@@ -31,23 +30,23 @@ export class ExampleDataExport {
 
         // Relationship
         const associate:IRelationship = await RelationshipModel.findOne({
-            "_delegateNickNameString" : "Jennifer Maxims",
-            "_subjectNickNameString" : "Jen's Catering Pty Ltd",
-            "_relationshipTypeCode" : "ASSOCIATE"
+            '_delegateNickNameString' : 'Jennifer Maxims',
+            '_subjectNickNameString' : 'Jen\'s Catering Pty Ltd',
+            '_relationshipTypeCode' : 'ASSOCIATE'
         }).exec();
         this.add(await RelationshipModel.findByIdentifier(associate.id), 'Relationship : Associate');
 
         const custom = await RelationshipModel.findOne({
-            "_delegateNickNameString" : "Jennifer Maxims",
-            "_subjectNickNameString" : "Cakery Bakery Pty Ltd",
-            "_relationshipTypeCode" : "CUSTOM_REPRESENTATIVE"
+            '_delegateNickNameString' : 'Jennifer Maxims',
+            '_subjectNickNameString' : 'Cakery Bakery Pty Ltd',
+            '_relationshipTypeCode' : 'CUSTOM_REPRESENTATIVE'
         }).exec();
         this.add(await RelationshipModel.findByIdentifier(custom.id), 'Relationship : Custom Representative');
 
         const universal = await RelationshipModel.findOne({
-            "_delegateNickNameString" : "Zoe Zombie 001",
-            "_subjectNickNameString" : "Jen's Catering Pty Ltd",
-            "_relationshipTypeCode" : "UNIVERSAL_REPRESENTATIVE"
+            '_delegateNickNameString' : 'Zoe Zombie 001',
+            '_subjectNickNameString' : 'Jen\'s Catering Pty Ltd',
+            '_relationshipTypeCode' : 'UNIVERSAL_REPRESENTATIVE'
         }).exec();
         this.add(await RelationshipModel.findByIdentifier(universal.id), 'Relationship : Universal Representative');
 
