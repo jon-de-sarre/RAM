@@ -256,13 +256,20 @@ case "$1" in
     cd backend
     if [ -z "$2" ]; then
       echo "Seeding database with $DEFAULT_CONF"
-      echo ""
-      RAM_CONF=$DEFAULT_CONF gulp seed
+      RAM_CONF=$DEFAULT_CONF gulp seed --no-lint
     else
       echo "Seeding database with $2"
-      echo ""
-      RAM_CONF="$2" gulp seed
+      RAM_CONF="$2" gulp seed --no-lint
     fi
+    echo ""
+    ;;
+
+  'db:export')
+    echo ""
+    echo "Exporting example data"
+    echo ""
+    cd backend
+    RAM_CONF=$DEFAULT_CONF gulp export --no-lint
     echo ""
     ;;
 
@@ -376,6 +383,7 @@ case "$1" in
     echo "$(tput setaf 3)    start:backend                        $(tput sgr0)      Starts local backend server"
     echo ""
     echo "$(tput setaf 3)    db:seed                              $(tput sgr0)      Seeds local database"
+    echo "$(tput setaf 3)    db:export                            $(tput sgr0)      Exports example data from local database"
     echo ""
     echo "$(tput setaf 3)    clean                                $(tput sgr0)      Cleans all generated files"
     echo "$(tput setaf 3)    swagger                              $(tput sgr0)      Opens browser to swagger apis on local server"

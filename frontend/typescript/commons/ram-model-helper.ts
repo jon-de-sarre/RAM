@@ -72,13 +72,14 @@ export class RAMModelHelper {
         return '';
     }
 
-    public relationshipStatusLabel(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], name: string) {
-        const status = this.getRelationshipStatus(relationshipStatusRefs, name);
+    public relationshipStatusLabel(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], code: string) {
+        const status = this.getRelationshipStatus(relationshipStatusRefs, code);
+        console.log(status);
         return status ? status.shortDecodeText : '';
     }
 
-    public profileProviderLabel(profileProviderRefs: IHrefValue<IProfileProvider>[], name: string) {
-        const profileProvider = this.getProfileProvider(profileProviderRefs, name);
+    public profileProviderLabel(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string) {
+        const profileProvider = this.getProfileProvider(profileProviderRefs, code);
         return profileProvider ? profileProvider.shortDecodeText : '';
     }
 
@@ -104,18 +105,18 @@ export class RAMModelHelper {
         return null;
     }
 
-    public getRelationshipStatus(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], name: string) {
+    public getRelationshipStatus(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], code: string) {
         for (let ref of relationshipStatusRefs) {
-            if (ref.value.name === name) {
+            if (ref.value.code === code) {
                 return ref.value;
             }
         }
         return null;
     }
 
-    public getProfileProvider(profileProviderRefs: IHrefValue<IProfileProvider>[], name: string) {
+    public getProfileProvider(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string) {
         for (let ref of profileProviderRefs) {
-            if (ref.value.name === name) {
+            if (ref.value.code === code) {
                 return ref.value;
             }
         }

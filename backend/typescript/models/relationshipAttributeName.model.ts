@@ -27,8 +27,8 @@ export class RelationshipAttributeNameDomain extends RAMEnum {
         RelationshipAttributeNameDomain.SelectMulti
     ];
 
-    constructor(name:string, shortDecodeText:string) {
-        super(name, shortDecodeText);
+    constructor(code:string, shortDecodeText:string) {
+        super(code, shortDecodeText);
     }
 }
 
@@ -42,8 +42,8 @@ export class RelationshipAttributeNameClassifier extends RAMEnum {
         RelationshipAttributeNameClassifier.Permission
     ];
 
-    constructor(name:string, shortDecodeText:string) {
-        super(name, shortDecodeText);
+    constructor(code:string, shortDecodeText:string) {
+        super(code, shortDecodeText);
     }
 }
 

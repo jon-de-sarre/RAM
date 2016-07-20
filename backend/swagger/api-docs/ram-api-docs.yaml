@@ -135,15 +135,15 @@ paths:
 
   # Party Types .......................................................................................................
 
-  /partyType/{name}:
+  /partyType/{code}:
     get:
       tags:
         - Business - Party Type
       operationId: Party.findTypeByName
-      summary: Get the party type by name
-      description: Get the party type by name
+      summary: Get the party type by code
+      description: Get the party type by code
       parameters:
-        - $ref: "#/parameters/name"
+        - $ref: "#/parameters/code"
       responses:
         200:
           description: The party type returned
@@ -174,15 +174,15 @@ paths:
 
   # Profile Providers .......................................................................................................
 
-  /profileProvider/{name}:
+  /profileProvider/{code}:
     get:
       tags:
         - Business - Profile Provider
       operationId: Profile.findProviderByName
-      summary: Get the profile provider by name
-      description: Get the profile provider by name
+      summary: Get the profile provider by code
+      description: Get the profile provider by code
       parameters:
-        - $ref: "#/parameters/name"
+        - $ref: "#/parameters/code"
       responses:
         200:
           description: The profile provider returned
@@ -450,15 +450,15 @@ paths:
 
   # Relationship Statuses..............................................................................................
 
-  /relationshipStatus/{name}:
+  /relationshipStatus/{code}:
     get:
       tags:
         - Business - Relationship Status
       operationId: Relationship.findStatusByName
-      summary: Get the relationship status by name
-      description: Get the relationship status by name
+      summary: Get the relationship status by code
+      description: Get the relationship status by code
       parameters:
-        - $ref: "#/parameters/name"
+        - $ref: "#/parameters/code"
       responses:
         200:
           description: The relationship status returned
@@ -768,7 +768,7 @@ definitions:
     type: object
     description: Party code and type
     properties:
-      name:
+      code:
         type: string
         description: The code or name
       shortDecodeText:
@@ -792,7 +792,7 @@ definitions:
     type: object
     description: Profile Provider code and human friendly label
     properties:
-      name:
+      code:
         type: string
         description: The code or name
       shortDecodeText:
@@ -1033,7 +1033,7 @@ definitions:
     type: object
     description: Relationship status
     properties:
-      name:
+      code:
         type: string
         description: The code or name
       shortDecodeText:

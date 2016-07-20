@@ -75,6 +75,8 @@
                 <ul class="list-group">
                     <li class="list-group-item" data-id="">Log Out</li>
                 </ul>
+                <ul class="list-group identities">
+                </ul>
             </div>
 
         </div>
@@ -96,44 +98,148 @@
     </div>
 
 
+    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newUser">
+        New User
+    </button>
+
+    <div class="modal fade" id="newUser" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
+                            aria-hidden="true">&times;</span></button>
+                    <h4 class="modal-title">New User</h4>
+                </div>
+                <div class="modal-body">
+                    <p>
+                        Use this to simulate ANY user coming via an external authentication mechanism and hitting
+                        RAM.
+                        For example, to create a new individual log in - with the correct headers, the identity will
+                        be created in the RAM database.
+                    </p>
+                    <div id="headers-container"></div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="headers-send-button">Create</button>
+                </div>
+            </div><!-- /.modal-content -->
+        </div><!-- /.modal-dialog -->
+    </div><!-- /.modal -->
+
     <script>
+        var X_RAM_HEADERS = {
+            'x-ram-identitytype': 'LINK_ID',
+            'x-ram-partytype': 'INDIVIDUAL',
+
+            'x-ram-givenname': 'Homer',
+            'x-ram-familyname': 'Simpson',
+            'x-ram-unstructuredname': null,
+            'x-ram-dob': '31/01/2000',
+
+            'x-ram-profileprovider': 'MY_GOV',
+
+            'x-ram-agencyscheme': null,
+            'x-ram-agencytoken': null,
+            'x-ram-linkidscheme': 'MY_GOV',
+            'x-ram-linkidconsumer': null,
+            'x-ram-publicidentifierscheme': null
+        };
+
         $(function () {
             var log = log4javascript.getLogger('my_logger');
             var consoleAppender = new log4javascript.BrowserConsoleAppender();
             log.addAppender(consoleAppender);
 
-            // Build list of known identities
-            $.get('/api/v1/identities?page=1', function (data) {
-                for (var i = 0; i < data.list.length; i++) {
-                    // eg. <li class="list-group-item" data-id="LINK_ID:MY_GOV:jennifermaxims_identity_1">Jennifer Maxims</li>
-                    var item = data.list[i];
-                    if (item.value.identityType === 'LINK_ID') {
-                        $('#user-list ul').append($('<li></li>').addClass('list-group-item').data('id', item.value.idValue).text(buildName(item.value.profile.name)));
-                    }
-                }
-
-                updateUser();
-
-                // Select user
-                $('#user-list li').click(function () {
-                    var identity = $(this).data('id');
-                    log.debug('Logging in with identity ', identity);
-                    $.post('/api/v1/simulators/authenticator/authenticate', {credentials: identity}, function (data) {
-                    }).always(function () {
-                        updateUser();
-                    });
-                });
-
-                // Construct name
-                function buildName(name) {
-                    if (name.unstructuredName) {
-                        return name.unstructuredName;
-                    }
-                    else {
-                        return name.givenName + ' ' + name.familyName;
-                    }
-                }
+            $.each(X_RAM_HEADERS, function (key, value) {
+                $('#headers-container').append('<div class="form-group form-group-sm"><label>' + key + '</label><input  class="form-control  input-sm" id="' + key + '" value="' + (X_RAM_HEADERS[key] ? X_RAM_HEADERS[key] : '') + '"/></div>');
             });
+
+            $('#headers-send-button').click(function () {
+                window.setTimeout(function () {
+                    // log out first
+                    $.post('/api/v1/simulators/authenticator/authenticate', {credentials: null}, function (data) {
+                    }).always(function () {
+                        // send any request with headers so identity gets created
+                        $.ajax({
+                            type: "POST",
+                            beforeSend: function (request) {
+                                var id = getId();
+                                var idValue = getIdValue();
+
+                                log.debug('Sending header for idValue ', idValue);
+
+                                $.each(X_RAM_HEADERS, function (key, value) {
+                                    var headerValue = $('#' + key).val();
+                                    if (headerValue) {
+                                        request.setRequestHeader(key, headerValue);
+                                    }
+                                });
+                                request.setRequestHeader('x-ram-identity-rawidvalue', id);
+                                request.setRequestHeader('x-ram-identity-idvalue', idValue);
+
+                            },
+                            url: "/api/v1/simulators/authenticator/authenticate",
+                            processData: false,
+                            complete: function (msg) {
+                                // now refresh and log in as the new user as a convenience
+                                refreshIdentities();
+                                logIn(getIdValue());
+                            }
+                        });
+                    }, 1000);
+                });
+            });
+
+            function getId() {
+                return [$('#x-ram-givenname').val(), $('#x-ram-familyname').val()].join('_').trim();
+            }
+
+            function getIdValue() {
+                return [$('#x-ram-identitytype').val(), $('#x-ram-profileprovider').val(), getId()].join(':').trim();
+            }
+
+            function refreshIdentities() {
+                // Build list of known identities
+                $.get('/api/v1/identities?page=1', function (data) {
+                    $('.identities').empty();
+                    for (var i = 0; i < data.list.length; i++) {
+                        // eg. <li class="list-group-item" data-id="LINK_ID:MY_GOV:jennifermaxims_identity_1">Jennifer Maxims</li>
+                        var item = data.list[i];
+                        if (item.value.identityType === 'LINK_ID' && !item.value.rawIdValue.startsWith('zoezombie')) {
+                            $('.identities').append($('<li></li>').addClass('list-group-item').data('id', item.value.idValue).text(buildName(item.value.profile.name)));
+                        }
+                    }
+
+                    updateUser();
+
+                    // Select user
+                    $('#user-list li').click(function () {
+                        var identity = $(this).data('id');
+                        logIn(identity);
+                    });
+
+                    // Construct name
+                    function buildName(name) {
+                        if (name.unstructuredName) {
+                            return name.unstructuredName;
+                        }
+                        else {
+                            return name.givenName + ' ' + name.familyName;
+                        }
+                    }
+                });
+            }
+
+            function logIn(identity) {
+                log.debug('Logging in with identity ', identity);
+                $.post('/api/v1/simulators/authenticator/authenticate', {credentials: identity}, function (data) {
+                }).always(function () {
+                    updateUser();
+                });
+            }
+
+            refreshIdentities();
 
             function updateUser() {
                 var id_value_header = 'x-ram-identity-idvalue';
@@ -143,22 +249,7 @@
                 var $userList = $('#user-list');
                 var $notLoggedIn = $('#not-logged-in');
                 var $launchRamLink = $('#launch-ram-link');
-                var $launchRamWithHeaders = $('#launch-ram-with-headers');
 
-                $launchRamWithHeaders.click(function () {
-                    $.ajax({
-                        url: 'service.svc/Request',
-                        type: 'GET',
-                        dataType: 'json',
-                        success: function () {
-                            alert('hello!');
-                        },
-                        error: function () {
-                            alert('boo!');
-                        },
-                        beforeSend: setHeader
-                    });
-                });
                 $userDetail.removeClass(effect);
 
                 $.get('/api/v1/simulators/authenticator/locals', function (data) {

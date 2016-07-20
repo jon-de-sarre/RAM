@@ -53,20 +53,20 @@ describe('RAM Identity', () => {
                     });
 
                     profile1 = await ProfileModel.create({
-                        provider: ProfileProvider.MyGov.name,
+                        provider: ProfileProvider.MyGov.code,
                         name: name1
                     });
 
                     party1 = await PartyModel.create({
-                        partyType: PartyType.Individual.name,
+                        partyType: PartyType.Individual.code,
                         name: name1
                     });
 
                     identity1 = await IdentityModel.create({
                         rawIdValue: 'uuid_1',
-                        identityType: IdentityType.LinkId.name,
+                        identityType: IdentityType.LinkId.code,
                         defaultInd: false,
-                        linkIdScheme: IdentityLinkIdScheme.MyGov.name,
+                        linkIdScheme: IdentityLinkIdScheme.MyGov.code,
                         profile: profile1,
                         party: party1
                     });
@@ -102,9 +102,9 @@ describe('RAM Identity', () => {
         try {
 
             const instance = await IdentityModel.create({
-                identityType: IdentityType.InvitationCode.name,
+                identityType: IdentityType.InvitationCode.code,
                 defaultInd: false,
-                invitationCodeStatus: IdentityInvitationCodeStatus.Pending.name,
+                invitationCodeStatus: IdentityInvitationCodeStatus.Pending.code,
                 invitationCodeExpiryTimestamp: new Date(2055, 1, 1),
                 invitationCodeTemporaryEmailAddress: 'bob@example.com',
                 profile: profile1,
@@ -158,9 +158,9 @@ describe('RAM Identity', () => {
 
             const instance = await IdentityModel.create({
                 rawIdValue: rawIdValue,
-                identityType: type.name,
+                identityType: type.code,
                 defaultInd: defaultInd,
-                linkIdScheme: IdentityLinkIdScheme.MyGov.name,
+                linkIdScheme: IdentityLinkIdScheme.MyGov.code,
                 profile: profile1,
                 party: party1
             });
@@ -175,7 +175,7 @@ describe('RAM Identity', () => {
             const retrievedInstance = await IdentityModel.findByIdValue(instance.idValue);
             expect(retrievedInstance).not.toBeNull();
             expect(retrievedInstance.id).toBe(instance.id);
-            expect(retrievedInstance.identityType).toBe(type.name);
+            expect(retrievedInstance.identityType).toBe(type.code);
             expect(retrievedInstance.identityTypeEnum()).toBe(type);
             expect(retrievedInstance.defaultInd).toBe(defaultInd);
             expect(retrievedInstance.profile.id).toBe(profile1.id);
@@ -200,9 +200,9 @@ describe('RAM Identity', () => {
 
             const instance = await IdentityModel.create({
                 rawIdValue: rawIdValue,
-                identityType: type.name,
+                identityType: type.code,
                 defaultInd: defaultInd,
-                agencyScheme: scheme.name,
+                agencyScheme: scheme.code,
                 agencyToken: agencyToken,
                 profile: profile1,
                 party: party1
@@ -211,9 +211,9 @@ describe('RAM Identity', () => {
             const retrievedInstance = await IdentityModel.findByIdValue(instance.idValue);
             expect(retrievedInstance).not.toBeNull();
             expect(retrievedInstance.id).toBe(instance.id);
-            expect(retrievedInstance.idValue).toBe(`${type.name}:${scheme.name}:${rawIdValue}`);
+            expect(retrievedInstance.idValue).toBe(`${type.code}:${scheme.code}:${rawIdValue}`);
             expect(retrievedInstance.rawIdValue).toBe(rawIdValue);
-            expect(retrievedInstance.identityType).toBe(type.name);
+            expect(retrievedInstance.identityType).toBe(type.code);
             expect(retrievedInstance.identityTypeEnum()).toBe(type);
             expect(retrievedInstance.agencyToken).toBe(agencyToken);
 
@@ -238,9 +238,9 @@ describe('RAM Identity', () => {
 
             const instance = await IdentityModel.create({
                 rawIdValue: rawIdValue,
-                identityType: type.name,
+                identityType: type.code,
                 defaultInd: defaultInd,
-                invitationCodeStatus: status.name,
+                invitationCodeStatus: status.code,
                 invitationCodeExpiryTimestamp: expiryTimestamp,
                 invitationCodeClaimedTimestamp: claimedTimestamp,
                 invitationCodeTemporaryEmailAddress: emailAddress,
@@ -251,11 +251,11 @@ describe('RAM Identity', () => {
             const retrievedInstance = await IdentityModel.findByIdValue(instance.idValue);
             expect(retrievedInstance).not.toBeNull();
             expect(retrievedInstance.id).toBe(instance.id);
-            expect(retrievedInstance.idValue).toBe(`${type.name}:${rawIdValue}`);
+            expect(retrievedInstance.idValue).toBe(`${type.code}:${rawIdValue}`);
             expect(retrievedInstance.rawIdValue).toBe(rawIdValue);
-            expect(retrievedInstance.identityType).toBe(type.name);
+            expect(retrievedInstance.identityType).toBe(type.code);
             expect(retrievedInstance.identityTypeEnum()).toBe(type);
-            expect(retrievedInstance.invitationCodeStatus).toBe(status.name);
+            expect(retrievedInstance.invitationCodeStatus).toBe(status.code);
             expect(retrievedInstance.invitationCodeStatusEnum()).toBe(status);
             expect(retrievedInstance.invitationCodeExpiryTimestamp.getTime()).toBe(expiryTimestamp.getTime());
             expect(retrievedInstance.invitationCodeClaimedTimestamp.getTime()).toBe(claimedTimestamp.getTime());
@@ -287,9 +287,9 @@ describe('RAM Identity', () => {
 
             for (let i = 0; i < 10; i = i + 1) {
                 const instance = await IdentityModel.create({
-                    identityType: IdentityType.InvitationCode.name,
+                    identityType: IdentityType.InvitationCode.code,
                     defaultInd: false,
-                    invitationCodeStatus: IdentityInvitationCodeStatus.Pending.name,
+                    invitationCodeStatus: IdentityInvitationCodeStatus.Pending.code,
                     invitationCodeExpiryTimestamp: new Date(),
                     profile: profile1,
                     party: party1
@@ -316,9 +316,9 @@ describe('RAM Identity', () => {
 
             const instance = await IdentityModel.create({
                 rawIdValue: rawIdValue,
-                identityType: type.name,
+                identityType: type.code,
                 defaultInd: defaultInd,
-                publicIdentifierScheme: scheme.name,
+                publicIdentifierScheme: scheme.code,
                 profile: profile1,
                 party: party1
             });
@@ -326,11 +326,11 @@ describe('RAM Identity', () => {
             const retrievedInstance = await IdentityModel.findByIdValue(instance.idValue);
             expect(retrievedInstance).not.toBeNull();
             expect(retrievedInstance.id).toBe(instance.id);
-            expect(retrievedInstance.idValue).toBe(`${type.name}:${scheme.name}:${rawIdValue}`);
+            expect(retrievedInstance.idValue).toBe(`${type.code}:${scheme.code}:${rawIdValue}`);
             expect(retrievedInstance.rawIdValue).toBe(rawIdValue);
-            expect(retrievedInstance.identityType).toBe(type.name);
+            expect(retrievedInstance.identityType).toBe(type.code);
             expect(retrievedInstance.identityTypeEnum()).toBe(type);
-            expect(retrievedInstance.publicIdentifierScheme).toBe(scheme.name);
+            expect(retrievedInstance.publicIdentifierScheme).toBe(scheme.code);
             expect(retrievedInstance.publicIdentifierSchemeEnum()).toBe(scheme);
 
             done();
@@ -351,9 +351,9 @@ describe('RAM Identity', () => {
 
             const instance = await IdentityModel.create({
                 rawIdValue: rawIdValue,
-                identityType: type.name,
+                identityType: type.code,
                 defaultInd: defaultInd,
-                linkIdScheme: scheme.name,
+                linkIdScheme: scheme.code,
                 profile: profile1,
                 party: party1
             });
@@ -361,11 +361,11 @@ describe('RAM Identity', () => {
             const retrievedInstance = await IdentityModel.findByIdValue(instance.idValue);
             expect(retrievedInstance).not.toBeNull();
             expect(retrievedInstance.id).toBe(instance.id);
-            expect(retrievedInstance.idValue).toBe(`${type.name}:${scheme.name}:${rawIdValue}`);
+            expect(retrievedInstance.idValue).toBe(`${type.code}:${scheme.code}:${rawIdValue}`);
             expect(retrievedInstance.rawIdValue).toBe(rawIdValue);
-            expect(retrievedInstance.identityType).toBe(type.name);
+            expect(retrievedInstance.identityType).toBe(type.code);
             expect(retrievedInstance.identityTypeEnum()).toBe(type);
-            expect(retrievedInstance.linkIdScheme).toBe(scheme.name);
+            expect(retrievedInstance.linkIdScheme).toBe(scheme.code);
             expect(retrievedInstance.linkIdSchemeEnum()).toBe(scheme);
 
             done();
@@ -415,7 +415,7 @@ describe('RAM Identity', () => {
         try {
             await IdentityModel.create({
                 rawIdValue: 'uuid_x',
-                identityType: IdentityType.LinkId.name,
+                identityType: IdentityType.LinkId.code,
                 defaultInd: false,
                 party: party1
             });
@@ -432,7 +432,7 @@ describe('RAM Identity', () => {
         try {
             await IdentityModel.create({
                 rawIdValue: 'uuid_x',
-                identityType: IdentityType.LinkId.name,
+                identityType: IdentityType.LinkId.code,
                 defaultInd: false,
                 profile: profile1
             });
@@ -448,7 +448,7 @@ describe('RAM Identity', () => {
     it('converts type to enum', async (done) => {
         try {
             expect(identity1).not.toBeNull();
-            expect(identity1.identityType).toBe(IdentityType.LinkId.name);
+            expect(identity1.identityType).toBe(IdentityType.LinkId.code);
             expect(identity1.identityTypeEnum()).toBe(IdentityType.LinkId);
             done();
         } catch (e) {
@@ -475,19 +475,19 @@ describe('RAM Identity', () => {
             // DTOs
             const identityDTO = new CreateIdentityDTO(
                 undefined,
-                PartyType.Individual.name,
+                PartyType.Individual.code,
                 'John',
                 'Doe',
                 undefined,
                 Seeder.dob_sharedSecretType.code,
                 '2015-07-31',
-                IdentityType.InvitationCode.name,
+                IdentityType.InvitationCode.code,
                 undefined,
                 undefined,
                 undefined,
                 undefined,
                 undefined,
-                ProfileProvider.Invitation.name);
+                ProfileProvider.Invitation.code);
 
             // Create new temp identity for invitation code
             const tempIdentity = await IdentityModel.createFromDTO(identityDTO);
@@ -495,7 +495,7 @@ describe('RAM Identity', () => {
             // Verify
             expect(tempIdentity).not.toBeNull();
             expect(tempIdentity.defaultInd).toBe(true);
-            expect(tempIdentity.identityType).toBe(IdentityType.InvitationCode.name);
+            expect(tempIdentity.identityType).toBe(IdentityType.InvitationCode.code);
             expect(tempIdentity.identityTypeEnum()).toBe(IdentityType.InvitationCode);
             expect(tempIdentity.party).not.toBeNull();
             expect(tempIdentity.profile).not.toBeNull();

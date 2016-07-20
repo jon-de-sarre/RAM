@@ -32,22 +32,22 @@ export class BobSmithIdentitySeeder {
                 } as any);
 
                 Seeder.bobsmith_profile = await Seeder.createProfileModel({
-                    provider: ProfileProvider.MyGov.name,
+                    provider: ProfileProvider.MyGov.code,
                     name: Seeder.bobsmith_name,
                     sharedSecrets: [Seeder.bobsmith_dob]
                 } as any);
 
                 Seeder.bobsmith_party = await Seeder.createPartyModel({
-                    partyType: PartyType.Individual.name
+                    partyType: PartyType.Individual.code
                 } as any);
 
                 Seeder.log('');
 
                 Seeder.bobsmith_identity_1 = await Seeder.createIdentityModel({
                     rawIdValue: 'bobsmith_identity_1',
-                    identityType: IdentityType.LinkId.name,
+                    identityType: IdentityType.LinkId.code,
                     defaultInd: true,
-                    linkIdScheme: IdentityLinkIdScheme.MyGov.name,
+                    linkIdScheme: IdentityLinkIdScheme.MyGov.code,
                     profile: Seeder.bobsmith_profile,
                     party: Seeder.bobsmith_party
                 } as any);
