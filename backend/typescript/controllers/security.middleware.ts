@@ -30,7 +30,7 @@ class Security {
     }
 
     private logHeaders(req:Request) {
-        for(let header in req.headers) {
+        for (let header of Object.keys(req.headers)) {
             if(Headers.isXRAMHeader(header)) {
                 logger.debug(header, '=', req.headers[header]);
             }
