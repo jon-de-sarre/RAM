@@ -549,7 +549,8 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
             .findOne({
                 subject: requestedParty,
                 delegate: requestingParty,
-                status: RelationshipStatus.Active.code
+                status: RelationshipStatus.Active.code,
+                $or: [{endDate: null}, {endDate: {$gte: date}}]
             })
             .exec();
 
