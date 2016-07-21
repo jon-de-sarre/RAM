@@ -158,8 +158,11 @@ PartySchema.static('hasAccess', async (requestingParty: IParty, requestedIdValue
         if (requestingParty.id === requestedParty.id) {
             return true;
         } else {
-            // todo find strongest relationship
-            return true;
+            return await RelationshipModel.hasActiveInDateRange1stOr2ndLevelConnection(
+                requestingParty,
+                requestedIdValue,
+                new Date()
+            );
         }
     }
     return false;

@@ -249,7 +249,7 @@ export interface IRelationshipModel extends mongoose.Model<IRelationship> {
     findByIdentifier:(id: string) => Promise<IRelationship>;
     findByInvitationCode:(invitationCode: string) => Promise<IRelationship>;
     findPendingByInvitationCodeInDateRange:(invitationCode: string, date: Date) => Promise<IRelationship>;
-    findStrongestActive1stOr2ndLevel:(requestingParty: IParty, requestedIdValue: string) => Promise<IRelationship>;
+    hasActiveInDateRange1stOr2ndLevelConnection:(requestingParty: IParty, requestedIdValue: string, date:Date) => Promise<boolean>;
     search:(subjectIdentityIdValue: string, delegateIdentityIdValue: string, page: number, pageSize: number)
         => Promise<SearchResult<IRelationship>>;
     searchByIdentity:(identityIdValue: string,
@@ -532,33 +532,78 @@ RelationshipSchema.static('findPendingByInvitationCodeInDateRange', async (invit
     return null;
 });
 
-// todo this currently only handles DIRECT relationships, need to accommodate 2nd level too
-// todo this isn't currently finding the STRONGEST, really just returning the first one
-RelationshipSchema.static('findStrongestActive1stOr2ndLevel', async (requestingParty: IParty,
-                                                                     requestedIdValue: string) => {
+RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (requestingParty: IParty,
+                                                                                requestedIdValue: string,
+                                                                                date:Date) => {
 
-    const subject = await PartyModel.findByIdentityIdValue(requestedIdValue);
+    const requestedParty = await PartyModel.findByIdentityIdValue(requestedIdValue);
 
-    if (!subject) {
+    if (!requestedParty) {
+        // no such subject
         return Promise.resolve(null);
     } else {
-        return this.RelationshipModel
+
+        // 1st level
+
+        const firstLevelRelationship = await this.RelationshipModel
             .findOne({
-                subject: subject,
+                subject: requestedParty,
                 delegate: requestingParty,
                 status: RelationshipStatus.Active.code
             })
-            .deepPopulate([
-                'relationshipType',
-                'subject',
-                'subjectNickName',
-                'delegate',
-                'delegateNickName',
-                'invitationIdentity.profile.name',
-                'attributes.attributeName'
-            ])
-            //.sort({name: 1})
             .exec();
+
+        if (firstLevelRelationship) {
+            return true;
+        } else {
+
+            // 2nd level
+
+            const listOfDelegateIds = await this.RelationshipModel
+                .aggregate([
+                    {
+                        '$match': {
+                            '$and': [
+                                {'subject': new mongoose.Types.ObjectId(requestedParty.id)},
+                                {'status': RelationshipStatus.Active.code},
+                                {'$or': [{endDate: null}, {endDate: {$gte: date}}]}
+                            ]
+                        }
+                    },
+                    {'$group': {'_id': '$delegate'}}
+                ])
+                .exec();
+
+            const listOfSubjectIds = await this.RelationshipModel
+                .aggregate([
+                    {
+                        '$match': {
+                            '$and': [
+                                {'delegate': new mongoose.Types.ObjectId(requestingParty.id)},
+                                {'status': RelationshipStatus.Active.code},
+                                {'$or': [{endDate: null}, {endDate: {$gte: date}}]}
+                            ]
+                        }
+                    },
+                    {'$group': {'_id': '$subject'}}
+                ])
+                .exec();
+
+            let arrays = [
+                listOfDelegateIds.map((obj) => obj['_id'].toString()),
+                listOfSubjectIds.map((obj) => obj['_id'].toString())
+            ];
+
+            const listOfIntersectingPartyIds = arrays.shift().filter(function(v) {
+                return arrays.every(function(a) {
+                    return a.indexOf(v) !== -1;
+                });
+            });
+
+            return listOfIntersectingPartyIds.length > 0;
+
+        }
+
     }
 
 });
