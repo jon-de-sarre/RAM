@@ -311,7 +311,7 @@ export class Seeder {
     public static async createIdentityModel(values:IIdentity) {
         const model = await IdentityModel.create(values);
         Seeder.log(`- Identity  : ${model.idValue}`.cyan);
-        Seeder.exportIdentity(values);
+        Seeder.exportIdentity(model);
         return model;
     }
 
