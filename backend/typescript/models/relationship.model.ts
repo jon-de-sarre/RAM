@@ -595,8 +595,8 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
                 listOfSubjectIds.map((obj) => obj['_id'].toString())
             ];
 
-            const listOfIntersectingPartyIds = arrays.shift().filter(function(v) {
-                return arrays.every(function(a) {
+            const listOfIntersectingPartyIds = arrays.shift().filter(function (v) {
+                return arrays.every(function (a) {
                     return a.indexOf(v) !== -1;
                 });
             });
