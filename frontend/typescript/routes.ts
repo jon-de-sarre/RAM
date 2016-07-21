@@ -8,27 +8,32 @@ import {AcceptAuthorisationComponent} from './components/accept-authorisation/ac
 import {WelcomeHomeComponent} from './components/welcome-home/welcome-home.component';
 
 export const routes: RouterConfig = [
-  {
-    path: '',
-    component: WelcomeHomeComponent,
-  }, {
-    path: 'relationships/:idValue',
-    component: RelationshipsComponent
-  }, {
-    path: 'relationships/add/:idValue',
-    component: AddRelationshipComponent
-  }, {
-    path: 'relationships/add/complete/:idValue/:invitationCode/:displayName',
-    component: AddRelationshipCompleteComponent
-  }, {
-    path: 'relationships/add/enter/:idValue',
-    component: EnterInvitationCodeComponent
-  }, {
-    path: 'relationships/add/accept/:idValue/:invitationCode',
-    component: AcceptAuthorisationComponent
-  }
+    {
+        path: '',
+        component: WelcomeHomeComponent,
+    },
+    {
+        path: 'relationships/:idValue',
+        component: RelationshipsComponent
+    },
+    {
+        path: 'relationships/add/:idValue',
+        component: AddRelationshipComponent
+    },
+    {
+        path: 'relationships/add/complete/:idValue/:invitationCode/:displayName',
+        component: AddRelationshipCompleteComponent
+    },
+    {
+        path: 'relationships/add/enter/:idValue',
+        component: EnterInvitationCodeComponent
+    },
+    {
+        path: 'relationships/add/accept/:idValue/:invitationCode',
+        component: AcceptAuthorisationComponent
+    }
 ];
 
 export const APP_ROUTER_PROVIDERS = [
-  provideRouter(routes)
+    provideRouter(routes)
 ];
