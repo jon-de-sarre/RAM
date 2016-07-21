@@ -3,6 +3,7 @@ import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
+import {BannerService} from '../commons/banner/banner.service';
 import {PageHeaderComponent} from '../commons/page-header/page-header.component';
 import {RAMRestService} from '../../services/ram-rest.service';
 import {RAMModelHelper} from '../../commons/ram-model-helper';
@@ -92,8 +93,10 @@ export class AddRelationshipComponent extends AbstractPageComponent {
                 router: Router,
                 rest: RAMRestService,
                 modelHelper: RAMModelHelper,
-                routeHelper: RAMRouteHelper) {
-        super(route, router, rest, modelHelper, routeHelper);
+                routeHelper: RAMRouteHelper,
+                bannerService: BannerService) {
+        super(route, router, rest, modelHelper, routeHelper, bannerService);
+        this.setTitle('Authorisations');
     }
 
     public onInit(params: {path: Params, query: Params}) {

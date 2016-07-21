@@ -1,6 +1,7 @@
 import 'ng2-bootstrap';
 import {Component} from '@angular/core';
 
+import {BannerService} from './banner.service';
 import {MyIdentityComponent} from '../my-identity/my-identity.component';
 
 @Component({
@@ -13,13 +14,14 @@ export class BannerComponent {
 
     public title: String;
 
-    constructor() {
-        // todo
+    constructor(private bannerService: BannerService) {
     }
 
     public ngOnInit() {
-        // todo
-        this.title = 'Authorisations';
+        this.title = 'Relationship Access Manager';
+        this.bannerService.subscribe((title: string) => {
+            this.title = title;
+        });
     }
 
 }

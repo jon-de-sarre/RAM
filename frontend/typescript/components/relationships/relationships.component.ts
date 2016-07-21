@@ -4,6 +4,7 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
+import {BannerService} from '../commons/banner/banner.service';
 import {PageHeaderComponent} from '../commons/page-header/page-header.component';
 import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
     from '../commons/search-result-pagination/search-result-pagination.component';
@@ -56,8 +57,10 @@ export class RelationshipsComponent extends AbstractPageComponent {
                 rest: RAMRestService,
                 modelHelper: RAMModelHelper,
                 routeHelper: RAMRouteHelper,
+                bannerService: BannerService,
                 private _fb: FormBuilder) {
-        super(route, router, rest, modelHelper, routeHelper);
+        super(route, router, rest, modelHelper, routeHelper, bannerService);
+        this.setTitle('Authorisations');
     }
 
     // todo need some way to indicate ALL the loading has finished; not a priority right now

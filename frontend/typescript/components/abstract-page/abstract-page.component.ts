@@ -5,6 +5,7 @@ import {ActivatedRoute, Router, Params} from '@angular/router';
 import {RAMRestService} from '../../services/ram-rest.service';
 import {RAMModelHelper} from '../../commons/ram-model-helper';
 import {RAMRouteHelper} from '../../commons/ram-route-helper';
+import {BannerService} from '../commons/banner/banner.service';
 
 export abstract class AbstractPageComponent implements OnInit, OnDestroy {
 
@@ -18,7 +19,8 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
                 public router: Router,
                 public rest: RAMRestService,
                 public modelHelper: RAMModelHelper,
-                public routeHelper: RAMRouteHelper) {
+                public routeHelper: RAMRouteHelper,
+                public bannerService: BannerService) {
     }
 
     /* tslint:disable:max-func-body-length */
@@ -117,6 +119,10 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
 
     protected clearGlobalMessages() {
         this.globalMessages = [];
+    }
+
+    protected setTitle(title: string) {
+        this.bannerService.setTitle(title);
     }
 
     private isEqual(params1: Params, params2: Params): boolean {

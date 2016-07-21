@@ -10,6 +10,7 @@ import {RAMNavService} from '../../services/ram-nav.service';
 import {RAMConstantsService} from '../../services/ram-constants.service';
 
 import {BannerComponent} from '../commons/banner/banner.component';
+import {BannerService} from '../commons/banner/banner.service';
 import {ErrorComponent} from '../commons/error/error.component';
 import {ErrorService} from '../commons/error/error.service';
 
@@ -24,6 +25,7 @@ import {ErrorService} from '../commons/error/error.service';
         RAMRouteHelper,
         RAMNavService,
         RAMConstantsService,
+        BannerService,
         ErrorService
     ]
 })
