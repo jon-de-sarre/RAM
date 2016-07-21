@@ -46,9 +46,9 @@ export class LDIFExporter {
     public static async exportIdentity(identity: IIdentity) {
         if ((identity.party.partyType === 'INDIVIDUAL') && (identity.identityType === 'LINK_ID')) {
             await fs.appendFile(LDIFExporter.ldifFileHandle, LDIFExporter.getIdentityLDIF(identity));
-            Seeder.log(`\n[LDIFExporter] Exported identity ${identity.rawIdValue}\n`.green);
+            Seeder.log(`\n[LDIFExporter] Exported identity ${identity.idValue}\n`.green);
         } else {
-            Seeder.log(`\n[LDIFExporter] Skipped export of identity ${identity.rawIdValue}\n`.gray);
+            Seeder.log(`\n[LDIFExporter] Skipped export of identity ${identity.idValue}\n`.gray);
         }
     }
 
