@@ -32,11 +32,10 @@ export class ErrorComponent implements OnInit {
     }
 
     public ngOnInit() {
-        this.errorService.errorOccurred.subscribe(
-            (errorData: Error) => {
-              this.errorData = errorData;
-              this.errorDisplay = 'block';
-          }
-        );
+        this.errorService.errorOccurred.subscribe((errorData: Error) => {
+            this.errorData = errorData;
+            this.errorDisplay = 'block';
+        });
     }
+
 }

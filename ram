@@ -256,9 +256,11 @@ case "$1" in
     cd backend
     if [ -z "$2" ]; then
       echo "Seeding database with $DEFAULT_CONF"
+      echo ""
       RAM_CONF=$DEFAULT_CONF gulp seed --no-lint
     else
       echo "Seeding database with $2"
+      echo ""
       RAM_CONF="$2" gulp seed --no-lint
     fi
     echo ""

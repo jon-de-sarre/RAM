@@ -29,7 +29,7 @@ export class RAMRouteHelper {
     }
 
     public goToRelationshipAddCompletePage(idValue: string, code: string, displayName: string) {
-        this.router.navigate(['relationships/add/complete',
+        this.router.navigate(['/relationships/add/complete',
             encodeURIComponent(idValue),
             encodeURIComponent(code),
             encodeURIComponent(displayName)

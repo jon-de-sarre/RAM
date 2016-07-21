@@ -276,7 +276,7 @@
                         });
 
                         // update link to open RAM
-                        $launchRamLink.attr('href', "/#relationships/" + encodeURIComponent(data[id_value_header]));
+                        $launchRamLink.attr('href', '/');
                     }
                     else {
                         // not logged in
@@ -291,35 +291,6 @@
     </script>
     <hr/>
 
-    <p>
-        <script>
-            window.redeploy = function () {
-                var msg_element = document.getElementById("msg")
-                var tag_element = document.getElementById("tag")
-                var tag = tag_element.value
-                tag_element.value = ""
-                msg_element.innerHTML = "Reloading from " + tag + "..."
-                var dots = setInterval(function () {
-                    msg_element.innerHTML += "."
-                }, 1000)
-                http_request("/api/reset?tag=" + tag, "GET",
-                        function (err, data) {
-                            clearInterval(dots)
-                            if (err) {
-                                msg_element.innerHTML = "Reloading page..."
-                                window.location.href = "/"
-                            } else {
-                                console.log(err, data)
-                                msg_element.innerHTML = data;
-                            }
-                        })
-            }
-        </script>
-        Tag/Branch/Hash:
-        <input id="tag" type="text" value="develop">
-        <button onclick="redeploy()">Redeploy</button>
-    </p>
-    <p id=msg></p>
 </div>
 
 </body>

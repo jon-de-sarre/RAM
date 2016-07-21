@@ -3,6 +3,7 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
+import {BannerService} from '../commons/banner/banner.service';
 import {PageHeaderComponent} from '../commons/page-header/page-header.component';
 import {RAMRestService} from '../../services/ram-rest.service';
 import {RAMModelHelper} from '../../commons/ram-model-helper';
@@ -30,8 +31,10 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
                 rest: RAMRestService,
                 modelHelper: RAMModelHelper,
                 routeHelper: RAMRouteHelper,
+                bannerService: BannerService,
                 private _fb: FormBuilder) {
-        super(route, router, rest, modelHelper, routeHelper);
+        super(route, router, rest, modelHelper, routeHelper, bannerService);
+        this.setTitle('Authorisations');
     }
 
     public onInit(params: {path:Params, query:Params}) {

@@ -74,7 +74,6 @@ export class RAMModelHelper {
 
     public relationshipStatusLabel(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], code: string) {
         const status = this.getRelationshipStatus(relationshipStatusRefs, code);
-        console.log(status);
         return status ? status.shortDecodeText : '';
     }
 
