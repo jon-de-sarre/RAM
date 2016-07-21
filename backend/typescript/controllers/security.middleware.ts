@@ -29,13 +29,13 @@ class Security {
         };
     }
 
-    private logHeaders(req:Request) {
-        for(let header in req.headers) {
-            if(Headers.isXRAMHeader(header)) {
-                logger.debug(header, '=', req.headers[header]);
-            }
-        }
-    }
+    // private logHeaders(req:Request) {
+    //     for (let header of Object.keys(req.headers)) {
+    //         if(Headers.isXRAMHeader(header)) {
+    //             logger.debug(header, '=', req.headers[header]);
+    //         }
+    //     }
+    // }
 
     /**
      * Attempts to provide an Identity Value by looking in the following:
