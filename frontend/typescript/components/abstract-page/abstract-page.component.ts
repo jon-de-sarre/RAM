@@ -116,7 +116,7 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
     }
 
     protected setBannerTitle(title: string) {
-        this.bannerService.setTitle(title);
+        this.services.banner.setTitle(title);
     }
 
     private isEqual(params1: Params, params2: Params): boolean {

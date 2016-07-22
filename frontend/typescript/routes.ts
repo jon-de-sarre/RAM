@@ -1,5 +1,6 @@
 import {RouterConfig, provideRouter} from '@angular/router';
 
+import {NotFoundComponent} from './components/not-found/not-found.component';
 import {RelationshipsComponent} from './components/relationships/relationships.component';
 import {AddRelationshipComponent} from './components/add-relationship/add-relationship.component';
 import {AddRelationshipCompleteComponent} from './components/add-relationship-complete/add-relationship-complete.component';
@@ -31,6 +32,11 @@ export const routes: RouterConfig = [
     {
         path: 'relationships/add/accept/:idValue/:invitationCode',
         component: AcceptAuthorisationComponent
+    },
+    {
+        path: '404',
+        name: 'NotFound',
+        component: NotFoundComponent
     }
 ];
 

@@ -43,7 +43,7 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
         }
 
         // identity in focus
-        this.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
+        this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
             this.identity = identity;
         });
 
@@ -56,7 +56,7 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
 
     public activateCode(event: Event) {
 
-        this.rest.claimRelationshipByInvitationCode(this.form.controls['relationshipCode'].value)
+        this.services.rest.claimRelationshipByInvitationCode(this.form.controls['relationshipCode'].value)
             .subscribe((relationship) => {
                 this.services.route.goToRelationshipAcceptPage(
                     this.idValue,
@@ -67,7 +67,7 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
                 if (status === 404) {
                     this.addGlobalMessage('The code you have entered does not exist or is invalid.');
                 } else {
-                    this.addGlobalMessages(this.rest.extractErrorMessages(err));
+                    this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
                 }
             });
 

@@ -98,12 +98,12 @@ export class AddRelationshipComponent extends AbstractPageComponent {
         this.idValue = decodeURIComponent(params.path['idValue']);
 
         // identity in focus
-        this.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
+        this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
             this.identity = identity;
         });
 
         // relationship types
-        this.relationshipTypes$ = this.rest.listRelationshipTypes();
+        this.relationshipTypes$ = this.services.rest.listRelationshipTypes();
 
         // delegate managed attribute
         this.resolveManageAuthAttribute('UNIVERSAL_REPRESENTATIVE', 'DELEGATE_MANAGE_AUTHORISATION_ALLOWED_IND');
@@ -163,19 +163,19 @@ export class AddRelationshipComponent extends AbstractPageComponent {
             ] /* TODO setting the attributes */
         };
 
-        this.rest.createRelationship(relationship).subscribe((relationship) => {
+        this.services.rest.createRelationship(relationship).subscribe((relationship) => {
             //console.log(JSON.stringify(relationship, null, 4));
-            this.rest.findIdentityByHref(relationship.delegate.value.identities[0].href).subscribe((identity) => {
+            this.services.rest.findIdentityByHref(relationship.delegate.value.identities[0].href).subscribe((identity) => {
                 //console.log(JSON.stringify(identity, null, 4));
                 this.services.route.goToRelationshipAddCompletePage(
                     this.idValue,
                     identity.rawIdValue,
                     this.displayName(this.newRelationship.representativeDetails));
             }, (err) => {
-                this.addGlobalMessages(this.rest.extractErrorMessages(err));
+                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
             });
         }, (err) => {
-            this.addGlobalMessages(this.rest.extractErrorMessages(err));
+            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
         });
 
     };
