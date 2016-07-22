@@ -1,7 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {Router} from '@angular/router';
 
-import {RAMServices} from '../../commons/ram-services';
+import {RAMServices} from '../../services/ram-services';
 
 import {IIdentity} from '../../../../commons/RamAPI2';
 

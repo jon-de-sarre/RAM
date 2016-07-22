@@ -4,7 +4,7 @@ import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderComponent} from '../../components/page-header/page-header.component';
-import {RAMServices} from '../../commons/ram-services';
+import {RAMServices} from '../../services/ram-services';
 
 import {AccessPeriodComponent, AccessPeriodComponentData} from '../../components/access-period/access-period.component';
 import {AuthorisationPermissionsComponent} from '../../components/authorisation-permissions/authorisation-permissions.component';

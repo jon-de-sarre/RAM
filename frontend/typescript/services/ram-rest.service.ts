@@ -2,7 +2,7 @@ import Rx from 'rxjs/Rx';
 import {Injectable} from '@angular/core';
 import {Response, Http, Headers} from '@angular/http';
 
-import {RAMModelHelper} from '../commons/ram-model-helper';
+import {RAMModelService} from './ram-model.service';
 
 import {
     ISearchResult,
@@ -22,7 +22,7 @@ import {
 export class RAMRestService {
 
     constructor(private http: Http,
-                private modelHelper: RAMModelHelper) {
+                private modelService: RAMModelService) {
     }
 
     // TODO remove temporary api
@@ -124,13 +124,13 @@ export class RAMRestService {
 
     public acceptPendingRelationshipByInvitationCode(relationship: IRelationship): Rx.Observable<IRelationship> {
         return this.http
-            .post(this.modelHelper.linkByType('accept', relationship._links).href, '')
+            .post(this.modelService.linkByType('accept', relationship._links).href, '')
             .map(this.extractData);
     }
 
     public rejectPendingRelationshipByInvitationCode(relationship: IRelationship): Rx.Observable<IRelationship> {
         return this.http
-            .post(this.modelHelper.linkByType('reject', relationship._links).href, '')
+            .post(this.modelService.linkByType('reject', relationship._links).href, '')
             .map(this.extractData);
     }
 

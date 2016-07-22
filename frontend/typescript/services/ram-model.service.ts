@@ -13,7 +13,7 @@ import {
 import {IRelationshipStatus} from '../../../commons/RamAPI2';
 
 @Injectable()
-export class RAMModelHelper {
+export class RAMModelService {
 
     public linkByType(type: string, links: ILink[]): ILink {
         for(let link of links) {

@@ -3,10 +3,10 @@ import {Component} from '@angular/core';
 import {HTTP_PROVIDERS} from '@angular/http';
 import {ROUTER_DIRECTIVES} from '@angular/router';
 
-import {RAMServices} from '../commons/ram-services';
+import {RAMServices} from '../services/ram-services';
 import {RAMRestService} from '../services/ram-rest.service';
-import {RAMModelHelper} from '../commons/ram-model-helper';
-import {RAMRouteHelper} from '../commons/ram-route-helper';
+import {RAMModelService} from '../services/ram-model.service';
+import {RAMRouteService} from '../services/ram-route.service';
 import {RAMNavService} from '../services/ram-nav.service';
 import {RAMConstantsService} from '../services/ram-constants.service';
 
@@ -23,8 +23,8 @@ import {ErrorService} from '../components/error/error.service';
         HTTP_PROVIDERS,
         RAMServices,
         RAMRestService,
-        RAMModelHelper,
-        RAMRouteHelper,
+        RAMModelService,
+        RAMRouteService,
         RAMNavService,
         RAMConstantsService,
         BannerService,

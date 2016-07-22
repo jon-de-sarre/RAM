@@ -2,7 +2,7 @@ import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute} from '@angular/router';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {RAMServices} from '../../commons/ram-services';
+import {RAMServices} from '../../services/ram-services';
 
 @Component({
     selector: 'ram-access-denied',
