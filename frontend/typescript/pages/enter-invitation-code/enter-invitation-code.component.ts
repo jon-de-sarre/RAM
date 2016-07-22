@@ -4,7 +4,7 @@ import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIREC
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderComponent} from '../../components/page-header/page-header.component';
-import {RAMServices} from '../../commons/ram-services';
+import {RAMServices} from '../../services/ram-services';
 
 import {IIdentity} from '../../../../commons/RamAPI2';
 

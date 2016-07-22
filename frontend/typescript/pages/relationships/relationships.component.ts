@@ -7,7 +7,7 @@ import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderComponent} from '../../components/page-header/page-header.component';
 import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
     from '../../components/search-result-pagination/search-result-pagination.component';
-import {RAMServices} from '../../commons/ram-services';
+import {RAMServices} from '../../services/ram-services';
 
 import {
     ISearchResult,

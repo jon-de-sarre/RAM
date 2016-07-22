@@ -2,7 +2,7 @@ import Rx from 'rxjs/Rx';
 import {OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router, Params} from '@angular/router';
 
-import {RAMServices} from '../../commons/ram-services';
+import {RAMServices} from '../../services/ram-services';
 
 export abstract class AbstractPageComponent implements OnInit, OnDestroy {
 

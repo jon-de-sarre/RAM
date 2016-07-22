@@ -1,8 +1,8 @@
 import {Injectable} from '@angular/core';
 
-import {RAMRestService} from '../services/ram-rest.service';
-import {RAMModelService} from '../services/ram-model.service';
-import {RAMRouteHelper} from './ram-route-helper';
+import {RAMRestService} from './ram-rest.service';
+import {RAMModelService} from './ram-model.service';
+import {RAMRouteHelper} from '../commons/ram-route-helper';
 import {BannerService} from '../components/banner/banner.service';
 
 @Injectable()
