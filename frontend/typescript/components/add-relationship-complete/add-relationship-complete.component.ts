@@ -3,12 +3,9 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {BannerService} from '../commons/banner/banner.service';
 import {PageHeaderComponent} from '../commons/page-header/page-header.component';
 import {RAMNgValidators} from '../../commons/ram-ng-validators';
-import {RAMRestService} from '../../services/ram-rest.service';
-import {RAMModelHelper} from '../../commons/ram-model-helper';
-import {RAMRouteHelper} from '../../commons/ram-route-helper';
+import {RAMServices} from '../../commons/ram-services';
 
 import {IIdentity, INotifyDelegateDTO} from '../../../../commons/RamAPI2';
 
@@ -34,13 +31,10 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
 
     constructor(route: ActivatedRoute,
                 router: Router,
-                rest: RAMRestService,
-                modelHelper: RAMModelHelper,
-                routeHelper: RAMRouteHelper,
-                bannerService: BannerService,
+                services: RAMServices,
                 private _fb: FormBuilder) {
-        super(route, router, rest, modelHelper, routeHelper, bannerService);
-        this.setTitle('Authorisations');
+        super(route, router, services);
+        this.setBannerTitle('Authorisations');
     }
 
     public onInit(params: {path: Params, query: Params}) {
@@ -78,7 +72,7 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
         };
 
         this.rest.notifyDelegateByInvitationCode(this.code, notifyDelegateDTO).subscribe((relationship) => {
-            this.routeHelper.goToRelationshipsPage(this.idValue, null, 1, 'DELEGATE_NOTIFIED');
+            this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'DELEGATE_NOTIFIED');
         }, (err) => {
             const status = err.status;
             if (status === 404) {
@@ -91,6 +85,6 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
     };
 
     public goToRelationshipsPage() {
-        this.routeHelper.goToRelationshipsPage(this.idValue);
+        this.services.route.goToRelationshipsPage(this.idValue);
     }
 }

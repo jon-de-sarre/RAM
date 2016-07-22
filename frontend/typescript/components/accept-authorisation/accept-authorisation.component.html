@@ -12,7 +12,7 @@
         <div class="panel-body">
             <!--<h4><b>{{displayName((relationship$ | async)?.delegateNickName)}}</b> has been authorised to-->
             <!--act on behalf of <b>{{displayName((relationship$ | async)?.subjectNickName)}}</b>.</h4>-->
-            <h4>You have been authorised to act on behalf of <b>{{modelHelper.displayName((relationship$ | async)?.subjectNickName)}}</b>.
+            <h4>You have been authorised to act on behalf of <b>{{services.model.displayName((relationship$ | async)?.subjectNickName)}}</b>.
                 Check to see if the following details are correct before accepting the authorisation request.</h4>
             <div class="row">
                 <div class="col-lg-2">
@@ -92,7 +92,7 @@
             <h4><span class="badge square">6</span> Declaration</h4>
         </div>
         <div class="panel-body">
-            <h4>By accepting to act on behalf of <b>{{modelHelper.displayName((relationship$ | async)?.subjectNickName)}}</b>,
+            <h4>By accepting to act on behalf of <b>{{services.model.displayName((relationship$ | async)?.subjectNickName)}}</b>,
                 you acknowledge that:</h4>
             <div>{{delegateRelationshipTypeDeclarationAttributeUsage?.defaultValue}}</div>
             <h4><input type="checkbox" [(ngModel)]="accept"> I accept</h4>

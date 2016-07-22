@@ -2,10 +2,7 @@ import Rx from 'rxjs/Rx';
 import {OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router, Params} from '@angular/router';
 
-import {RAMRestService} from '../../services/ram-rest.service';
-import {RAMModelHelper} from '../../commons/ram-model-helper';
-import {RAMRouteHelper} from '../../commons/ram-route-helper';
-import {BannerService} from '../commons/banner/banner.service';
+import {RAMServices} from '../../commons/ram-services';
 
 export abstract class AbstractPageComponent implements OnInit, OnDestroy {
 
@@ -17,10 +14,7 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
 
     constructor(public route: ActivatedRoute,
                 public router: Router,
-                public rest: RAMRestService,
-                public modelHelper: RAMModelHelper,
-                public routeHelper: RAMRouteHelper,
-                public bannerService: BannerService) {
+                public services: RAMServices) {
     }
 
     /* tslint:disable:max-func-body-length */
@@ -121,7 +115,7 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
         this.globalMessages = [];
     }
 
-    protected setTitle(title: string) {
+    protected setBannerTitle(title: string) {
         this.bannerService.setTitle(title);
     }
 

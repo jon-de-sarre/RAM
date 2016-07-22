@@ -4,13 +4,10 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {BannerService} from '../commons/banner/banner.service';
 import {PageHeaderComponent} from '../commons/page-header/page-header.component';
 import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
     from '../commons/search-result-pagination/search-result-pagination.component';
-import {RAMRestService} from '../../services/ram-rest.service';
-import {RAMModelHelper} from '../../commons/ram-model-helper';
-import {RAMRouteHelper} from '../../commons/ram-route-helper';
+import {RAMServices} from '../../commons/ram-services';
 
 import {
     ISearchResult,
@@ -54,13 +51,10 @@ export class RelationshipsComponent extends AbstractPageComponent {
 
     constructor(route: ActivatedRoute,
                 router: Router,
-                rest: RAMRestService,
-                modelHelper: RAMModelHelper,
-                routeHelper: RAMRouteHelper,
-                bannerService: BannerService,
+                services: RAMServices,
                 private _fb: FormBuilder) {
-        super(route, router, rest, modelHelper, routeHelper, bannerService);
-        this.setTitle('Authorisations');
+        super(route, router, services);
+        this.setBannerTitle('Authorisations');
     }
 
     // todo need some way to indicate ALL the loading has finished; not a priority right now
@@ -139,7 +133,7 @@ export class RelationshipsComponent extends AbstractPageComponent {
         // pagination delegate
         this.paginationDelegate = {
             goToPage: (page: number) => {
-                this.routeHelper.goToRelationshipsPage(this.idValue, this.filter.encode(), page);
+                this.services.route.goToRelationshipsPage(this.idValue, this.filter.encode(), page);
             }
         } as SearchResultPaginationDelegate;
 
@@ -160,7 +154,10 @@ export class RelationshipsComponent extends AbstractPageComponent {
         if (subject) {
             if (subject && subject.identities && subject.identities.length > 0) {
                 for (const identityHrefValue of subject.identities) {
-                    let label = this.modelHelper.profileProviderLabel(this.profileProviderRefs, identityHrefValue.value.profile.provider);
+                    let label = this.services.model.profileProviderLabel(
+                        this.profileProviderRefs,
+                        identityHrefValue.value.profile.provider
+                    );
                     providerNames.push(label);
                 }
             }
@@ -183,22 +180,22 @@ export class RelationshipsComponent extends AbstractPageComponent {
             .encode();
         //console.log('Filter (encoded): ' + filterString);
         //console.log('Filter (decoded): ' + JSON.stringify(FilterParams.decode(filterString), null, 4));
-        this.routeHelper.goToRelationshipsPage(this.idValue, filterString);
+        this.services.route.goToRelationshipsPage(this.idValue, filterString);
     }
 
     public goToRelationshipAddPage() {
-        this.routeHelper.goToRelationshipAddPage(this.idValue);
+        this.services.route.goToRelationshipAddPage(this.idValue);
     };
 
     public goToRelationshipEnterCodePage() {
-        this.routeHelper.goToRelationshipEnterCodePage(this.idValue);
+        this.services.route.goToRelationshipEnterCodePage(this.idValue);
     };
 
     public goToRelationshipsContext(partyResource: IHrefValue<IParty>) {
-        const defaultIdentityResource = this.modelHelper.getDefaultIdentityResource(partyResource.value);
+        const defaultIdentityResource = this.services.model.getDefaultIdentityResource(partyResource.value);
         if (defaultIdentityResource) {
             const identityIdValue = defaultIdentityResource.value.idValue;
-            this.routeHelper.goToRelationshipsPage(identityIdValue);
+            this.services.route.goToRelationshipsPage(identityIdValue);
         }
     }
 

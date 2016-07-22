@@ -4,11 +4,8 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {DatePipe} from '@angular/common';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {BannerService} from '../commons/banner/banner.service';
 import {PageHeaderComponent} from '../commons/page-header/page-header.component';
-import {RAMRestService} from '../../services/ram-rest.service';
-import {RAMModelHelper} from '../../commons/ram-model-helper';
-import {RAMRouteHelper} from '../../commons/ram-route-helper';
+import {RAMServices} from '../../commons/ram-services';
 
 import {
     IIdentity,
@@ -40,12 +37,9 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
 
     constructor(route: ActivatedRoute,
                 router: Router,
-                rest: RAMRestService,
-                modelHelper: RAMModelHelper,
-                routeHelper: RAMRouteHelper,
-                bannerService: BannerService) {
-        super(route, router, rest, modelHelper, routeHelper, bannerService);
-        this.setTitle('Authorisations');
+                services: RAMServices) {
+        super(route, router, services);
+        this.setBannerTitle('Authorisations');
     }
 
     /* tslint:disable:max-func-body-length */
@@ -89,7 +83,7 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
 
     public declineAuthorisation = () => {
         this.rest.rejectPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
-            this.routeHelper.goToRelationshipsPage(this.idValue, null, 1, 'DECLINED_RELATIONSHIP');
+            this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'DECLINED_RELATIONSHIP');
         }, (err) => {
             this.addGlobalMessages(this.rest.extractErrorMessages(err));
         });
@@ -97,18 +91,18 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
 
     public acceptAuthorisation = () => {
         this.rest.acceptPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
-            this.routeHelper.goToRelationshipsPage(this.idValue, null, 1, 'ACCEPTED_RELATIONSHIP');
+            this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'ACCEPTED_RELATIONSHIP');
         }, (err) => {
             this.addGlobalMessages(this.rest.extractErrorMessages(err));
         });
     };
 
     public goToEnterAuthorisationPage = () => {
-        this.routeHelper.goToRelationshipEnterCodePage(this.idValue, 'INVALID_CODE');
+        this.services.route.goToRelationshipEnterCodePage(this.idValue, 'INVALID_CODE');
     };
 
     public goToRelationshipsPage = () => {
-        this.routeHelper.goToRelationshipsPage(this.idValue, null, 1, 'CANCEL_ACCEPT_RELATIONSHIP');
+        this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'CANCEL_ACCEPT_RELATIONSHIP');
     };
 
     // TODO: not sure how to set the locale, Implement as a pipe

@@ -3,11 +3,8 @@ import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {BannerService} from '../commons/banner/banner.service';
 import {PageHeaderComponent} from '../commons/page-header/page-header.component';
-import {RAMRestService} from '../../services/ram-rest.service';
-import {RAMModelHelper} from '../../commons/ram-model-helper';
-import {RAMRouteHelper} from '../../commons/ram-route-helper';
+import {RAMServices} from '../../commons/ram-services';
 
 import {AccessPeriodComponent, AccessPeriodComponentData} from '../commons/access-period/access-period.component';
 import {AuthorisationPermissionsComponent} from '../commons/authorisation-permissions/authorisation-permissions.component';
@@ -91,12 +88,9 @@ export class AddRelationshipComponent extends AbstractPageComponent {
 
     constructor(route: ActivatedRoute,
                 router: Router,
-                rest: RAMRestService,
-                modelHelper: RAMModelHelper,
-                routeHelper: RAMRouteHelper,
-                bannerService: BannerService) {
-        super(route, router, rest, modelHelper, routeHelper, bannerService);
-        this.setTitle('Authorisations');
+                services: RAMServices) {
+        super(route, router, services);
+        this.setBannerTitle('Authorisations');
     }
 
     public onInit(params: {path: Params, query: Params}) {
@@ -173,7 +167,7 @@ export class AddRelationshipComponent extends AbstractPageComponent {
             //console.log(JSON.stringify(relationship, null, 4));
             this.rest.findIdentityByHref(relationship.delegate.value.identities[0].href).subscribe((identity) => {
                 //console.log(JSON.stringify(identity, null, 4));
-                this.routeHelper.goToRelationshipAddCompletePage(
+                this.services.route.goToRelationshipAddCompletePage(
                     this.idValue,
                     identity.rawIdValue,
                     this.displayName(this.newRelationship.representativeDetails));
