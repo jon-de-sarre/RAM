@@ -36,6 +36,10 @@ export const routes: RouterConfig = [
     {
         path: '404',
         component: NotFoundComponent
+    },
+    {
+        path: '**',
+        redirectTo: '404'
     }
 ];
 
