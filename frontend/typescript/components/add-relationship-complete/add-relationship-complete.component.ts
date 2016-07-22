@@ -72,7 +72,7 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
         };
 
         this.rest.notifyDelegateByInvitationCode(this.code, notifyDelegateDTO).subscribe((relationship) => {
-            this.routeHelper.goToRelationshipsPage(this.idValue, null, 1, 'DELEGATE_NOTIFIED');
+            this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'DELEGATE_NOTIFIED');
         }, (err) => {
             const status = err.status;
             if (status === 404) {
@@ -85,6 +85,6 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
     };
 
     public goToRelationshipsPage() {
-        this.routeHelper.goToRelationshipsPage(this.idValue);
+        this.services.route.goToRelationshipsPage(this.idValue);
     }
 }

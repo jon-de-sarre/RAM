@@ -58,7 +58,7 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
 
         this.rest.claimRelationshipByInvitationCode(this.form.controls['relationshipCode'].value)
             .subscribe((relationship) => {
-                this.routeHelper.goToRelationshipAcceptPage(
+                this.services.route.goToRelationshipAcceptPage(
                     this.idValue,
                     this.form.controls['relationshipCode'].value
                 );
@@ -76,7 +76,7 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
     }
 
     public goToRelationshipsPage() {
-        this.routeHelper.goToRelationshipsPage(this.idValue);
+        this.services.route.goToRelationshipsPage(this.idValue);
     };
 
 }

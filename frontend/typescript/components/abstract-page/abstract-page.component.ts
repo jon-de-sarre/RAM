@@ -3,10 +3,6 @@ import {OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router, Params} from '@angular/router';
 
 import {RAMServices} from '../../commons/ram-services';
-import {RAMRestService} from '../../services/ram-rest.service';
-import {RAMModelHelper} from '../../commons/ram-model-helper';
-import {RAMRouteHelper} from '../../commons/ram-route-helper';
-import {BannerService} from '../commons/banner/banner.service';
 
 export abstract class AbstractPageComponent implements OnInit, OnDestroy {
 
@@ -16,19 +12,9 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
     protected pathParamSub: Rx.Subscription;
     protected queryParamSub: Rx.Subscription;
 
-    // todo to be removed ...
-    public rest: RAMRestService;
-    public modelHelper: RAMModelHelper;
-    public routeHelper: RAMRouteHelper;
-    public bannerService: BannerService;
-
     constructor(public route: ActivatedRoute,
                 public router: Router,
                 public services: RAMServices) {
-        this.rest = services.rest;
-        this.modelHelper = services.model;
-        this.routeHelper = services.route;
-        this.bannerService = services.banner;
     }
 
     /* tslint:disable:max-func-body-length */

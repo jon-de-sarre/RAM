@@ -90,17 +90,17 @@
                 <tr class="relationship-subject-heading">
                     <td colspan="5">
                         <div (click)="goToRelationshipsContext(item.subjectRef)" class="clickable">
-                            <h4>{{modelHelper.displayNameForParty(item.subjectRef.value)}}</h4>
-                            <h5>{{modelHelper.abnLabelForParty(item.subjectRef.value)}} /
-                                {{modelHelper.partyTypeLabelForParty(item.subjectRef.value)}}</h5>
+                            <h4>{{services.model.displayNameForParty(item.subjectRef.value)}}</h4>
+                            <h5>{{services.model.abnLabelForParty(item.subjectRef.value)}} /
+                                {{services.model.partyTypeLabelForParty(item.subjectRef.value)}}</h5>
                         </div>
                     </td>
                 </tr>
                 <tr *ngFor="let relationshipRef of item.relationshipRefs">
-                    <td>{{modelHelper.displayName(relationshipRef.value.delegateNickName)}}</td>
+                    <td>{{services.model.displayName(relationshipRef.value.delegateNickName)}}</td>
                     <td>{{commaSeparatedListOfProviderNames(relationshipRef.value.delegate.value)}}</td>
-                    <td>{{modelHelper.relationshipTypeLabel(relationshipTypeRefs, relationshipRef.value)}}</td>
-                    <td>{{modelHelper.relationshipStatusLabel(relationshipStatusRefs, relationshipRef.value.status)}}</td>
+                    <td>{{services.model.relationshipTypeLabel(relationshipTypeRefs, relationshipRef.value)}}</td>
+                    <td>{{services.model.relationshipStatusLabel(relationshipStatusRefs, relationshipRef.value.status)}}</td>
                     <td></td>
                 </tr>
             </template>

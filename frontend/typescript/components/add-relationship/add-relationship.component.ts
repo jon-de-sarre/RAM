@@ -167,7 +167,7 @@ export class AddRelationshipComponent extends AbstractPageComponent {
             //console.log(JSON.stringify(relationship, null, 4));
             this.rest.findIdentityByHref(relationship.delegate.value.identities[0].href).subscribe((identity) => {
                 //console.log(JSON.stringify(identity, null, 4));
-                this.routeHelper.goToRelationshipAddCompletePage(
+                this.services.route.goToRelationshipAddCompletePage(
                     this.idValue,
                     identity.rawIdValue,
                     this.displayName(this.newRelationship.representativeDetails));

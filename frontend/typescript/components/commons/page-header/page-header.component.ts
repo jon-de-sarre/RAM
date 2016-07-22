@@ -1,6 +1,7 @@
 import {Component, Input} from '@angular/core';
 import {Router} from '@angular/router';
 
+import {RAMServices} from '../../../commons/ram-services';
 import {RAMModelHelper} from '../../../commons/ram-model-helper';
 import {RAMRouteHelper} from '../../../commons/ram-route-helper';
 
@@ -20,8 +21,7 @@ export class PageHeaderComponent {
     @Input() public giveAuthorisationsEnabled: boolean = false;
 
     constructor(private router: Router,
-                private modelHelper: RAMModelHelper,
-                private routeHelper: RAMRouteHelper) {
+                private services: RAMServices) {
     }
 
     public hasMessages(): boolean {
@@ -29,26 +29,26 @@ export class PageHeaderComponent {
     }
 
     public title(): string {
-        return this.identity ? this.modelHelper.displayNameForIdentity(this.identity) : 'Loading ...';
+        return this.identity ? this.services.model.displayNameForIdentity(this.identity) : 'Loading ...';
     }
 
     public goToRelationshipsPage() {
         if (this.identity) {
-            this.routeHelper.goToRelationshipsPage(this.identity.idValue);
+            this.services.route.goToRelationshipsPage(this.identity.idValue);
         }
     };
 
     public goToGiveAuthorisationPage() {
         if (this.isGiveAuthorisationsPageEnabled()) {
             if (this.identity) {
-                this.routeHelper.goToRelationshipAddPage(this.identity.idValue);
+                this.services.route.goToRelationshipAddPage(this.identity.idValue);
             }
         }
     };
 
     public goToGetAuthorisationPage() {
         if (this.identity) {
-            this.routeHelper.goToRelationshipEnterCodePage(this.identity.idValue);
+            this.services.route.goToRelationshipEnterCodePage(this.identity.idValue);
         }
     };
 

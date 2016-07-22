@@ -83,7 +83,7 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
 
     public declineAuthorisation = () => {
         this.rest.rejectPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
-            this.routeHelper.goToRelationshipsPage(this.idValue, null, 1, 'DECLINED_RELATIONSHIP');
+            this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'DECLINED_RELATIONSHIP');
         }, (err) => {
             this.addGlobalMessages(this.rest.extractErrorMessages(err));
         });
@@ -91,18 +91,18 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
 
     public acceptAuthorisation = () => {
         this.rest.acceptPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
-            this.routeHelper.goToRelationshipsPage(this.idValue, null, 1, 'ACCEPTED_RELATIONSHIP');
+            this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'ACCEPTED_RELATIONSHIP');
         }, (err) => {
             this.addGlobalMessages(this.rest.extractErrorMessages(err));
         });
     };
 
     public goToEnterAuthorisationPage = () => {
-        this.routeHelper.goToRelationshipEnterCodePage(this.idValue, 'INVALID_CODE');
+        this.services.route.goToRelationshipEnterCodePage(this.idValue, 'INVALID_CODE');
     };
 
     public goToRelationshipsPage = () => {
-        this.routeHelper.goToRelationshipsPage(this.idValue, null, 1, 'CANCEL_ACCEPT_RELATIONSHIP');
+        this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'CANCEL_ACCEPT_RELATIONSHIP');
     };
 
     // TODO: not sure how to set the locale, Implement as a pipe
