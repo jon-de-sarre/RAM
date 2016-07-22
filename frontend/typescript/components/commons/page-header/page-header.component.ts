@@ -2,8 +2,6 @@ import {Component, Input} from '@angular/core';
 import {Router} from '@angular/router';
 
 import {RAMServices} from '../../../commons/ram-services';
-import {RAMModelHelper} from '../../../commons/ram-model-helper';
-import {RAMRouteHelper} from '../../../commons/ram-route-helper';
 
 import {IIdentity} from '../../../../../commons/RamAPI2';
 
