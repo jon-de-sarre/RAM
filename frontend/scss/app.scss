@@ -309,10 +309,11 @@ color: $color;
 }
 
 #top-nav h1 {
-    color: $navbar-default-color;
-    margin: 25px auto;
-    position: absolute;
-    width: 100%;
+  color: $navbar-default-color;
+  font-size: 30px;
+  margin: 30px auto 0 auto;
+  position: absolute;
+  width: 100%;
 }
 
 #top-nav .navbar-toggle {
