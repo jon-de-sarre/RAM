@@ -4,7 +4,7 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {DatePipe} from '@angular/common';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {PageHeaderComponent} from '../commons/page-header/page-header.component';
+import {PageHeaderComponent} from '../../components/page-header/page-header.component';
 import {RAMServices} from '../../commons/ram-services';
 
 import {

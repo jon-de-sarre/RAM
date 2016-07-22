@@ -1,6 +1,6 @@
 import {OnInit, Input, Output, EventEmitter, Component} from '@angular/core';
 import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES } from '@angular/forms';
-import {RAMNgValidators} from '../../../../commons/ram-ng-validators';
+import {RAMNgValidators} from '../../../commons/ram-ng-validators';
 
 @Component({
     selector: 'individual-representative-details',

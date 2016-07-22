@@ -1,6 +1,6 @@
 import {OnInit, Input, Output, EventEmitter, Component} from '@angular/core';
 import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES } from '@angular/forms';
-import {RAMNgValidators} from   '../../../commons/ram-ng-validators';
+import {RAMNgValidators} from   '../../commons/ram-ng-validators';
 import {MarkdownComponent} from '../ng2-markdown/ng2-markdown.component';
 
 @Component({

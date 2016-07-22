@@ -1,7 +1,7 @@
 import {OnInit, Input, Output, EventEmitter, Component} from '@angular/core';
 import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FormControl, FORM_DIRECTIVES } from '@angular/forms';
-import {Utils} from '../../../../../commons/ram-utils';
-import {RAMNgValidators} from '../../../commons/ram-ng-validators';
+import {Utils} from '../../../../commons/ram-utils';
+import {RAMNgValidators} from '../../commons/ram-ng-validators';
 
 @Component({
     selector: 'access-period',

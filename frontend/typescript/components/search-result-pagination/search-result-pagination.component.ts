@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {ISearchResult} from '../../../../../commons/RamAPI2';
+import {ISearchResult} from '../../../../commons/RamAPI2';
 
 @Component({
     selector: 'search-result-pagination',

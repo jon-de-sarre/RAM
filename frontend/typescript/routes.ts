@@ -1,13 +1,13 @@
 import {RouterConfig, provideRouter} from '@angular/router';
 
-import {AccessDeniedComponent} from './components/access-denied/access-denied.component';
-import {NotFoundComponent} from './components/not-found/not-found.component';
-import {RelationshipsComponent} from './components/relationships/relationships.component';
-import {AddRelationshipComponent} from './components/add-relationship/add-relationship.component';
-import {AddRelationshipCompleteComponent} from './components/add-relationship-complete/add-relationship-complete.component';
-import {EnterInvitationCodeComponent} from './components/enter-invitation-code/enter-invitation-code.component';
-import {AcceptAuthorisationComponent} from './components/accept-authorisation/accept-authorisation.component';
-import {WelcomeHomeComponent} from './components/welcome-home/welcome-home.component';
+import {AccessDeniedComponent} from './pages/access-denied/access-denied.component';
+import {NotFoundComponent} from './pages/not-found/not-found.component';
+import {RelationshipsComponent} from './pages/relationships/relationships.component';
+import {AddRelationshipComponent} from './pages/add-relationship/add-relationship.component';
+import {AddRelationshipCompleteComponent} from './pages/add-relationship-complete/add-relationship-complete.component';
+import {EnterInvitationCodeComponent} from './pages/enter-invitation-code/enter-invitation-code.component';
+import {AcceptAuthorisationComponent} from './pages/accept-authorisation/accept-authorisation.component';
+import {WelcomeHomeComponent} from './pages/welcome-home/welcome-home.component';
 
 export const routes: RouterConfig = [
     {

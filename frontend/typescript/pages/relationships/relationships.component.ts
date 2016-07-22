@@ -4,9 +4,9 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {PageHeaderComponent} from '../commons/page-header/page-header.component';
+import {PageHeaderComponent} from '../../components/page-header/page-header.component';
 import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
-    from '../commons/search-result-pagination/search-result-pagination.component';
+    from '../../components/search-result-pagination/search-result-pagination.component';
 import {RAMServices} from '../../commons/ram-services';
 
 import {
