@@ -45,7 +45,7 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
         this.displayName = decodeURIComponent(params.path['displayName']);
 
         // identity in focus
-        this.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
+        this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
             this.identity = identity;
         });
 
@@ -71,14 +71,14 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
             email: this.form.value.email
         };
 
-        this.rest.notifyDelegateByInvitationCode(this.code, notifyDelegateDTO).subscribe((relationship) => {
+        this.services.rest.notifyDelegateByInvitationCode(this.code, notifyDelegateDTO).subscribe((relationship) => {
             this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'DELEGATE_NOTIFIED');
         }, (err) => {
             const status = err.status;
             if (status === 404) {
                 this.addGlobalMessage('The code you have entered does not exist or is invalid.');
             } else {
-                this.addGlobalMessages(this.rest.extractErrorMessages(err));
+                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
             }
         });
         return false;

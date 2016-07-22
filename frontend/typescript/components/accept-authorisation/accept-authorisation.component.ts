@@ -50,12 +50,12 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
         this.code = decodeURIComponent(params.path['invitationCode']);
 
         // identity in focus
-        this.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
+        this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
             this.identity = identity;
         });
 
         // relationship
-        this.relationship$ = this.rest.findPendingRelationshipByInvitationCode(this.code);
+        this.relationship$ = this.services.rest.findPendingRelationshipByInvitationCode(this.code);
         this.relationship$.subscribe((relationship) => {
             this.relationship = relationship;
             for (let attribute of relationship.attributes) {
@@ -63,7 +63,7 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
                     this.delegateManageAuthorisationAllowedIndAttribute = attribute;
                 }
             }
-            this.relationshipType$ = this.rest.findRelationshipTypeByHref(relationship.relationshipType.href);
+            this.relationshipType$ = this.services.rest.findRelationshipTypeByHref(relationship.relationshipType.href);
             this.relationshipType$.subscribe((relationshipType) => {
                 for (let attributeUsage of relationshipType.relationshipAttributeNames) {
                     if (attributeUsage.attributeNameDef.value.code === 'DELEGATE_RELATIONSHIP_TYPE_DECLARATION') {
@@ -75,25 +75,25 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
             if (err.status === 404) {
                 this.goToEnterAuthorisationPage();
             } else {
-                this.addGlobalMessages(this.rest.extractErrorMessages(err));
+                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
             }
         });
 
     }
 
     public declineAuthorisation = () => {
-        this.rest.rejectPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
+        this.services.rest.rejectPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
             this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'DECLINED_RELATIONSHIP');
         }, (err) => {
-            this.addGlobalMessages(this.rest.extractErrorMessages(err));
+            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
         });
     };
 
     public acceptAuthorisation = () => {
-        this.rest.acceptPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
+        this.services.rest.acceptPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
             this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'ACCEPTED_RELATIONSHIP');
         }, (err) => {
-            this.addGlobalMessages(this.rest.extractErrorMessages(err));
+            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
         });
     };
 

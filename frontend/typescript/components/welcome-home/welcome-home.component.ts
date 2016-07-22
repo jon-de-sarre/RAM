@@ -22,9 +22,9 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
     public onInit(params: {path: Params, query: Params}) {
 
         // logged in identity
-        this.rest.findMyIdentity().subscribe(identity => {
+        this.services.rest.findMyIdentity().subscribe(identity => {
             const idValue = identity.idValue;
-            this.routeHelper.goToRelationshipsPage(idValue);
+            this.services.route.goToRelationshipsPage(idValue);
         });
 
     }

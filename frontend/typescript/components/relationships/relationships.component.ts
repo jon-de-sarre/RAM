@@ -81,33 +81,33 @@ export class RelationshipsComponent extends AbstractPageComponent {
         }
 
         // identity in focus
-        this.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
+        this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
             this.identity = identity;
         });
 
         // party types
-        this.rest.listPartyTypes().subscribe((partyTypeRefs) => {
+        this.services.rest.listPartyTypes().subscribe((partyTypeRefs) => {
             this.partyTypeRefs = partyTypeRefs;
         });
 
         // profile providers
-        this.rest.listProfileProviders().subscribe((profileProviderRefs) => {
+        this.services.rest.listProfileProviders().subscribe((profileProviderRefs) => {
             this.profileProviderRefs = profileProviderRefs;
         });
 
         // relationship statuses
-        this.rest.listRelationshipStatuses().subscribe((relationshipStatusRefs) => {
+        this.services.rest.listRelationshipStatuses().subscribe((relationshipStatusRefs) => {
             this.relationshipStatusRefs = relationshipStatusRefs;
         });
 
         // relationship types
-        this.rest.listRelationshipTypes().subscribe((relationshipTypeRefs) => {
+        this.services.rest.listRelationshipTypes().subscribe((relationshipTypeRefs) => {
             this.relationshipTypeRefs = relationshipTypeRefs;
         });
 
         // relationships
         this.subjectGroupsWithRelationships = [];
-        this.relationships$ = this.rest.searchRelationshipsByIdentity(this.idValue, this.filter.encode(), this.page);
+        this.relationships$ = this.services.rest.searchRelationshipsByIdentity(this.idValue, this.filter.encode(), this.page);
         this.relationships$.subscribe((relationshipRefs) => {
             this._isLoading = false;
             for (const relationshipRef of relationshipRefs.list) {
@@ -126,7 +126,7 @@ export class RelationshipsComponent extends AbstractPageComponent {
                 subjectGroupWithRelationshipsToAddTo.relationshipRefs.push(relationshipRef);
             }
         }, (err) => {
-            this.addGlobalMessages(this.rest.extractErrorMessages(err));
+            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
             this._isLoading = false;
         });
 
