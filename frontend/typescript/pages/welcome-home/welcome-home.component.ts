@@ -37,6 +37,7 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
         if (this.isAuthenticated()) {
             this.services.route.goToRelationshipsPage(this.identity.idValue);
         } else {
+            this.clearGlobalMessages();
             this.addGlobalMessage('You are not currently logged in.');
         }
     }
@@ -45,6 +46,7 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
         if (this.isAuthenticated()) {
             // todo not yet implemented
         } else {
+            this.clearGlobalMessages();
             this.addGlobalMessage('You are not currently logged in.');
         }
     }
