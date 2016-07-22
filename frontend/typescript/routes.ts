@@ -1,5 +1,6 @@
 import {RouterConfig, provideRouter} from '@angular/router';
 
+import {AccessDeniedComponent} from './components/access-denied/access-denied.component';
 import {NotFoundComponent} from './components/not-found/not-found.component';
 import {RelationshipsComponent} from './components/relationships/relationships.component';
 import {AddRelationshipComponent} from './components/add-relationship/add-relationship.component';
@@ -32,6 +33,10 @@ export const routes: RouterConfig = [
     {
         path: 'relationships/add/accept/:idValue/:invitationCode',
         component: AcceptAuthorisationComponent
+    },
+    {
+        path: '401',
+        component: AccessDeniedComponent
     },
     {
         path: '404',
