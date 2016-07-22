@@ -5,8 +5,8 @@ import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {RAMServices} from '../../commons/ram-services';
 
 @Component({
-    selector: 'ram-four-o-four',
-    templateUrl: 'four-o-four.component.html',
+    selector: 'ram-not-found',
+    templateUrl: 'not-found.component.html',
     directives: [
         ROUTER_DIRECTIVES
     ]
