@@ -1,11 +1,11 @@
 import 'ng2-bootstrap';
 import {Component} from '@angular/core';
 
-import {RAMRestService} from '../../../services/ram-rest.service';
-import {RAMModelHelper} from '../../../commons/ram-model-helper';
+import {RAMRestService} from '../../services/ram-rest.service';
+import {RAMModelHelper} from '../../commons/ram-model-helper';
 import {ErrorService} from '../error/error.service';
 
-import {IIdentity} from '../../../../../commons/RamAPI2';
+import {IIdentity} from '../../../../commons/RamAPI2';
 
 @Component({
     selector: 'my-identity',

@@ -3,26 +3,26 @@ import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {PageHeaderComponent} from '../commons/page-header/page-header.component';
+import {PageHeaderComponent} from '../../components/page-header/page-header.component';
 import {RAMServices} from '../../commons/ram-services';
 
-import {AccessPeriodComponent, AccessPeriodComponentData} from '../commons/access-period/access-period.component';
-import {AuthorisationPermissionsComponent} from '../commons/authorisation-permissions/authorisation-permissions.component';
+import {AccessPeriodComponent, AccessPeriodComponentData} from '../../components/access-period/access-period.component';
+import {AuthorisationPermissionsComponent} from '../../components/authorisation-permissions/authorisation-permissions.component';
 import {
     AuthorisationTypeComponent,
     AuthorisationTypeComponentData
-} from '../commons/authorisation-type/authorisation-type.component';
+} from '../../components/authorisation-type/authorisation-type.component';
 import {
     RelationshipDeclarationComponent, DeclarationComponentData
-} from '../commons/relationship-declaration/relationship-declaration.component';
+} from '../../components/relationship-declaration/relationship-declaration.component';
 import {
     RepresentativeDetailsComponent, RepresentativeDetailsComponentData
 } from
-'../commons/representative-details/representative-details.component';
+'../../components/representative-details/representative-details.component';
 import {
     AuthorisationManagementComponent,
     AuthorisationManagementComponentData
-} from '../commons/authorisation-management/authorisation-management.component';
+} from '../../components/authorisation-management/authorisation-management.component';
 
 import {
     IAttributeDTO,

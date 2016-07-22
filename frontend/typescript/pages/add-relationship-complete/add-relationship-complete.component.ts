@@ -3,7 +3,7 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {PageHeaderComponent} from '../commons/page-header/page-header.component';
+import {PageHeaderComponent} from '../../components/page-header/page-header.component';
 import {RAMNgValidators} from '../../commons/ram-ng-validators';
 import {RAMServices} from '../../commons/ram-services';
 

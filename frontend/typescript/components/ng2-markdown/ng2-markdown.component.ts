@@ -5,7 +5,7 @@
  */
 import { Directive, ElementRef, OnInit, Attribute } from '@angular/core';
 import Showdown from 'showdown';
-import { RelationshipTypesService } from '../../../services/relationship-types.service';
+import { RelationshipTypesService } from '../../services/relationship-types.service';
 
 @Directive({
   selector: 'ng2-markdown',
