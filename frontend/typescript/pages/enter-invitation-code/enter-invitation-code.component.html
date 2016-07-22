@@ -1,27 +1,23 @@
-<div class="col-lg-12 col-md-12 col-sm-12">
+<page-header [identity]="identity"
+             tab="GET_AUTHORISATION"
+             [messages]="globalMessages"
+             [giveAuthorisationsEnabled]="giveAuthorisationsEnabled"></page-header>
 
-    <page-header [identity]="identity"
-                 tab="GET_AUTHORISATION"
-                 [messages]="globalMessages"
-                 [giveAuthorisationsEnabled]="giveAuthorisationsEnabled"></page-header>
-
-    <form class="form-horizontal" [formGroup]='form'>
-        <div class="form-group">
-            <div class="col-lg-8" [class.has-error]="!form.controls['relationshipCode'].valid">
-                <input type="text" class="form-control" placeholder="Authorisation code ..." [formControl]='form.controls["relationshipCode"]'>
-            </div>
-            <div class="col-lg-2">
-                <button class="btn btn-primary col-lg-12" (click)="activateCode($event)"
-                [disabled]='!form.valid'>Activate</button>
-            </div>
+<form class="form-horizontal" [formGroup]='form'>
+    <div class="form-group">
+        <div class="col-lg-8" [class.has-error]="!form.controls['relationshipCode'].valid">
+            <input type="text" class="form-control" placeholder="Authorisation code ..." [formControl]='form.controls["relationshipCode"]'>
         </div>
-    </form>
+        <div class="col-lg-2">
+            <button class="btn btn-primary col-lg-12" (click)="activateCode($event)"
+            [disabled]='!form.valid'>Activate</button>
+        </div>
+    </div>
+</form>
 
-    <div class="clearfix"></div>
-    <div class="padding-btn-20"></div>
-    <a class="btn btn-default col-md-3 align-center" (click)="goToRelationshipsPage()"> ← Go to relationships </a>
-    <div class="clearfix"></div>
-    <div class="padding-btn-20"></div>
-    <div class="padding-btn-20"></div>
-
-</div>
+<div class="clearfix"></div>
+<div class="padding-btn-20"></div>
+<a class="btn btn-default col-md-3 align-center" (click)="goToRelationshipsPage()"> ← Go to relationships </a>
+<div class="clearfix"></div>
+<div class="padding-btn-20"></div>
+<div class="padding-btn-20"></div>

@@ -119,6 +119,10 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
         this.services.banner.setTitle(title);
     }
 
+    protected hasGlobalMessages(): boolean {
+        return this.globalMessages && this.globalMessages.length > 0;
+    }
+
     private isEqual(params1: Params, params2: Params): boolean {
         return params1 && params2 && JSON.stringify(params1) === JSON.stringify(params2);
     }
