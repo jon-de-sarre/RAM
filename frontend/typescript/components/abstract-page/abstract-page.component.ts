@@ -2,6 +2,7 @@ import Rx from 'rxjs/Rx';
 import {OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router, Params} from '@angular/router';
 
+import {RAMServices} from '../../commons/ram-services';
 import {RAMRestService} from '../../services/ram-rest.service';
 import {RAMModelHelper} from '../../commons/ram-model-helper';
 import {RAMRouteHelper} from '../../commons/ram-route-helper';
@@ -15,12 +16,19 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
     protected pathParamSub: Rx.Subscription;
     protected queryParamSub: Rx.Subscription;
 
+    // todo to be removed ...
+    public rest: RAMRestService;
+    public modelHelper: RAMModelHelper;
+    public routeHelper: RAMRouteHelper;
+    public bannerService: BannerService;
+
     constructor(public route: ActivatedRoute,
                 public router: Router,
-                public rest: RAMRestService,
-                public modelHelper: RAMModelHelper,
-                public routeHelper: RAMRouteHelper,
-                public bannerService: BannerService) {
+                public services: RAMServices) {
+        this.rest = services.rest;
+        this.modelHelper = services.modelHelper;
+        this.routeHelper = services.routeHelper;
+        this.bannerService = services.bannerService;
     }
 
     /* tslint:disable:max-func-body-length */
