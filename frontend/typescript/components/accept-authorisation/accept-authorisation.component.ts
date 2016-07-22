@@ -39,7 +39,7 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
                 router: Router,
                 services: RAMServices) {
         super(route, router, services);
-        this.setTitle('Authorisations');
+        this.setBannerTitle('Authorisations');
     }
 
     /* tslint:disable:max-func-body-length */

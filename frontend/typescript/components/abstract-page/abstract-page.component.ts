@@ -129,7 +129,7 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
         this.globalMessages = [];
     }
 
-    protected setTitle(title: string) {
+    protected setBannerTitle(title: string) {
         this.bannerService.setTitle(title);
     }
 

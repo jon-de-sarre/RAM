@@ -54,7 +54,7 @@ export class RelationshipsComponent extends AbstractPageComponent {
                 services: RAMServices,
                 private _fb: FormBuilder) {
         super(route, router, services);
-        this.setTitle('Authorisations');
+        this.setBannerTitle('Authorisations');
     }
 
     // todo need some way to indicate ALL the loading has finished; not a priority right now

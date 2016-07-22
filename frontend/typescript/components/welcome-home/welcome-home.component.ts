@@ -16,7 +16,7 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
                 router: Router,
                 services: RAMServices) {
         super(route, router, services);
-        this.setTitle('Relationship Access Manager');
+        this.setBannerTitle('Relationship Access Manager');
     }
 
     public onInit(params: {path: Params, query: Params}) {

@@ -34,7 +34,7 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
                 services: RAMServices,
                 private _fb: FormBuilder) {
         super(route, router, services);
-        this.setTitle('Authorisations');
+        this.setBannerTitle('Authorisations');
     }
 
     public onInit(params: {path: Params, query: Params}) {

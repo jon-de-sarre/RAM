@@ -90,7 +90,7 @@ export class AddRelationshipComponent extends AbstractPageComponent {
                 router: Router,
                 services: RAMServices) {
         super(route, router, services);
-        this.setTitle('Authorisations');
+        this.setBannerTitle('Authorisations');
     }
 
     public onInit(params: {path: Params, query: Params}) {
