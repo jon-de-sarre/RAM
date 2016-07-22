@@ -26,9 +26,9 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
                 public router: Router,
                 public services: RAMServices) {
         this.rest = services.rest;
-        this.modelHelper = services.modelHelper;
-        this.routeHelper = services.routeHelper;
-        this.bannerService = services.bannerService;
+        this.modelHelper = services.model;
+        this.routeHelper = services.route;
+        this.bannerService = services.banner;
     }
 
     /* tslint:disable:max-func-body-length */

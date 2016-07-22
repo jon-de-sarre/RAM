@@ -9,9 +9,9 @@ import {BannerService} from '../components/commons/banner/banner.service';
 export class RAMServices {
 
     constructor(public rest: RAMRestService,
-                public modelHelper: RAMModelHelper,
-                public routeHelper: RAMRouteHelper,
-                public bannerService: BannerService) {
+                public model: RAMModelHelper,
+                public route: RAMRouteHelper,
+                public banner: BannerService) {
     }
 
 }
