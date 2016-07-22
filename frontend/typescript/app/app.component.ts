@@ -5,7 +5,7 @@ import {ROUTER_DIRECTIVES} from '@angular/router';
 
 import {RAMServices} from '../commons/ram-services';
 import {RAMRestService} from '../services/ram-rest.service';
-import {RAMModelHelper} from '../commons/ram-model-helper';
+import {RAMModelService} from '../services/ram-model.service';
 import {RAMRouteHelper} from '../commons/ram-route-helper';
 import {RAMNavService} from '../services/ram-nav.service';
 import {RAMConstantsService} from '../services/ram-constants.service';
@@ -23,7 +23,7 @@ import {ErrorService} from '../components/error/error.service';
         HTTP_PROVIDERS,
         RAMServices,
         RAMRestService,
-        RAMModelHelper,
+        RAMModelService,
         RAMRouteHelper,
         RAMNavService,
         RAMConstantsService,

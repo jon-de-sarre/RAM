@@ -2,7 +2,7 @@ import 'ng2-bootstrap';
 import {Component} from '@angular/core';
 
 import {RAMRestService} from '../../services/ram-rest.service';
-import {RAMModelHelper} from '../../commons/ram-model-helper';
+import {RAMModelService} from '../../services/ram-model.service';
 import {ErrorService} from '../error/error.service';
 
 import {IIdentity} from '../../../../commons/RamAPI2';
@@ -22,7 +22,7 @@ export class MyIdentityComponent {
 
     constructor(private rest: RAMRestService,
                 private errorService: ErrorService,
-                private modelHelper: RAMModelHelper) {
+                private modelService: RAMModelService) {
     }
 
     public ngOnInit() {

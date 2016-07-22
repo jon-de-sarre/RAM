@@ -1,7 +1,7 @@
 import {Injectable} from '@angular/core';
 
 import {RAMRestService} from '../services/ram-rest.service';
-import {RAMModelHelper} from './ram-model-helper';
+import {RAMModelService} from '../services/ram-model.service';
 import {RAMRouteHelper} from './ram-route-helper';
 import {BannerService} from '../components/banner/banner.service';
 
@@ -9,7 +9,7 @@ import {BannerService} from '../components/banner/banner.service';
 export class RAMServices {
 
     constructor(public rest: RAMRestService,
-                public model: RAMModelHelper,
+                public model: RAMModelService,
                 public route: RAMRouteHelper,
                 public banner: BannerService) {
     }
