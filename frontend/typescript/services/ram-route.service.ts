@@ -53,4 +53,9 @@ export class RAMRouteService {
             encodeURIComponent(code)
         ]);
     }
+
+    public goToNotificationsPage() {
+        this.router.navigate(['/notifications']);
+    }
+
 }
