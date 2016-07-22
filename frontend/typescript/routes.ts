@@ -35,7 +35,6 @@ export const routes: RouterConfig = [
     },
     {
         path: '404',
-        name: 'NotFound',
         component: NotFoundComponent
     }
 ];
