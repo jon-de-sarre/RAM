@@ -25,7 +25,13 @@ import {
 @Component({
     selector: 'list-relationships',
     templateUrl: 'relationships.component.html',
-    directives: [ROUTER_DIRECTIVES, FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, PageHeaderAuthComponent, SearchResultPaginationComponent]
+    directives: [
+        ROUTER_DIRECTIVES,
+        FORM_DIRECTIVES,
+        REACTIVE_FORM_DIRECTIVES,
+        PageHeaderAuthComponent,
+        SearchResultPaginationComponent
+    ]
 })
 
 export class RelationshipsComponent extends AbstractPageComponent {
