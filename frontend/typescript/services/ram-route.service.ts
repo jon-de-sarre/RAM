@@ -7,6 +7,10 @@ export class RAMRouteService {
     constructor(private router: Router) {
     }
 
+    public goToHomePage() {
+        this.router.navigate(['/']);
+    }
+
     public goToRelationshipsPage(idValue: string, filter?: string, page?: number, msg?: string) {
         const queryParams = {};
         if (filter) {
