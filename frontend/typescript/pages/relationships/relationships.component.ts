@@ -1,4 +1,4 @@
-import Rx from 'rxjs/Rx';
+import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
 import {FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup} from '@angular/forms';
@@ -34,7 +34,7 @@ export class RelationshipsComponent extends AbstractPageComponent {
     public filter: FilterParams;
     public page: number;
 
-    public relationships$: Rx.Observable<ISearchResult<IHrefValue<IRelationship>>>;
+    public relationships$: Observable<ISearchResult<IHrefValue<IRelationship>>>;
 
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
     public identity: IIdentity;

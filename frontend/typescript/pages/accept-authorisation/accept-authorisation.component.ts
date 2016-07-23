@@ -1,4 +1,4 @@
-import Rx from 'rxjs/Rx';
+import {Observable} from 'rxjs/Observable';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
 import {DatePipe} from '@angular/common';
@@ -26,8 +26,8 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
     public idValue: string;
     public code: string;
 
-    public relationship$: Rx.Observable<IRelationship>;
-    public relationshipType$: Rx.Observable<IRelationshipType>;
+    public relationship$: Observable<IRelationship>;
+    public relationshipType$: Observable<IRelationshipType>;
 
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
     public identity: IIdentity;

@@ -58,6 +58,10 @@ export class RAMRouteService {
         ]);
     }
 
+    public goToBusinessesPage() {
+        this.router.navigate(['/businesses']);
+    }
+
     public goToNotificationsPage() {
         this.router.navigate(['/notifications']);
     }

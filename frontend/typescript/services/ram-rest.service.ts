@@ -1,4 +1,5 @@
-import Rx from 'rxjs/Rx';
+import 'rxjs/add/operator/map';
+import {Observable} from 'rxjs/Observable';
 import {Injectable} from '@angular/core';
 import {Response, Http, Headers} from '@angular/http';
 
@@ -41,25 +42,25 @@ export class RAMRestService {
         return body || {};
     }
 
-    public findMyIdentity(): Rx.Observable<IIdentity> {
+    public findMyIdentity(): Observable<IIdentity> {
         return this.http
             .get(`/api/v1/identity/me`)
             .map(this.extractData);
     }
 
-    public findIdentityByValue(identityValue: string): Rx.Observable<IIdentity> {
+    public findIdentityByValue(identityValue: string): Observable<IIdentity> {
         return this.http
             .get(`/api/v1/identity/${identityValue}`)
             .map(this.extractData);
     }
 
-    public findIdentityByHref(href: string): Rx.Observable<IIdentity> {
+    public findIdentityByHref(href: string): Observable<IIdentity> {
         return this.http
             .get(href)
             .map(this.extractData);
     }
 
-    public listRelationshipStatuses(): Rx.Observable<IHrefValue<IRelationshipStatus>[]> {
+    public listRelationshipStatuses(): Observable<IHrefValue<IRelationshipStatus>[]> {
         return this.http
             .get('/api/v1/relationshipStatuses')
             .map(this.extractData);
@@ -67,74 +68,74 @@ export class RAMRestService {
 
     public searchRelationshipsByIdentity(idValue: string,
                                          filter: string,
-                                         page: number): Rx.Observable<ISearchResult<IHrefValue<IRelationship>>> {
+                                         page: number): Observable<ISearchResult<IHrefValue<IRelationship>>> {
         return this.http
             .get(`/api/v1/relationships/identity/${idValue}?filter=${filter}&page=${page}`)
             .map(this.extractData);
     }
 
     public searchDistinctSubjectsBySubjectOrDelegateIdentity(idValue: string,
-                                                             page: number): Rx.Observable<ISearchResult<IHrefValue<IParty>>> {
+                                                             page: number): Observable<ISearchResult<IHrefValue<IParty>>> {
         return this.http
             .get(`/api/v1/relationships/identity/${idValue}/subjects?page=${page}`)
             .map(this.extractData);
     }
 
-    public listPartyTypes(): Rx.Observable<IHrefValue<IPartyType>[]> {
+    public listPartyTypes(): Observable<IHrefValue<IPartyType>[]> {
         return this.http
             .get('/api/v1/partyTypes')
             .map(this.extractData);
     }
 
-    public listProfileProviders(): Rx.Observable<IHrefValue<IProfileProvider>[]> {
+    public listProfileProviders(): Observable<IHrefValue<IProfileProvider>[]> {
         return this.http
             .get('/api/v1/profileProviders')
             .map(this.extractData);
     }
 
-    public findRelationshipTypeByCode(code: string): Rx.Observable<IRelationshipType> {
+    public findRelationshipTypeByCode(code: string): Observable<IRelationshipType> {
         return this.http
             .get(`/api/v1/relationshipType/${code}`)
             .map(this.extractData);
     }
 
-    public listRelationshipTypes(): Rx.Observable<IHrefValue<IRelationshipType>[]> {
+    public listRelationshipTypes(): Observable<IHrefValue<IRelationshipType>[]> {
         return this.http
             .get('/api/v1/relationshipTypes')
             .map(this.extractData);
     }
 
-    public findRelationshipTypeByHref(href: string): Rx.Observable<IRelationshipType> {
+    public findRelationshipTypeByHref(href: string): Observable<IRelationshipType> {
         return this.http
             .get(href)
             .map(this.extractData);
     }
 
-    public claimRelationshipByInvitationCode(invitationCode: string): Rx.Observable<IRelationship> {
+    public claimRelationshipByInvitationCode(invitationCode: string): Observable<IRelationship> {
         return this.http
             .post(`/api/v1/relationship/invitationCode/${invitationCode}/claim`, '')
             .map(this.extractData);
     }
 
-    public findPendingRelationshipByInvitationCode(invitationCode: string): Rx.Observable<IRelationship> {
+    public findPendingRelationshipByInvitationCode(invitationCode: string): Observable<IRelationship> {
         return this.http
             .get(`/api/v1/relationship/invitationCode/${invitationCode}`)
             .map(this.extractData);
     }
 
-    public acceptPendingRelationshipByInvitationCode(relationship: IRelationship): Rx.Observable<IRelationship> {
+    public acceptPendingRelationshipByInvitationCode(relationship: IRelationship): Observable<IRelationship> {
         return this.http
             .post(this.modelService.linkByType('accept', relationship._links).href, '')
             .map(this.extractData);
     }
 
-    public rejectPendingRelationshipByInvitationCode(relationship: IRelationship): Rx.Observable<IRelationship> {
+    public rejectPendingRelationshipByInvitationCode(relationship: IRelationship): Observable<IRelationship> {
         return this.http
             .post(this.modelService.linkByType('reject', relationship._links).href, '')
             .map(this.extractData);
     }
 
-    public notifyDelegateByInvitationCode(invitationCode: string, notification: INotifyDelegateDTO): Rx.Observable<IRelationship> {
+    public notifyDelegateByInvitationCode(invitationCode: string, notification: INotifyDelegateDTO): Observable<IRelationship> {
         return this.http
             .post(`/api/v1/relationship/invitationCode/${invitationCode}/notifyDelegate`, JSON.stringify(notification), {
                 headers: this.headersForJson()
@@ -142,7 +143,7 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
-    public createRelationship(relationship: IRelationshipAddDTO): Rx.Observable<IRelationship> {
+    public createRelationship(relationship: IRelationshipAddDTO): Observable<IRelationship> {
         return this.http
             .post(`/api/v1/relationship`, JSON.stringify(relationship), {
                 headers: this.headersForJson()

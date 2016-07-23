@@ -11,6 +11,7 @@ import {AddRelationshipCompleteComponent} from './pages/add-relationship-complet
 import {EnterInvitationCodeComponent} from './pages/enter-invitation-code/enter-invitation-code.component';
 import {AcceptAuthorisationComponent} from './pages/accept-authorisation/accept-authorisation.component';
 
+import {BusinessesComponent} from './pages/businesses/businesses.component';
 import {NotificationsComponent} from './pages/notifications/notifications.component';
 
 export const routes: RouterConfig = [
@@ -37,6 +38,10 @@ export const routes: RouterConfig = [
     {
         path: 'relationships/add/accept/:idValue/:invitationCode',
         component: AcceptAuthorisationComponent
+    },
+    {
+        path: 'businesses',
+        component: BusinessesComponent
     },
     {
         path: 'notifications',

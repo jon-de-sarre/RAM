@@ -1,7 +1,7 @@
-import { Injectable } from '@angular/core';
+import {Observable} from 'rxjs/Observable';
+import {Injectable} from '@angular/core';
 import {RAMRestService} from './ram-rest.service';
 import {IIdentity, IName} from '../../../commons/RamAPI2';
-import Rx from 'rxjs/Rx';
 
 @Injectable()
 export class RAMIdentityService {
@@ -11,9 +11,9 @@ export class RAMIdentityService {
     constructor(private rest: RAMRestService) {
     }
 
-    public getDefaultName(identityValue: string): Rx.Observable<IName> {
+    public getDefaultName(identityValue: string): Observable<IName> {
         if (this._identityCache[identityValue]) {
-            return Rx.Observable.of(this._identityCache[identityValue]);
+            return Observable.of(this._identityCache[identityValue]);
         } else {
             return this.rest
                 .findIdentityByValue(identityValue)

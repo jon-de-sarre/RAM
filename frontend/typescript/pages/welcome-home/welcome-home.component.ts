@@ -44,7 +44,7 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
 
     public goToSoftwareProviderServicesPage() {
         if (this.isAuthenticated()) {
-            this.services.route.goToNotificationsPage();
+            this.services.route.goToBusinessesPage();
         } else {
             this.clearGlobalMessages();
             this.addGlobalMessage('You are not currently logged in.');

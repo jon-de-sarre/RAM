@@ -5,14 +5,14 @@ import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {RAMServices} from '../../services/ram-services';
 
 @Component({
-    selector: 'ram-osp-notifications',
-    templateUrl: 'notifications.component.html',
+    selector: 'ram-business-relationships',
+    templateUrl: 'businesses.component.html',
     directives: [
         ROUTER_DIRECTIVES
     ]
 })
 
-export class NotificationsComponent extends AbstractPageComponent {
+export class BusinessesComponent extends AbstractPageComponent {
 
     constructor(route: ActivatedRoute,
                 router: Router,
