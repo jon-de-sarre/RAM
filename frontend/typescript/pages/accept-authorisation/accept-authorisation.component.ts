@@ -4,7 +4,7 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {DatePipe} from '@angular/common';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {PageHeaderComponent} from '../../components/page-header/page-header.component';
+import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
 import {RAMServices} from '../../services/ram-services';
 
 import {
@@ -18,7 +18,7 @@ import {
 @Component({
     selector: 'accept-authorisation',
     templateUrl: 'accept-authorisation.component.html',
-    directives: [ROUTER_DIRECTIVES, PageHeaderComponent]
+    directives: [ROUTER_DIRECTIVES, PageHeaderAuthComponent]
 })
 
 export class AcceptAuthorisationComponent extends AbstractPageComponent {

@@ -3,7 +3,7 @@ import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {PageHeaderComponent} from '../../components/page-header/page-header.component';
+import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
 import {RAMServices} from '../../services/ram-services';
 
 import {AccessPeriodComponent, AccessPeriodComponentData} from '../../components/access-period/access-period.component';
@@ -45,7 +45,7 @@ import {
         RelationshipDeclarationComponent,
         RepresentativeDetailsComponent,
         AuthorisationManagementComponent,
-        PageHeaderComponent
+        PageHeaderAuthComponent
     ]
 })
 

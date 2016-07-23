@@ -3,7 +3,7 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {PageHeaderComponent} from '../../components/page-header/page-header.component';
+import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
 import {RAMNgValidators} from '../../commons/ram-ng-validators';
 import {RAMServices} from '../../services/ram-services';
 
@@ -12,7 +12,7 @@ import {IIdentity, INotifyDelegateDTO} from '../../../../commons/RamAPI2';
 @Component({
     selector: 'add-relationship-complete',
     templateUrl: 'add-relationship-complete.component.html',
-    directives: [ROUTER_DIRECTIVES, FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, PageHeaderComponent],
+    directives: [ROUTER_DIRECTIVES, FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, PageHeaderAuthComponent],
     providers: []
 })
 

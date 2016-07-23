@@ -7,11 +7,11 @@ import {IIdentity} from '../../../../commons/RamAPI2';
 
 @Component({
     selector: 'page-header',
-    templateUrl: 'page-header.component.html',
+    templateUrl: 'page-header-auth.component.html',
     directives: []
 })
 
-export class PageHeaderComponent {
+export class PageHeaderAuthComponent {
 
     @Input() public identity: IIdentity;
     @Input() public tab: string;

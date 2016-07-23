@@ -4,7 +4,7 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {PageHeaderComponent} from '../../components/page-header/page-header.component';
+import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
 import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
     from '../../components/search-result-pagination/search-result-pagination.component';
 import {RAMServices} from '../../services/ram-services';
@@ -25,7 +25,7 @@ import {
 @Component({
     selector: 'list-relationships',
     templateUrl: 'relationships.component.html',
-    directives: [ROUTER_DIRECTIVES, FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, PageHeaderComponent, SearchResultPaginationComponent]
+    directives: [ROUTER_DIRECTIVES, FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, PageHeaderAuthComponent, SearchResultPaginationComponent]
 })
 
 export class RelationshipsComponent extends AbstractPageComponent {
