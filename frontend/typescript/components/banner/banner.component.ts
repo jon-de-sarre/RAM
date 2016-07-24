@@ -2,12 +2,12 @@ import 'ng2-bootstrap';
 import {Component} from '@angular/core';
 
 import {BannerService} from './banner.service';
-import {MyIdentityComponent} from '../my-identity/my-identity.component';
+import {TopMenuComponent} from '../top-menu/top-menu.component';
 
 @Component({
     selector: 'page-banner',
     templateUrl: 'banner.component.html',
-    directives: [MyIdentityComponent]
+    directives: [TopMenuComponent]
 })
 
 export class BannerComponent {

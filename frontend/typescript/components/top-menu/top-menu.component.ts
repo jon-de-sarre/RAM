@@ -8,15 +8,11 @@ import {ErrorService} from '../error/error.service';
 import {IIdentity} from '../../../../commons/RamAPI2';
 
 @Component({
-    selector: 'my-identity',
-    templateUrl: 'my-identity.component.html'
+    selector: 'top-menu',
+    templateUrl: 'top-menu.component.html'
 })
 
-/**
- * Simple placeholder for displaying the current user.
- * Demo code only.
- */
-export class MyIdentityComponent {
+export class TopMenuComponent {
 
     public me: IIdentity;
 
