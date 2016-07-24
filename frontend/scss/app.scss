@@ -59,6 +59,12 @@ $pagination-disabled-border:           $brand-primary;
 
 /******************************************************************************************************/
 
+.content {
+  background: #fff;
+  padding-top: ($line-height-computed * 3);
+  padding-bottom: ($line-height-computed * 4);
+}
+
 a {
     cursor: pointer;
 }
@@ -213,7 +219,6 @@ footer {
         }
     }
     background: #555;
-    margin-top: ($line-height-computed * 3);
     padding-top: 50px;
     padding-bottom: 50px;
 }
@@ -304,10 +309,11 @@ color: $color;
 }
 
 #top-nav h1 {
-    color: $navbar-default-color;
-    margin: 25px auto;
-    position: absolute;
-    width: 100%;
+  color: $navbar-default-color;
+  font-size: 30px;
+  margin: 30px auto 0 auto;
+  position: absolute;
+  width: 100%;
 }
 
 #top-nav .navbar-toggle {
@@ -318,6 +324,11 @@ color: $color;
 #top-menu {
   color: $navbar-default-color;
   margin: 37px 0;
+}
+
+#top-menu li a {
+  color: #fff;
+  padding: 0;
 }
 
 .panel-heading .badge.square {

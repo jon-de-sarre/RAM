@@ -97,7 +97,7 @@
     "no-document-write": true,
     "max-func-body-length": [
       true,
-      30
+      200
     ]
   }
 }

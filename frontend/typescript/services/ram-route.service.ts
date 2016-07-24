@@ -7,6 +7,10 @@ export class RAMRouteService {
     constructor(private router: Router) {
     }
 
+    public goToHomePage() {
+        this.router.navigate(['/']);
+    }
+
     public goToRelationshipsPage(idValue: string, filter?: string, page?: number, msg?: string) {
         const queryParams = {};
         if (filter) {
@@ -53,4 +57,13 @@ export class RAMRouteService {
             encodeURIComponent(code)
         ]);
     }
+
+    public goToBusinessesPage() {
+        this.router.navigate(['/businesses']);
+    }
+
+    public goToNotificationsPage() {
+        this.router.navigate(['/notifications']);
+    }
+
 }

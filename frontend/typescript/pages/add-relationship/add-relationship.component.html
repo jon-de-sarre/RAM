@@ -1,29 +1,25 @@
-<div class="col-lg-12 col-md-12 col-sm-12">
+<page-header [identity]="identity"
+             tab="GIVE_AUTHORISATION"
+             [messages]="globalMessages"
+             [giveAuthorisationsEnabled]="giveAuthorisationsEnabled"></page-header>
 
-    <page-header [identity]="identity"
-                 tab="GIVE_AUTHORISATION"
-                 [messages]="globalMessages"
-                 [giveAuthorisationsEnabled]="giveAuthorisationsEnabled"></page-header>
+<representative-details [(data)]='newRelationship.representativeDetails' (isValid)='representativeIsValid=$event'>
+</representative-details>
 
-    <representative-details [(data)]='newRelationship.representativeDetails' (isValid)='representativeIsValid=$event'>
-    </representative-details>
+<authorisation-type [(data)]='newRelationship.authType' (isValid)='authTypeIsValid=$event'>
+</authorisation-type>
 
-    <authorisation-type [(data)]='newRelationship.authType' (isValid)='authTypeIsValid=$event'>
-    </authorisation-type>
+<access-period [(data)]='newRelationship.accessPeriod' (isValid)='accessPeriodIsValid=$event'>
+</access-period>
 
-    <access-period [(data)]='newRelationship.accessPeriod' (isValid)='accessPeriodIsValid=$event'>
-    </access-period>
+<authorisation-management [(data)]='newRelationship.authorisationManagement' [attributeNameUsage]='manageAuthAttribute'></authorisation-management>
 
-    <authorisation-management [(data)]='newRelationship.authorisationManagement' [attributeNameUsage]='manageAuthAttribute'></authorisation-management>
+<!--authorisation-permissions (validationErrors)='authorisationPermissionErrors=$event'></authorisation-permissions-->
 
-    <!--authorisation-permissions (validationErrors)='authorisationPermissionErrors=$event'></authorisation-permissions-->
+<relationship-declaration [(data)]='newRelationship.decalaration'
+             (backEvent)="back()"
+             (createRelationshipEvent)="submit()"
+             (isValid)='declarationIsValid=$event'
+             [isAuthorizedBtnEnabled]='accessPeriodIsValid && authTypeIsValid && representativeIsValid'></relationship-declaration>
 
-    <relationship-declaration [(data)]='newRelationship.decalaration'
-                 (backEvent)="back()"
-                 (createRelationshipEvent)="submit()"
-                 (isValid)='declarationIsValid=$event'
-                 [isAuthorizedBtnEnabled]='accessPeriodIsValid && authTypeIsValid && representativeIsValid'></relationship-declaration>
-
-    <!--{{dumpObject(newRelationship)}}-->
-
-</div>
+<!--{{dumpObject(newRelationship)}}-->

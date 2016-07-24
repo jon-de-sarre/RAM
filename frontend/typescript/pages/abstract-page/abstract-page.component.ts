@@ -1,4 +1,6 @@
-import Rx from 'rxjs/Rx';
+import 'rxjs/add/operator/merge';
+import {Observable} from 'rxjs/Observable';
+import {Subscription} from 'rxjs/Subscription';
 import {OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router, Params} from '@angular/router';
 
@@ -8,9 +10,9 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
 
     protected globalMessages: string[];
 
-    protected mergedParamSub: Rx.Subscription;
-    protected pathParamSub: Rx.Subscription;
-    protected queryParamSub: Rx.Subscription;
+    protected mergedParamSub: Subscription;
+    protected pathParamSub: Subscription;
+    protected queryParamSub: Subscription;
 
     constructor(public route: ActivatedRoute,
                 public router: Router,
@@ -60,7 +62,7 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
         const pathParams$ = this.route.params;
         const queryParams$ = this.router.routerState.queryParams;
 
-        this.mergedParamSub = Rx.Observable.merge(pathParams$, queryParams$)
+        this.mergedParamSub = Observable.merge(pathParams$, queryParams$)
             .subscribe((params) => {
                 if (!pathParams) {
                     this.log('-----------');
@@ -117,6 +119,10 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
 
     protected setBannerTitle(title: string) {
         this.services.banner.setTitle(title);
+    }
+
+    protected hasGlobalMessages(): boolean {
+        return this.globalMessages && this.globalMessages.length > 0;
     }
 
     private isEqual(params1: Params, params2: Params): boolean {

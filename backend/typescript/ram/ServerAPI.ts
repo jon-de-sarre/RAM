@@ -14,6 +14,7 @@ export interface IRamConf {
     jwtSecretKey: string;
     jwtExpiryInMSec: number;
     hashIdsSalt: string;
+    exportLDIFFileName: string;
 }
 
 export interface SecurityToken {

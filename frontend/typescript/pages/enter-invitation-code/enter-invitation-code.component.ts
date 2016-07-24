@@ -3,7 +3,7 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {PageHeaderComponent} from '../../components/page-header/page-header.component';
+import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
 import {RAMServices} from '../../services/ram-services';
 
 import {IIdentity} from '../../../../commons/RamAPI2';
@@ -11,7 +11,7 @@ import {IIdentity} from '../../../../commons/RamAPI2';
 @Component({
     selector: 'enter-invitation-code',
     templateUrl: 'enter-invitation-code.component.html',
-    directives: [REACTIVE_FORM_DIRECTIVES, FORM_DIRECTIVES, ROUTER_DIRECTIVES, PageHeaderComponent]
+    directives: [REACTIVE_FORM_DIRECTIVES, FORM_DIRECTIVES, ROUTER_DIRECTIVES, PageHeaderAuthComponent]
 })
 
 export class EnterInvitationCodeComponent extends AbstractPageComponent {
