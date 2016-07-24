@@ -29,4 +29,8 @@ export class TopMenuComponent {
         );
     }
 
+    public isLoggedIn() {
+        return this.me !== null && this.me !== undefined;
+    }
+
 }
