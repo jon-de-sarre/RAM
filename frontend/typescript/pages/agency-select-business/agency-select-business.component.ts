@@ -46,4 +46,12 @@ export class AgencySelectBusinessComponent extends AbstractPageComponent {
         // todo perform redirect to search (see relationships.component, businesses.component for examples)
     }
 
+    public selectBusiness(idValue: string) {
+        if (this.dashboard === 'auth') {
+            this.services.route.goToRelationshipsPage(idValue);
+        } else {
+            this.services.route.goToNotificationsPage(idValue);
+        }
+    }
+
 }

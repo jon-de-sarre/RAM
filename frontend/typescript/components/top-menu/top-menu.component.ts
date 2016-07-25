@@ -37,7 +37,7 @@ export class TopMenuComponent {
         this.services.route.goToAuthorisationsHomePage();
     }
 
-    public goToSoftwareProviderServicesPage() {
+    public goToSoftwareProviderServicesHomePage() {
         this.services.route.goToSoftwareServicesProviderHomePage();
     }
 
