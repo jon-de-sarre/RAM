@@ -23,4 +23,8 @@ export class BusinessesComponent extends AbstractPageComponent {
         this.setBannerTitle('Software Provider Services');
     }
 
+    public goToNotificationsPage(idValue: string) {
+        this.services.route.goToNotificationsPage(idValue);
+    };
+
 }

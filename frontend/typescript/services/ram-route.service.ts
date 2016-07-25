@@ -70,8 +70,12 @@ export class RAMRouteService {
         this.router.navigate(['/businesses']);
     }
 
-    public goToNotificationsPage() {
-        this.router.navigate(['/notifications']);
+    public goToNotificationsPage(idValue: string) {
+        this.router.navigate(['/notifications/', encodeURIComponent(idValue)]);
+    }
+
+    public goToAddNotificationPage(idValue: string) {
+        this.router.navigate(['/notifications/add/', encodeURIComponent(idValue)]);
     }
 
     public goToAgencySelectBusinessForAuthorisationsPage() {

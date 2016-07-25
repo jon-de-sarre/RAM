@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "RAM",
-		"_postman_id": "2d155066-70df-4179-3b52-972c43db7039",
+		"_postman_id": "b243f550-af32-4024-6da7-c8558a13548c",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -694,7 +694,7 @@
 				{
 					"name": "List distinct subjects",
 					"request": {
-						"url": "{{host}}/api/v1/relationships/identity/PUBLIC_IDENTIFIER:ABN:jenscatering_identity_1/subjects?page=1",
+						"url": "{{host}}/api/v1/relationships/identity/subjects?page=1",
 						"method": "GET",
 						"header": [
 							{
