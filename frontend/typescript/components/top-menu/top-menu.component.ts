@@ -29,4 +29,16 @@ export class TopMenuComponent {
         return this.me !== null && this.me !== undefined;
     }
 
+    public goToHomePage() {
+        this.services.route.goToHomePage();
+    }
+
+    public goToAuthorisationsHomePage() {
+        this.services.route.goToAuthorisationsHomePage();
+    }
+
+    public goToSoftwareProviderServicesPage() {
+        this.services.route.goToSoftwareServicesProviderHomePage();
+    }
+
 }
