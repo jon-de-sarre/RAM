@@ -14,9 +14,11 @@
         </div>
         <div class="col-md-4">
             <h4>Date of birth</h4>
-            <input class="form-control" type="date" name="dob"
-            [formControl]="form.controls['dob']"
-            placeholder="Date of birth ...">
+            <p-calendar
+                    placeholder="Date of birth ..."
+                    inputStyleClass="form-control"
+                    [formControl]="form.controls['dob']"
+                    dateFormat="yy-mm-dd"></p-calendar>
         </div>
     </div>
 </form>

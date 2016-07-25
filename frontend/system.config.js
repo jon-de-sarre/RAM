@@ -17,10 +17,14 @@ System.config({
     "@angular/platform-browser-dynamic": "npm:@angular/platform-browser-dynamic@2.0.0-rc.4",
     "@angular/router": "npm:@angular/router@3.0.0-beta.2",
     "crypto": "github:jspm/nodelibs-crypto@0.1.0",
+    "css": "github:systemjs/plugin-css@0.1.23",
     "es6-shim": "npm:es6-shim@0.35.1",
+    "jquery": "npm:jquery@2.2.4",
     "lodash": "npm:lodash@4.13.1",
     "ng2-bootstrap": "npm:ng2-bootstrap@1.0.17",
     "ng2-markdown-component": "github:evanplaice/ng2-markdown@0.2.3",
+    "primeng": "npm:primeng@1.0.0-beta.9",
+    "primeui": "npm:primeui@4.1.12",
     "reflect-metadata": "npm:reflect-metadata@0.1.3",
     "rxjs": "npm:rxjs@5.0.0-beta.6",
     "showdown": "github:showdownjs/showdown@1.4.2",
@@ -299,6 +303,12 @@ System.config({
       "path": "github:jspm/nodelibs-path@0.1.0",
       "process": "github:jspm/nodelibs-process@0.1.2",
       "systemjs-json": "github:systemjs/plugin-json@0.1.2"
+    },
+    "npm:primeng@1.0.0-beta.9": {
+      "primeui": "npm:primeui@4.1.12"
+    },
+    "npm:primeui@4.1.12": {
+      "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:process@0.11.5": {
       "assert": "github:jspm/nodelibs-assert@0.1.0",

@@ -353,3 +353,14 @@ color: $color;
 .table > tbody > tr.relationship-subject-heading > td > div > h4 {
   font-weight: bold;
 }
+
+.ui-calendar {
+  display: inherit !important;
+}
+
+.hasDatepicker {
+  padding: $padding-base-vertical $padding-base-horizontal !important;
+  border-radius: 0 !important;
+  -moz-border-radius: 0 !important;
+  -webkit-border-radius: 0 !important;
+}
