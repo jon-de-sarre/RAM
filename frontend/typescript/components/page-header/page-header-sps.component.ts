@@ -31,15 +31,24 @@ export class PageHeaderSPSComponent {
     }
 
     public goToNotificationsPage() {
-        this.services.route.goToBusinessesPage();
+        if (this.isIdentityValid()) {
+            this.services.route.goToNotificationsPage(this.identity.idValue);
+        }
     };
 
     public goToAddNotificationPage() {
-        // todo not yet implemented
+        if (this.isAddNotificationPageEnabled()) {
+            this.services.route.goToAddNotificationPage(this.identity.idValue);
+        }
     };
 
+    // todo do we need to check access permissions?
     public isAddNotificationPageEnabled() {
-        return false;
+        return this.isIdentityValid();
+    }
+
+    private isIdentityValid() {
+        return this.identity !== null && this.identity !== undefined;
     }
 
 }

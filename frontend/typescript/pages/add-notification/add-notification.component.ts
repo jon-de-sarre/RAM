@@ -10,15 +10,15 @@ import {
 } from '../../../../commons/RamAPI2';
 
 @Component({
-    selector: 'ram-osp-notifications',
-    templateUrl: 'notifications.component.html',
+    selector: 'ram-osp-notification-add',
+    templateUrl: 'add-notification.component.html',
     directives: [
         ROUTER_DIRECTIVES,
         PageHeaderSPSComponent
     ]
 })
 
-export class NotificationsComponent extends AbstractPageComponent {
+export class AddNotificationComponent extends AbstractPageComponent {
 
     public idValue: string;
 
