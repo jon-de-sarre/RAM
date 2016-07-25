@@ -13,10 +13,24 @@ import {AcceptAuthorisationComponent} from './pages/accept-authorisation/accept-
 
 import {BusinessesComponent} from './pages/businesses/businesses.component';
 import {NotificationsComponent} from './pages/notifications/notifications.component';
+import {AgencySelectBusinessComponent} from './pages/agency-select-business/agency-select-business.component';
 
 export const routes: RouterConfig = [
     {
         path: '',
+        pathMatch: 'full',
+        redirectTo: 'home'
+    },
+    {
+        path: 'home',
+        component: WelcomeHomeComponent,
+    },
+    {
+        path: 'home/:dashboard',
+        component: WelcomeHomeComponent,
+    },
+    {
+        path: 'home/:dashboard',
         component: WelcomeHomeComponent,
     },
     {
@@ -46,6 +60,10 @@ export const routes: RouterConfig = [
     {
         path: 'notifications',
         component: NotificationsComponent
+    },
+    {
+        path: 'agencySelectBusiness/:dashboard',
+        component: AgencySelectBusinessComponent
     },
     {
         path: '401',

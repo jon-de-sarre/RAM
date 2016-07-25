@@ -25,17 +25,30 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
 
     public onInit(params: {path: Params, query: Params}) {
 
+        const dashboard = params.path['dashboard'];
+
         // logged in identity
-        // todo handle agency (ie consider using principal)
         this.services.rest.findMyIdentity().subscribe(identity => {
+
             this.identity = identity;
+
+            if (dashboard === 'auth') {
+                this.goToAuthorisationsPage();
+            } else if (dashboard === 'sps') {
+                this.goToSoftwareProviderServicesPage();
+            }
+
         });
 
     }
 
     public goToAuthorisationsPage() {
         if (this.isAuthenticated()) {
-            this.services.route.goToRelationshipsPage(this.identity.idValue);
+            if (this.isAgencyUser()) {
+                this.services.route.goToAgencySelectBusinessForAuthorisationsPage();
+            } else {
+                this.services.route.goToRelationshipsPage(this.identity.idValue);
+            }
         } else {
             this.clearGlobalMessages();
             this.addGlobalMessage('You are not currently logged in.');
@@ -44,7 +57,11 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
 
     public goToSoftwareProviderServicesPage() {
         if (this.isAuthenticated()) {
-            this.services.route.goToBusinessesPage();
+            if (this.isAgencyUser()) {
+                this.services.route.goToAgencySelectBusinessForSoftwareProviderServicesPage();
+            } else {
+                this.services.route.goToBusinessesPage();
+            }
         } else {
             this.clearGlobalMessages();
             this.addGlobalMessage('You are not currently logged in.');
@@ -53,6 +70,12 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
 
     private isAuthenticated() {
         return this.identity !== null;
+    }
+
+    // todo handle agency (ie consider using Principal)
+    // todo determine if agency user or not
+    private isAgencyUser() {
+        return false;
     }
 
 }
