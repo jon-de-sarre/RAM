@@ -32,18 +32,10 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
 
             this.identity = identity;
 
-            if (this.isAgencyUser()) {
-                if (dashboard === 'auth') {
-                    // todo not yet implemented
-                } else if (dashboard === 'sps') {
-                    // todo not yet implemented
-                }
-            } else {
-                if (dashboard === 'auth') {
-                    this.goToAuthorisationsPage();
-                } else if (dashboard === 'sps') {
-                    this.goToSoftwareProviderServicesPage();
-                }
+            if (dashboard === 'auth') {
+                this.goToAuthorisationsPage();
+            } else if (dashboard === 'sps') {
+                this.goToSoftwareProviderServicesPage();
             }
 
         });
@@ -52,7 +44,11 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
 
     public goToAuthorisationsPage() {
         if (this.isAuthenticated()) {
-            this.services.route.goToRelationshipsPage(this.identity.idValue);
+            if (this.isAgencyUser()) {
+                this.services.route.goToAgencySelectBusinessForAuthorisationsPage();
+            } else {
+                this.services.route.goToRelationshipsPage(this.identity.idValue);
+            }
         } else {
             this.clearGlobalMessages();
             this.addGlobalMessage('You are not currently logged in.');
@@ -61,7 +57,11 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
 
     public goToSoftwareProviderServicesPage() {
         if (this.isAuthenticated()) {
-            this.services.route.goToBusinessesPage();
+            if (this.isAgencyUser()) {
+                this.services.route.goToAgencySelectBusinessForSoftwareProviderServicesPage();
+            } else {
+                this.services.route.goToBusinessesPage();
+            }
         } else {
             this.clearGlobalMessages();
             this.addGlobalMessage('You are not currently logged in.');
