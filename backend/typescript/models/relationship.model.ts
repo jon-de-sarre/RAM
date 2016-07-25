@@ -260,7 +260,7 @@ export interface IRelationshipModel extends mongoose.Model<IRelationship> {
                       text: string,
                       sort: string,
                       page: number, pageSize: number) => Promise<SearchResult<IRelationship>>;
-    searchDistinctSubjectsBySubjectOrDelegateIdentity:(identityIdValue: string, page: number, pageSize: number)
+    searchDistinctSubjectsForMe:(requestingParty: IParty, page: number, pageSize: number)
         => Promise<SearchResult<IParty>>;
 }
 
@@ -724,34 +724,25 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
 /**
  * Returns a paginated list of distinct subjects for relationships which have a subject or delegate matching the one supplied.
  *
- * todo need to optional filters (term, party type, relationship type, status)
+ * todo need to optional filters (term, relationship type, status)
  * todo need to add sorting
  * todo this search might no longer be useful after SS2 spike
  */
 /* tslint:disable:max-func-body-length */
-RelationshipSchema.static('searchDistinctSubjectsBySubjectOrDelegateIdentity',
-    (identityIdValue: string, page: number, reqPageSize: number) => {
+RelationshipSchema.static('searchDistinctSubjectsForMe',
+    (requestingParty: IParty, page: number, reqPageSize: number) => {
         return new Promise<SearchResult<IParty>>(async (resolve, reject) => {
             const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
             try {
-                const party = await PartyModel.findByIdentityIdValue(identityIdValue);
                 const listForCount = await this.RelationshipModel
-                    .distinct('subject', {
-                        '$or': [
-                            {subject: party},
-                            {delegate: party}
-                        ]
-                    })
+                    .distinct('delegate', requestingParty)
                     .exec();
                 const count = listForCount.length;
                 const listOfIds = await this.RelationshipModel
                     .aggregate([
                         {
                             '$match': {
-                                '$or': [
-                                    {'subject': new mongoose.Types.ObjectId(party.id)},
-                                    {'delegate': new mongoose.Types.ObjectId(party.id)}
-                                ]
+                                'delegate': new mongoose.Types.ObjectId(requestingParty.id)
                             }
                         },
                         {'$group': {'_id': '$subject'}},
