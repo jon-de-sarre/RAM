@@ -5,6 +5,12 @@ export interface ISearchResult<T> {
     list: T[];
 }
 
+export interface IPrincipal {
+    id: string;
+    displayName: string;
+    isAgencyUser: boolean;
+}
+
 export interface ICodeDecode {
     code: string;
     shortDecodeText: string;
