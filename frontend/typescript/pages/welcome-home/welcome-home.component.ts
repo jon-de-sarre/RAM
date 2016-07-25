@@ -33,12 +33,17 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
             this.identity = identity;
 
             if (this.isAgencyUser()) {
-                // todo not yet implemented
-            }
-            if (dashboard === 'auth') {
-                this.goToAuthorisationsPage();
-            } else if (dashboard === 'sps') {
-                this.goToSoftwareProviderServicesPage();
+                if (dashboard === 'auth') {
+                    // todo not yet implemented
+                } else if (dashboard === 'sps') {
+                    // todo not yet implemented
+                }
+            } else {
+                if (dashboard === 'auth') {
+                    this.goToAuthorisationsPage();
+                } else if (dashboard === 'sps') {
+                    this.goToSoftwareProviderServicesPage();
+                }
             }
 
         });
