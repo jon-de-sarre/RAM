@@ -62,7 +62,7 @@ export const routes: RouterConfig = [
         component: NotificationsComponent
     },
     {
-        path: 'agencySelectBusiness/:dashboard',
+        path: 'agency/selectBusiness/:dashboard',
         component: AgencySelectBusinessComponent
     },
     {

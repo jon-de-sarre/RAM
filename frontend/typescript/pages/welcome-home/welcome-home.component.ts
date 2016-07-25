@@ -75,7 +75,7 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
     // todo handle agency (ie consider using Principal)
     // todo determine if agency user or not
     private isAgencyUser() {
-        return false;
+        return true;
     }
 
 }
