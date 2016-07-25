@@ -8,7 +8,15 @@ export class RAMRouteService {
     }
 
     public goToHomePage() {
-        this.router.navigate(['/']);
+        this.router.navigate(['/home']);
+    }
+
+    public goToAuthorisationsHomePage() {
+        this.router.navigate(['/home/auth']);
+    }
+
+    public goToSoftwareServicesProviderHomePage() {
+        this.router.navigate(['/home/sps']);
     }
 
     public goToRelationshipsPage(idValue: string, filter?: string, page?: number, msg?: string) {
@@ -64,6 +72,14 @@ export class RAMRouteService {
 
     public goToNotificationsPage() {
         this.router.navigate(['/notifications']);
+    }
+
+    public goToAgencySelectBusinessForAuthorisationsPage() {
+        this.router.navigate(['/agency/selectBusiness/auth']);
+    }
+
+    public goToAgencySelectBusinessForSoftwareProviderServicesPage() {
+        this.router.navigate(['/agency/selectBusiness/sps']);
     }
 
 }

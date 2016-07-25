@@ -13,6 +13,7 @@ import {AcceptAuthorisationComponent} from './pages/accept-authorisation/accept-
 
 import {BusinessesComponent} from './pages/businesses/businesses.component';
 import {NotificationsComponent} from './pages/notifications/notifications.component';
+import {AgencySelectBusinessComponent} from './pages/agency-select-business/agency-select-business.component';
 
 export const routes: RouterConfig = [
     {
@@ -59,6 +60,10 @@ export const routes: RouterConfig = [
     {
         path: 'notifications',
         component: NotificationsComponent
+    },
+    {
+        path: 'agency/selectBusiness/:dashboard',
+        component: AgencySelectBusinessComponent
     },
     {
         path: '401',

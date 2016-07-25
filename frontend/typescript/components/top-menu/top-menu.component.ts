@@ -1,9 +1,7 @@
 import 'ng2-bootstrap';
 import {Component} from '@angular/core';
 
-import {RAMRestService} from '../../services/ram-rest.service';
-import {RAMModelService} from '../../services/ram-model.service';
-import {ErrorService} from '../error/error.service';
+import {RAMServices} from '../../services/ram-services';
 
 import {IIdentity} from '../../../../commons/RamAPI2';
 
@@ -16,13 +14,11 @@ export class TopMenuComponent {
 
     public me: IIdentity;
 
-    constructor(private rest: RAMRestService,
-                private errorService: ErrorService,
-                private modelService: RAMModelService) {
+    constructor(private services: RAMServices) {
     }
 
     public ngOnInit() {
-        this.rest.findMyIdentity().subscribe(
+        this.services.rest.findMyIdentity().subscribe(
             identity => {
                 this.me = identity;
             }
@@ -31,6 +27,18 @@ export class TopMenuComponent {
 
     public isLoggedIn() {
         return this.me !== null && this.me !== undefined;
+    }
+
+    public goToHomePage() {
+        this.services.route.goToHomePage();
+    }
+
+    public goToAuthorisationsHomePage() {
+        this.services.route.goToAuthorisationsHomePage();
+    }
+
+    public goToSoftwareProviderServicesPage() {
+        this.services.route.goToSoftwareServicesProviderHomePage();
     }
 
 }
