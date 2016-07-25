@@ -1,11 +1,12 @@
 import {OnInit, Input, Output, EventEmitter, Component} from '@angular/core';
 import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES } from '@angular/forms';
 import {RAMNgValidators} from '../../../commons/ram-ng-validators';
+import {Calendar} from 'primeng/primeng';
 
 @Component({
     selector: 'individual-representative-details',
     templateUrl: 'individual-representative-details.component.html',
-    directives: [FORM_DIRECTIVES,REACTIVE_FORM_DIRECTIVES]
+    directives: [FORM_DIRECTIVES,REACTIVE_FORM_DIRECTIVES,Calendar]
 })
 export class IndividualRepresentativeDetailsComponent implements OnInit {
 

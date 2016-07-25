@@ -2,11 +2,12 @@ import {OnInit, Input, Output, EventEmitter, Component} from '@angular/core';
 import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FormControl, FORM_DIRECTIVES } from '@angular/forms';
 import {Utils} from '../../../../commons/ram-utils';
 import {RAMNgValidators} from '../../commons/ram-ng-validators';
+import {Calendar} from 'primeng/primeng';
 
 @Component({
     selector: 'access-period',
     templateUrl: 'access-period.component.html',
-    directives: [REACTIVE_FORM_DIRECTIVES,FORM_DIRECTIVES]
+    directives: [REACTIVE_FORM_DIRECTIVES,FORM_DIRECTIVES,Calendar]
 })
 export class AccessPeriodComponent implements OnInit {
 

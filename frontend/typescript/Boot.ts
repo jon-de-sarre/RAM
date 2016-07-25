@@ -5,6 +5,8 @@ import 'zone';
 import 'reflect-metadata';
 import 'rxjs/Rx';
 import 'ng2-bootstrap';
+import 'primeui/primeui-ng-all';
+import 'jquery/dist/jquery';
 
 import {bootstrap} from '@angular/platform-browser-dynamic';
 import {AppComponent} from './app/app.component';

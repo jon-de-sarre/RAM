@@ -75,11 +75,11 @@ export class RAMRouteService {
     }
 
     public goToAgencySelectBusinessForAuthorisationsPage() {
-        this.router.navigate(['/agencySelectBusiness/auth']);
+        this.router.navigate(['/agency/selectBusiness/auth']);
     }
 
     public goToAgencySelectBusinessForSoftwareProviderServicesPage() {
-        this.router.navigate(['/agencySelectBusiness/sps']);
+        this.router.navigate(['/agency/selectBusiness/sps']);
     }
 
 }
