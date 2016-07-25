@@ -25,10 +25,22 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
 
     public onInit(params: {path: Params, query: Params}) {
 
+        const dashboard = params.path['dashboard'];
+
         // logged in identity
-        // todo handle agency (ie consider using principal)
         this.services.rest.findMyIdentity().subscribe(identity => {
+
             this.identity = identity;
+
+            if (this.isAgencyUser()) {
+                // todo not yet implemented
+            }
+            if (dashboard === 'auth') {
+                this.goToAuthorisationsPage();
+            } else if (dashboard === 'sps') {
+                this.goToSoftwareProviderServicesPage();
+            }
+
         });
 
     }
@@ -53,6 +65,12 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
 
     private isAuthenticated() {
         return this.identity !== null;
+    }
+
+    // todo handle agency (ie consider using Principal)
+    // todo determine if agency user or not
+    private isAgencyUser() {
+        return false;
     }
 
 }

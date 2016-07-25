@@ -17,6 +17,19 @@ import {NotificationsComponent} from './pages/notifications/notifications.compon
 export const routes: RouterConfig = [
     {
         path: '',
+        pathMatch: 'full',
+        redirectTo: 'home'
+    },
+    {
+        path: 'home',
+        component: WelcomeHomeComponent,
+    },
+    {
+        path: 'home/:dashboard',
+        component: WelcomeHomeComponent,
+    },
+    {
+        path: 'home/:dashboard',
         component: WelcomeHomeComponent,
     },
     {
