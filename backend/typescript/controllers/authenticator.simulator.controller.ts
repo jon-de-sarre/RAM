@@ -3,7 +3,7 @@ import {Headers} from './headers';
 
 export class AuthenticatorSimulatorController {
 
-    private authenticate = async (req:Request, res:Response) => {
+    private authenticate = async(req: Request, res: Response) => {
         const authToken = req.body.credentials;
         if (authToken) {
             const authTokenEncoded = new Buffer(authToken).toString('base64');
@@ -21,12 +21,12 @@ export class AuthenticatorSimulatorController {
         }
     };
 
-    private showLocals = async (req:Request, res:Response) => {
+    private showLocals = async(req: Request, res: Response) => {
         res.status(200);
         res.send(res.locals);
     };
 
-    public assignRoutes = (router:Router) => {
+    public assignRoutes = (router: Router) => {
         router.post('/v1/simulators/authenticator/authenticate', this.authenticate);
         router.get('/v1/simulators/authenticator/locals', this.showLocals);
         return router;
