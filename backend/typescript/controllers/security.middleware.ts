@@ -16,17 +16,17 @@ class Security {
         return (req: Request, res: Response, next: () => void) => {
             //this.logHeaders(req);
             const agencyUserLoginIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserLoginId);
-            const authToken = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AuthToken);
-            logger.info('Identity Id Value:', authToken);
+            const identityIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.IdentityIdValue);
+            logger.info('Identity Id Value:', identityIdValue);
             logger.info('Agency User Login Id Value:', agencyUserLoginIdValue);
             if (agencyUserLoginIdValue) {
                 Promise.resolve(null)
                     .then(this.prepareAgencyUserResponseLocals(req, res, next))
                     .then(this.prepareCommonResponseLocals(req, res, next))
                     .catch(this.reject(res, next));
-            } else if (authToken) {
+            } else if (identityIdValue) {
                 // identity id supplied, try to lookup and if not found create a new identity before carrying on
-                IdentityModel.findByIdValue(authToken)
+                IdentityModel.findByIdValue(identityIdValue)
                     .then(this.createIdentityIfNotFound(req, res))
                     .then(this.prepareIdentityResponseLocals(req, res, next))
                     .then(this.prepareCommonResponseLocals(req, res, next))
