@@ -1,13 +1,16 @@
-<ul class="nav navbar-nav navbar-right user-details" *ngIf="isLoggedIn()">
-    <li class="dropdown">
+<ul class="nav navbar-nav navbar-right user-details" *ngIf="isLoggedIn()" dropdown>
+    <li id="identity-menu" class="dropdown dropdown-toggle" dropdownToggle>
         <a href="#"
            class="dropdown-toggle"
            data-toggle="dropdown"
            role="button"
            aria-haspopup="true"
            aria-expanded="false">{{me.displayName}} <span class="caret"></span></a>
-        <!--<ul class="dropdown-menu">-->
-            <!--<li><a href="/">Home</a></li>-->
-        <!--</ul>-->
     </li>
+    <ul id="top-drop-down" class="dropdown-menu" dropdownMenu role="menu" aria-labelledby="identity-menu">
+        <li role="menuitem"><a class="dropdown-item" (click)="goToHomePage()">Home</a></li>
+        <li role="menuitem"><a class="dropdown-item" (click)="goToAuthorisationsHomePage()">Authorisations</a></li>
+        <li role="menuitem"><a class="dropdown-item" (click)="goToSoftwareProviderServicesHomePage()">Software Provider Services</a></li>
+    </ul>
+
 </ul>
