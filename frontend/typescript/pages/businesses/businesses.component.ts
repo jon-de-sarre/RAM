@@ -101,4 +101,8 @@ export class BusinessesComponent extends AbstractPageComponent {
     public goToNotificationsPage(idValue: string) {
         this.services.route.goToNotificationsPage(idValue);
     };
+
+    public goToHomePage() {
+        this.services.route.goToHomePage();
+    };
 }
