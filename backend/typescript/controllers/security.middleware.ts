@@ -118,6 +118,7 @@ class Security {
                     displayName: agencyUserDisplayName,
                     agencyUserInd: true
                 } as IPrincipal;
+                res.locals[Headers.PrincipalIdValue] = idValue;
                 res.locals[Headers.AgencyUser] = {
                     id: idValue,
                     givenName: agencyUserGivenName,
@@ -125,7 +126,6 @@ class Security {
                     displayName: agencyUserDisplayName,
                     programRoles: programRoles
                 } as IAgencyUser;
-                res.locals[Headers.PrincipalIdValue] = idValue;
             }
         };
     }
