@@ -8,6 +8,7 @@ import {RAMModelService} from './ram-model.service';
 import {
     ISearchResult,
     IHrefValue,
+    IPrincipal,
     IIdentity,
     IParty,
     IPartyType,
@@ -40,6 +41,12 @@ export class RAMRestService {
         }
         const body = res.json();
         return body || {};
+    }
+
+    public findMyPrincipal(): Observable<IPrincipal> {
+        return this.http
+            .get(`/api/v1/me`)
+            .map(this.extractData);
     }
 
     public findMyIdentity(): Observable<IIdentity> {
