@@ -15,11 +15,13 @@ class ForgeRockSimulator {
             if (credentialsFromAuthenticationSimulator) {
                 // log in from development only login form
                 IdentityModel.findByIdValue(credentialsFromAuthenticationSimulator)
-                    .then(self.resolve(req, res, next), self.reject(res, next));
+                    .then(self.resolve(req, res, next))
+                    .catch(self.reject(res, next));
             } else if (idValueFromCookie) {
                 // log in from cookie
                 IdentityModel.findByIdValue(idValueFromCookie)
-                    .then(self.resolve(req, res, next), self.reject(res, next));
+                    .then(self.resolve(req, res, next))
+                    .catch(self.reject(res, next));
             } else {
                 next();
             }
