@@ -66,6 +66,13 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
+    public searchDistinctSubjectsForMe(filter: string,
+                                       page: number): Observable<ISearchResult<IHrefValue<IParty>>> {
+        return this.http
+            .get(`/api/v1/relationships/identity/subjects?filter=${filter}&page=${page}`)
+            .map(this.extractData);
+    }
+
     public searchRelationshipsByIdentity(idValue: string,
                                          filter: string,
                                          page: number): Observable<ISearchResult<IHrefValue<IRelationship>>> {
