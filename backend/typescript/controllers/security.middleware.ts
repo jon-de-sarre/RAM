@@ -97,11 +97,11 @@ class Security {
         return (idValue: string) => {
             logger.info('Agency User context:', (idValue ? colors.magenta(idValue) : colors.red('[not found]')));
             if (idValue) {
-                const agencyUserGivenName = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.GivenName);
-                const agencyUserFamilyName = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.FamilyName);
-                const agencyUserDisplayName = agencyUserGivenName ?
-                    agencyUserGivenName + (agencyUserFamilyName ? ' ' + agencyUserFamilyName : '') :
-                    (agencyUserFamilyName ? agencyUserFamilyName : '');
+                const givenName = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.GivenName);
+                const familyName = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.FamilyName);
+                const displayName = givenName ?
+                    givenName + (familyName ? ' ' + familyName : '') :
+                    (familyName ? familyName : '');
                 const programRoles: IAgencyUserProgramRole[] = [];
                 const programRolesRaw = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserProgramRoles);
                 if (programRolesRaw) {
@@ -115,15 +115,15 @@ class Security {
                 }
                 res.locals[Headers.Principal] = {
                     id: idValue,
-                    displayName: agencyUserDisplayName,
+                    displayName: displayName,
                     agencyUserInd: true
                 } as IPrincipal;
                 res.locals[Headers.PrincipalIdValue] = idValue;
                 res.locals[Headers.AgencyUser] = {
                     id: idValue,
-                    givenName: agencyUserGivenName,
-                    familyName: agencyUserFamilyName,
-                    displayName: agencyUserDisplayName,
+                    givenName: givenName,
+                    familyName: familyName,
+                    displayName: displayName,
                     programRoles: programRoles
                 } as IAgencyUser;
             }
