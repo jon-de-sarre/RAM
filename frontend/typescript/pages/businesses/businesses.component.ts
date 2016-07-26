@@ -4,7 +4,7 @@ import {ROUTER_DIRECTIVES, Router, ActivatedRoute} from '@angular/router';
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
 import {RAMServices} from '../../services/ram-services';
-import {Observable} from '../../../jspm_packages/npm/rxjs@5.0.0-beta.6/Observable';
+import {Observable} from "rxjs/Observable";
 
 import {
     ISearchResult,
