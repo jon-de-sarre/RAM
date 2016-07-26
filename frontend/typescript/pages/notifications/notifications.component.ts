@@ -42,4 +42,7 @@ export class NotificationsComponent extends AbstractPageComponent {
 
     }
 
+    public goToBusinessesPage() {
+        this.services.route.goToBusinessesPage(1);
+    }
 }
