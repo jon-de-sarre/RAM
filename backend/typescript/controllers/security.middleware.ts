@@ -15,18 +15,20 @@ class Security {
     public prepareRequest(): (req: Request, res: Response, next: () => void) => void {
         return (req: Request, res: Response, next: () => void) => {
             //this.logHeaders(req);
-            const identityIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AuthToken);
             const agencyUserLoginIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserLoginId);
-            if (identityIdValue) {
-                // identity id supplied, try to lookup and if not found create a new identity before carrying on
-                IdentityModel.findByIdValue(identityIdValue)
-                    .then(this.createIdentityIfNotFound(req, res))
-                    .then(this.prepareIdentityResponseLocals(req, res, next))
-                    .then(this.prepareCommonResponseLocals(req, res, next))
-                    .catch(this.reject(res, next));
-            } else if (agencyUserLoginIdValue) {
+            const authToken = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AuthToken);
+            logger.info('Identity Id Value:', authToken);
+            logger.info('Agency User Login Id Value:', agencyUserLoginIdValue);
+            if (agencyUserLoginIdValue) {
                 Promise.resolve(null)
                     .then(this.prepareAgencyUserResponseLocals(req, res, next))
+                    .then(this.prepareCommonResponseLocals(req, res, next))
+                    .catch(this.reject(res, next));
+            } else if (authToken) {
+                // identity id supplied, try to lookup and if not found create a new identity before carrying on
+                IdentityModel.findByIdValue(authToken)
+                    .then(this.createIdentityIfNotFound(req, res))
+                    .then(this.prepareIdentityResponseLocals(req, res, next))
                     .then(this.prepareCommonResponseLocals(req, res, next))
                     .catch(this.reject(res, next));
             } else {
@@ -92,29 +94,6 @@ class Security {
         };
     }
 
-    private prepareIdentityResponseLocals(req: Request, res: Response, next: () => void) {
-        return (identity?: IIdentity) => {
-            logger.info('Identity context:', (identity ? colors.magenta(identity.idValue) : colors.red('[not found]')));
-            if (identity) {
-                res.locals[Headers.Principal] = {
-                    id: identity.idValue,
-                    displayName: identity.profile.name._displayName,
-                    agencyUserInd: false
-                } as IPrincipal;
-                res.locals[Headers.PrincipalIdValue] = identity.idValue;
-                res.locals[Headers.Identity] = identity;
-                res.locals[Headers.IdentityIdValue] = identity.idValue;
-                res.locals[Headers.IdentityRawIdValue] = identity.rawIdValue;
-                res.locals[Headers.GivenName] = identity.profile.name.givenName;
-                res.locals[Headers.FamilyName] = identity.profile.name.familyName;
-                res.locals[Headers.UnstructuredName] = identity.profile.name.unstructuredName;
-                for (let sharedSecret of identity.profile.sharedSecrets) {
-                    res.locals[`${Headers.Prefix}-${sharedSecret.sharedSecretType.code}`.toLowerCase()] = sharedSecret.value;
-                }
-            }
-        };
-    }
-
     private prepareAgencyUserResponseLocals(req: Request, res: Response, next: () => void) {
         return () => {
             const idValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserLoginId);
@@ -149,6 +128,29 @@ class Security {
                     programRoles: programRoles
                 } as IAgencyUser;
                 res.locals[Headers.PrincipalIdValue] = idValue;
+            }
+        };
+    }
+
+    private prepareIdentityResponseLocals(req: Request, res: Response, next: () => void) {
+        return (identity?: IIdentity) => {
+            logger.info('Identity context:', (identity ? colors.magenta(identity.idValue) : colors.red('[not found]')));
+            if (identity) {
+                res.locals[Headers.Principal] = {
+                    id: identity.idValue,
+                    displayName: identity.profile.name._displayName,
+                    agencyUserInd: false
+                } as IPrincipal;
+                res.locals[Headers.PrincipalIdValue] = identity.idValue;
+                res.locals[Headers.Identity] = identity;
+                res.locals[Headers.IdentityIdValue] = identity.idValue;
+                res.locals[Headers.IdentityRawIdValue] = identity.rawIdValue;
+                res.locals[Headers.GivenName] = identity.profile.name.givenName;
+                res.locals[Headers.FamilyName] = identity.profile.name.familyName;
+                res.locals[Headers.UnstructuredName] = identity.profile.name.unstructuredName;
+                for (let sharedSecret of identity.profile.sharedSecrets) {
+                    res.locals[`${Headers.Prefix}-${sharedSecret.sharedSecretType.code}`.toLowerCase()] = sharedSecret.value;
+                }
             }
         };
     }

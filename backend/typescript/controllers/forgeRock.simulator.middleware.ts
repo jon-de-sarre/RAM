@@ -17,18 +17,36 @@ class ForgeRockSimulator {
             const id = idFromAuthenticationSimulator ? idFromAuthenticationSimulator : idFromCookie;
             if (id) {
                 const agencyUser = AgencyUsersSeeder.findById(id);
-                if (!agencyUser) {
-                    IdentityModel.findByIdValue(id)
-                        .then(self.resolveForIdentity(req, res, next))
-                        .catch(self.reject(res, next));
-                } else {
+                if (agencyUser) {
                     Promise.resolve(agencyUser)
                         .then(self.resolveForAgencyUser(req, res, next))
+                        .catch(self.reject(res, next));
+                } else {
+                    IdentityModel.findByIdValue(id)
+                        .then(self.resolveForIdentity(req, res, next))
                         .catch(self.reject(res, next));
                 }
             } else {
                 next();
             }
+        };
+    }
+
+    private resolveForAgencyUser(req: Request, res: Response, next: () => void) {
+        return (agencyUser?: IAgencyUser) => {
+            if (agencyUser) {
+                logger.info(colors.red(`Setting ${Headers.AgencyUserLoginId}: ${agencyUser.id}`));
+                let programRolesString = '';
+                for (let i = 0; i < agencyUser.programRoles; i = i + 1) {
+                    let programRole = agencyUser.programRoles[i];
+                    programRolesString += (i > 0 ? ',' : '') + programRole.program + ':' + programRole.role;
+                }
+                res.locals[Headers.AgencyUserLoginId] = agencyUser.id;
+                res.locals[Headers.GivenName] = agencyUser.givenName;
+                res.locals[Headers.FamilyName] = agencyUser.familyName;
+                res.locals[Headers.AgencyUserProgramRoles] = programRolesString;
+            }
+            next();
         };
     }
 
@@ -50,23 +68,6 @@ class ForgeRockSimulator {
                     res.locals[Headers.IdentityRawIdValue] = rawIdValue;
                     req.headers[Headers.IdentityRawIdValue] = rawIdValue;
                 }
-            }
-            next();
-        };
-    }
-
-    private resolveForAgencyUser(req: Request, res: Response, next: () => void) {
-        return (agencyUser?: IAgencyUser) => {
-            if (agencyUser) {
-                logger.info(colors.red(`Setting ${Headers.AgencyUserLoginId}: ${agencyUser.id}`));
-                let programRolesString = '';
-                for (let i = 0; i < agencyUser.programRoles; i = i + 1) {
-                    let programRole = agencyUser.programRoles[i];
-                    programRolesString += (i > 0 ? ',' : '') + programRole.program + ':' + programRole.role;
-                }
-                res.locals[Headers.GivenName] = agencyUser.givenName;
-                res.locals[Headers.FamilyName] = agencyUser.familyName;
-                res.locals[Headers.AgencyUserProgramRoles] = programRolesString;
             }
             next();
         };
