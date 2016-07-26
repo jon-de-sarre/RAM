@@ -1,10 +1,10 @@
 import {Component} from '@angular/core';
-import {ROUTER_DIRECTIVES, Router, ActivatedRoute} from '@angular/router';
+import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
 import {RAMServices} from '../../services/ram-services';
-import {Observable} from '../../../jspm_packages/npm/rxjs@5.0.0-beta.6/Observable';
+import {Observable} from "rxjs/Observable";
 
 import {
     ISearchResult,
@@ -12,15 +12,15 @@ import {
     IHrefValue,
     FilterParams
 } from '../../../../commons/RamAPI2';
-import {Params} from '../../../jspm_packages/npm/@angular/router@3.0.0-beta.2/esm/src/shared';
-import {SearchResultPaginationDelegate} from '../../components/search-result-pagination/search-result-pagination.component';
+import {SearchResultPaginationDelegate, SearchResultPaginationComponent} from '../../components/search-result-pagination/search-result-pagination.component';
 
 @Component({
     selector: 'ram-business-relationships',
     templateUrl: 'businesses.component.html',
     directives: [
         ROUTER_DIRECTIVES,
-        PageHeaderSPSComponent
+        PageHeaderSPSComponent,
+        SearchResultPaginationComponent
     ]
 })
 
