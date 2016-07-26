@@ -17,8 +17,6 @@ class Security {
             //this.logHeaders(req);
             const agencyUserLoginIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserLoginId);
             const identityIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.IdentityIdValue);
-            logger.info('Identity Id Value:', identityIdValue);
-            logger.info('Agency User Login Id Value:', agencyUserLoginIdValue);
             if (agencyUserLoginIdValue) {
                 // agency login supplied, carry on
                 Promise.resolve(null)
