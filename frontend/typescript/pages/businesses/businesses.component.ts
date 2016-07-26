@@ -4,7 +4,7 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
 import {RAMServices} from '../../services/ram-services';
-import {Observable} from "rxjs/Observable";
+import {Observable} from 'rxjs/Observable';
 
 import {
     ISearchResult,
@@ -12,7 +12,10 @@ import {
     IHrefValue,
     FilterParams
 } from '../../../../commons/RamAPI2';
-import {SearchResultPaginationDelegate, SearchResultPaginationComponent} from '../../components/search-result-pagination/search-result-pagination.component';
+import {
+    SearchResultPaginationDelegate,
+    SearchResultPaginationComponent
+} from '../../components/search-result-pagination/search-result-pagination.component';
 
 @Component({
     selector: 'ram-business-relationships',
