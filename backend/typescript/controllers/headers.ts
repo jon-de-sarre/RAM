@@ -6,7 +6,7 @@ export class Headers {
     public static AuthTokenDecoded = `${Headers.Prefix}-auth-token-decoded`;
 
     public static Principal = `${Headers.Prefix}-principal`;
-    public static PrincipalId = `${Headers.Prefix}-principal-id`;
+    public static PrincipalIdValue = `${Headers.Prefix}-principal-idvalue`;
 
     public static Identity = `${Headers.Prefix}-identity`;
     public static IdentityIdValue = `${Headers.Prefix}-identity-idvalue`;
@@ -16,6 +16,9 @@ export class Headers {
 
     public static CredentialType = `${Headers.Prefix}-credentialtype`;
     public static CredentialStrength = `${Headers.Prefix}-credentialstrength`;
+
+    public static AgencyUserLoginId = `${Headers.Prefix}-agencyuser-loginid`;
+    public static AgencyUserProgramRoles = `${Headers.Prefix}-agencyuser-programroles`;
 
     public static PartyType = `${Headers.Prefix}-partytype`;
 
@@ -32,8 +35,6 @@ export class Headers {
     public static LinkIdScheme = `${Headers.Prefix}-linkidscheme`;
     public static LinkIdConsumer = `${Headers.Prefix}-linkidconsumer`;
     public static PublicIdentifierScheme = `${Headers.Prefix}-publicidentifierscheme`;
-
-    public static AgencyProgramRoles = `${Headers.Prefix}-agencyuser-programroles`;
 
     public static isXRAMHeader(headerName:string) {
         return headerName.toLowerCase().startsWith(Headers.Prefix);

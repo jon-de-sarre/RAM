@@ -12,48 +12,39 @@ import {DOB_SHARED_SECRET_TYPE_CODE} from '../models/sharedSecretType.model';
 
 class Security {
 
-    public prepareRequest():(req:Request, res:Response, next:() => void) => void {
-        return (req:Request, res:Response, next:() => void) => {
+    public prepareRequest(): (req: Request, res: Response, next: () => void) => void {
+        return (req: Request, res: Response, next: () => void) => {
             //this.logHeaders(req);
-
-            const idValue = this.getIdValue(req, res);
-            if (idValue) {
-                // id supplied, try to lookup and if not found create a new identity before carrying on
-                IdentityModel.findByIdValue(idValue)
+            const identityIdValue = this.getIdentityIdValue(req, res);
+            if (identityIdValue) {
+                // identity id supplied, try to lookup and if not found create a new identity before carrying on
+                IdentityModel.findByIdValue(identityIdValue)
                     .then(this.createIdentityIfNotFound(req, res))
                     .then(this.prepareResponseLocals(req, res, next), this.reject(res, next));
             } else {
-                // id not supplied, carry on
+                // no id supplied, carry on
                 Promise.resolve(null)
                     .then(this.prepareResponseLocals(req, res, next), this.reject(res, next));
             }
         };
     }
 
-    // private logHeaders(req:Request) {
-    //     for (let header of Object.keys(req.headers)) {
-    //         if(Headers.isXRAMHeader(header)) {
-    //             logger.debug(header, '=', req.headers[header]);
-    //         }
-    //     }
-    // }
-
     /**
-     * Attempts to provide an Identity Value by looking in the following:
+     * Attempts to provide an Identity Id Value by looking in the following:
      *  header,
      *  locals,
      *  cookie
      */
-    private getIdValue(req:Request, res:Response):string {
+    private getIdentityIdValue(req: Request, res: Response): string {
 
         // look for id in headers
-        if(req.get(Headers.IdentityIdValue)) {
+        if (req.get(Headers.IdentityIdValue)) {
             // logger.info('found header', req.get(Headers.IdentityIdValue));
             return req.get(Headers.IdentityIdValue);
         }
 
         // look for id in locals
-        if(res.locals[Headers.IdentityIdValue]) {
+        if (res.locals[Headers.IdentityIdValue]) {
             // logger.info('found local', res.locals[Headers.IdentityIdValue]);
             return res.locals[Headers.IdentityIdValue];
         }
@@ -64,8 +55,8 @@ class Security {
     }
 
     /* tslint:disable:max-func-body-length */
-    private createIdentityIfNotFound(req:Request, res:Response) {
-        return (identity?:IIdentity) => {
+    private createIdentityIfNotFound(req: Request, res: Response) {
+        return (identity?: IIdentity) => {
             const rawIdValue = req.get(Headers.IdentityRawIdValue);
             if (identity) {
                 logger.info('Identity context: Using existing identity ...');
@@ -97,8 +88,8 @@ class Security {
         };
     }
 
-    private prepareResponseLocals(req:Request, res:Response, next:() => void) {
-        return (identity?:IIdentity) => {
+    private prepareResponseLocals(req: Request, res: Response, next: () => void) {
+        return (identity?: IIdentity) => {
             logger.info('Identity context:', (identity ? colors.magenta(identity.idValue) : colors.red('[not found]')));
             if (identity) {
                 for (let key of Object.keys(req.headers)) {
@@ -115,7 +106,7 @@ class Security {
                     displayName: identity.profile.name._displayName,
                     agencyUserInd: false
                 } as IPrincipal;
-                res.locals[Headers.PrincipalId] = identity.idValue;
+                res.locals[Headers.PrincipalIdValue] = identity.idValue;
                 res.locals[Headers.Identity] = identity;
                 res.locals[Headers.IdentityIdValue] = identity.idValue;
                 res.locals[Headers.IdentityRawIdValue] = identity.rawIdValue;
@@ -130,25 +121,33 @@ class Security {
         };
     }
 
-    private reject(res:Response, next:() => void) {
-        return (err:Error):void => {
+    private reject(res: Response, next: () => void) {
+        return (err: Error): void => {
             logger.error(('Unable to look up identity: ' + err).red);
             res.status(401);
             res.send(new ErrorResponse('Unable to look up identity.'));
         };
     }
 
-    public getAuthenticatedIdentityIdValue(res:Response):string {
+    public getAuthenticatedIdentityIdValue(res: Response): string {
         return res.locals[Headers.IdentityIdValue];
     }
 
-    public getAuthenticatedIdentity(res:Response):IIdentity {
+    public getAuthenticatedIdentity(res: Response): IIdentity {
         return res.locals[Headers.Identity];
     }
 
-    public isAuthenticated(req:Request, res:Response, next:() => void) {
-        const idValue = res.locals[Headers.IdentityIdValue];
-        if (idValue) {
+    public getAuthenticatedPrincipalIdValue(res: Response): string {
+        return res.locals[Headers.PrincipalIdValue];
+    }
+
+    public getAuthenticatedPrincipal(res: Response): IPrincipal {
+        return res.locals[Headers.Principal];
+    }
+
+    public isAuthenticated(req: Request, res: Response, next: () => void) {
+        const id = res.locals[Headers.PrincipalIdValue];
+        if (id) {
             next();
         } else {
             logger.error('Unable to invoke route requiring authentication'.red);
@@ -156,11 +155,20 @@ class Security {
             res.send(new ErrorResponse('Not authenticated.'));
         }
     }
+
+    // private logHeaders(req:Request) {
+    //     for (let header of Object.keys(req.headers)) {
+    //         if(Headers.isXRAMHeader(header)) {
+    //             logger.debug(header, '=', req.headers[header]);
+    //         }
+    //     }
+    // }
+
 }
 
 export class SecurityHelper {
 
-    public static getIdentityIdValueFromCookies(req:Request):string {
+    public static getIdentityIdValueFromCookies(req: Request): string {
 
         // find cookie regardless of case
         for (let key of Object.keys(req.cookies)) {
@@ -172,7 +180,7 @@ export class SecurityHelper {
                 // get encoded auth token
                 const authTokenEncodedFromCookie = req.cookies[key];
 
-                if(authTokenEncodedFromCookie) {
+                if (authTokenEncodedFromCookie) {
                     // decode auth token
                     const authToken = new Buffer(authTokenEncodedFromCookie, 'base64').toString('ascii');
                     // get idValue from auth token
@@ -187,7 +195,7 @@ export class SecurityHelper {
 
     }
 
-    private static getIdentityIdValueFromAuthToken(authToken:string):string {
+    private static getIdentityIdValueFromAuthToken(authToken: string): string {
         return authToken;
     }
 
