@@ -164,6 +164,15 @@ case "$1" in
     echo ""
     ;;
 
+  'start:frontend-no-lint')
+    echo ""
+    echo "Starting frontend"
+    echo ""
+    cd frontend
+    gulp serve --no-lint
+    echo ""
+    ;;
+
   'start:backend')
     echo ""
     cd backend
@@ -175,6 +184,21 @@ case "$1" in
       echo "Starting backend with $2"
       echo ""
       RAM_CONF="$2" gulp serve
+    fi
+    echo ""
+    ;;
+
+  'start:backend-no-lint')
+    echo ""
+    cd backend
+    if [ -z "$2" ]; then
+      echo "Starting backend with $DEFAULT_CONF"
+      echo ""
+      RAM_CONF=$DEFAULT_CONF gulp serve --no-lint
+    else
+      echo "Starting backend with $2"
+      echo ""
+      RAM_CONF="$2" gulp serve --no-lint
     fi
     echo ""
     ;;
@@ -383,6 +407,8 @@ case "$1" in
     echo ""
     echo "$(tput setaf 3)    start:frontend                       $(tput sgr0)      Starts local frontend server"
     echo "$(tput setaf 3)    start:backend                        $(tput sgr0)      Starts local backend server"
+    echo "$(tput setaf 3)    start:frontend-no-lint               $(tput sgr0)      Starts local frontend server without linting"
+    echo "$(tput setaf 3)    start:backend-no-lint                $(tput sgr0)      Starts local backend server without linting"
     echo ""
     echo "$(tput setaf 3)    db:seed                              $(tput sgr0)      Seeds local database"
     echo "$(tput setaf 3)    db:export                            $(tput sgr0)      Exports example data from local database"

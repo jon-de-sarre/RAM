@@ -17,6 +17,7 @@ var proxy = require("proxy-middleware");
 var url = require("url");
 var embedTemplates = require("gulp-angular-embed-templates");
 var merge = require('merge-stream');
+var args = require('yargs').argv;
 
 gulp.task("copy:font", function () {
     return gulp.src(["fonts/{**,./}/*.{eot,svg,ttf,woff,woff2}"], { base: "./" })
@@ -121,11 +122,15 @@ gulp.task("scss:watch", ["scss:compile"], function () {
 });
 
 gulp.task("ts:lint", function () {
-    return gulp.src(["typescript/{**,./}/*.ts", "test/{**,./}/*.ts"])
-        .pipe(tslint())
-        .pipe(tslint.report({
-            emitError: false
-        }));
+    if (args['lint'] === false) {
+        console.log('           Skipping \'ts:lint\' via --no-lint');
+    } else {
+        return gulp.src(["typescript/{**,./}/*.ts", "test/{**,./}/*.ts"])
+            .pipe(tslint())
+            .pipe(tslint.report({
+                emitError: false
+            }));
+    }
 });
 gulp.task("watch", ["scss:watch", "ts:watch", "html:watch", "data:watch"]);
 
