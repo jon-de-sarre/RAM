@@ -51,11 +51,17 @@ export class BusinessesComponent extends AbstractPageComponent {
         // extract path and query parameters
         this.page = params.query['page'] ? +params.query['page'] : 1;
 
+        // load business parties that the user has authorisation management for
         this.partyRefs = [];
         this.parties$ = this.services.rest.searchDistinctSubjectsForMe(this.filter.encode(), this.page);
         this.parties$.subscribe((partyRefs) => {
             this._isLoading = false;
             this.partyRefs = partyRefs.list;
+
+            // automatically focus business if there is only one
+            if (partyRefs.totalCount === 1) {
+                this.goToNotificationsContext(this.partyRefs[0]);
+            }
         }, (err) => {
             this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
             this._isLoading = false;
