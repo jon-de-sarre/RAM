@@ -17,7 +17,7 @@ export class PrincipalController {
             .then((model) => model ? {
                 id: model.idValue,
                 displayName: model.profile.name._displayName,
-                isAgencyUser: false} as IPrincipal : null)
+                agencyUserInd: false} as IPrincipal : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
             .catch(sendError(res));

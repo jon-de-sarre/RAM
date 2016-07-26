@@ -8,7 +8,7 @@ export interface ISearchResult<T> {
 export interface IPrincipal {
     id: string;
     displayName: string;
-    isAgencyUser: boolean;
+    agencyUserInd: boolean;
 }
 
 export interface ICodeDecode {

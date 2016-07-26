@@ -64,7 +64,7 @@ export class SearchResult<T> {
 export class Principal {
     constructor(public id:string,
                 public displayName:string,
-                public isAgencyUser:boolean) {
+                public agencyUserInd:boolean) {
     }
 }
 
