@@ -4,7 +4,7 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {RAMServices} from '../../services/ram-services';
 
-import {IIdentity} from '../../../../commons/RamAPI2';
+import {IPrincipal} from '../../../../commons/RamAPI2';
 
 @Component({
     selector: 'landing-home',
@@ -14,7 +14,7 @@ import {IIdentity} from '../../../../commons/RamAPI2';
 
 export class WelcomeHomeComponent extends AbstractPageComponent {
 
-    private identity: IIdentity = null;
+    private me: IPrincipal = null;
 
     constructor(route: ActivatedRoute,
                 router: Router,
@@ -27,10 +27,10 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
 
         const dashboard = params.path['dashboard'];
 
-        // logged in identity
-        this.services.rest.findMyIdentity().subscribe(identity => {
+        // logged in principal
+        this.services.rest.findMyPrincipal().subscribe(principal => {
 
-            this.identity = identity;
+            this.me = principal;
 
             if (dashboard === 'auth') {
                 this.goToAuthorisationsPage();
@@ -47,7 +47,7 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
             if (this.isAgencyUser()) {
                 this.services.route.goToAgencySelectBusinessForAuthorisationsPage();
             } else {
-                this.services.route.goToRelationshipsPage(this.identity.idValue);
+                this.services.route.goToRelationshipsPage(this.me.id);
             }
         } else {
             this.clearGlobalMessages();
@@ -69,13 +69,11 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
     }
 
     private isAuthenticated() {
-        return this.identity !== null;
+        return this.me !== null;
     }
 
-    // todo handle agency (ie consider using Principal)
-    // todo determine if agency user or not
     private isAgencyUser() {
-        return false;
+        return this.me.agencyUserInd;
     }
 
 }
