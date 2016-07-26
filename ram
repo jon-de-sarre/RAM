@@ -301,6 +301,14 @@ case "$1" in
 
 # OTHER
 
+  'chrome')
+    echo ""
+    echo "Opening Chrome in application mode."
+    echo ""
+    /Applications/Google\ Chrome.app/Contents/MacOS/Google\ Chrome --app=http://localhost:3001/#/
+    echo ""
+    ;;
+
   'clean')
     echo ""
     echo "Cleaning all generated files ..."
@@ -413,6 +421,7 @@ case "$1" in
     echo "$(tput setaf 3)    db:seed                              $(tput sgr0)      Seeds local database"
     echo "$(tput setaf 3)    db:export                            $(tput sgr0)      Exports example data from local database"
     echo ""
+    echo "$(tput setaf 3)    chrome                               $(tput sgr0)      Opens chrome in application mode"
     echo "$(tput setaf 3)    clean                                $(tput sgr0)      Cleans all generated files"
     echo "$(tput setaf 3)    swagger                              $(tput sgr0)      Opens browser to swagger apis on local server"
     echo "$(tput setaf 3)    staging                              $(tput sgr0)      Opens browser to staging instance"
