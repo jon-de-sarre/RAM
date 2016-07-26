@@ -66,8 +66,13 @@ export class RAMRouteService {
         ]);
     }
 
-    public goToBusinessesPage() {
-        this.router.navigate(['/businesses']);
+    public goToBusinessesPage(page?: number) {
+        const queryParams = {};
+        if (page) {
+            queryParams['page'] = page;
+        }
+        this.router.navigate(['/businesses'],
+            {queryParams: queryParams});
     }
 
     public goToNotificationsPage(idValue: string) {

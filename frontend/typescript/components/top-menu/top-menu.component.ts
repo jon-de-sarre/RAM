@@ -3,7 +3,7 @@ import {Component} from '@angular/core';
 
 import {RAMServices} from '../../services/ram-services';
 
-import {IIdentity} from '../../../../commons/RamAPI2';
+import {IPrincipal} from '../../../../commons/RamAPI2';
 
 @Component({
     selector: 'top-menu',
@@ -12,15 +12,14 @@ import {IIdentity} from '../../../../commons/RamAPI2';
 
 export class TopMenuComponent {
 
-    public me: IIdentity;
+    public me: IPrincipal;
 
     constructor(private services: RAMServices) {
     }
 
     public ngOnInit() {
-        this.services.rest.findMyIdentity().subscribe(
-            identity => {
-                this.me = identity;
+        this.services.rest.findMyPrincipal().subscribe(principal => {
+                this.me = principal;
             }
         );
     }

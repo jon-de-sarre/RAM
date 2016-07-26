@@ -20,6 +20,7 @@ import {IdentityController} from './controllers/identity.controller';
 import {ResetController} from './controllers/reset.server.controller';
 
 // PRODUCTION RESOURCES
+import {PrincipalController} from './controllers/principal.controller';
 import {PartyController} from './controllers/party.controller';
 import {ProfileController} from './controllers/profile.controller';
 import {RelationshipController} from './controllers/relationship.controller';
@@ -82,6 +83,10 @@ server.use('/api/reset',
     new ResetController().assignRoutes(express.Router()));
 
 // setup route handlers (production) ..................................................................................
+
+server.use('/api/',
+    new PrincipalController()
+        .assignRoutes(express.Router()));
 
 server.use('/api/',
     new RelationshipTypeController(RelationshipTypeModel)

@@ -28,6 +28,27 @@ paths:
   # Business End Points
   # -------------------------------------------------------------------------------------------------------------------
 
+  # Principals ........................................................................................................
+
+  /me:
+    get:
+      tags:
+        - Business - Principal
+      operationId: Principal.findMe
+      summary: Get the logged in principal
+      description: Get the logged in principal
+      responses:
+        200:
+          description: The principal returned
+          schema:
+            $ref: "#/definitions/Principal"
+        400:
+          $ref: '#/responses/400'
+        401:
+          $ref: '#/responses/401'
+        500:
+          $ref: '#/responses/500'
+
   # Identities ........................................................................................................
 
   /identity/me:
@@ -654,6 +675,24 @@ definitions:
   # -------------------------------------------------------------------------------------------------------------------
   # Business Models
   # -------------------------------------------------------------------------------------------------------------------
+
+  # Principal .........................................................................................................
+
+  Principal:
+    type: object
+    description: |
+      A principal is representation of the logged in user, which could refer to an Identity or an Agency User.
+    required: ["id","displayName","agencyUserInd"]
+    properties:
+      id:
+        type: string
+        description: The unique id for this principal
+      displayName:
+        type: string
+        description: The display name for this principal
+      agencyUserInd:
+        type: boolean
+        description: Agency User indicator for this principal
 
   # Profile ...........................................................................................................
 

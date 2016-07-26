@@ -1,6 +1,7 @@
 // system domain ......................................................................................................
 
 import {ICreateIdentityDTO, IAttributeDTO, IRelationshipAddDTO} from './RamAPI2';
+
 export enum RAMMessageType {
     Error = 1,
     Info = 2,
@@ -31,6 +32,7 @@ export class ErrorResponse implements IResponse<void> {
     }
 }
 
+// todo is this used?
 export interface IKeyValue<T> {
     key:string;
     value:T;
@@ -59,6 +61,14 @@ export class SearchResult<T> {
 
 // business domain ....................................................................................................
 
+export class Principal {
+    constructor(public id:string,
+                public displayName:string,
+                public agencyUserInd:boolean) {
+    }
+}
+
+// todo do we drop the I?
 export class ICodeDecode {
     constructor(public code:string,
                 public shortDecodeText:string,
