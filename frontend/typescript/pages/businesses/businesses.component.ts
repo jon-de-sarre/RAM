@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
+import {FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
@@ -22,6 +23,8 @@ import {
     templateUrl: 'businesses.component.html',
     directives: [
         ROUTER_DIRECTIVES,
+        FORM_DIRECTIVES,
+        REACTIVE_FORM_DIRECTIVES,
         PageHeaderSPSComponent,
         SearchResultPaginationComponent
     ]
@@ -34,11 +37,14 @@ export class BusinessesComponent extends AbstractPageComponent {
     public parties$: Observable<ISearchResult<IHrefValue<IParty>>>;
     public partyRefs: IHrefValue<IParty>[];
     public paginationDelegate: SearchResultPaginationDelegate;
+    public form: FormGroup;
+
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
     constructor(route: ActivatedRoute,
                 router: Router,
-                services: RAMServices) {
+                services: RAMServices,
+                private _fb: FormBuilder) {
         super(route, router, services);
         this.setBannerTitle('Software Provider Services');
     }
@@ -47,7 +53,7 @@ export class BusinessesComponent extends AbstractPageComponent {
     public onInit(params: {path: Params, query: Params}) {
 
         this._isLoading = true;
-        this.filter = new FilterParams();
+        this.filter = FilterParams.decode(params.query['filter']);
         this.filter.add('partyType', 'ABN');
         this.filter.add('authorisationManagement', true);
 
@@ -64,7 +70,7 @@ export class BusinessesComponent extends AbstractPageComponent {
             // automatically focus business if there is only one
             if (partyRefs.totalCount === 1) {
                 this.goToNotificationsContext(this.partyRefs[0]);
-            } else if(partyRefs.totalCount === 0) {
+            } else if (partyRefs.totalCount === 0) {
                 this.addGlobalMessage('You do not have authorisation administrator access to any businesses - see your administrator');
             }
         }, (err) => {
@@ -75,12 +81,26 @@ export class BusinessesComponent extends AbstractPageComponent {
         // pagination delegate
         this.paginationDelegate = {
             goToPage: (page: number) => {
-                this.services.route.goToBusinessesPage(page);
+                this.services.route.goToBusinessesPage(this.filter.encode(), page);
             }
         } as SearchResultPaginationDelegate;
 
-        this._isLoading = false;
+        // forms
+        this.form = this._fb.group({
+            text: this.filter.get('text', ''),
+            sort: this.filter.get('sort', '-')
+        });
     }
+
+    public search() {
+        const filterString = new FilterParams()
+            .add('text', this.form.controls['text'].value)
+            .add('sort', this.form.controls['sort'].value)
+            .encode();
+        console.log('here');
+        this.services.route.goToBusinessesPage(filterString);
+    }
+
 
     public get isLoading() {
         return this._isLoading;
