@@ -11,6 +11,19 @@ export interface IPrincipal {
     agencyUserInd: boolean;
 }
 
+export interface IAgencyUser {
+    id: string;
+    givenName: string;
+    familyName: string;
+    displayName: string;
+    programRoles: IAgencyUserProgramRole[]
+}
+
+export interface IAgencyUserProgramRole {
+    program: string;
+    role: string;
+}
+
 export interface ICodeDecode {
     code: string;
     shortDecodeText: string;

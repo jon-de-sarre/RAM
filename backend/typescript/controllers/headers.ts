@@ -14,11 +14,12 @@ export class Headers {
     public static IdentityType = `${Headers.Prefix}-identitytype`;
     public static IdentityStrength = `${Headers.Prefix}-identitystrength`;
 
-    public static CredentialType = `${Headers.Prefix}-credentialtype`;
-    public static CredentialStrength = `${Headers.Prefix}-credentialstrength`;
-
+    public static AgencyUser = `${Headers.Prefix}-agencyuser`;
     public static AgencyUserLoginId = `${Headers.Prefix}-agencyuser-loginid`;
     public static AgencyUserProgramRoles = `${Headers.Prefix}-agencyuser-programroles`;
+
+    public static CredentialType = `${Headers.Prefix}-credentialtype`;
+    public static CredentialStrength = `${Headers.Prefix}-credentialstrength`;
 
     public static PartyType = `${Headers.Prefix}-partytype`;
 
