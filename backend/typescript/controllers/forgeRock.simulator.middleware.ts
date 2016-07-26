@@ -11,7 +11,7 @@ class ForgeRockSimulator {
         const self = this;
         return (req:Request, res:Response, next:() => void) => {
             const credentialsFromAuthenticationSimulator = req.body.credentials;
-            const idValueFromCookie = SecurityHelper.getIdentityIdValueFromCookies(req);
+            const idValueFromCookie = SecurityHelper.getValueFromCookies(req, Headers.AuthToken);
             if (credentialsFromAuthenticationSimulator) {
                 // log in from development only login form
                 IdentityModel.findByIdValue(credentialsFromAuthenticationSimulator)

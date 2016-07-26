@@ -15,7 +15,7 @@ class Security {
     public prepareRequest(): (req: Request, res: Response, next: () => void) => void {
         return (req: Request, res: Response, next: () => void) => {
             //this.logHeaders(req);
-            const identityIdValue = this.getIdentityIdValue(req, res);
+            const identityIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AuthToken);
             if (identityIdValue) {
                 // identity id supplied, try to lookup and if not found create a new identity before carrying on
                 IdentityModel.findByIdValue(identityIdValue)
@@ -29,28 +29,22 @@ class Security {
         };
     }
 
-    /**
-     * Attempts to provide an Identity Id Value by looking in the following:
-     *  header,
-     *  locals,
-     *  cookie
-     */
-    private getIdentityIdValue(req: Request, res: Response): string {
+    private getValueFromHeaderLocalsOrCookie(req: Request, res: Response, key: string): string {
 
         // look for id in headers
-        if (req.get(Headers.IdentityIdValue)) {
-            // logger.info('found header', req.get(Headers.IdentityIdValue));
-            return req.get(Headers.IdentityIdValue);
+        if (req.get(key)) {
+            // logger.info('found header', req.get(key));
+            return req.get(key);
         }
 
         // look for id in locals
-        if (res.locals[Headers.IdentityIdValue]) {
-            // logger.info('found local', res.locals[Headers.IdentityIdValue]);
-            return res.locals[Headers.IdentityIdValue];
+        if (res.locals[key]) {
+            // logger.info('found local', res.locals[key]);
+            return res.locals[key];
         }
 
         // look for id in cookies
-        return SecurityHelper.getIdentityIdValueFromCookies(req);
+        return SecurityHelper.getValueFromCookies(req, key);
 
     }
 
@@ -168,35 +162,18 @@ class Security {
 
 export class SecurityHelper {
 
-    public static getIdentityIdValueFromCookies(req: Request): string {
-
-        // find cookie regardless of case
+    public static getValueFromCookies(req: Request, keyToMatch: string): string {
+        const keyToMatchLower = keyToMatch.toLowerCase();
         for (let key of Object.keys(req.cookies)) {
-
             const keyLower = key.toLowerCase();
-
-            if (keyLower === Headers.AuthToken) {
-
-                // get encoded auth token
-                const authTokenEncodedFromCookie = req.cookies[key];
-
-                if (authTokenEncodedFromCookie) {
-                    // decode auth token
-                    const authToken = new Buffer(authTokenEncodedFromCookie, 'base64').toString('ascii');
-                    // get idValue from auth token
-                    return this.getIdentityIdValueFromAuthToken(authToken);
+            if (keyLower === keyToMatchLower) {
+                const encodedValue = req.cookies[key];
+                if (encodedValue) {
+                    return new Buffer(encodedValue, 'base64').toString('ascii');
                 }
-
             }
-
         }
-
         return null;
-
-    }
-
-    private static getIdentityIdValueFromAuthToken(authToken: string): string {
-        return authToken;
     }
 
 }
