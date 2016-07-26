@@ -734,22 +734,20 @@ RelationshipSchema.static('searchDistinctSubjectsForMe',
         return new Promise<SearchResult<IParty>>(async (resolve, reject) => {
             const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
             try {
-                const listForCount = await this.RelationshipModel
-                    .distinct('delegate', requestingParty)
-                    .exec();
-                const count = listForCount.length;
-                const listOfIds = await this.RelationshipModel
-                    .aggregate([
-                        {
-                            '$match': {
-                                'delegate': new mongoose.Types.ObjectId(requestingParty.id)
-                            }
-                        },
-                        {'$group': {'_id': '$subject'}},
-                        {'$skip': (page - 1) * pageSize},
-                        {'$limit': pageSize}
-                    ])
-                    .exec();
+                const where = [];
+                where.push(
+                    {
+                        '$match': {
+                            'delegate': new mongoose.Types.ObjectId(requestingParty.id)
+                        }
+                    });
+                where.push(
+                    {'$group': {'_id': '$subject'}}
+                );
+                const count = (await this.RelationshipModel.aggregate(where).exec()).length;
+                where.push({'$skip': (page - 1) * pageSize});
+                where.push({'$limit': pageSize});
+                const listOfIds = await this.RelationshipModel.aggregate(where).exec();
                 const inflatedList = (await PartyModel.populate(listOfIds, {path: '_id'})).map((item: {_id:string}) => item._id);
                 resolve(new SearchResult<IParty>(page, count, pageSize, inflatedList));
             } catch (e) {

@@ -8,6 +8,7 @@ import {RAMModelService} from './ram-model.service';
 import {
     ISearchResult,
     IHrefValue,
+    IPrincipal,
     IIdentity,
     IParty,
     IPartyType,
@@ -42,6 +43,12 @@ export class RAMRestService {
         return body || {};
     }
 
+    public findMyPrincipal(): Observable<IPrincipal> {
+        return this.http
+            .get(`/api/v1/me`)
+            .map(this.extractData);
+    }
+
     public findMyIdentity(): Observable<IIdentity> {
         return this.http
             .get(`/api/v1/identity/me`)
@@ -63,6 +70,13 @@ export class RAMRestService {
     public listRelationshipStatuses(): Observable<IHrefValue<IRelationshipStatus>[]> {
         return this.http
             .get('/api/v1/relationshipStatuses')
+            .map(this.extractData);
+    }
+
+    public searchDistinctSubjectsForMe(filter: string,
+                                       page: number): Observable<ISearchResult<IHrefValue<IParty>>> {
+        return this.http
+            .get(`/api/v1/relationships/identity/subjects?filter=${filter}&page=${page}`)
             .map(this.extractData);
     }
 

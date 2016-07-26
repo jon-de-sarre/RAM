@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "RAM",
-		"_postman_id": "b243f550-af32-4024-6da7-c8558a13548c",
+		"_postman_id": "e3b3e9d0-5b8c-7c17-7820-3ca806940afb",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -568,6 +568,39 @@
 						"body": {
 							"mode": "formdata",
 							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Principal",
+			"description": "",
+			"item": [
+				{
+					"name": "Get (me)",
+					"request": {
+						"url": "{{host}}/api/v1/me",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
 						},
 						"description": ""
 					},
