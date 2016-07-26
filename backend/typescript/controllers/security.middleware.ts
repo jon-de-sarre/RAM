@@ -4,6 +4,7 @@ import {Request, Response} from 'express';
 import {Headers} from './headers';
 import {ErrorResponse} from '../../../commons/RamAPI';
 import {CreateIdentityDTO} from '../../../commons/RamAPI';
+import {IPrincipal} from '../../../commons/RamAPI2';
 import {IIdentity, IdentityModel} from '../models/identity.model';
 import {DOB_SHARED_SECRET_TYPE_CODE} from '../models/sharedSecretType.model';
 
@@ -101,17 +102,20 @@ class Security {
             logger.info('Identity context:', (identity ? colors.magenta(identity.idValue) : colors.red('[not found]')));
             if (identity) {
                 for (let key of Object.keys(req.headers)) {
-
                     // headers should be lowercase, but lets make sure
                     const keyLower = key.toLowerCase();
-
                     // if it's an application header, copy it to locals
                     if (keyLower.startsWith(Headers.Prefix)) {
                         const value = req.get(key);
                         res.locals[keyLower] = value;
                     }
-
                 }
+                res.locals[Headers.Principal] = {
+                    id: identity.idValue,
+                    displayName: identity.profile.name._displayName,
+                    agencyUserInd: false
+                } as IPrincipal;
+                res.locals[Headers.PrincipalId] = identity.idValue;
                 res.locals[Headers.Identity] = identity;
                 res.locals[Headers.IdentityIdValue] = identity.idValue;
                 res.locals[Headers.IdentityRawIdValue] = identity.rawIdValue;

@@ -5,6 +5,9 @@ export class Headers {
     public static AuthToken = `${Headers.Prefix}-auth-token`;
     public static AuthTokenDecoded = `${Headers.Prefix}-auth-token-decoded`;
 
+    public static Principal = `${Headers.Prefix}-principal`;
+    public static PrincipalId = `${Headers.Prefix}-principal-id`;
+
     public static Identity = `${Headers.Prefix}-identity`;
     public static IdentityIdValue = `${Headers.Prefix}-identity-idvalue`;
     public static IdentityRawIdValue = `${Headers.Prefix}-identity-rawidvalue`;
