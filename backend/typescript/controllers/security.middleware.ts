@@ -20,6 +20,7 @@ class Security {
             logger.info('Identity Id Value:', identityIdValue);
             logger.info('Agency User Login Id Value:', agencyUserLoginIdValue);
             if (agencyUserLoginIdValue) {
+                // agency login supplied, carry on
                 Promise.resolve(null)
                     .then(this.prepareAgencyUserResponseLocals(req, res, next))
                     .then(this.prepareCommonResponseLocals(req, res, next))
