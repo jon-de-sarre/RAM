@@ -19,7 +19,7 @@ class Security {
             const identityIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.IdentityIdValue);
             if (agencyUserLoginIdValue) {
                 // agency login supplied, carry on
-                Promise.resolve(null)
+                Promise.resolve(agencyUserLoginIdValue)
                     .then(this.prepareAgencyUserResponseLocals(req, res, next))
                     .then(this.prepareCommonResponseLocals(req, res, next))
                     .catch(this.reject(res, next));
@@ -94,8 +94,7 @@ class Security {
     }
 
     private prepareAgencyUserResponseLocals(req: Request, res: Response, next: () => void) {
-        return () => {
-            const idValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserLoginId);
+        return (idValue: string) => {
             logger.info('Agency User context:', (idValue ? colors.magenta(idValue) : colors.red('[not found]')));
             if (idValue) {
                 const agencyUserGivenName = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.GivenName);
