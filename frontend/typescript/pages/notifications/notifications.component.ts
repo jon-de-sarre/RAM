@@ -21,6 +21,7 @@ import {
 export class NotificationsComponent extends AbstractPageComponent {
 
     public idValue: string;
+    public canReturnToDashboard: boolean = false;
 
     public identity: IIdentity;
 
@@ -40,6 +41,10 @@ export class NotificationsComponent extends AbstractPageComponent {
             this.identity = identity;
         });
 
+        // if the user can see more than one business, they can see the dashboard
+        this.services.rest.searchDistinctSubjectsForMe(null, 1).subscribe((partyRefs) => {
+            this.canReturnToDashboard = partyRefs.totalCount > 1;
+        });
     }
 
     public goToBusinessesPage() {
