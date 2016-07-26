@@ -16,6 +16,7 @@ export class PageHeaderSPSComponent {
     @Input() public identity: IIdentity;
     @Input() public tab: string;
     @Input() public messages: string[];
+    @Input() public showContent: boolean = true;
     @Input() public giveAuthorisationsEnabled: boolean = false;
 
     constructor(private router: Router,

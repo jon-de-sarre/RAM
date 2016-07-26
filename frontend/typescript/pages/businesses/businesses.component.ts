@@ -64,6 +64,8 @@ export class BusinessesComponent extends AbstractPageComponent {
             // automatically focus business if there is only one
             if (partyRefs.totalCount === 1) {
                 this.goToNotificationsContext(this.partyRefs[0]);
+            } else if(partyRefs.totalCount === 0) {
+                this.addGlobalMessage('You do not have authorisation administrator access to any businesses - see your administrator');
             }
         }, (err) => {
             this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
@@ -82,6 +84,10 @@ export class BusinessesComponent extends AbstractPageComponent {
 
     public get isLoading() {
         return this._isLoading;
+    }
+
+    public hasParties() {
+        return this.partyRefs && this.partyRefs.length > 0;
     }
 
     public goToNotificationsContext(partyResource: IHrefValue<IParty>) {
