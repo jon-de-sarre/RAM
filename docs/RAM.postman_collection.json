@@ -2,44 +2,11 @@
 	"variables": [],
 	"info": {
 		"name": "RAM",
-		"_postman_id": "d3d0d84c-1038-3691-a3a6-1d93b406c12f",
+		"_postman_id": "0eed2076-f8b9-9453-acd7-616f0b16582d",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
-		{
-			"name": "Agency User",
-			"description": "",
-			"item": [
-				{
-					"name": "List",
-					"request": {
-						"url": "{{host}}/api/v1/agencyUsers",
-						"method": "GET",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "urlencoded",
-							"urlencoded": [
-								{
-									"key": "credentials",
-									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-									"type": "text",
-									"enabled": true
-								}
-							]
-						},
-						"description": ""
-					},
-					"response": []
-				}
-			]
-		},
 		{
 			"name": "Authentication",
 			"description": "",
@@ -216,7 +183,7 @@
 					"response": []
 				},
 				{
-					"name": "Authenticate Agency User (Ted Agent)",
+					"name": "Authenticate Agency User (Ted Agency User)",
 					"request": {
 						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
 						"method": "POST",
@@ -232,7 +199,7 @@
 							"urlencoded": [
 								{
 									"key": "credentials",
-									"value": "ted_agent",
+									"value": "ted_agency_user",
 									"type": "text",
 									"enabled": true
 								}
@@ -787,7 +754,7 @@
 				{
 					"name": "List distinct subjects",
 					"request": {
-						"url": "{{host}}/api/v1/relationships/identity/subjects?page=1",
+						"url": "{{host}}/api/v1/relationships/identity/subjects?filter=text%3Djen%26sort%3Dasc%26partyType%3DABN%26authorisationManagement%3Dtrue&page=1",
 						"method": "GET",
 						"header": [
 							{

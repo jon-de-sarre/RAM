@@ -229,6 +229,9 @@ export class RelationshipController {
 
     private searchDistinctSubjectsForMe = async (req:Request, res:Response) => {
         const schema = {
+            'filter': {
+                in: 'query'
+            },
             'page': {
                 in: 'query',
                 notEmpty: true,
@@ -244,9 +247,14 @@ export class RelationshipController {
                 }
             }
         };
+        const filterParams = FilterParams.decode(req.query.filter);
         validateReqSchema(req, schema)
             .then((req:Request) => this.relationshipModel.searchDistinctSubjectsForMe(
                 res.locals[Headers.Identity].party,
+                filterParams.get('partyType'),
+                filterParams.get('authorisationManagement'),
+                filterParams.get('text'),
+                filterParams.get('sort'),
                 req.query.page,
                 req.query.pageSize)
             )

@@ -1,24 +1,30 @@
 <!-- THIS IS A DEVELOPMENT ONLY PAGE PROVIDING A CONVENIENT WAY TO LOG IN AS TEST USERS -->
 <html>
+
 <head>
+
     <link rel="stylesheet" href="//cdnjs.cloudflare.com/ajax/libs/animate.css/3.5.2/animate.min.css">
     <script src="//ajax.googleapis.com/ajax/libs/jquery/2.2.4/jquery.min.js"></script>
-
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
-          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
     <script src="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/js/bootstrap.min.js"
             integrity="sha384-0mSbJDEHialfmuBBQP6A4Qrprq5OVfW37PRR3j5ELqxss1yVqOtnepnHVP9aJ7xS"
             crossorigin="anonymous"></script>
     <script src="https://cdnjs.cloudflare.com/ajax/libs/log4javascript/1.4.9/log4javascript.min.js"></script>
 
+    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.6/css/bootstrap.min.css"
+          integrity="sha384-1q8mTJOASx8j1Au+a5WDVnPi2lkFfwwEAa8hDDdjZlpLegxhjVME1fgjWPGmkzs7" crossorigin="anonymous">
+
     <style>
+
         #user-list {
             overflow: scroll;
-            height: 400px;
         }
 
         #user-list ul li {
             cursor: pointer;
+        }
+
+        #user-list ul li span {
+            color: #ccc;
         }
 
         #user-detail {
@@ -61,13 +67,19 @@
             hyphens: auto;
 
         }
+
     </style>
+
 </head>
+
 <body>
+
 <div class="container">
 
     <h2 class="animated bounce">RAM Mock Login</h2>
-    <p>Please select a user from the list below to simulate logging in as that user:</p>
+
+    <p>Please select a regular user or agency user from the list below to simulate logging in as that user:</p>
+    <p>&nbsp;</p>
 
     <div class="row">
         <div class="col-md-6">
@@ -78,118 +90,79 @@
                 <ul class="list-group identities">
                 </ul>
             </div>
-
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newUser">
+                New Regular User
+            </button>
         </div>
-
-        <div class="col-md-6">
-            <div id="user-detail" class="animated">
-                <span class="glyphicon glyphicon-user disabled" aria-hidden="true"></span>
-                <h2 id="not-logged-in">Not Logged In</h2>
-                <table class="table dont-break-out">
-
-                </table>
+        <div id="user-detail" class="col-md-6">
+            <div class="panel panel-default container-fluid">
+                <div class="panel-heading row"><b>User Details</b></div>
+                <div class="panel-body">
+                    <h2 id="not-logged-in">Not Logged In</h2>
+                    <table class="table dont-break-out"></table>
+                </div>
+                <div class="panel-footer row">
+                    <a href="/" target="_blank" class="btn btn-primary" id="launch-ram-link">Launch RAM</a>
+                </div>
             </div>
-
-            <p class="text-center">
-                <a href="/#relationships/" target="_blank" class="btn btn-primary" id="launch-ram-link">Launch RAM</a>
-            </p>
         </div>
-
     </div>
 
-
-    <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newUser">
-        New User
-    </button>
-
+    <!--New Regular User-->
     <div class="modal fade" id="newUser" tabindex="-1" role="dialog">
         <div class="modal-dialog">
             <div class="modal-content">
                 <div class="modal-header">
-                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span
-                            aria-hidden="true">&times;</span></button>
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
                     <h4 class="modal-title">New User</h4>
                 </div>
                 <div class="modal-body">
-                    <p>
-                        Use this to simulate ANY user coming via an external authentication mechanism and hitting
-                        RAM.
-                        For example, to create a new individual log in - with the correct headers, the identity will
-                        be created in the RAM database.
-                    </p>
+                    <p>Use this to simulate ANY user coming via an external authentication mechanism
+                        and hitting RAM. For example, to create a new individual log in - with the correct
+                        headers, the identity will be created in the RAM database.</p>
                     <div id="headers-container"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
                     <button type="button" class="btn btn-primary" data-dismiss="modal" id="headers-send-button">Create</button>
                 </div>
-            </div><!-- /.modal-content -->
-        </div><!-- /.modal-dialog -->
-    </div><!-- /.modal -->
+            </div>
+        </div>
+    </div>
 
     <script>
-        var X_RAM_HEADERS = {
-            'x-ram-identitytype': 'LINK_ID',
-            'x-ram-partytype': 'INDIVIDUAL',
-
-            'x-ram-givenname': 'Homer',
-            'x-ram-familyname': 'Simpson',
-            'x-ram-unstructuredname': null,
-            'x-ram-dob': '31/01/2000',
-
-            'x-ram-profileprovider': 'MY_GOV',
-
-            'x-ram-agencyscheme': null,
-            'x-ram-agencytoken': null,
-            'x-ram-linkidscheme': 'MY_GOV',
-            'x-ram-linkidconsumer': null,
-            'x-ram-publicidentifierscheme': null
-        };
 
         $(function () {
-            var log = log4javascript.getLogger('my_logger');
-            var consoleAppender = new log4javascript.BrowserConsoleAppender();
-            log.addAppender(consoleAppender);
 
-            $.each(X_RAM_HEADERS, function (key, value) {
-                $('#headers-container').append('<div class="form-group form-group-sm"><label>' + key + '</label><input  class="form-control  input-sm" id="' + key + '" value="' + (X_RAM_HEADERS[key] ? X_RAM_HEADERS[key] : '') + '"/></div>');
-            });
+            var X_RAM_HEADERS_FOR_ADDING = {
 
-            $('#headers-send-button').click(function () {
-                window.setTimeout(function () {
-                    // log out first
-                    $.post('/api/v1/simulators/authenticator/authenticate', {credentials: null}, function (data) {
-                    }).always(function () {
-                        // send any request with headers so identity gets created
-                        $.ajax({
-                            type: "POST",
-                            beforeSend: function (request) {
-                                var id = getId();
-                                var idValue = getIdValue();
+                'x-ram-identitytype': 'LINK_ID',
+                'x-ram-partytype': 'INDIVIDUAL',
 
-                                log.debug('Sending header for idValue ', idValue);
+                'x-ram-givenname': 'Homer',
+                'x-ram-familyname': 'Simpson',
+                'x-ram-unstructuredname': null,
+                'x-ram-dob': '31/01/2000',
 
-                                $.each(X_RAM_HEADERS, function (key, value) {
-                                    var headerValue = $('#' + key).val();
-                                    if (headerValue) {
-                                        request.setRequestHeader(key, headerValue);
-                                    }
-                                });
-                                request.setRequestHeader('x-ram-identity-rawidvalue', id);
-                                request.setRequestHeader('x-ram-identity-idvalue', idValue);
+                'x-ram-profileprovider': 'MY_GOV',
 
-                            },
-                            url: "/api/v1/simulators/authenticator/authenticate",
-                            processData: false,
-                            complete: function (msg) {
-                                // now refresh and log in as the new user as a convenience
-                                refreshIdentities();
-                                logIn(getIdValue());
-                            }
-                        });
-                    }, 1000);
-                });
-            });
+                'x-ram-agencyscheme': null,
+                'x-ram-agencytoken': null,
+                'x-ram-linkidscheme': 'MY_GOV',
+                'x-ram-linkidconsumer': null,
+                'x-ram-publicidentifierscheme': null
+
+            };
+
+            var $identities = $('.identities');
+
+            function buildName(name) {
+                if (name.unstructuredName) {
+                    return name.unstructuredName;
+                } else {
+                    return name.givenName + ' ' + name.familyName;
+                }
+            }
 
             function getId() {
                 return [$('#x-ram-givenname').val(), $('#x-ram-familyname').val()].join('_').trim();
@@ -199,56 +172,88 @@
                 return [$('#x-ram-identitytype').val(), $('#x-ram-profileprovider').val(), getId()].join(':').trim();
             }
 
-            function refreshIdentities() {
-                // Build list of known identities
+            function refreshIdentitiesAndAgencyUsers() {
+
+                // identities
                 $.get('/api/v1/identities?page=1', function (data) {
-                    $('.identities').empty();
+
+                    // empty
+                    $identities.empty();
+
+                    // populate
                     for (var i = 0; i < data.list.length; i++) {
                         // eg. <li class="list-group-item" data-id="LINK_ID:MY_GOV:jennifermaxims_identity_1">Jennifer Maxims</li>
                         var item = data.list[i];
                         if (item.value.identityType === 'LINK_ID' && !item.value.rawIdValue.startsWith('zoezombie')) {
-                            $('.identities').append($('<li></li>').addClass('list-group-item').data('id', item.value.idValue).text(buildName(item.value.profile.name)));
+                            var $li = $('<li></li>')
+                                    .addClass('list-group-item')
+                                    .addClass('regular-user')
+                                    .data('id', item.value.idValue)
+                                    .text(buildName(item.value.profile.name))
+                                    .append($('<span/>').addClass('pull-right').text('Regular User'));
+                            $identities.append($li);
                         }
                     }
 
-                    updateUser();
+                    // details
+                    refreshPrincipalDetails();
 
-                    // Select user
+                    // select user
                     $('#user-list li').click(function () {
                         var identity = $(this).data('id');
                         logIn(identity);
                     });
 
-                    // Construct name
-                    function buildName(name) {
-                        if (name.unstructuredName) {
-                            return name.unstructuredName;
+                    // agency users
+                    $.get('/api/v1/agencyUsers', function (data) {
+
+                        // populate
+                        for (var i = 0; i < data.length; i++) {
+                            // eg. <li class="list-group-item" data-id="ted_agent">Jennifer Maxims</li>
+                            var item = data[i];
+                            var $li = $('<li></li>')
+                                    .addClass('list-group-item')
+                                    .addClass('agency-user')
+                                    .data('id', item.id)
+                                    .text(item.displayName)
+                                    .append($('<span/>').addClass('pull-right').text('Agency User'));
+                            $identities.append($li);
                         }
-                        else {
-                            return name.givenName + ' ' + name.familyName;
-                        }
-                    }
+
+                        // details
+                        refreshPrincipalDetails();
+
+                        // select user
+                        $('#user-list li').click(function () {
+                            var identity = $(this).data('id');
+                            logIn(identity);
+                        });
+
+
+
+                    });
+
                 });
+
             }
 
-            function logIn(identity) {
-                log.debug('Logging in with identity ', identity);
-                $.post('/api/v1/simulators/authenticator/authenticate', {credentials: identity}, function (data) {
+            function logIn(credentials) {
+                log.debug('Logging in with credentials ', credentials);
+                $.post('/api/v1/simulators/authenticator/authenticate', {credentials: credentials}, function (data) {
                 }).always(function () {
-                    updateUser();
+                    refreshPrincipalDetails();
                 });
             }
 
-            refreshIdentities();
+            function refreshPrincipalDetails() {
 
-            function updateUser() {
-                var id_value_header = 'x-ram-identity-idvalue';
+                var identity_id_value_header = 'x-ram-identity-idvalue';
+                var agency_login_id_value_header = 'x-ram-agencyuser-loginid';
 
                 var effect = 'rubberBand';
                 var $userDetail = $('#user-detail');
                 var $userList = $('#user-list');
                 var $notLoggedIn = $('#not-logged-in');
-                var $launchRamLink = $('#launch-ram-link');
 
                 $userDetail.removeClass(effect);
 
@@ -260,23 +265,24 @@
                     $userList.find('li').removeClass('active');
 
                     if (Object.keys(data).length > 0) {
+
                         // display login details
                         $notLoggedIn.hide();
                         $userDetail.find('.glyphicon').removeClass('disabled');
-
                         for (var key in data) {
                             $userDetail.find('table').append('<tr><td>' + key + '</td><td>' + data[key] + '</td></tr>');
                         }
 
+                        // pick id to use
+                        var id = data[agency_login_id_value_header] ? data[agency_login_id_value_header] : data[identity_id_value_header];
+
                         // highlight logged in user
                         $userList.find('li').each(function (index) {
-                            if ($(this).data('id') == data[id_value_header]) {
+                            if ($(this).data('id') == id) {
                                 $(this).addClass('active');
                             }
                         });
 
-                        // update link to open RAM
-                        $launchRamLink.attr('href', '/');
                     }
                     else {
                         // not logged in
@@ -285,13 +291,70 @@
 
                     log.debug('updated');
                     $userDetail.addClass(effect);
+
                 });
+
             }
+
+            var log = log4javascript.getLogger('my_logger');
+            var consoleAppender = new log4javascript.BrowserConsoleAppender();
+            log.addAppender(consoleAppender);
+
+            // construct add new user form
+            $.each(X_RAM_HEADERS_FOR_ADDING, function (key, value) {
+                $('#headers-container').append('<div class="form-group form-group-sm"><label>' +
+                        key +
+                        '</label><input  class="form-control input-sm" id="' +
+                        key +
+                        '" value="' +
+                        (X_RAM_HEADERS_FOR_ADDING[key] ? X_RAM_HEADERS_FOR_ADDING[key] : '') +
+                        '"/></div>');
+            });
+
+            // add new user
+            $('#headers-send-button').click(function () {
+                window.setTimeout(function () {
+                    // log out first
+                    $.post('/api/v1/simulators/authenticator/authenticate', {credentials: null}, function (data) {
+                    }).always(function () {
+                        // send any request with headers so identity gets created
+                        $.ajax({
+                            url: "/api/v1/simulators/authenticator/authenticate",
+                            type: "POST",
+                            beforeSend: function (request) {
+                                var id = getId();
+                                var idValue = getIdValue();
+                                log.debug('Sending header for idValue ', idValue);
+                                $.each(X_RAM_HEADERS_FOR_ADDING, function (key, value) {
+                                    var headerValue = $('#' + key).val();
+                                    if (headerValue) {
+                                        request.setRequestHeader(key, headerValue);
+                                    }
+                                });
+                                request.setRequestHeader('x-ram-identity-rawidvalue', id);
+                                request.setRequestHeader('x-ram-identity-idvalue', idValue);
+                            },
+                            processData: false,
+                            complete: function (msg) {
+                                // now refresh and log in as the new user as a convenience
+                                refreshIdentitiesAndAgencyUsers();
+                                logIn(getIdValue());
+                            }
+                        });
+                    }, 1000);
+                });
+            });
+
+            refreshIdentitiesAndAgencyUsers();
+
         });
+
     </script>
+
     <hr/>
 
 </div>
 
 </body>
+
 </html>

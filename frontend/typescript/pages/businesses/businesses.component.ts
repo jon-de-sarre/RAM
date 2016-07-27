@@ -101,7 +101,6 @@ export class BusinessesComponent extends AbstractPageComponent {
         this.services.route.goToBusinessesPage(filterString);
     }
 
-
     public get isLoading() {
         return this._isLoading;
     }
