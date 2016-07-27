@@ -98,6 +98,9 @@ export interface ISharedSecretType extends ICodeDecode {
     domain: string;
 }
 
+export interface ILegislativeProgram extends ICodeDecode {
+}
+
 export interface IProfile {
     provider: string;
     name: IName;

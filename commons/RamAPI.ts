@@ -141,6 +141,16 @@ export class SharedSecretType extends ICodeDecode {
     }
 }
 
+export class LegislativeProgram extends ICodeDecode {
+    constructor(code:string,
+                shortDecodeText:string,
+                longDecodeText:string,
+                startTimestamp:Date,
+                endTimestamp:Date) {
+        super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
+    }
+}
+
 export class Profile {
     constructor(public provider:string,
                 public name:Name,
