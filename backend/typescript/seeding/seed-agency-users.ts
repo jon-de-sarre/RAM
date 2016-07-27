@@ -31,7 +31,6 @@ export class AgencyUsersSeeder {
     public static findById(id: string): IAgencyUser {
         for (let i = 0; i < users.length; i = i + 1) {
             let user = users[i];
-            console.log('Checking: ' + JSON.stringify(user, null, 4));
             if (user.id === id) {
                 return user;
             }

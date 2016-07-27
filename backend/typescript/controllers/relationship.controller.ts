@@ -5,11 +5,9 @@ import {
 } from './helpers';
 import {IPartyModel} from '../models/party.model';
 import {IRelationshipModel, RelationshipStatus} from '../models/relationship.model';
-import {RelationshipAddDTO, CreateIdentityDTO, AttributeDTO} from '../../../commons/RamAPI';
+import {IInvitationCodeRelationshipAddDTO, ICreateInvitationCodeDTO, IAttributeDTO} from '../../../commons/RamAPI2';
 import {FilterParams} from '../../../commons/RamAPI2';
 import {PartyModel} from '../models/party.model';
-import {ProfileProvider} from '../models/profile.model';
-import {IdentityType} from '../models/identity.model';
 import {Headers} from './headers';
 
 // todo add data security
@@ -255,7 +253,7 @@ export class RelationshipController {
                 filterParams.get('authorisationManagement'),
                 filterParams.get('text'),
                 filterParams.get('sort'),
-                req.query.page,
+                parseInt(req.query.page),
                 req.query.pageSize)
             )
             .then((results) => (results.map((model) => model.toHrefValue(true))))
@@ -336,33 +334,33 @@ export class RelationshipController {
         };
 
         validateReqSchema(req, schemaB2I)
-            .then((req:Request) => {
+            .then((req: Request) => {
                 return PartyModel.findByIdentityIdValue(req.body.subjectIdValue);
             })
             .then((subjectParty) => {
-                const relationshipAddDTO = new RelationshipAddDTO(
-                    req.body.relationshipType,
-                    req.body.subjectIdValue,
-                    new CreateIdentityDTO(
-                        undefined,
-                        req.body.delegate.partyType,
-                        req.body.delegate.givenName,
-                        req.body.delegate.familyName,
-                        req.body.delegate.unstructuredName,
-                        req.body.delegate.sharedSecretTypeCode,
-                        req.body.delegate.sharedSecretValue,
-                        IdentityType.InvitationCode.code,
-                        undefined,
-                        undefined,
-                        undefined,
-                        undefined,
-                        undefined,
-                        ProfileProvider.Invitation.code
-                    ),
-                    req.body.startTimestamp ? new Date(req.body.startTimestamp) : undefined,
-                    req.body.endTimestamp ? new Date(req.body.endTimestamp) : undefined,
-                    AttributeDTO.build(req.body.attributes)
-                );
+
+                const delegateIdentity: ICreateInvitationCodeDTO = {
+                    givenName: req.body.delegate.givenName,
+                    familyName: req.body.delegate.familyName,
+                    sharedSecretValue: req.body.delegate.sharedSecretValue
+                };
+
+                const attributes: IAttributeDTO[] = [];
+                for (let attribute of req.body.attributes) {
+                    attributes.push({
+                        code: attribute.code,
+                        value: attribute.value
+                    });
+                }
+
+                const relationshipAddDTO: IInvitationCodeRelationshipAddDTO = {
+                    relationshipType: req.body.relationshipType,
+                    subjectIdValue: req.body.subjectIdValue,
+                    delegate: delegateIdentity,
+                    startTimestamp: req.body.startTimestamp ? new Date(req.body.startTimestamp) : undefined,
+                    endTimestamp: req.body.endTimestamp ? new Date(req.body.endTimestamp) : undefined,
+                    attributes: attributes
+                };
                 return subjectParty.addRelationship(relationshipAddDTO);
             })
             .then((model) => model ? model.toDTO(null) : null)
@@ -380,7 +378,7 @@ export class RelationshipController {
             }
         };
         validateReqSchema(req, schema)
-            .then((req:Request) => RelationshipStatus.valueOf(req.params.code))
+            .then((req:Request) => RelationshipStatus.valueOf(req.params.code) as RelationshipStatus)
             .then((model) => model ? model.toDTO() : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))

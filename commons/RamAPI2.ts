@@ -148,6 +148,12 @@ export interface IRelationshipAttribute {
     attributeName: IHrefValue<IRelationshipAttributeName>;
 }
 
+export interface ICreateInvitationCodeDTO {
+    givenName?:string;
+    familyName?:string;
+    sharedSecretValue:string;
+}
+
 export interface ICreateIdentityDTO {
     rawIdValue?:string;
     partyType:string;
@@ -170,10 +176,10 @@ export interface IAttributeDTO {
     value:string;
 }
 
-export interface IRelationshipAddDTO {
+export interface IInvitationCodeRelationshipAddDTO {
     relationshipType:string;
     subjectIdValue:string;
-    delegate:ICreateIdentityDTO;
+    delegate:ICreateInvitationCodeDTO;
     startTimestamp:Date;
     endTimestamp:Date;
     attributes:IAttributeDTO[];

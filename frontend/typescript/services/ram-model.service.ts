@@ -62,6 +62,10 @@ export class RAMModelService {
         }
     }
 
+    public isIndividual(identity: IIdentity): string {
+        return identity && identity.identityType === 'LINK_ID';
+    }
+
     public relationshipTypeLabel(relationshipTypeRefs: IHrefValue<IRelationshipType>[], relationship: IRelationship) {
         if (relationshipTypeRefs && relationship) {
             let relationshipType = this.getRelationshipType(relationshipTypeRefs, relationship);
