@@ -255,7 +255,7 @@ export class RelationshipController {
                 filterParams.get('authorisationManagement'),
                 filterParams.get('text'),
                 filterParams.get('sort'),
-                req.query.page,
+                parseInt(req.query.page),
                 req.query.pageSize)
             )
             .then((results) => (results.map((model) => model.toHrefValue(true))))
