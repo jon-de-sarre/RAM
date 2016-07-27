@@ -1,10 +1,11 @@
 import {Component} from '@angular/core';
-import {ROUTER_DIRECTIVES, Router, ActivatedRoute} from '@angular/router';
+import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
+import {FORM_DIRECTIVES, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
 import {RAMServices} from '../../services/ram-services';
-import {Observable} from '../../../jspm_packages/npm/rxjs@5.0.0-beta.6/Observable';
+import {Observable} from 'rxjs/Observable';
 
 import {
     ISearchResult,
@@ -12,15 +13,20 @@ import {
     IHrefValue,
     FilterParams
 } from '../../../../commons/RamAPI2';
-import {Params} from '../../../jspm_packages/npm/@angular/router@3.0.0-beta.2/esm/src/shared';
-import {SearchResultPaginationDelegate} from '../../components/search-result-pagination/search-result-pagination.component';
+import {
+    SearchResultPaginationDelegate,
+    SearchResultPaginationComponent
+} from '../../components/search-result-pagination/search-result-pagination.component';
 
 @Component({
     selector: 'ram-business-relationships',
     templateUrl: 'businesses.component.html',
     directives: [
         ROUTER_DIRECTIVES,
-        PageHeaderSPSComponent
+        FORM_DIRECTIVES,
+        REACTIVE_FORM_DIRECTIVES,
+        PageHeaderSPSComponent,
+        SearchResultPaginationComponent
     ]
 })
 
@@ -31,11 +37,14 @@ export class BusinessesComponent extends AbstractPageComponent {
     public parties$: Observable<ISearchResult<IHrefValue<IParty>>>;
     public partyRefs: IHrefValue<IParty>[];
     public paginationDelegate: SearchResultPaginationDelegate;
+    public form: FormGroup;
+
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
     constructor(route: ActivatedRoute,
                 router: Router,
-                services: RAMServices) {
+                services: RAMServices,
+                private _fb: FormBuilder) {
         super(route, router, services);
         this.setBannerTitle('Software Provider Services');
     }
@@ -44,18 +53,26 @@ export class BusinessesComponent extends AbstractPageComponent {
     public onInit(params: {path: Params, query: Params}) {
 
         this._isLoading = true;
-        this.filter = new FilterParams();
+        this.filter = FilterParams.decode(params.query['filter']);
         this.filter.add('partyType', 'ABN');
         this.filter.add('authorisationManagement', true);
 
         // extract path and query parameters
         this.page = params.query['page'] ? +params.query['page'] : 1;
 
+        // load business parties that the user has authorisation management for
         this.partyRefs = [];
         this.parties$ = this.services.rest.searchDistinctSubjectsForMe(this.filter.encode(), this.page);
         this.parties$.subscribe((partyRefs) => {
             this._isLoading = false;
             this.partyRefs = partyRefs.list;
+
+            // automatically focus business if there is only one
+            if (partyRefs.totalCount === 1) {
+                this.goToNotificationsContext(this.partyRefs[0]);
+            } else if (partyRefs.totalCount === 0) {
+                this.addGlobalMessage('You do not have authorisation administrator access to any businesses - see your administrator');
+            }
         }, (err) => {
             this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
             this._isLoading = false;
@@ -64,15 +81,33 @@ export class BusinessesComponent extends AbstractPageComponent {
         // pagination delegate
         this.paginationDelegate = {
             goToPage: (page: number) => {
-                this.services.route.goToBusinessesPage(page);
+                this.services.route.goToBusinessesPage(this.filter.encode(), page);
             }
         } as SearchResultPaginationDelegate;
 
-        this._isLoading = false;
+        // forms
+        this.form = this._fb.group({
+            text: this.filter.get('text', ''),
+            sort: this.filter.get('sort', '-')
+        });
     }
+
+    public search() {
+        const filterString = new FilterParams()
+            .add('text', this.form.controls['text'].value)
+            .add('sort', this.form.controls['sort'].value)
+            .encode();
+        console.log('here');
+        this.services.route.goToBusinessesPage(filterString);
+    }
+
 
     public get isLoading() {
         return this._isLoading;
+    }
+
+    public hasParties() {
+        return this.partyRefs && this.partyRefs.length > 0;
     }
 
     public goToNotificationsContext(partyResource: IHrefValue<IParty>) {
@@ -85,5 +120,9 @@ export class BusinessesComponent extends AbstractPageComponent {
 
     public goToNotificationsPage(idValue: string) {
         this.services.route.goToNotificationsPage(idValue);
+    };
+
+    public goToHomePage() {
+        this.services.route.goToHomePage();
     };
 }

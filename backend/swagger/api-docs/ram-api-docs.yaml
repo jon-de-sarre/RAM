@@ -28,6 +28,26 @@ paths:
   # Business End Points
   # -------------------------------------------------------------------------------------------------------------------
 
+  # Agency Users ......................................................................................................
+
+  /agencyUsers:
+    get:
+      tags:
+        - Business - Agency User
+      operationId: AgencyUser.search
+      summary: Search Agency Users (non-prod only)
+      description: Search Agency Users (non-prod only)
+      responses:
+        200:
+          schema:
+            type: array
+            items:
+              $ref: '#/definitions/AgencyUser'
+        400:
+          $ref: '#/responses/400'
+        500:
+          $ref: '#/responses/500'
+
   # Principals ........................................................................................................
 
   /me:
@@ -675,6 +695,41 @@ definitions:
   # -------------------------------------------------------------------------------------------------------------------
   # Business Models
   # -------------------------------------------------------------------------------------------------------------------
+
+  # Agency User .......................................................................................................
+
+  AgencyUser:
+    type: object
+    description: Agency User
+    properties:
+      id:
+        type: string
+        description: The id
+      givenName:
+        type: string
+        description: The given name
+      familyName:
+        type: string
+        description: The family name
+      displayName:
+        type: string
+        description: The display name
+      programRoles:
+        type: array
+        description: The list of program roles
+        items:
+          $ref: '#/definitions/AgencyUserProgramRole'
+
+  AgencyUserProgramRole:
+    type: object
+    description: Agency User Program Role
+    properties:
+      program:
+        type: string
+        description: The program
+      role:
+        type: string
+        description: The role
 
   # Principal .........................................................................................................
 

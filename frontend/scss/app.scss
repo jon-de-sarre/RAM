@@ -331,6 +331,14 @@ color: $color;
   padding: 0;
 }
 
+#top-drop-down {
+  background-color: #222;
+}
+
+#top-drop-down > li > a {
+  padding: 3px 20px;
+}
+
 .panel-heading .badge.square {
     border-radius: 0;
     padding: 10px 15px;

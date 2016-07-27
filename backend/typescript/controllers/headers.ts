@@ -5,10 +5,21 @@ export class Headers {
     public static AuthToken = `${Headers.Prefix}-auth-token`;
     public static AuthTokenDecoded = `${Headers.Prefix}-auth-token-decoded`;
 
+    public static Principal = `${Headers.Prefix}-principal`;
+    public static PrincipalIdValue = `${Headers.Prefix}-principal-idvalue`;
+
     public static Identity = `${Headers.Prefix}-identity`;
     public static IdentityIdValue = `${Headers.Prefix}-identity-idvalue`;
     public static IdentityRawIdValue = `${Headers.Prefix}-identity-rawidvalue`;
     public static IdentityType = `${Headers.Prefix}-identitytype`;
+    public static IdentityStrength = `${Headers.Prefix}-identitystrength`;
+
+    public static AgencyUser = `${Headers.Prefix}-agencyuser`;
+    public static AgencyUserLoginId = `${Headers.Prefix}-agencyuser-loginid`;
+    public static AgencyUserProgramRoles = `${Headers.Prefix}-agencyuser-programroles`;
+
+    public static CredentialType = `${Headers.Prefix}-credentialtype`;
+    public static CredentialStrength = `${Headers.Prefix}-credentialstrength`;
 
     public static PartyType = `${Headers.Prefix}-partytype`;
 
@@ -16,6 +27,7 @@ export class Headers {
     public static FamilyName = `${Headers.Prefix}-familyname`;
     public static UnstructuredName = `${Headers.Prefix}-unstructuredname`;
     public static DOB = `${Headers.Prefix}-dob`;
+    public static EMAIL = `${Headers.Prefix}-email`;
 
     public static ProfileProvider = `${Headers.Prefix}-profileprovider`;
 

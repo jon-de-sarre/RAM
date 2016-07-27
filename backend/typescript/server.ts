@@ -16,13 +16,14 @@ import {security} from './controllers/security.middleware';
 
 // DEVELOPMENT RESOURCES
 import {AuthenticatorSimulatorController} from './controllers/authenticator.simulator.controller';
-import {IdentityController} from './controllers/identity.controller';
+import {AgencyUserController} from './controllers/agencyUser.controller';
 import {ResetController} from './controllers/reset.server.controller';
 
 // PRODUCTION RESOURCES
 import {PrincipalController} from './controllers/principal.controller';
 import {PartyController} from './controllers/party.controller';
 import {ProfileController} from './controllers/profile.controller';
+import {IdentityController} from './controllers/identity.controller';
 import {RelationshipController} from './controllers/relationship.controller';
 import {RelationshipTypeController} from './controllers/relationshipType.controller';
 import {RelationshipAttributeNameController} from './controllers/relationshipAttributeName.controller';
@@ -78,6 +79,10 @@ if (conf.devMode) {
 }
 
 // setup route handlers (dev) .........................................................................................
+
+server.use('/api/',
+    new AgencyUserController()
+        .assignRoutes(express.Router()));
 
 server.use('/api/reset',
     new ResetController().assignRoutes(express.Router()));

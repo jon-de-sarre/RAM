@@ -27,6 +27,10 @@ import {
     SharedSecretModel} from '../models/sharedSecret.model';
 
 import {
+    ILegislativeProgram,
+    LegislativeProgramModel} from '../models/legislativeProgram.model';
+
+import {
     IName,
     NameModel} from '../models/name.model';
 
@@ -49,6 +53,8 @@ import {
 import {
     IIdentity,
     IdentityModel} from '../models/identity.model';
+
+import {LegislativeProgramsSeeder} from './seed-legislative-programs';
 
 import {BobSmithIdentitySeeder} from './seed-bobsmith-identity';
 
@@ -105,6 +111,9 @@ export class Seeder {
     public static custom_delegate_relationshipType:IRelationshipType;
 
     public static dob_sharedSecretType:ISharedSecretType;
+
+    // Legislative Programs
+    public static education_legislativeProgram:ILegislativeProgram;
 
     // individual identity
     public static bobsmith_name:IName;
@@ -284,6 +293,19 @@ export class Seeder {
         Seeder.log(`- Secret    : ${values.sharedSecretType.code} (${values.value})`.cyan);
         const model = await SharedSecretModel.create(values);
         return model;
+    }
+
+    public static async createLegislativeProgramModel(values:ILegislativeProgram) {
+        const code = values.code;
+        const existingModel = await LegislativeProgramModel.findByCodeIgnoringDateRange(code);
+        if (existingModel === null) {
+            Seeder.log(`- ${code}`.red);
+            const model = await LegislativeProgramModel.create(values);
+            return model;
+        } else {
+            Seeder.log(`- ${code} ...`.red);
+            return existingModel;
+        }
     }
 
     public static async createNameModel(values:IName) {
@@ -659,7 +681,8 @@ export class Seeder {
             .then(Seeder.loadRelationshipOtherAttributeNames)
             .then(Seeder.loadRelationshipPermissionAttributeNames)
             .then(Seeder.loadRelationshipTypes)
-            .then(Seeder.loadSharedSecretTypes);
+            .then(Seeder.loadSharedSecretTypes)
+            .then(LegislativeProgramsSeeder.load)
     }
 
     public static loadMock() {

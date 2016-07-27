@@ -2,11 +2,44 @@
 	"variables": [],
 	"info": {
 		"name": "RAM",
-		"_postman_id": "e3b3e9d0-5b8c-7c17-7820-3ca806940afb",
+		"_postman_id": "d3d0d84c-1038-3691-a3a6-1d93b406c12f",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
+		{
+			"name": "Agency User",
+			"description": "",
+			"item": [
+				{
+					"name": "List",
+					"request": {
+						"url": "{{host}}/api/v1/agencyUsers",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
 		{
 			"name": "Authentication",
 			"description": "",
@@ -50,7 +83,7 @@
 					"response": []
 				},
 				{
-					"name": "Authenticate (Jennifer Maxims)",
+					"name": "Authenticate Identity (Jennifer Maxims)",
 					"request": {
 						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
 						"method": "POST",
@@ -76,7 +109,7 @@
 					"response": []
 				},
 				{
-					"name": "Authenticate (Bob Smith)",
+					"name": "Authenticate Identity (Bob Smith)",
 					"request": {
 						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
 						"method": "POST",
@@ -102,7 +135,7 @@
 					"response": []
 				},
 				{
-					"name": "Authenticate As New User (Fred Johnson)",
+					"name": "Authenticate New Identity (Fred Johnson)",
 					"request": {
 						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
 						"method": "POST",
@@ -179,6 +212,33 @@
 								}
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate Agency User (Ted Agent)",
+					"request": {
+						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "ted_agent",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
 					},
 					"response": []
 				}

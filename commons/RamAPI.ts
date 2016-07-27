@@ -68,6 +68,21 @@ export class Principal {
     }
 }
 
+export class AgencyUser {
+    constructor(public id:string,
+                public givenName:string,
+                public familyName:string,
+                public displayName:string,
+                public programRoles:AgencyUserProgramRole[]) {
+    }
+}
+
+export class AgencyUserProgramRole {
+    constructor(public program:string,
+                public role:string) {
+    }
+}
+
 // todo do we drop the I?
 export class ICodeDecode {
     constructor(public code:string,
@@ -137,6 +152,16 @@ export class SharedSecretType extends ICodeDecode {
                 startTimestamp:Date,
                 endTimestamp:Date,
                 public domain:string) {
+        super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
+    }
+}
+
+export class LegislativeProgram extends ICodeDecode {
+    constructor(code:string,
+                shortDecodeText:string,
+                longDecodeText:string,
+                startTimestamp:Date,
+                endTimestamp:Date) {
         super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
     }
 }

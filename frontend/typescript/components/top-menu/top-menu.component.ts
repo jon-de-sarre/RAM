@@ -4,10 +4,12 @@ import {Component} from '@angular/core';
 import {RAMServices} from '../../services/ram-services';
 
 import {IPrincipal} from '../../../../commons/RamAPI2';
+import {DROPDOWN_DIRECTIVES} from 'ng2-bootstrap';
 
 @Component({
     selector: 'top-menu',
-    templateUrl: 'top-menu.component.html'
+    templateUrl: 'top-menu.component.html',
+    directives: [DROPDOWN_DIRECTIVES]
 })
 
 export class TopMenuComponent {

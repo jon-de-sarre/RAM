@@ -226,7 +226,7 @@ export class RelationshipController {
             .then(sendNotFoundError(res))
             .catch(sendError(res));
     };
-    
+
     private searchDistinctSubjectsForMe = async (req:Request, res:Response) => {
         const schema = {
             'page': {

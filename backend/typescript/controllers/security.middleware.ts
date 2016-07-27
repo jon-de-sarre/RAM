@@ -4,6 +4,8 @@ import {Request, Response} from 'express';
 import {Headers} from './headers';
 import {ErrorResponse} from '../../../commons/RamAPI';
 import {CreateIdentityDTO} from '../../../commons/RamAPI';
+import {AgencyUser, IAgencyUserProgramRole, AgencyUserProgramRole} from '../models/agencyUser.model';
+import {IPrincipal, Principal} from '../models/principal.model';
 import {IIdentity, IdentityModel} from '../models/identity.model';
 import {DOB_SHARED_SECRET_TYPE_CODE} from '../models/sharedSecretType.model';
 
@@ -11,60 +13,56 @@ import {DOB_SHARED_SECRET_TYPE_CODE} from '../models/sharedSecretType.model';
 
 class Security {
 
-    public prepareRequest():(req:Request, res:Response, next:() => void) => void {
-        return (req:Request, res:Response, next:() => void) => {
+    public prepareRequest(): (req: Request, res: Response, next: () => void) => void {
+        return (req: Request, res: Response, next: () => void) => {
             //this.logHeaders(req);
-
-            const idValue = this.getIdValue(req, res);
-            if (idValue) {
-                // id supplied, try to lookup and if not found create a new identity before carrying on
-                IdentityModel.findByIdValue(idValue)
+            const agencyUserLoginIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserLoginId);
+            const identityIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.IdentityIdValue);
+            if (agencyUserLoginIdValue) {
+                // agency login supplied, carry on
+                Promise.resolve(agencyUserLoginIdValue)
+                    .then(this.prepareAgencyUserResponseLocals(req, res, next))
+                    .then(this.prepareCommonResponseLocals(req, res, next))
+                    .catch(this.reject(res, next));
+            } else if (identityIdValue) {
+                // identity id supplied, try to lookup and if not found create a new identity before carrying on
+                IdentityModel.findByIdValue(identityIdValue)
                     .then(this.createIdentityIfNotFound(req, res))
-                    .then(this.prepareResponseLocals(req, res, next), this.reject(res, next));
+                    .then(this.prepareIdentityResponseLocals(req, res, next))
+                    .then(this.prepareCommonResponseLocals(req, res, next))
+                    .catch(this.reject(res, next));
             } else {
-                // id not supplied, carry on
+                // no id supplied, carry on
                 Promise.resolve(null)
-                    .then(this.prepareResponseLocals(req, res, next), this.reject(res, next));
+                    .then(this.prepareIdentityResponseLocals(req, res, next))
+                    .then(this.prepareCommonResponseLocals(req, res, next))
+                    .catch(this.reject(res, next));
             }
         };
     }
 
-    // private logHeaders(req:Request) {
-    //     for (let header of Object.keys(req.headers)) {
-    //         if(Headers.isXRAMHeader(header)) {
-    //             logger.debug(header, '=', req.headers[header]);
-    //         }
-    //     }
-    // }
-
-    /**
-     * Attempts to provide an Identity Value by looking in the following:
-     *  header,
-     *  locals,
-     *  cookie
-     */
-    private getIdValue(req:Request, res:Response):string {
+    private getValueFromHeaderLocalsOrCookie(req: Request, res: Response, key: string): string {
 
         // look for id in headers
-        if(req.get(Headers.IdentityIdValue)) {
-            // logger.info('found header', req.get(Headers.IdentityIdValue));
-            return req.get(Headers.IdentityIdValue);
+        if (req.get(key)) {
+            // logger.info('found header', req.get(key));
+            return req.get(key);
         }
 
         // look for id in locals
-        if(res.locals[Headers.IdentityIdValue]) {
-            // logger.info('found local', res.locals[Headers.IdentityIdValue]);
-            return res.locals[Headers.IdentityIdValue];
+        if (res.locals[key]) {
+            // logger.info('found local', res.locals[key]);
+            return res.locals[key];
         }
 
         // look for id in cookies
-        return SecurityHelper.getIdentityIdValueFromCookies(req);
+        return SecurityHelper.getValueFromCookies(req, key);
 
     }
 
     /* tslint:disable:max-func-body-length */
-    private createIdentityIfNotFound(req:Request, res:Response) {
-        return (identity?:IIdentity) => {
+    private createIdentityIfNotFound(req: Request, res: Response) {
+        return (identity?: IIdentity) => {
             const rawIdValue = req.get(Headers.IdentityRawIdValue);
             if (identity) {
                 logger.info('Identity context: Using existing identity ...');
@@ -96,22 +94,45 @@ class Security {
         };
     }
 
-    private prepareResponseLocals(req:Request, res:Response, next:() => void) {
-        return (identity?:IIdentity) => {
+    private prepareAgencyUserResponseLocals(req: Request, res: Response, next: () => void) {
+        return (idValue: string) => {
+            logger.info('Agency User context:', (idValue ? colors.magenta(idValue) : colors.red('[not found]')));
+            if (idValue) {
+                const givenName = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.GivenName);
+                const familyName = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.FamilyName);
+                const displayName = givenName ?
+                    givenName + (familyName ? ' ' + familyName : '') :
+                    (familyName ? familyName : '');
+                const programRoles: IAgencyUserProgramRole[] = [];
+                const programRolesRaw = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserProgramRoles);
+                if (programRolesRaw) {
+                    const programRowStrings = programRolesRaw.split(',');
+                    for (let programRoleString of programRowStrings) {
+                        programRoles.push(new AgencyUserProgramRole(
+                            programRoleString.split(':')[0],
+                            programRoleString.split(':')[1]
+                        ));
+                    }
+                }
+                res.locals[Headers.Principal] = new Principal(idValue, displayName, true);
+                res.locals[Headers.PrincipalIdValue] = idValue;
+                res.locals[Headers.AgencyUser] = new AgencyUser(
+                    idValue,
+                    givenName,
+                    familyName,
+                    displayName,
+                    programRoles
+                );
+            }
+        };
+    }
+
+    private prepareIdentityResponseLocals(req: Request, res: Response, next: () => void) {
+        return (identity?: IIdentity) => {
             logger.info('Identity context:', (identity ? colors.magenta(identity.idValue) : colors.red('[not found]')));
             if (identity) {
-                for (let key of Object.keys(req.headers)) {
-
-                    // headers should be lowercase, but lets make sure
-                    const keyLower = key.toLowerCase();
-
-                    // if it's an application header, copy it to locals
-                    if (keyLower.startsWith(Headers.Prefix)) {
-                        const value = req.get(key);
-                        res.locals[keyLower] = value;
-                    }
-
-                }
+                res.locals[Headers.Principal] = new Principal(identity.idValue, identity.profile.name._displayName, false);
+                res.locals[Headers.PrincipalIdValue] = identity.idValue;
                 res.locals[Headers.Identity] = identity;
                 res.locals[Headers.IdentityIdValue] = identity.idValue;
                 res.locals[Headers.IdentityRawIdValue] = identity.rawIdValue;
@@ -122,29 +143,51 @@ class Security {
                     res.locals[`${Headers.Prefix}-${sharedSecret.sharedSecretType.code}`.toLowerCase()] = sharedSecret.value;
                 }
             }
+        };
+    }
+
+    private prepareCommonResponseLocals(req: Request, res: Response, next: () => void) {
+        return () => {
+            for (let key of Object.keys(req.headers)) {
+                // headers should be lowercase, but lets make sure
+                const keyLower = key.toLowerCase();
+                // if it's an application header, copy it to locals
+                if (keyLower.startsWith(Headers.Prefix)) {
+                    const value = req.get(key);
+                    res.locals[keyLower] = value;
+                }
+            }
             next();
         };
     }
 
-    private reject(res:Response, next:() => void) {
-        return (err:Error):void => {
+    private reject(res: Response, next: () => void) {
+        return (err: Error): void => {
             logger.error(('Unable to look up identity: ' + err).red);
             res.status(401);
             res.send(new ErrorResponse('Unable to look up identity.'));
         };
     }
 
-    public getAuthenticatedIdentityIdValue(res:Response):string {
+    public getAuthenticatedIdentityIdValue(res: Response): string {
         return res.locals[Headers.IdentityIdValue];
     }
 
-    public getAuthenticatedIdentity(res:Response):IIdentity {
+    public getAuthenticatedIdentity(res: Response): IIdentity {
         return res.locals[Headers.Identity];
     }
 
-    public isAuthenticated(req:Request, res:Response, next:() => void) {
-        const idValue = res.locals[Headers.IdentityIdValue];
-        if (idValue) {
+    public getAuthenticatedPrincipalIdValue(res: Response): string {
+        return res.locals[Headers.PrincipalIdValue];
+    }
+
+    public getAuthenticatedPrincipal(res: Response): IPrincipal {
+        return res.locals[Headers.Principal];
+    }
+
+    public isAuthenticated(req: Request, res: Response, next: () => void) {
+        const id = res.locals[Headers.PrincipalIdValue];
+        if (id) {
             next();
         } else {
             logger.error('Unable to invoke route requiring authentication'.red);
@@ -152,39 +195,42 @@ class Security {
             res.send(new ErrorResponse('Not authenticated.'));
         }
     }
+
+    public isAuthenticatedAsAgencyUser(req: Request, res: Response, next: () => void) {
+        const principal = res.locals[Headers.Principal];
+        if (principal && principal.agencyUserInd) {
+            next();
+        } else {
+            logger.error('Unable to invoke route requiring agency user'.red);
+            res.status(401);
+            res.send(new ErrorResponse('Not authenticated as agency user.'));
+        }
+    }
+
+    // private logHeaders(req:Request) {
+    //     for (let header of Object.keys(req.headers)) {
+    //         if(Headers.isXRAMHeader(header)) {
+    //             logger.debug(header, '=', req.headers[header]);
+    //         }
+    //     }
+    // }
+
 }
 
 export class SecurityHelper {
 
-    public static getIdentityIdValueFromCookies(req:Request):string {
-
-        // find cookie regardless of case
+    public static getValueFromCookies(req: Request, keyToMatch: string): string {
+        const keyToMatchLower = keyToMatch.toLowerCase();
         for (let key of Object.keys(req.cookies)) {
-
             const keyLower = key.toLowerCase();
-
-            if (keyLower === Headers.AuthToken) {
-
-                // get encoded auth token
-                const authTokenEncodedFromCookie = req.cookies[key];
-
-                if(authTokenEncodedFromCookie) {
-                    // decode auth token
-                    const authToken = new Buffer(authTokenEncodedFromCookie, 'base64').toString('ascii');
-                    // get idValue from auth token
-                    return this.getIdentityIdValueFromAuthToken(authToken);
+            if (keyLower === keyToMatchLower) {
+                const encodedValue = req.cookies[key];
+                if (encodedValue) {
+                    return new Buffer(encodedValue, 'base64').toString('ascii');
                 }
-
             }
-
         }
-
         return null;
-
-    }
-
-    private static getIdentityIdValueFromAuthToken(authToken:string):string {
-        return authToken;
     }
 
 }
