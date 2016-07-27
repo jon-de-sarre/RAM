@@ -47,6 +47,7 @@ case "$1" in
   'deps:frontend')
     echo ""
     echo "Downloading frontend dependencies ..."
+    echo ""
     cd frontend
     npm install && bower install && typings install && ./node_modules/.bin/jspm install
     echo ""
@@ -55,6 +56,7 @@ case "$1" in
   'deps:backend')
     echo ""
     echo "Downloading backend dependencies ..."
+    echo ""
     cd backend
     npm install && typings install
     echo ""
@@ -63,6 +65,7 @@ case "$1" in
   'deps:test')
     echo ""
     echo "Downloading test dependencies ..."
+    echo ""
     cd tests
     npm install && typings install
     echo ""
@@ -208,6 +211,7 @@ case "$1" in
   'lint:frontend')
     echo ""
     echo "Running ts:lint on frontend"
+    echo ""
     cd frontend
     gulp ts:lint
     echo ""
@@ -216,6 +220,7 @@ case "$1" in
   'lint:backend')
     echo ""
     echo "Running ts:lint on backend"
+    echo ""
     cd backend
     gulp ts:lint
     echo ""
@@ -226,6 +231,7 @@ case "$1" in
   'compile:frontend')
     echo ""
     echo "Running ts:compile on frontend"
+    echo ""
     cd frontend
     gulp ts:compile
     echo ""
@@ -234,6 +240,7 @@ case "$1" in
   'compile:backend')
     echo ""
     echo "Running ts:compile on backend"
+    echo ""
     cd backend
     gulp ts:compile
     echo ""

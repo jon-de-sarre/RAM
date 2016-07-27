@@ -71,6 +71,8 @@ import {JohnMaximsIdentitySeeder} from './seed-johnmaxims-identity';
 import {JensCateringIdentitySeeder} from './seed-jenscatering-identity';
 import {JensCateringRelationshipsSeeder} from './seed-jenscatering-relationships';
 
+import {AgencyUsersSeeder} from './seed-agency-users';
+
 import {LDIFExporter} from './ldifExporter';
 
 const now = new Date();
@@ -340,6 +342,14 @@ export class Seeder {
     public static async exportIdentity(identity:IIdentity) {
         if(Seeder.exportLDIFMode) {
             await LDIFExporter.exportIdentity(identity);
+        }
+    }
+
+    public static async exportAgencyUsers() {
+        if(Seeder.exportLDIFMode) {
+            for (let agencyUser of AgencyUsersSeeder.all()) {
+                await LDIFExporter.exportAgencyUser(agencyUser);
+            }
         }
     }
 
@@ -702,6 +712,9 @@ export class Seeder {
             .then(CakeryBakeryRelationshipsSeeder.load)
             .then(JensCateringRelationshipsSeeder.load)
             .then(JMFoodPackagingRelationshipsSeeder.load)
+
+            // agency users
+            .then(Seeder.exportAgencyUsers)
 
             .then(Seeder.disconnectIdentityExporters);
     }
