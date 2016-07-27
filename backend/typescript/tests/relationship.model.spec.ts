@@ -590,7 +590,7 @@ describe('RAM Relationship', () => {
                 status: RelationshipStatus.Pending.code
             });
 
-            const parties = await RelationshipModel.searchDistinctSubjectsForMe(delegateParty1, 1, 10);
+            const parties = await RelationshipModel.searchDistinctSubjectsForMe(delegateParty1, null, 'asc', 1, 10);
             expect(parties.totalCount).toBe(1);
             expect(parties.list.length).toBe(1);
 

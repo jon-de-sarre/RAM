@@ -260,7 +260,7 @@ export interface IRelationshipModel extends mongoose.Model<IRelationship> {
                       text: string,
                       sort: string,
                       page: number, pageSize: number) => Promise<SearchResult<IRelationship>>;
-    searchDistinctSubjectsForMe:(requestingParty: IParty, page: number, pageSize: number)
+    searchDistinctSubjectsForMe:(requestingParty: IParty, text: string, sort: string,page: number, pageSize: number)
         => Promise<SearchResult<IParty>>;
 }
 
@@ -730,24 +730,40 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
  */
 /* tslint:disable:max-func-body-length */
 RelationshipSchema.static('searchDistinctSubjectsForMe',
-    (requestingParty: IParty, page: number, reqPageSize: number) => {
+    (requestingParty: IParty,
+     text: string,
+     sort: string,
+     page: number,
+     reqPageSize: number) => {
         return new Promise<SearchResult<IParty>>(async (resolve, reject) => {
             const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
             try {
-                const where = [];
-                where.push(
-                    {
-                        '$match': {
-                            'delegate': new mongoose.Types.ObjectId(requestingParty.id)
-                        }
-                    });
-                where.push(
-                    {'$group': {'_id': '$subject'}}
-                );
-                const count = (await this.RelationshipModel.aggregate(where).exec()).length;
-                where.push({'$skip': (page - 1) * pageSize});
-                where.push({'$limit': pageSize});
-                const listOfIds = await this.RelationshipModel.aggregate(where).exec();
+                const where: Object =  {
+                    '$match': {
+                        'delegate': new mongoose.Types.ObjectId(requestingParty.id)
+                    }
+                };
+                if (text) {
+                    where['$match']['_subjectNickNameString'] = new RegExp(text, 'i');
+                    where['$match']['_subjectABNString'] = new RegExp(text, 'i');
+                }
+                const count = (await this.RelationshipModel
+                    .aggregate([
+                        where,
+                        {'$group': {'_id': '$subject'}}
+                    ])
+                    .exec()).length;
+                const listOfIds = await this.RelationshipModel
+                    .aggregate([
+                        where,
+                        {'$group': {'_id': '$subject'}}
+                    ])
+                    .sort({
+                        '_subjectNickNameString': !sort || sort === 'asc' ? 1 : -1
+                    })
+                    .skip((page - 1) * pageSize)
+                    .limit(pageSize)
+                    .exec();
                 const inflatedList = (await PartyModel.populate(listOfIds, {path: '_id'})).map((item: {_id:string}) => item._id);
                 resolve(new SearchResult<IParty>(page, count, pageSize, inflatedList));
             } catch (e) {
