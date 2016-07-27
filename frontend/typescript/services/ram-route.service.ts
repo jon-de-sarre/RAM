@@ -66,8 +66,11 @@ export class RAMRouteService {
         ]);
     }
 
-    public goToBusinessesPage(page?: number) {
+    public goToBusinessesPage(filter?: string, page?: number) {
         const queryParams = {};
+        if (filter) {
+            queryParams['filter'] = filter;
+        }
         if (page) {
             queryParams['page'] = page;
         }

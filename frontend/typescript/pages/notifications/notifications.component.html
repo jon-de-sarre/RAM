@@ -5,3 +5,12 @@
 <div class="centered">
     <p class="todo">List OSP notification relationships for business in focus</p>
 </div>
+
+<div *ngIf="canReturnToDashboard">
+<div class="clearfix"></div>
+<div class="padding-btn-20"></div>
+<a class="btn btn-default col-md-3 align-center" (click)="goToBusinessesPage()"> ← Go to dashboard </a>
+<div class="clearfix"></div>
+<div class="padding-btn-20"></div>
+<div class="padding-btn-20"></div>
+</div>

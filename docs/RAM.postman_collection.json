@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "RAM",
-		"_postman_id": "e3b3e9d0-5b8c-7c17-7820-3ca806940afb",
+		"_postman_id": "9f171ead-8d4a-3b9b-ec55-a0ee43d577f4",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -50,7 +50,7 @@
 					"response": []
 				},
 				{
-					"name": "Authenticate (Jennifer Maxims)",
+					"name": "Authenticate Identity (Jennifer Maxims)",
 					"request": {
 						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
 						"method": "POST",
@@ -76,7 +76,7 @@
 					"response": []
 				},
 				{
-					"name": "Authenticate (Bob Smith)",
+					"name": "Authenticate Identity (Bob Smith)",
 					"request": {
 						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
 						"method": "POST",
@@ -102,7 +102,7 @@
 					"response": []
 				},
 				{
-					"name": "Authenticate As New User (Fred Johnson)",
+					"name": "Authenticate New Identity (Fred Johnson)",
 					"request": {
 						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
 						"method": "POST",
@@ -179,6 +179,33 @@
 								}
 							]
 						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate Agency User (Ted Agency User)",
+					"request": {
+						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "ted_agency_user",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
 					},
 					"response": []
 				}

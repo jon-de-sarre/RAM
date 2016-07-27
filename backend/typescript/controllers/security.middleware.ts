@@ -4,7 +4,7 @@ import {Request, Response} from 'express';
 import {Headers} from './headers';
 import {ErrorResponse} from '../../../commons/RamAPI';
 import {CreateIdentityDTO} from '../../../commons/RamAPI';
-import {IPrincipal} from '../../../commons/RamAPI2';
+import {IPrincipal, IAgencyUser, IAgencyUserProgramRole} from '../../../commons/RamAPI2';
 import {IIdentity, IdentityModel} from '../models/identity.model';
 import {DOB_SHARED_SECRET_TYPE_CODE} from '../models/sharedSecretType.model';
 
@@ -15,16 +15,27 @@ class Security {
     public prepareRequest(): (req: Request, res: Response, next: () => void) => void {
         return (req: Request, res: Response, next: () => void) => {
             //this.logHeaders(req);
-            const identityIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AuthToken);
-            if (identityIdValue) {
+            const agencyUserLoginIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserLoginId);
+            const identityIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.IdentityIdValue);
+            if (agencyUserLoginIdValue) {
+                // agency login supplied, carry on
+                Promise.resolve(agencyUserLoginIdValue)
+                    .then(this.prepareAgencyUserResponseLocals(req, res, next))
+                    .then(this.prepareCommonResponseLocals(req, res, next))
+                    .catch(this.reject(res, next));
+            } else if (identityIdValue) {
                 // identity id supplied, try to lookup and if not found create a new identity before carrying on
                 IdentityModel.findByIdValue(identityIdValue)
                     .then(this.createIdentityIfNotFound(req, res))
-                    .then(this.prepareResponseLocals(req, res, next), this.reject(res, next));
+                    .then(this.prepareIdentityResponseLocals(req, res, next))
+                    .then(this.prepareCommonResponseLocals(req, res, next))
+                    .catch(this.reject(res, next));
             } else {
                 // no id supplied, carry on
                 Promise.resolve(null)
-                    .then(this.prepareResponseLocals(req, res, next), this.reject(res, next));
+                    .then(this.prepareIdentityResponseLocals(req, res, next))
+                    .then(this.prepareCommonResponseLocals(req, res, next))
+                    .catch(this.reject(res, next));
             }
         };
     }
@@ -82,19 +93,47 @@ class Security {
         };
     }
 
-    private prepareResponseLocals(req: Request, res: Response, next: () => void) {
+    private prepareAgencyUserResponseLocals(req: Request, res: Response, next: () => void) {
+        return (idValue: string) => {
+            logger.info('Agency User context:', (idValue ? colors.magenta(idValue) : colors.red('[not found]')));
+            if (idValue) {
+                const givenName = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.GivenName);
+                const familyName = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.FamilyName);
+                const displayName = givenName ?
+                    givenName + (familyName ? ' ' + familyName : '') :
+                    (familyName ? familyName : '');
+                const programRoles: IAgencyUserProgramRole[] = [];
+                const programRolesRaw = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserProgramRoles);
+                if (programRolesRaw) {
+                    const programRowStrings = programRolesRaw.split(',');
+                    for (let programRoleString of programRowStrings) {
+                        programRoles.push({
+                            program: programRoleString.split(':')[0],
+                            role: programRoleString.split(':')[1]
+                        } as IAgencyUserProgramRole);
+                    }
+                }
+                res.locals[Headers.Principal] = {
+                    id: idValue,
+                    displayName: displayName,
+                    agencyUserInd: true
+                } as IPrincipal;
+                res.locals[Headers.PrincipalIdValue] = idValue;
+                res.locals[Headers.AgencyUser] = {
+                    id: idValue,
+                    givenName: givenName,
+                    familyName: familyName,
+                    displayName: displayName,
+                    programRoles: programRoles
+                } as IAgencyUser;
+            }
+        };
+    }
+
+    private prepareIdentityResponseLocals(req: Request, res: Response, next: () => void) {
         return (identity?: IIdentity) => {
             logger.info('Identity context:', (identity ? colors.magenta(identity.idValue) : colors.red('[not found]')));
             if (identity) {
-                for (let key of Object.keys(req.headers)) {
-                    // headers should be lowercase, but lets make sure
-                    const keyLower = key.toLowerCase();
-                    // if it's an application header, copy it to locals
-                    if (keyLower.startsWith(Headers.Prefix)) {
-                        const value = req.get(key);
-                        res.locals[keyLower] = value;
-                    }
-                }
                 res.locals[Headers.Principal] = {
                     id: identity.idValue,
                     displayName: identity.profile.name._displayName,
@@ -109,6 +148,20 @@ class Security {
                 res.locals[Headers.UnstructuredName] = identity.profile.name.unstructuredName;
                 for (let sharedSecret of identity.profile.sharedSecrets) {
                     res.locals[`${Headers.Prefix}-${sharedSecret.sharedSecretType.code}`.toLowerCase()] = sharedSecret.value;
+                }
+            }
+        };
+    }
+
+    private prepareCommonResponseLocals(req: Request, res: Response, next: () => void) {
+        return () => {
+            for (let key of Object.keys(req.headers)) {
+                // headers should be lowercase, but lets make sure
+                const keyLower = key.toLowerCase();
+                // if it's an application header, copy it to locals
+                if (keyLower.startsWith(Headers.Prefix)) {
+                    const value = req.get(key);
+                    res.locals[keyLower] = value;
                 }
             }
             next();

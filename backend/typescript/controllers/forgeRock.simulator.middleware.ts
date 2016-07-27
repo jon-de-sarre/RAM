@@ -3,31 +3,55 @@ import * as colors from 'colors';
 import {Request, Response} from 'express';
 import {Headers} from './headers';
 import {SecurityHelper} from './security.middleware';
+import {AgencyUsersSeeder} from '../seeding/seed-agency-users';
 import {IIdentity, IdentityModel} from '../models/identity.model';
+import {IAgencyUser} from '../../../commons/RamAPI2';
 
 class ForgeRockSimulator {
 
-    public prepareRequest():(req:Request, res:Response, next:() => void) => void {
+    public prepareRequest(): (req: Request, res: Response, next: () => void) => void {
         const self = this;
-        return (req:Request, res:Response, next:() => void) => {
-            const credentialsFromAuthenticationSimulator = req.body.credentials;
-            const idValueFromCookie = SecurityHelper.getValueFromCookies(req, Headers.AuthToken);
-            if (credentialsFromAuthenticationSimulator) {
-                // log in from development only login form
-                IdentityModel.findByIdValue(credentialsFromAuthenticationSimulator)
-                    .then(self.resolve(req, res, next), self.reject(res, next));
-            } else if (idValueFromCookie) {
-                // log in from cookie
-                IdentityModel.findByIdValue(idValueFromCookie)
-                    .then(self.resolve(req, res, next), self.reject(res, next));
+        return (req: Request, res: Response, next: () => void) => {
+            const idFromAuthenticationSimulator = req.body.credentials;
+            const idFromCookie = SecurityHelper.getValueFromCookies(req, Headers.AuthToken);
+            const id = idFromAuthenticationSimulator ? idFromAuthenticationSimulator : idFromCookie;
+            if (id) {
+                const agencyUser = AgencyUsersSeeder.findById(id);
+                if (agencyUser) {
+                    Promise.resolve(agencyUser)
+                        .then(self.resolveForAgencyUser(req, res, next))
+                        .catch(self.reject(res, next));
+                } else {
+                    IdentityModel.findByIdValue(id)
+                        .then(self.resolveForIdentity(req, res, next))
+                        .catch(self.reject(res, next));
+                }
             } else {
                 next();
             }
         };
     }
 
-    private resolve(req:Request, res:Response, next:() => void) {
-        return (identity?:IIdentity) => {
+    private resolveForAgencyUser(req: Request, res: Response, next: () => void) {
+        return (agencyUser?: IAgencyUser) => {
+            if (agencyUser) {
+                logger.info(colors.red(`Setting ${Headers.AgencyUserLoginId}: ${agencyUser.id}`));
+                let programRolesString = '';
+                for (let i = 0; i < agencyUser.programRoles; i = i + 1) {
+                    let programRole = agencyUser.programRoles[i];
+                    programRolesString += (i > 0 ? ',' : '') + programRole.program + ':' + programRole.role;
+                }
+                res.locals[Headers.AgencyUserLoginId] = agencyUser.id;
+                res.locals[Headers.GivenName] = agencyUser.givenName;
+                res.locals[Headers.FamilyName] = agencyUser.familyName;
+                res.locals[Headers.AgencyUserProgramRoles] = programRolesString;
+            }
+            next();
+        };
+    }
+
+    private resolveForIdentity(req: Request, res: Response, next: () => void) {
+        return (identity?: IIdentity) => {
             if (identity) {
                 logger.info(colors.red(`Setting ${Headers.IdentityIdValue}: ${identity.idValue}`));
                 res.locals[Headers.IdentityIdValue] = identity.idValue;
@@ -49,9 +73,9 @@ class ForgeRockSimulator {
         };
     }
 
-    private reject(res:Response, next:() => void) {
-        return ():void => {
-            logger.info('Unable to look up identity!');
+    private reject(res: Response, next: () => void) {
+        return (): void => {
+            logger.info('Unable to look up identity or agency user!');
             res.status(401);
             res.send({});
         };
