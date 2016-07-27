@@ -52,20 +52,24 @@ export class PageHeaderAuthComponent {
 
     // todo logins page
     public goToLoginsPage() {
-        if (this.isLoginsPageEnabled()) {
-            alert('TODO: MANAGE LOGINS');
+        if (this.identity) {
+            if (this.isLoginsPageEnabled()) {
+                alert('TODO: MANAGE LOGINS');
+            }
         }
     };
 
     // todo roles page
     public goToRolesPage() {
-        if (this.isRolesPageEnabled()) {
-            alert('TODO: MANAGE ROLES');
+        if (this.identity) {
+            if (this.isRolesPageEnabled()) {
+                this.services.route.goToRolesPage(this.identity.idValue);
+            }
         }
     };
 
     public isGiveAuthorisationsPageEnabled() {
-        return this.giveAuthorisationsEnabled;
+        return this.identity !== null && this.identity !== undefined && this.giveAuthorisationsEnabled;
     }
 
     // todo logins page
@@ -73,9 +77,8 @@ export class PageHeaderAuthComponent {
         return false;
     }
 
-    // todo roles page
     public isRolesPageEnabled() {
-        return false;
+        return this.identity !== null && this.identity !== undefined;
     }
 
 }

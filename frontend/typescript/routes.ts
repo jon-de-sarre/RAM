@@ -10,6 +10,7 @@ import {AddRelationshipComponent} from './pages/add-relationship/add-relationshi
 import {AddRelationshipCompleteComponent} from './pages/add-relationship-complete/add-relationship-complete.component';
 import {EnterInvitationCodeComponent} from './pages/enter-invitation-code/enter-invitation-code.component';
 import {AcceptAuthorisationComponent} from './pages/accept-authorisation/accept-authorisation.component';
+import {RolesComponent} from './pages/roles/roles.component';
 
 import {BusinessesComponent} from './pages/businesses/businesses.component';
 import {NotificationsComponent} from './pages/notifications/notifications.component';
@@ -53,6 +54,10 @@ export const routes: RouterConfig = [
     {
         path: 'relationships/add/accept/:idValue/:invitationCode',
         component: AcceptAuthorisationComponent
+    },
+    {
+        path: 'roles/:idValue',
+        component: RolesComponent
     },
     {
         path: 'businesses',

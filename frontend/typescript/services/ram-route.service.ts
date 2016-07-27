@@ -37,7 +37,9 @@ export class RAMRouteService {
     }
 
     public goToRelationshipAddPage(idValue: string) {
-        this.router.navigate(['/relationships/add', encodeURIComponent(idValue)]);
+        this.router.navigate(['/relationships/add',
+            encodeURIComponent(idValue)
+        ]);
     }
 
     public goToRelationshipAddCompletePage(idValue: string, code: string, displayName: string) {
@@ -66,6 +68,12 @@ export class RAMRouteService {
         ]);
     }
 
+    public goToRolesPage(idValue: string) {
+        this.router.navigate(['/roles',
+            encodeURIComponent(idValue)
+        ]);
+    }
+
     public goToBusinessesPage(filter?: string, page?: number) {
         const queryParams = {};
         if (filter) {
@@ -85,7 +93,9 @@ export class RAMRouteService {
     }
 
     public goToAddNotificationPage(idValue: string) {
-        this.router.navigate(['/notifications/add/', encodeURIComponent(idValue)]);
+        this.router.navigate(['/notifications/add/',
+            encodeURIComponent(idValue)
+        ]);
     }
 
     public goToAgencySelectBusinessForAuthorisationsPage() {
