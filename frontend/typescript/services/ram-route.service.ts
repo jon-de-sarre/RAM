@@ -79,7 +79,9 @@ export class RAMRouteService {
     }
 
     public goToNotificationsPage(idValue: string) {
-        this.router.navigate(['/notifications/', encodeURIComponent(idValue)]);
+        this.router.navigate(['/notifications/',
+            encodeURIComponent(idValue)],
+            {queryParams: {}});
     }
 
     public goToAddNotificationPage(idValue: string) {
