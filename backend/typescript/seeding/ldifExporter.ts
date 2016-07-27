@@ -1,5 +1,6 @@
 import {Seeder} from './seed';
 import {IIdentity} from '../models/identity.model';
+import {IAgencyUser} from '../models/agencyUser.model';
 import * as SharedSecretType from '../models/sharedSecretType.model';
 
 import {Headers} from '../controllers/headers';
@@ -23,7 +24,7 @@ const OBJECT_CLASSES =
     'objectClass: person\n' +
     'objectClass: iPlanetPreferences\n' +
     'objectClass: iplanet-am-auth-configuration-service\n' +
-    'objectClass: ram-identity\n';
+    'objectClass: ram-user\n';
 
 /* tslint:disable:max-func-body-length */
 /* tslint:disable:no-any */
@@ -50,6 +51,11 @@ export class LDIFExporter {
         } else {
             Seeder.log(`\n[LDIFExporter] Skipped export of identity ${identity.idValue}\n`.gray);
         }
+    }
+
+    public static async exportAgencyUser(agencyUser: IAgencyUser) {
+        await fs.appendFile(LDIFExporter.ldifFileHandle, LDIFExporter.getAgencyUserLDIF(agencyUser));
+        Seeder.log(`\n[LDIFExporter] Exported agency user ${agencyUser.id}\n`.green);
     }
 
     public static getIdentityLDIF(identity: IIdentity): string {
@@ -96,6 +102,37 @@ export class LDIFExporter {
         ldif += LDIFExporter.getAttributeLDIF(Headers.LinkIdScheme, identity.linkIdScheme);
         ldif += LDIFExporter.getAttributeLDIF(Headers.LinkIdConsumer, identity.linkIdConsumer);
         ldif += LDIFExporter.getAttributeLDIF(Headers.PublicIdentifierScheme, identity.publicIdentifierScheme);
+
+        return ldif += '\n';
+    }
+
+    public static getAgencyUserLDIF(agencyUser: IAgencyUser): string {
+        let uid = agencyUser.id;
+
+        let ldif = `dn: uid=${uid},ou=people,ou=users,dc=openam,dc=ram,dc=ato,dc=gov,dc=au\n`;
+        ldif += OBJECT_CLASSES;
+        ldif += `uid: ${uid}\n`;
+        ldif += 'inetUserStatus: Active\n';
+        ldif += 'userPassword: password\n';
+
+        // sn and cn are MUST attributes for the person objectClass - including givenName for completeness
+        ldif += LDIFExporter.getAttributeLDIF('givenName', agencyUser.givenName);
+        ldif += `sn: ${agencyUser.familyName}\n`;
+        ldif += `cn: ${agencyUser.givenName} ${agencyUser.familyName}\n`;
+
+        ldif += LDIFExporter.getAttributeLDIF(Headers.AgencyUserLoginId, uid);
+
+        ldif += LDIFExporter.getAttributeLDIF(Headers.GivenName, agencyUser.givenName);
+        ldif += LDIFExporter.getAttributeLDIF(Headers.FamilyName, agencyUser.familyName);
+
+        let programRoles: Array<string> = [];
+        for (let programRole of agencyUser.programRoles) {
+            programRoles.push(`${programRole.program}:${programRole.role}`);
+        }
+
+        if(programRoles.length > 0) {
+            ldif += LDIFExporter.getAttributeLDIF(Headers.AgencyUserProgramRoles, programRoles.join(','));
+        }
 
         return ldif += '\n';
     }
