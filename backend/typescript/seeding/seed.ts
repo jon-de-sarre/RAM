@@ -692,7 +692,7 @@ export class Seeder {
             .then(Seeder.loadRelationshipPermissionAttributeNames)
             .then(Seeder.loadRelationshipTypes)
             .then(Seeder.loadSharedSecretTypes)
-            .then(LegislativeProgramsSeeder.load)
+            .then(LegislativeProgramsSeeder.load);
     }
 
     public static loadMock() {
