@@ -78,7 +78,9 @@ export class PageHeaderAuthComponent {
     }
 
     public isRolesPageEnabled() {
-        return this.identity !== null && this.identity !== undefined;
+        return this.identity !== null &&
+            this.identity !== undefined &&
+            !this.services.model.isIndividual(this.identity);
     }
 
 }
