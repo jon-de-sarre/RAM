@@ -2,6 +2,7 @@ import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
 import {sendResource, sendError, sendNotFoundError, validateReqSchema} from './helpers';
 import {Headers} from './headers';
+import {IPrincipal} from '../models/principal.model';
 
 export class PrincipalController {
 
@@ -10,7 +11,7 @@ export class PrincipalController {
         const schema = {};
         validateReqSchema(req, schema)
             .then((req:Request) => principal ? principal : null)
-            .then((model) => model ? model : null)
+            .then((model:IPrincipal) => model ? model.toDTO() : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
             .catch(sendError(res));

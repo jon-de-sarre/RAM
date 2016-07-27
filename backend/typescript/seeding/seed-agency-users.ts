@@ -1,28 +1,28 @@
-import {IAgencyUser, IAgencyUserProgramRole} from '../../../commons/RamAPI2';
+import {IAgencyUser, AgencyUser, AgencyUserProgramRole} from '../models/agencyUser.model';
 
 // seeder .............................................................................................................
 
 const users: IAgencyUser[] = [
 
-    {
-        id: 'ted_agent',
-        givenName: 'Ted',
-        familyName: 'Agent',
-        displayName: 'Ted Agent',
-        programRoles: [
-            {program: 'EDUCATION', role: 'ROLE_ADMIN'} as IAgencyUserProgramRole
+    new AgencyUser(
+        'ted_agent',
+        'Ted',
+        'Agent',
+        'Ted Agent',
+        [
+            new AgencyUserProgramRole('EDUCATION', 'ROLE_ADMIN')
         ]
-    } as IAgencyUser,
+    ),
 
-    {
-        id: 'max_agent',
-        givenName: 'Max',
-        familyName: 'Agent',
-        displayName: 'Max Agent',
-        programRoles: [
-            {program: 'TAX', role: 'ROLE_ADMIN'} as IAgencyUserProgramRole
+    new AgencyUser(
+        'max_agent',
+        'Max',
+        'Agent',
+        'Max Agent',
+        [
+            new AgencyUserProgramRole('TAX', 'ROLE_ADMIN')
         ]
-    } as IAgencyUser
+    )
 
 ];
 
@@ -31,6 +31,7 @@ export class AgencyUsersSeeder {
     public static findById(id: string): IAgencyUser {
         for (let i = 0; i < users.length; i = i + 1) {
             let user = users[i];
+            console.log('Checking: ' + JSON.stringify(user, null, 4));
             if (user.id === id) {
                 return user;
             }

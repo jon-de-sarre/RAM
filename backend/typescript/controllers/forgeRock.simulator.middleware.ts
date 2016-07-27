@@ -5,7 +5,7 @@ import {Headers} from './headers';
 import {SecurityHelper} from './security.middleware';
 import {AgencyUsersSeeder} from '../seeding/seed-agency-users';
 import {IIdentity, IdentityModel} from '../models/identity.model';
-import {IAgencyUser} from '../../../commons/RamAPI2';
+import {IAgencyUser} from '../models/agencyUser.model';
 
 class ForgeRockSimulator {
 
@@ -15,8 +15,10 @@ class ForgeRockSimulator {
             const idFromAuthenticationSimulator = req.body.credentials;
             const idFromCookie = SecurityHelper.getValueFromCookies(req, Headers.AuthToken);
             const id = idFromAuthenticationSimulator ? idFromAuthenticationSimulator : idFromCookie;
+            console.log('Id=', id);
             if (id) {
                 const agencyUser = AgencyUsersSeeder.findById(id);
+                console.log('Agency User=', agencyUser);
                 if (agencyUser) {
                     Promise.resolve(agencyUser)
                         .then(self.resolveForAgencyUser(req, res, next))

@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "RAM",
-		"_postman_id": "9f171ead-8d4a-3b9b-ec55-a0ee43d577f4",
+		"_postman_id": "d3d0d84c-1038-3691-a3a6-1d93b406c12f",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -183,7 +183,7 @@
 					"response": []
 				},
 				{
-					"name": "Authenticate Agency User (Ted Agency User)",
+					"name": "Authenticate Agency User (Ted Agent)",
 					"request": {
 						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
 						"method": "POST",
@@ -199,7 +199,7 @@
 							"urlencoded": [
 								{
 									"key": "credentials",
-									"value": "ted_agency_user",
+									"value": "ted_agent",
 									"type": "text",
 									"enabled": true
 								}

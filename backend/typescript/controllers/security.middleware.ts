@@ -4,7 +4,8 @@ import {Request, Response} from 'express';
 import {Headers} from './headers';
 import {ErrorResponse} from '../../../commons/RamAPI';
 import {CreateIdentityDTO} from '../../../commons/RamAPI';
-import {IPrincipal, IAgencyUser, IAgencyUserProgramRole} from '../../../commons/RamAPI2';
+import {AgencyUser, IAgencyUserProgramRole, AgencyUserProgramRole} from '../models/agencyUser.model';
+import {IPrincipal, Principal} from '../models/principal.model';
 import {IIdentity, IdentityModel} from '../models/identity.model';
 import {DOB_SHARED_SECRET_TYPE_CODE} from '../models/sharedSecretType.model';
 
@@ -107,25 +108,21 @@ class Security {
                 if (programRolesRaw) {
                     const programRowStrings = programRolesRaw.split(',');
                     for (let programRoleString of programRowStrings) {
-                        programRoles.push({
-                            program: programRoleString.split(':')[0],
-                            role: programRoleString.split(':')[1]
-                        } as IAgencyUserProgramRole);
+                        programRoles.push(new AgencyUserProgramRole(
+                            programRoleString.split(':')[0],
+                            programRoleString.split(':')[1]
+                        ));
                     }
                 }
-                res.locals[Headers.Principal] = {
-                    id: idValue,
-                    displayName: displayName,
-                    agencyUserInd: true
-                } as IPrincipal;
+                res.locals[Headers.Principal] = new Principal(idValue, displayName, true);
                 res.locals[Headers.PrincipalIdValue] = idValue;
-                res.locals[Headers.AgencyUser] = {
-                    id: idValue,
-                    givenName: givenName,
-                    familyName: familyName,
-                    displayName: displayName,
-                    programRoles: programRoles
-                } as IAgencyUser;
+                res.locals[Headers.AgencyUser] = new AgencyUser(
+                    idValue,
+                    givenName,
+                    familyName,
+                    displayName,
+                    programRoles
+                );
             }
         };
     }
@@ -134,11 +131,7 @@ class Security {
         return (identity?: IIdentity) => {
             logger.info('Identity context:', (identity ? colors.magenta(identity.idValue) : colors.red('[not found]')));
             if (identity) {
-                res.locals[Headers.Principal] = {
-                    id: identity.idValue,
-                    displayName: identity.profile.name._displayName,
-                    agencyUserInd: false
-                } as IPrincipal;
+                res.locals[Headers.Principal] = new Principal(identity.idValue, identity.profile.name._displayName, false);
                 res.locals[Headers.PrincipalIdValue] = identity.idValue;
                 res.locals[Headers.Identity] = identity;
                 res.locals[Headers.IdentityIdValue] = identity.idValue;
