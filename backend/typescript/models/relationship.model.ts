@@ -260,7 +260,7 @@ export interface IRelationshipModel extends mongoose.Model<IRelationship> {
                       text: string,
                       sort: string,
                       page: number, pageSize: number) => Promise<SearchResult<IRelationship>>;
-    searchDistinctSubjectsForMe:(requestingParty: IParty, text: string, sort: string,page: number, pageSize: number)
+    searchDistinctSubjectsForMe:(requestingParty: IParty, partyType: string, authorisationManagement:boolean, text: string, sort: string,page: number, pageSize: number)
         => Promise<SearchResult<IParty>>;
 }
 
@@ -731,21 +731,32 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
 /* tslint:disable:max-func-body-length */
 RelationshipSchema.static('searchDistinctSubjectsForMe',
     (requestingParty: IParty,
+     partyType: string,
+     authorisationManagement:boolean,
      text: string,
      sort: string,
      page: number,
      reqPageSize: number) => {
         return new Promise<SearchResult<IParty>>(async (resolve, reject) => {
+            console.log('searchDistinctSubjectsForMe', authorisationManagement);
+
             const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
             try {
                 const where: Object =  {
                     '$match': {
-                        'delegate': new mongoose.Types.ObjectId(requestingParty.id)
+                        '$and': [ { 'delegate': new mongoose.Types.ObjectId(requestingParty.id) } ]
                     }
                 };
+                if (partyType) {
+                    where['$match']['$and'].push({ '_subjectPartyTypeCode': partyType });
+                }
                 if (text) {
-                    where['$match']['_subjectNickNameString'] = new RegExp(text, 'i');
-                    where['$match']['_subjectABNString'] = new RegExp(text, 'i');
+                    where['$match']['$and'].push({
+                        '$or': [
+                            { '_subjectNickNameString': new RegExp(text, 'i') },
+                            { '_subjectABNString': new RegExp(text, 'i') },
+                        ]
+                    });
                 }
                 const count = (await this.RelationshipModel
                     .aggregate([

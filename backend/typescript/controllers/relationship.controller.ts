@@ -251,6 +251,8 @@ export class RelationshipController {
         validateReqSchema(req, schema)
             .then((req:Request) => this.relationshipModel.searchDistinctSubjectsForMe(
                 res.locals[Headers.Identity].party,
+                filterParams.get('partyType'),
+                filterParams.get('authorisationManagement') == true,
                 filterParams.get('text'),
                 filterParams.get('sort'),
                 req.query.page,
