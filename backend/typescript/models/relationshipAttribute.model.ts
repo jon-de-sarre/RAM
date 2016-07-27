@@ -2,8 +2,8 @@ import * as mongoose from 'mongoose';
 import {RelationshipModel} from './relationship.model';
 import {IRelationshipAttributeName, RelationshipAttributeNameModel} from './relationshipAttributeName.model';
 import {
-    RelationshipAttribute as DTO
-} from '../../../commons/RamAPI';
+    IRelationshipAttribute as DTO
+} from '../../../commons/RamAPI2';
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
 
@@ -45,10 +45,12 @@ export interface IRelationshipAttributeModel extends mongoose.Model<IRelationshi
 // instance methods ...................................................................................................
 
 RelationshipAttributeSchema.method('toDTO', async function () {
-    return new DTO(
-        this.value,
-        await this.attributeName.toHrefValue(true)
-    );
+    const dto: DTO = {
+        value: this.value,
+        attributeName: await this.attributeName.toHrefValue(true)
+    };
+
+    return dto;
 });
 
 // static methods .....................................................................................................

@@ -5,9 +5,9 @@ import {
     HrefValue,
     Party as DTO,
     PartyType as PartyTypeDTO,
-    Identity as IdentityDTO,
-    RelationshipAddDTO
+    Identity as IdentityDTO
 } from '../../../commons/RamAPI';
+import {IInvitationCodeRelationshipAddDTO} from  '../../../commons/RamAPI2';
 import {RelationshipModel, IRelationship} from './relationship.model';
 import {RelationshipTypeModel} from './relationshipType.model';
 import {RelationshipAttributeModel, IRelationshipAttribute} from './relationshipAttribute.model';
@@ -59,7 +59,7 @@ export interface IParty extends IRAMObject {
     partyTypeEnum():PartyType;
     toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
     toDTO():Promise<DTO>;
-    addRelationship(dto: RelationshipAddDTO):Promise<IRelationship>;
+    addRelationship(dto: IInvitationCodeRelationshipAddDTO):Promise<IRelationship>;
 }
 
 /* tslint:disable:no-empty-interfaces */
@@ -102,7 +102,7 @@ PartySchema.method('toDTO', async function () {
  * the relationship will be transferred to the authorised identity.
  */
 /* tslint:disable:max-func-body-length */
-PartySchema.method('addRelationship', async (dto: RelationshipAddDTO) => {
+PartySchema.method('addRelationship', async (dto: IInvitationCodeRelationshipAddDTO) => {
 
     // TODO improve handling of lookups that return null outside of the date range
 

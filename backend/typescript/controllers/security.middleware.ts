@@ -3,7 +3,7 @@ import * as colors from 'colors';
 import {Request, Response} from 'express';
 import {Headers} from './headers';
 import {ErrorResponse} from '../../../commons/RamAPI';
-import {CreateIdentityDTO} from '../../../commons/RamAPI';
+import {ICreateIdentityDTO} from '../../../commons/RamAPI2';
 import {AgencyUser, IAgencyUserProgramRole, AgencyUserProgramRole} from '../models/agencyUser.model';
 import {IPrincipal, Principal} from '../models/principal.model';
 import {IIdentity, IdentityModel} from '../models/identity.model';
@@ -71,24 +71,23 @@ class Security {
                 logger.info('Identity context: Unable to create identity as raw id value was not supplied ...'.red);
                 return Promise.resolve(null);
             } else {
-                const dto = new CreateIdentityDTO(
-                    rawIdValue,
-                    req.get(Headers.PartyType),
-                    req.get(Headers.GivenName),
-                    req.get(Headers.FamilyName),
-                    req.get(Headers.UnstructuredName),
-                    DOB_SHARED_SECRET_TYPE_CODE,
-                    req.get(Headers.DOB),
-                    req.get(Headers.IdentityType),
-                    req.get(Headers.AgencyScheme),
-                    req.get(Headers.AgencyToken),
-                    req.get(Headers.LinkIdScheme),
-                    req.get(Headers.LinkIdConsumer),
-                    req.get(Headers.PublicIdentifierScheme),
-                    req.get(Headers.ProfileProvider)
-                );
+                const dto: ICreateIdentityDTO = {
+                    rawIdValue: rawIdValue,
+                    partyType: req.get(Headers.PartyType),
+                    givenName: req.get(Headers.GivenName),
+                    familyName: req.get(Headers.FamilyName),
+                    unstructuredName: req.get(Headers.UnstructuredName),
+                    sharedSecretTypeCode: DOB_SHARED_SECRET_TYPE_CODE,
+                    sharedSecretValue: req.get(Headers.DOB),
+                    identityType: req.get(Headers.IdentityType),
+                    agencyScheme: req.get(Headers.AgencyScheme),
+                    agencyToken: req.get(Headers.AgencyToken),
+                    linkIdScheme: req.get(Headers.LinkIdScheme),
+                    linkIdConsumer: req.get(Headers.LinkIdConsumer),
+                    publicIdentifierScheme: req.get(Headers.PublicIdentifierScheme),
+                    profileProvider: req.get(Headers.ProfileProvider)
+                };
                 logger.info('Identity context: Creating new identity ... ');
-                console.log(dto);
                 return IdentityModel.createFromDTO(dto);
             }
         };

@@ -28,7 +28,7 @@ import {
     IAttributeDTO,
     IIdentity,
     ICreateIdentityDTO,
-    IRelationshipAddDTO,
+    IInvitationCodeRelationshipAddDTO,
     IRelationshipAttributeNameUsage,
     IRelationshipType,
     IHrefValue
@@ -152,7 +152,7 @@ export class AddRelationshipComponent extends AbstractPageComponent {
             value: this.newRelationship.authorisationManagement.value
         };
 
-        const relationship: IRelationshipAddDTO = {
+        const relationship: IInvitationCodeRelationshipAddDTO = {
             relationshipType: this.newRelationship.authType.authType,
             subjectIdValue: this.idValue,
             delegate: delegate,

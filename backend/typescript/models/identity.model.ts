@@ -6,14 +6,14 @@ import {RAMEnum, IRAMObject, RAMSchema} from './base';
 import {
     HrefValue,
     Identity as DTO,
-    CreateIdentityDTO,
     SearchResult
 } from '../../../commons/RamAPI';
 import {NameModel} from './name.model';
 import {SharedSecretModel} from './sharedSecret.model';
 import {IProfile, ProfileModel, ProfileProvider} from './profile.model';
-import {IParty, PartyModel} from './party.model';
-import {SharedSecretTypeModel} from './sharedSecretType.model';
+import {IParty, PartyModel, PartyType} from './party.model';
+import {SharedSecretTypeModel, DOB_SHARED_SECRET_TYPE_CODE} from './sharedSecretType.model';
+import {ICreateInvitationCodeDTO, ICreateIdentityDTO} from '../../../commons/RamAPI2';
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
 
@@ -278,7 +278,7 @@ export interface IIdentity extends IRAMObject {
 }
 
 export interface IIdentityModel extends mongoose.Model<IIdentity> {
-    createFromDTO:(dto:CreateIdentityDTO) => Promise<IIdentity>;
+    createFromDTO:(dto:ICreateInvitationCodeDTO) => Promise<IIdentity>;
     createInvitationCodeIdentity:(givenName:string, familyName:string, dateOfBirth:string) => Promise<IIdentity>;
     findByIdValue:(idValue:string) => Promise<IIdentity>;
     findByInvitationCode:(invitationCode:string) => Promise<IIdentity>;
@@ -442,22 +442,23 @@ IdentitySchema.static('createInvitationCodeIdentity',
     async (givenName:string, familyName:string, dateOfBirth:string):Promise<IIdentity> => {
 
         return await this.IdentityModel.createFromDTO(
-        new CreateIdentityDTO(
-            undefined, // TODO should this be a UUID?
-            'INDIVIDUAL',
-            givenName,
-            familyName,
-            undefined,
-            'DATE_OF_BIRTH',
-            dateOfBirth,
-            IdentityType.InvitationCode.code,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            ProfileProvider.Invitation.code
-        ));
+            {
+                rawIdValue: undefined,
+                partyType: PartyType.Individual.code,
+                givenName: givenName,
+                familyName: familyName,
+                unstructuredName: undefined,
+                sharedSecretTypeCode: DOB_SHARED_SECRET_TYPE_CODE,
+                sharedSecretValue: dateOfBirth,
+                identityType: IdentityType.InvitationCode.code,
+                agencyScheme: undefined,
+                agencyToken: undefined,
+                linkIdScheme: undefined,
+                linkIdConsumer: undefined,
+                publicIdentifierScheme: undefined,
+                profileProvider: ProfileProvider.Invitation.code
+            }
+        );
 });
 
 /**
@@ -466,7 +467,7 @@ IdentitySchema.static('createInvitationCodeIdentity',
  * transferred to the authorised identity.
  */
 /* tslint:disable:max-func-body-length */
-IdentitySchema.static('createFromDTO', async(dto:CreateIdentityDTO):Promise<IIdentity> => {
+IdentitySchema.static('createFromDTO', async(dto:ICreateIdentityDTO):Promise<IIdentity> => {
 
     const name = await NameModel.create({
         givenName: dto.givenName,

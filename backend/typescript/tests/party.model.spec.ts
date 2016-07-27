@@ -20,12 +20,12 @@ import {
     PartyModel,
     PartyType
 } from '../models/party.model';
-import {
-    RelationshipAddDTO,
-    CreateIdentityDTO,
-    AttributeDTO
-} from '../../../commons/RamAPI';
 import {RelationshipStatus} from '../models/relationship.model';
+import {
+    IInvitationCodeRelationshipAddDTO,
+    ICreateInvitationCodeDTO,
+    IAttributeDTO
+} from '../../../commons/RamAPI2';
 
 /* tslint:disable:max-func-body-length */
 describe('RAM Party', () => {
@@ -33,10 +33,10 @@ describe('RAM Party', () => {
     connectDisconnectMongo();
     resetDataInMongo();
 
-    let name1:IName;
-    let profile1:IProfile;
-    let party1:IParty;
-    let identity1:IIdentity;
+    let name1: IName;
+    let profile1: IProfile;
+    let party1: IParty;
+    let identity1: IIdentity;
 
     beforeEach(async(done) => {
 
@@ -104,30 +104,25 @@ describe('RAM Party', () => {
 
             const instance = await PartyModel.findByIdentityIdValue(identity1.idValue);
 
-            const relationshipAddDTO = new RelationshipAddDTO(
-                Seeder.custom_delegate_relationshipType.code,
-                identity1.idValue,
-                new CreateIdentityDTO(
-                    undefined,
-                    PartyType.Individual.code,
-                    'John',
-                    'Doe',
-                    undefined,
-                    Seeder.dob_sharedSecretType.code,
-                    '2015-12-31',
-                    IdentityType.InvitationCode.code,
-                    undefined,
-                    undefined,
-                    undefined,
-                    undefined,
-                    undefined,
-                    ProfileProvider.Invitation.code),
-                new Date(),
-                new Date(),
-                [
-                    new AttributeDTO(Seeder.permissionCustomisationAllowedInd_attributeName.code, 'true')
-                ]
-            );
+            const identity: ICreateInvitationCodeDTO = {
+                givenName: 'John',
+                familyName: 'Doe',
+                sharedSecretValue: '2015-12-31'
+            };
+
+            const attribute: IAttributeDTO = {
+                code: Seeder.permissionCustomisationAllowedInd_attributeName.code,
+                value: 'true'
+            };
+
+            const relationshipAddDTO: IInvitationCodeRelationshipAddDTO = {
+                relationshipType: Seeder.custom_delegate_relationshipType.code,
+                subjectIdValue: identity1.idValue,
+                delegate: identity,
+                startTimestamp: new Date(),
+                endTimestamp: new Date(),
+                attributes: [attribute]
+            };
 
             const newRelationship = await instance.addRelationship(relationshipAddDTO);
             expect(newRelationship).not.toBeNull();

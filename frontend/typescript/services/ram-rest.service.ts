@@ -13,7 +13,7 @@ import {
     IParty,
     IPartyType,
     IProfileProvider,
-    IRelationshipAddDTO,
+    IInvitationCodeRelationshipAddDTO,
     IRelationship,
     IRelationshipType,
     IRelationshipStatus,
@@ -157,7 +157,7 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
-    public createRelationship(relationship: IRelationshipAddDTO): Observable<IRelationship> {
+    public createRelationship(relationship: IInvitationCodeRelationshipAddDTO): Observable<IRelationship> {
         return this.http
             .post(`/api/v1/relationship`, JSON.stringify(relationship), {
                 headers: this.headersForJson()
