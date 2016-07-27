@@ -196,6 +196,17 @@ class Security {
         }
     }
 
+    public isAuthenticatedAsAgencyUser(req: Request, res: Response, next: () => void) {
+        const principal = res.locals[Headers.Principal];
+        if (principal && principal.agencyUserInd) {
+            next();
+        } else {
+            logger.error('Unable to invoke route requiring agency user'.red);
+            res.status(401);
+            res.send(new ErrorResponse('Not authenticated as agency user.'));
+        }
+    }
+
     // private logHeaders(req:Request) {
     //     for (let header of Object.keys(req.headers)) {
     //         if(Headers.isXRAMHeader(header)) {
