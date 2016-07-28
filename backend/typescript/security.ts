@@ -1,6 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 import {Request, Response, NextFunction} from 'express';
-import * as cApi from '../../commons/RamAPI';
+import {ErrorResponse} from '../../commons/RamAPI2';
 import * as sApi from './ram/ServerAPI';
 
 export const signToken = (secret: string, jwtExpiryInMinutes: number) => {
@@ -22,7 +22,7 @@ export const continueOnlyIfJWTisValid =
                 req.user = signToken(jwtSecretKey, 5)({ partyId: '123', navPathIds: [] });
                 next();
             } else {
-                res.status(401).send(new cApi.ErrorResponse('Invalid security token.'));
+                res.status(401).send(new ErrorResponse('Invalid security token.'));
             }
         }
     };

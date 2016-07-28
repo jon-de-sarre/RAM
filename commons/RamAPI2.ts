@@ -1,3 +1,35 @@
+// system domain ......................................................................................................
+
+export enum RAMMessageType {
+    Error = 1,
+    Info = 2,
+    Success = 3
+}
+
+export interface IResponse<T> {
+    data?:T;
+    token?:string;
+    alert?:Alert;
+}
+
+export interface Alert {
+    messages:string[];
+    alertType:RAMMessageType;
+}
+
+export class ErrorResponse implements IResponse<void> {
+    alert:Alert;
+
+    constructor(messages:string | string[],
+                alertType:number = RAMMessageType.Error) {
+        if (Array.isArray(messages)) {
+            this.alert = {messages: messages, alertType: alertType};
+        } else {
+            this.alert = {messages: [messages], alertType: alertType};
+        }
+    }
+}
+
 export interface ISearchResult<T> {
     page: number,
     totalCount: number,
