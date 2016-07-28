@@ -2,7 +2,8 @@ import {connectDisconnectMongo} from './helpers';
 import {Seeder} from '../seeding/seed';
 import {
     IRole,
-    RoleModel
+    RoleModel,
+    RoleStatus
 } from '../models/role.model';
 import {
     IRoleAttribute,
@@ -76,6 +77,7 @@ describe('RAM Role Attribute', () => {
                         roleType: roleTypeCustom,
                         party: party1,
                         startTimestamp: new Date(),
+                        status: RoleStatus.Active.code,
                         attributes: [roleAttribute1]
                     });
 

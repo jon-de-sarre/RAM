@@ -2,7 +2,8 @@ import {connectDisconnectMongo} from './helpers';
 import {Seeder} from '../seeding/seed';
 import {
     IRole,
-    RoleModel
+    RoleModel,
+    RoleStatus
 } from '../models/role.model';
 import {IRoleType} from '../models/roleType.model';
 import {IParty, PartyModel, PartyType} from '../models/party.model';
@@ -65,6 +66,7 @@ describe('RAM Role', () => {
                         party1,
                         new Date(),
                         null,
+                        RoleStatus.Active,
                         []
                     );
 
@@ -84,7 +86,9 @@ describe('RAM Role', () => {
             const instance = await RoleModel.create({
                 roleType: roleTypeCustom,
                 party: party1,
-                startTimestamp: new Date()
+                startTimestamp: new Date(),
+                status: RoleStatus.Active.code,
+                attributes: []
             });
 
             expect(instance).not.toBeNull();
@@ -106,7 +110,8 @@ describe('RAM Role', () => {
                 roleType: roleTypeCustom,
                 party: party1,
                 startTimestamp: new Date(),
-                endTimestamp: new Date()
+                endTimestamp: new Date(),
+                status: RoleStatus.Active.code
             });
 
             expect(instance).not.toBeNull();

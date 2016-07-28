@@ -503,6 +503,7 @@ export class Role implements IRole {
                 public endTimestamp:Date,
                 public endEventTimestamp:Date,
                 public assignedTimestamp:Date,
+                public status:string,
                 public attributes:RoleAttribute[]) {
     }
 }
@@ -512,7 +513,7 @@ export interface IRoleStatus {
     shortDecodeText: string;
 }
 
-export class RolesStatus implements IRoleStatus {
+export class RoleStatus implements IRoleStatus {
     constructor(public code: string,
                 public shortDecodeText: string) {
     }

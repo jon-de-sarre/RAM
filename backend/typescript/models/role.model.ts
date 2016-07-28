@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import {IRAMObject, RAMSchema, Query} from './base';
+import {RAMEnum, IRAMObject, RAMSchema, Query} from './base';
 import {IParty, PartyModel} from './party.model';
 import {IRoleType, RoleTypeModel} from './roleType.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
@@ -7,6 +7,7 @@ import {
     Link,
     HrefValue,
     Role as DTO,
+    RoleStatus as RoleStatusDTO,
     RoleAttribute as RoleAttributeDTO,
     SearchResult
 } from '../../../commons/RamAPI';
@@ -22,6 +23,34 @@ const _RoleAttributeModel = RoleAttributeModel;
 const MAX_PAGE_SIZE = 10;
 
 // enums, utilities, helpers ..........................................................................................
+
+export class RoleStatus extends RAMEnum {
+
+    public static Active = new RoleStatus('ACTIVE', 'Active');
+    public static Suspended = new RoleStatus('SUSPENDED', 'Suspended');
+    public static Removed = new RoleStatus('REMOVED', 'Removed');
+
+    protected static AllValues = [
+        RoleStatus.Active,
+        RoleStatus.Suspended,
+        RoleStatus.Removed
+    ];
+
+    constructor(code: string, shortDecodeText: string) {
+        super(code, shortDecodeText);
+    }
+
+    public toHrefValue(includeValue: boolean): Promise<HrefValue<RoleStatusDTO>> {
+        return Promise.resolve(new HrefValue(
+            '/api/v1/roleStatus/' + this.code,
+            includeValue ? this.toDTO() : undefined
+        ));
+    }
+
+    public toDTO(): RoleStatusDTO {
+        return new RoleStatusDTO(this.code, this.shortDecodeText);
+    }
+}
 
 // schema .............................................................................................................
 
@@ -55,6 +84,12 @@ const RoleSchema = RAMSchema({
             return this.endTimestamp;
         }, 'End Event Timestamp is required']
     },
+    status: {
+        type: String,
+        required: [true, 'Status is required'],
+        trim: true,
+        enum: RoleStatus.valueStrings()
+    },
     attributes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'RoleAttribute'
@@ -81,6 +116,7 @@ export interface IRole extends IRAMObject {
     startTimestamp:Date;
     endTimestamp?:Date;
     endEventTimestamp?:Date;
+    roleStatus:RoleStatus;
     attributes:IRoleAttribute[];
     _roleTypeCode:string;
     toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
@@ -92,6 +128,7 @@ export interface IRoleModel extends mongoose.Model<IRole> {
          party: IParty,
          startTimestamp: Date,
          endTimestamp: Date,
+         roleStatus:RoleStatus,
          attributes: IRoleAttribute[]) => Promise<IRole>;
     search:(page: number, pageSize: number)
         => Promise<SearchResult<IRole>>;
@@ -122,6 +159,7 @@ RoleSchema.method('toDTO', async function () {
         this.endTimestamp,
         this.endEventTimestamp,
         this.createdAt,
+        this.status,
         await Promise.all<RoleAttributeDTO>(this.attributes.map(
             async (attribute: IRoleAttribute) => {
                 return await attribute.toDTO();
@@ -135,12 +173,14 @@ RoleSchema.static('add', async (roleType: IRoleType,
                                 party: IParty,
                                 startTimestamp: Date,
                                 endTimestamp: Date,
+                                roleStatus: RoleStatus,
                                 attributes: IRoleAttribute[]) => {
     return await this.RoleModel.create({
         roleType: roleType,
         party: party,
         startTimestamp: startTimestamp,
         endTimestamp: endTimestamp,
+        status: roleStatus.code,
         attributes: attributes
     });
 });

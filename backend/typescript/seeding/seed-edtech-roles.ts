@@ -1,5 +1,6 @@
 import {conf} from '../bootstrap';
 import {Seeder} from './seed';
+import {RoleStatus} from '../models/role.model';
 
 // seeder .............................................................................................................
 
@@ -22,6 +23,7 @@ export class EdTechRolesSeeder {
                     roleType: Seeder.osp_roleType,
                     party: Seeder.edtech_party,
                     startTimestamp: new Date(),
+                    status: RoleStatus.Active.code,
                     attributes: [
                         await Seeder.createRoleAttributeModel({
                             value: true,
