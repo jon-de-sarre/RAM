@@ -7,10 +7,9 @@
 </div>
 
 <div *ngIf="canReturnToDashboard">
-<div class="clearfix"></div>
-<div class="padding-btn-20"></div>
-<a class="btn btn-default col-md-3 align-center" (click)="goToBusinessesPage()"> ← Go to dashboard </a>
-<div class="clearfix"></div>
-<div class="padding-btn-20"></div>
-<div class="padding-btn-20"></div>
+    <div id="action-button-bar">
+        <div class="pull-left">
+            <a class="btn btn-default col-md-3 align-center" (click)="goToBusinessesPage()">← Go to dashboard</a>
+        </div>
+    </div>
 </div>
