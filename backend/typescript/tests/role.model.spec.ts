@@ -27,7 +27,7 @@ describe('RAM Role', () => {
 
                 try {
 
-                    roleTypeCustom = Seeder.osiUsi_roleType;
+                    roleTypeCustom = Seeder.osp_roleType;
 
                     role1 = await RoleModel.add(roleTypeCustom,
                         new Date(),
