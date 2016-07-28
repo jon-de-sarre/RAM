@@ -5,7 +5,7 @@ import {
 } from './helpers';
 import {IPartyModel} from '../models/party.model';
 import {IRoleModel} from '../models/role.model';
-import {FilterParams} from '../../../commons/RamAPI2';
+import {FilterParams} from '../../../commons/RamAPI';
 import {Headers} from './headers';
 
 // todo add data security
