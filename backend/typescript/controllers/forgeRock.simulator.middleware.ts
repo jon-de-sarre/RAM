@@ -17,7 +17,6 @@ class ForgeRockSimulator {
             const id = idFromAuthenticationSimulator ? idFromAuthenticationSimulator : idFromCookie;
             if (id) {
                 const agencyUser = AgencyUsersSeeder.findById(id);
-                console.log('Agency User=', agencyUser);
                 if (agencyUser) {
                     Promise.resolve(agencyUser)
                         .then(self.resolveForAgencyUser(req, res, next))
