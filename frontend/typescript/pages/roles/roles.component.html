@@ -11,8 +11,9 @@
         </tr>
     </thead>
     <tbody *ngIf="!isLoading">
-        <tr>
-            <td colspan="5" class="text-center"><h3 class="todo">TODO display roles</h3></td>
+        <tr *ngFor="let roleRef of (roles$|async)?.list">
+            <td>{{services.model.roleTypeLabel(roleTypeRefs, roleRef.value)}}</td>
+            <td class="todo">TODO: Date</td>
         </tr>
     </tbody>
     <tbody *ngIf="isLoading">
@@ -21,3 +22,8 @@
         </tr>
     </tbody>
 </table>
+
+<search-result-pagination
+        [searchResult]="roles$|async"
+        [delegate]="paginationDelegate">
+</search-result-pagination>

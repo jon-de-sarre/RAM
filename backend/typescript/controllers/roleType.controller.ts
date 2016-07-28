@@ -1,7 +1,7 @@
 import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
 import {
-    sendResource, sendError, sendNotFoundError, validateReqSchema
+    sendResource, sendList, sendError, sendNotFoundError, validateReqSchema
 } from './helpers';
 import {IPartyModel} from '../models/party.model';
 import {IRoleTypeModel} from '../models/roleType.model';
@@ -28,11 +28,24 @@ export class RoleTypeController {
             .catch(sendError(res));
     };
 
+    private listIgnoringDateRange = async (req:Request, res:Response) => {
+        const schema = {};
+        validateReqSchema(req, schema)
+            .then((req:Request) => this.roleTypeModel.listIgnoringDateRange())
+            .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
+            .then(sendList(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
+    };
+
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/roleType/:code',
             security.isAuthenticated,
             this.findByCodeIgnoringDateRange);
+
+        router.get('/v1/roleTypes',
+            this.listIgnoringDateRange);
 
         return router;
 

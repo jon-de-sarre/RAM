@@ -68,9 +68,14 @@ export class RAMRouteService {
         ]);
     }
 
-    public goToRolesPage(idValue: string) {
+    public goToRolesPage(idValue: string, page?: number) {
+        const queryParams = {};
+        if (page) {
+            queryParams['page'] = page;
+        }
         this.router.navigate(['/roles',
-            encodeURIComponent(idValue)
+            encodeURIComponent(idValue),
+            {queryParams: queryParams}
         ]);
     }
 
