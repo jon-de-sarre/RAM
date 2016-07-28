@@ -23,9 +23,9 @@ export class ErrorResponse implements IResponse<void> {
     constructor(messages:string | string[],
                 alertType:number = RAMMessageType.Error) {
         if (Array.isArray(messages)) {
-            this.alert = {messages: messages, alertType: alertType};
+            this.alert = {messages: messages, alertType: alertType} as Alert;
         } else {
-            this.alert = {messages: [messages], alertType: alertType};
+            this.alert = {messages: [messages], alertType: alertType} as Alert;
         }
     }
 }

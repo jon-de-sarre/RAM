@@ -27,24 +27,23 @@
 <br/>
 
 <table class="table">
-
     <tbody *ngIf="!isLoading">
-    <template ngFor let-item="$implicit" [ngForOf]="partyRefs">
-        <tr class="relationship-subject-heading">
-            <td colspan="5">
-                <div (click)="goToNotificationsContext(item)" class="clickable">
-                    <h4>{{services.model.displayNameForParty(item.value)}}</h4>
-                    <h5>{{services.model.abnLabelForParty(item.value)}} /
-                        {{services.model.partyTypeLabelForParty(item.value)}}</h5>
-                </div>
-            </td>
-        </tr>
-    </template>
+        <template ngFor let-item="$implicit" [ngForOf]="partyRefs">
+            <tr class="relationship-subject-heading">
+                <td colspan="5">
+                    <div (click)="goToNotificationsContext(item)" class="clickable">
+                        <h4>{{services.model.displayNameForParty(item.value)}}</h4>
+                        <h5>{{services.model.abnLabelForParty(item.value)}} /
+                            {{services.model.partyTypeLabelForParty(item.value)}}</h5>
+                    </div>
+                </td>
+            </tr>
+        </template>
     </tbody>
     <tbody *ngIf="isLoading">
-    <tr>
-        <td colspan="5" class="text-center"><h3>Loading ...</h3></td>
-    </tr>
+        <tr>
+            <td colspan="5" class="text-center"><h3>Loading ...</h3></td>
+        </tr>
     </tbody>
 </table>
 
