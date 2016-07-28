@@ -79,6 +79,13 @@ export class RAMRouteService {
         );
     }
 
+    public goToAddRolePage(idValue: string) {
+        this.router.navigate(['/roles/add',
+                encodeURIComponent(idValue)
+            ], {queryParams: {}}
+        );
+    }
+
     public goToBusinessesPage(filter?: string, page?: number) {
         const queryParams = {};
         if (filter) {

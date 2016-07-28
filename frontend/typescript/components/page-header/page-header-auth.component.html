@@ -12,8 +12,9 @@
             <li [class.active]="tab == 'MANAGE_AUTHORISATIONS'"><a href="" (click)="goToRelationshipsPage()">Manage Authorisations</a></li>
             <li [class.active]="tab == 'GIVE_AUTHORISATION'" [class.disabled]="!isGiveAuthorisationsPageEnabled()"><a href="" (click)="goToGiveAuthorisationPage()">Give Authorisation</a></li>
             <li [class.active]="tab == 'GET_AUTHORISATION'"><a href="" (click)="goToGetAuthorisationPage()">Get Authorisation</a></li>
-            <li [class.active]="tab == 'MANAGE_LOGINS'" [class.disabled]="!isLoginsPageEnabled()"><a href="" (click)="goToLoginsPage()">Manage logins</a></li>
-            <li [class.active]="tab == 'MANAGE_ROLES'" [class.disabled]="!isRolesPageEnabled()"><a href="" (click)="goToRolesPage()">Manage roles</a></li>
+            <li [class.active]="tab == 'MANAGE_LOGINS'" [class.disabled]="!isLoginsPageEnabled()"><a href="" (click)="goToLoginsPage()">Manage Logins</a></li>
+            <li [class.active]="tab == 'MANAGE_ROLES'" [class.disabled]="!isRolesPageEnabled()"><a href="" (click)="goToRolesPage()">Manage Roles</a></li>
+            <li [class.active]="tab == 'ADD_ROLE'" [class.disabled]="!isAddRolePageEnabled()"><a href="" (click)="goToAddRolePage()">Add Role</a></li>
         </ul>
     </div>
 

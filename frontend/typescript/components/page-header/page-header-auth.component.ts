@@ -59,11 +59,18 @@ export class PageHeaderAuthComponent {
         }
     };
 
-    // todo roles page
     public goToRolesPage() {
         if (this.identity) {
             if (this.isRolesPageEnabled()) {
                 this.services.route.goToRolesPage(this.identity.idValue);
+            }
+        }
+    };
+
+    public goToAddRolePage() {
+        if (this.identity) {
+            if (this.isAddRolePageEnabled()) {
+                this.services.route.goToAddRolePage(this.identity.idValue);
             }
         }
     };
@@ -77,7 +84,15 @@ export class PageHeaderAuthComponent {
         return false;
     }
 
+    // todo verify logic
     public isRolesPageEnabled() {
+        return this.identity !== null &&
+            this.identity !== undefined &&
+            !this.services.model.isIndividual(this.identity);
+    }
+
+    // todo verify logic
+    public isAddRolePageEnabled() {
         return this.identity !== null &&
             this.identity !== undefined &&
             !this.services.model.isIndividual(this.identity);
