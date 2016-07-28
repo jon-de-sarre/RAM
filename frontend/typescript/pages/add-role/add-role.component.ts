@@ -32,6 +32,7 @@ export class AddRoleComponent extends AbstractPageComponent {
 
     public roles$: Observable<ISearchResult<IHrefValue<IRole>>>;
 
+    public giveAuthorisationsEnabled: boolean = true; // todo need to set this
     public identity: IIdentity;
     public roleTypeRefs: IHrefValue<IRoleType>[];
 
