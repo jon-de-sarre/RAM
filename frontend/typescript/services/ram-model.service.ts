@@ -2,29 +2,34 @@ import {Injectable} from '@angular/core';
 import {DatePipe} from '@angular/common';
 
 import {
+    ILink,
+    IHrefValue,
     IName,
     IParty,
     IProfileProvider,
     IIdentity,
     IRelationship,
-    IRole,
+    IRelationshipStatus,
     IRelationshipType,
-    IRoleType,
-    ILink,
-    IHrefValue,
-    IRelationshipStatus
+    IRole,
+    IRoleStatus,
+    IRoleType
 } from '../../../commons/RamAPI';
 
 @Injectable()
 export class RAMModelService {
 
-    public linkByType(type: string, links: ILink[]): ILink {
-        for(let link of links) {
-            if(link.type === type) {
-                return link;
-            }
+    // helpers ........................................................................................................
+
+    public displayDate(dateString: string) {
+        if (dateString) {
+            const date = new Date(dateString);
+            const datePipe = new DatePipe();
+            return datePipe.transform(date, 'd') + ' ' +
+                datePipe.transform(date, 'MMMM') + ' ' +
+                datePipe.transform(date, 'yyyy');
         }
-        return null;
+        return 'Not specified';
     }
 
     public displayName(name: IName): string {
@@ -69,6 +74,11 @@ export class RAMModelService {
         return identity && identity.identityType === 'LINK_ID';
     }
 
+    public profileProviderLabel(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string) {
+        const profileProvider = this.getProfileProvider(profileProviderRefs, code);
+        return profileProvider ? profileProvider.shortDecodeText : '';
+    }
+
     public relationshipTypeLabel(relationshipTypeRefs: IHrefValue<IRelationshipType>[], relationship: IRelationship) {
         if (relationshipTypeRefs && relationship) {
             let relationshipType = this.getRelationshipType(relationshipTypeRefs, relationship);
@@ -94,9 +104,20 @@ export class RAMModelService {
         return status ? status.shortDecodeText : '';
     }
 
-    public profileProviderLabel(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string) {
-        const profileProvider = this.getProfileProvider(profileProviderRefs, code);
-        return profileProvider ? profileProvider.shortDecodeText : '';
+    public roleStatusLabel(roleStatusRefs: IHrefValue<IRoleStatus>[], code: string) {
+        const status = this.getRoleStatus(roleStatusRefs, code);
+        return status ? status.shortDecodeText : '';
+    }
+
+    // model lookups ..................................................................................................
+
+    public getLinkByType(type: string, links: ILink[]): ILink {
+        for (let link of links) {
+            if (link.type === type) {
+                return link;
+            }
+        }
+        return null;
     }
 
     public getDefaultIdentityResource(party: IParty): IHrefValue<IIdentity> {
@@ -106,6 +127,15 @@ export class RAMModelService {
                 if (identity.defaultInd) {
                     return ref;
                 }
+            }
+        }
+        return null;
+    }
+
+    public getProfileProvider(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string) {
+        for (let ref of profileProviderRefs) {
+            if (ref.value.code === code) {
+                return ref.value;
             }
         }
         return null;
@@ -140,24 +170,13 @@ export class RAMModelService {
         return null;
     }
 
-    public getProfileProvider(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string) {
-        for (let ref of profileProviderRefs) {
+    public getRoleStatus(roleStatusRefs: IHrefValue<IRoleStatus>[], code: string) {
+        for (let ref of roleStatusRefs) {
             if (ref.value.code === code) {
                 return ref.value;
             }
         }
         return null;
-    }
-
-    public displayDate(dateString: string) {
-        if (dateString) {
-            const date = new Date(dateString);
-            const datePipe = new DatePipe();
-            return datePipe.transform(date, 'd') + ' ' +
-                datePipe.transform(date, 'MMMM') + ' ' +
-                datePipe.transform(date, 'yyyy');
-        }
-        return 'Not specified';
     }
 
 }
