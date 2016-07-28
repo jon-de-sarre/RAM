@@ -487,6 +487,7 @@ export interface INotifyDelegateDTO {
 export interface IRole {
     _links: ILink[];
     roleType: IHrefValue<IRoleType>;
+    party: IHrefValue<IParty>;
     startTimestamp: Date;
     endTimestamp?: Date;
     endEventTimestamp?: Date,
@@ -497,6 +498,7 @@ export interface IRole {
 export class Role implements IRole {
     constructor(public _links:Link[],
                 public roleType:IHrefValue<IRoleType>,
+                public party:IHrefValue<IParty>,
                 public startTimestamp:Date,
                 public endTimestamp:Date,
                 public endEventTimestamp:Date,
