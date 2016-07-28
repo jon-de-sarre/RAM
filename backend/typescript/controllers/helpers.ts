@@ -1,7 +1,7 @@
 import {logger} from '../logger';
 import {Response, Request} from 'express';
 import {SearchResult, HrefValue} from '../../../commons/RamAPI';
-import {IResponse, ErrorResponse} from '../../../commons/RamAPI2';
+import {ErrorResponse} from '../../../commons/RamAPI2';
 import * as _ from 'lodash';
 
 export const REGULAR_CHARS = '^([A-Za-z0-9 +&\'\*\-]+)?$';
