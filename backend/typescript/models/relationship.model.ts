@@ -591,7 +591,7 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
                 .exec();
 
             let arrays = [
-                listOfDelegateIds.map((obj) => obj['_id'].toString()),
+                listOfDelegateIds.map((obj):string => obj['_id'].toString()),
                 listOfSubjectIds.map((obj) => obj['_id'].toString())
             ];
 
@@ -722,11 +722,9 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
 });
 
 /**
- * Returns a paginated list of distinct subjects for relationships which have a subject or delegate matching the one supplied.
+ * Returns a paginated list of distinct subjects for relationships which have a delegate matching the one supplied.
  *
- * todo need to optional filters (term, relationship type, status)
- * todo need to add sorting
- * todo this search might no longer be useful after SS2 spike
+ * todo need to optional filters (authorisation management)
  */
 /* tslint:disable:max-func-body-length */
 RelationshipSchema.static('searchDistinctSubjectsForMe',
@@ -748,7 +746,7 @@ RelationshipSchema.static('searchDistinctSubjectsForMe',
                 if (partyType) {
                     where['$match']['$and'].push({ '_subjectPartyTypeCode': partyType });
                 }
-                // todo authorisation management 
+                // todo authorisation management
                 if (text) {
                     where['$match']['$and'].push({
                         '$or': [
