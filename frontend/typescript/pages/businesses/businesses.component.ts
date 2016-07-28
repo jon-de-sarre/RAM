@@ -68,11 +68,14 @@ export class BusinessesComponent extends AbstractPageComponent {
             this._isLoading = false;
             this.partyRefs = partyRefs.list;
 
-            // automatically focus business if there is only one
-            if (partyRefs.totalCount === 1) {
-                this.goToNotificationsContext(this.partyRefs[0]);
-            } else if (partyRefs.totalCount === 0) {
-                this.addGlobalMessage('You do not have authorisation administrator access to any businesses - see your administrator');
+            // if results are not being filtered
+            if(!this.filter.get('text')) {
+                // automatically focus business if there is only one
+                if (partyRefs.totalCount === 1) {
+                    this.goToNotificationsContext(this.partyRefs[0]);
+                } else if (partyRefs.totalCount === 0) {
+                    this.addGlobalMessage('You do not have authorisation administrator access to any businesses - see your administrator');
+                }
             }
         }, (err) => {
             this.addGlobalMessages(this.services.rest.extractErrorMessages(err));

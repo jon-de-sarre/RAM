@@ -59,6 +59,10 @@ export class FilterParams {
         return value ? value: defaultValue;
     }
 
+    public isEmpty():boolean {
+        return Object.keys(this.data).length === 0;
+    }
+
     public add(key:string, value:Object):FilterParams {
         this.data[key] = value ? value.toString() : null;
         return this;
