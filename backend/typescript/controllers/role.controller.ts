@@ -5,7 +5,6 @@ import {
 } from './helpers';
 import {IPartyModel} from '../models/party.model';
 import {IRoleModel} from '../models/role.model';
-import {FilterParams} from '../../../commons/RamAPI';
 import {Headers} from './headers';
 
 // todo add data security
@@ -39,7 +38,6 @@ export class RoleController {
                 }
             }
         };
-        const filterParams = FilterParams.decode(req.query.filter);
         validateReqSchema(req, schema)
             .then(async (req:Request) => {
                 const me = res.locals[Headers.Identity];
