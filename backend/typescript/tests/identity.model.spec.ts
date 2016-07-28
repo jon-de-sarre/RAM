@@ -23,7 +23,6 @@ import {
     PartyType
 } from '../models/party.model';
 import {Seeder} from '../seeding/seed';
-import {ICreateInvitationCodeDTO} from '../../../commons/RamAPI2';
 
 /* tslint:disable:max-func-body-length */
 describe('RAM Identity', () => {
