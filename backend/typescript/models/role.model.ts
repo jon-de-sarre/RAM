@@ -1,6 +1,6 @@
 import * as mongoose from 'mongoose';
 import {IRAMObject, RAMSchema, Query} from './base';
-import {IRoleType} from './roleType.model';
+import {IRoleType, RoleTypeModel} from './roleType.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
 import {
     Link,
@@ -12,6 +12,9 @@ import {
 import {PartyModel} from './party.model';
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
+
+/* tslint:disable:no-unused-variable */
+const _RoleTypeModel = RoleTypeModel;
 
 /* tslint:disable:no-unused-variable */
 const _RoleAttributeModel = RoleAttributeModel;
