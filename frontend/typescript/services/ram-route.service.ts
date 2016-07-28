@@ -31,7 +31,7 @@ export class RAMRouteService {
             queryParams['msg'] = msg;
         }
         this.router.navigate(['/relationships',
-            encodeURIComponent(idValue)],
+                encodeURIComponent(idValue)],
             {queryParams: queryParams}
         );
     }
@@ -56,8 +56,8 @@ export class RAMRouteService {
             queryParams['msg'] = msg;
         }
         this.router.navigate(['/relationships/add/enter',
-            encodeURIComponent(idValue)],
-            {queryParams: queryParams}
+                encodeURIComponent(idValue)
+            ], {queryParams: queryParams}
         );
     }
 
@@ -74,9 +74,16 @@ export class RAMRouteService {
             queryParams['page'] = page;
         }
         this.router.navigate(['/roles',
-            encodeURIComponent(idValue),
-            {queryParams: queryParams}
-        ]);
+                encodeURIComponent(idValue)
+            ], {queryParams: queryParams}
+        );
+    }
+
+    public goToAddRolePage(idValue: string) {
+        this.router.navigate(['/roles/add',
+                encodeURIComponent(idValue)
+            ], {queryParams: {}}
+        );
     }
 
     public goToBusinessesPage(filter?: string, page?: number) {
@@ -88,13 +95,15 @@ export class RAMRouteService {
             queryParams['page'] = page;
         }
         this.router.navigate(['/businesses'],
-            {queryParams: queryParams});
+            {queryParams: queryParams}
+        );
     }
 
     public goToNotificationsPage(idValue: string) {
         this.router.navigate(['/notifications/',
-            encodeURIComponent(idValue)],
-            {queryParams: {}});
+                encodeURIComponent(idValue)
+            ], {queryParams: {}}
+        );
     }
 
     public goToAddNotificationPage(idValue: string) {

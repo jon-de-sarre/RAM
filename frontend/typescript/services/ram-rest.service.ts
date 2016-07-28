@@ -19,6 +19,7 @@ import {
     IRelationshipStatus,
     IRole,
     IRoleType,
+    IRoleStatus,
     INotifyDelegateDTO
 } from '../../../commons/RamAPI';
 
@@ -141,13 +142,13 @@ export class RAMRestService {
 
     public acceptPendingRelationshipByInvitationCode(relationship: IRelationship): Observable<IRelationship> {
         return this.http
-            .post(this.modelService.linkByType('accept', relationship._links).href, '')
+            .post(this.modelService.getLinkByType('accept', relationship._links).href, '')
             .map(this.extractData);
     }
 
     public rejectPendingRelationshipByInvitationCode(relationship: IRelationship): Observable<IRelationship> {
         return this.http
-            .post(this.modelService.linkByType('reject', relationship._links).href, '')
+            .post(this.modelService.getLinkByType('reject', relationship._links).href, '')
             .map(this.extractData);
     }
 
@@ -177,6 +178,12 @@ export class RAMRestService {
     public listRoleTypes(): Observable<IHrefValue<IRoleType>[]> {
         return this.http
             .get('/api/v1/roleTypes')
+            .map(this.extractData);
+    }
+
+    public listRoleStatuses(): Observable<IHrefValue<IRoleStatus>[]> {
+        return this.http
+            .get('/api/v1/roleStatuses')
             .map(this.extractData);
     }
 

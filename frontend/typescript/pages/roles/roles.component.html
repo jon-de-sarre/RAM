@@ -7,13 +7,15 @@
     <thead>
         <tr>
             <th><h4>Role</h4></th>
-            <th class="col-md-6"><h4>Date Assigned</h4></th>
+            <th class="col-md-3"><h4>Date Assigned</h4></th>
+            <th class="col-md-2"><h4>Status</h4></th>
         </tr>
     </thead>
     <tbody *ngIf="!isLoading">
         <tr *ngFor="let roleRef of (roles$|async)?.list">
             <td>{{services.model.roleTypeLabel(roleTypeRefs, roleRef.value)}}</td>
             <td>{{services.model.displayDate(roleRef.value.assignedTimestamp)}}</td>
+            <td>{{services.model.roleStatusLabel(roleStatusRefs, roleRef.value)}}</td>
         </tr>
     </tbody>
     <tbody *ngIf="isLoading">

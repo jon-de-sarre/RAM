@@ -2,13 +2,18 @@ import {connectDisconnectMongo} from './helpers';
 import {Seeder} from '../seeding/seed';
 import {
     IRole,
-    RoleModel
+    RoleModel,
+    RoleStatus
 } from '../models/role.model';
 import {
     IRoleAttribute,
     RoleAttributeModel
 } from '../models/roleAttribute.model';
 import {IRoleType} from '../models/roleType.model';
+import {IParty, PartyModel, PartyType} from '../models/party.model';
+import {IName, NameModel} from '../models/name.model';
+import {IProfile, ProfileModel, ProfileProvider} from '../models/profile.model';
+import {IIdentity, IdentityModel, IdentityType, IdentityLinkIdScheme} from '../models/identity.model';
 
 /* tslint:disable:max-func-body-length */
 describe('RAM Role Attribute', () => {
@@ -16,6 +21,11 @@ describe('RAM Role Attribute', () => {
     connectDisconnectMongo();
 
     let roleTypeCustom:IRoleType;
+
+    let partyNickName1:IName;
+    let partyProfile1:IProfile;
+    let partyIdentity1:IIdentity;
+    let party1:IParty;
 
     let role1:IRole;
 
@@ -35,6 +45,29 @@ describe('RAM Role Attribute', () => {
 
                     roleTypeCustom = Seeder.osp_roleType;
 
+                    partyNickName1 = await NameModel.create({
+                        givenName: 'Jane',
+                        familyName: 'Subject 1'
+                    });
+
+                    partyProfile1 = await ProfileModel.create({
+                        provider: ProfileProvider.MyGov.code,
+                        name: partyNickName1
+                    });
+
+                    party1 = await PartyModel.create({
+                        partyType: PartyType.Individual.code
+                    });
+
+                    partyIdentity1 = await IdentityModel.create({
+                        rawIdValue: 'uuid_1',
+                        identityType: IdentityType.LinkId.code,
+                        defaultInd: true,
+                        linkIdScheme: IdentityLinkIdScheme.MyGov.code,
+                        profile: partyProfile1,
+                        party: party1
+                    });
+
                     roleAttribute1 = await RoleAttributeModel.create({
                         value: 'true',
                         attributeName: Seeder.delegateManageAuthorisationAllowedInd_attributeName
@@ -42,7 +75,9 @@ describe('RAM Role Attribute', () => {
 
                     role1 = await RoleModel.create({
                         roleType: roleTypeCustom,
+                        party: party1,
                         startTimestamp: new Date(),
+                        status: RoleStatus.Active.code,
                         attributes: [roleAttribute1]
                     });
 
