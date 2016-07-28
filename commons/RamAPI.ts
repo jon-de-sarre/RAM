@@ -88,6 +88,41 @@ export class RelationshipAttributeName extends ICodeDecode {
     }
 }
 
+
+export class RoleType extends ICodeDecode {
+    constructor(code:string,
+                shortDecodeText:string,
+                longDecodeText:string,
+                startTimestamp:Date,
+                endTimestamp:Date,
+                public voluntaryInd:boolean,
+                public roleAttributeNames:RoleAttributeNameUsage[]) {
+        super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
+    }
+}
+
+export class RoleAttributeNameUsage {
+    constructor(public mandatory:boolean,
+                public defaultValue:string,
+                public attributeNameDef:HrefValue<RoleAttributeName>) {
+    }
+}
+
+export class RoleAttributeName extends ICodeDecode {
+    constructor(code:string,
+                shortDecodeText:string,
+                longDecodeText:string,
+                startTimestamp:Date,
+                endTimestamp:Date,
+                public name:string,
+                public domain:string,
+                public classifier:string,
+                public category:string,
+                public permittedValues:string[]) {
+        super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
+    }
+}
+
 export class Name {
     constructor(public givenName:string,
                 public familyName:string,
@@ -195,5 +230,21 @@ export class RelationshipStatus {
 export class RelationshipAttribute {
     constructor(public value:string,
                 public attributeName:HrefValue<RelationshipAttributeName>) {
+    }
+}
+
+export class Role {
+    constructor(public _links:Link[],
+                public roleType:RoleType,
+                public startTimestamp:Date,
+                public endTimestamp:Date,
+                public endEventTimestamp:Date,
+                public attributes:RoleAttribute[]) {
+    }
+}
+
+export class RoleAttribute {
+    constructor(public value:string,
+                public attributeName:HrefValue<RoleAttributeName>) {
     }
 }

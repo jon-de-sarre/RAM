@@ -121,11 +121,15 @@ export interface IRelationshipType extends ICodeDecode {
     relationshipAttributeNames: IRelationshipAttributeNameUsage[];
 }
 
+export interface IRelationshipAttribute {
+    value: string;
+    attributeName: IHrefValue<IRelationshipAttributeName>;
+}
+
 export interface IRelationshipAttributeNameUsage {
     mandatory: boolean;
     defaultValue: string;
     attributeNameDef: IHrefValue<IRelationshipAttributeName>;
-
 }
 
 export interface IRelationshipAttributeName extends ICodeDecode {
@@ -134,6 +138,50 @@ export interface IRelationshipAttributeName extends ICodeDecode {
     category: string;
     permittedValues: string[];
 }
+
+export interface IRole {
+    _links: ILink[];
+    roleType: IHrefValue<IRoleType>;
+    startTimestamp: string;
+    endTimestamp?: string;
+    endEventTimestamp?: string,
+    attributes: IRoleAttribute[];
+}
+
+export interface IRoleStatus {
+    code: string;
+    shortDecodeText: string;
+}
+
+export interface RoleSearchDTO {
+    totalCount: number;
+    pageSize: number;
+    list: Array<IHrefValue<IRole>>;
+}
+
+export interface IRoleType extends ICodeDecode {
+    voluntaryInd: boolean;
+    roleAttributeNames: IRoleAttributeNameUsage[];
+}
+
+export interface IRoleAttribute {
+    value: string;
+    attributeName: IHrefValue<IRoleAttributeName>;
+}
+
+export interface IRoleAttributeNameUsage {
+    mandatory: boolean;
+    defaultValue: string;
+    attributeNameDef: IHrefValue<IRoleAttributeName>;
+}
+
+export interface IRoleAttributeName extends ICodeDecode {
+    domain: string;
+    classifier: string;
+    category: string;
+    permittedValues: string[];
+}
+
 interface ISharedSecret {
     value: string;
     sharedSecretType: ISharedSecretType;
@@ -175,10 +223,6 @@ export interface IIdentity {
     party: IHrefValue<IParty>;
 }
 
-export interface IRelationshipAttribute {
-    value: string;
-    attributeName: IHrefValue<IRelationshipAttributeName>;
-}
 
 export interface ICreateInvitationCodeDTO {
     givenName?:string;
@@ -212,6 +256,13 @@ export interface IInvitationCodeRelationshipAddDTO {
     relationshipType:string;
     subjectIdValue:string;
     delegate:ICreateInvitationCodeDTO;
+    startTimestamp:Date;
+    endTimestamp:Date;
+    attributes:IAttributeDTO[];
+}
+
+export interface IRoleAddDTO {
+    roleType:string;
     startTimestamp:Date;
     endTimestamp:Date;
     attributes:IAttributeDTO[];

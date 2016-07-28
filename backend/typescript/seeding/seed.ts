@@ -18,6 +18,20 @@ import {
     RelationshipTypeModel} from '../models/relationshipType.model';
 
 import {
+    IRoleAttributeName,
+    RoleAttributeNameModel,
+    RoleAttributeNameDomain,
+    RoleAttributeNameClassifier} from '../models/roleAttributeName.model';
+
+import {
+    IRoleAttributeNameUsage,
+    RoleAttributeNameUsageModel} from '../models/roleAttributeNameUsage.model';
+
+import {
+    IRoleType,
+    RoleTypeModel} from '../models/roleType.model';
+
+import {
     ISharedSecretType,
     SharedSecretTypeModel,
     DOB_SHARED_SECRET_TYPE_CODE} from '../models/sharedSecretType.model';
@@ -41,6 +55,14 @@ import {
 import {
     IParty,
     PartyModel} from '../models/party.model';
+
+import {
+    IRole,
+    RoleModel} from '../models/role.model';
+
+import {
+    IRoleAttribute,
+    RoleAttributeModel} from '../models/roleAttribute.model';
 
 import {
     IRelationship,
@@ -74,6 +96,7 @@ import {JensCateringRelationshipsSeeder} from './seed-jenscatering-relationships
 import {AgencyUsersSeeder} from './seed-agency-users';
 
 import {LDIFExporter} from './ldifExporter';
+import {EdTechRolesSeeder} from './seed-edtech-roles';
 
 const now = new Date();
 
@@ -111,6 +134,10 @@ export class Seeder {
     public static associate_delegate_relationshipType:IRelationshipType;
     public static universal_delegate_relationshipType:IRelationshipType;
     public static custom_delegate_relationshipType:IRelationshipType;
+
+    public static ssid_roleAttributeName:IRoleAttributeName;
+
+    public static osiUsi_roleType:IRoleType;
 
     public static dob_sharedSecretType:ISharedSecretType;
 
@@ -177,6 +204,8 @@ export class Seeder {
     public static jenscatering_and_robertsmith_relationship:IRelationship;
     public static jenscatering_and_fredjohnson_relationship:IRelationship;
     public static jmfoodpackaging_and_jenscatering_relationship:IRelationship;
+
+    public static edTech_osiUsi_relationship:IRole;
 
     public static log(msg:String) {
         if(Seeder.verboseMode) {
@@ -270,6 +299,60 @@ export class Seeder {
             Seeder.log(`- ${code}`.magenta);
             values.attributeNameUsages = await Seeder.createRelationshipAttributeNameUsageModels(attributeValues);
             const model = await RelationshipTypeModel.create(values);
+            Seeder.log('');
+            return model;
+        } else {
+            Seeder.log(`- ${code} ... skipped`.magenta);
+            return existingModel;
+        }
+    }
+
+    public static async createRoleAttributeNameModel(values:IRoleAttributeName) {
+        const code = values.code;
+        const existingModel = await RoleAttributeNameModel.findByCodeIgnoringDateRange(code);
+        if (existingModel === null) {
+            Seeder.log(`- ${code}`.green);
+            if (values.permittedValues) {
+                for (let permittedValue of values.permittedValues) {
+                    Seeder.log(colors.gray(`  - ${permittedValue}`));
+                }
+            }
+            const model = await RoleAttributeNameModel.create(values);
+            return model;
+        } else {
+            Seeder.log(`- ${code} ... skipped`.green);
+            return existingModel;
+        }
+    }
+
+    public static async createRoleAttributeNameUsageModels
+    <T extends { attribute:IRoleAttributeName, optionalInd:boolean, defaultValue:string}>(attributeValues:T[]) {
+        const attributeNameUsages:IRoleAttributeNameUsage[] = [];
+        if (attributeValues) {
+            for (let i = 0; i < attributeValues.length; i = i + 1) {
+                const attributeValue = attributeValues[i];
+                const truncatedDefaultValue = truncateString(attributeValue.defaultValue);
+                Seeder.log(`  - ${attributeValue.attribute.code} (${truncatedDefaultValue})`.green);
+                const attributeNameUsage = await RoleAttributeNameUsageModel.create({
+                    attributeName: attributeValue.attribute,
+                    optionalInd: attributeValue.optionalInd,
+                    defaultValue: attributeValue.defaultValue
+                });
+                attributeNameUsages.push(attributeNameUsage);
+            }
+        }
+        return attributeNameUsages;
+    }
+
+    public static async createRoleTypeModel
+    <T extends { attribute:IRoleAttributeName, optionalInd:boolean, defaultValue:string}>
+    (values:IRoleType, attributeValues:T[]) {
+        const code = values.code;
+        const existingModel = await RoleTypeModel.findByCodeIgnoringDateRange(code);
+        if (existingModel === null) {
+            Seeder.log(`- ${code}`.magenta);
+            values.attributeNameUsages = await Seeder.createRoleAttributeNameUsageModels(attributeValues);
+            const model = await RoleTypeModel.create(values);
             Seeder.log('');
             return model;
         } else {
@@ -379,6 +462,24 @@ export class Seeder {
         Seeder.log(`  - Start At  : ${values.startTimestamp}`.cyan);
         Seeder.log(`  - Status    : ${values.status}`.cyan);
         const model = await RelationshipModel.create(values);
+        return model;
+    }
+
+    public static async createRoleAttributeModel(values:IRoleAttribute) {
+        const model = await RoleAttributeModel.create(values);
+        return model;
+    }
+
+    public static async createRoleModel(values:IRole) {
+        Seeder.log(`- ${values.roleType.code}`.magenta);
+        if (values.attributes) {
+            for (let attribute of values.attributes) {
+                const truncatedValue = truncateString(attribute.value);
+                Seeder.log(`  - ${attribute.attributeName.code} (${truncatedValue})`.green);
+            }
+        }
+        Seeder.log(`  - Start At  : ${values.startTimestamp}`.cyan);
+        const model = await RoleModel.create(values);
         return model;
     }
 
@@ -570,6 +671,28 @@ export class Seeder {
         }
     }
 
+    public static async loadRoleAttributeNames() {
+        try {
+
+            Seeder.log('\nInserting Role Attribute Names:\n'.underline);
+
+            Seeder.ssid_roleAttributeName = await Seeder.createRoleAttributeNameModel({
+                code: 'SSID',
+                shortDecodeText: 'SSID',
+                longDecodeText: 'Software serial number',
+                startDate: now,
+                domain: RoleAttributeNameDomain.String.code,
+                classifier: RoleAttributeNameClassifier.Other.code,
+                category: null,
+                purposeText: 'Software serial number'
+            } as any);
+
+        } catch (e) {
+            Seeder.log('Seeding failed!');
+            Seeder.log(e);
+        }
+    }
+
     public static async loadRelationshipTypes() {
         try {
 
@@ -659,6 +782,26 @@ export class Seeder {
         }
     }
 
+    public static async loadRoleTypes() {
+        try {
+
+            Seeder.log('\nInserting Role Types:\n'.underline);
+
+            Seeder.osiUsi_roleType = await Seeder.createRoleTypeModel({
+                code: 'OSIUSI',
+                shortDecodeText: 'OSI USI',
+                longDecodeText: 'OSI USI',
+                startDate: now
+            } as any, [
+                {attribute: Seeder.ssid_roleAttributeName, optionalInd: false, defaultValue: null}
+            ]);
+
+        } catch (e) {
+            Seeder.log('Seeding failed!');
+            Seeder.log(e);
+        }
+    }
+
     public static async loadSharedSecretTypes() {
         try {
 
@@ -691,6 +834,8 @@ export class Seeder {
             .then(Seeder.loadRelationshipOtherAttributeNames)
             .then(Seeder.loadRelationshipPermissionAttributeNames)
             .then(Seeder.loadRelationshipTypes)
+            .then(Seeder.loadRoleAttributeNames)
+            .then(Seeder.loadRoleTypes)
             .then(Seeder.loadSharedSecretTypes)
             .then(LegislativeProgramsSeeder.load);
     }
@@ -712,6 +857,9 @@ export class Seeder {
             .then(CakeryBakeryRelationshipsSeeder.load)
             .then(JensCateringRelationshipsSeeder.load)
             .then(JMFoodPackagingRelationshipsSeeder.load)
+
+            // roles
+            .then(EdTechRolesSeeder.load)
 
             // agency users
             .then(Seeder.exportAgencyUsers)
