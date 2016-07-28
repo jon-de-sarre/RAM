@@ -112,9 +112,11 @@ export class RAMModelService {
     // model lookups ..................................................................................................
 
     public getLinkByType(type: string, links: ILink[]): ILink {
-        for (let link of links) {
-            if (link.type === type) {
-                return link;
+        if (type && links) {
+            for (let link of links) {
+                if (link.type === type) {
+                    return link;
+                }
             }
         }
         return null;
@@ -133,47 +135,57 @@ export class RAMModelService {
     }
 
     public getProfileProvider(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string) {
-        for (let ref of profileProviderRefs) {
-            if (ref.value.code === code) {
-                return ref.value;
+        if (profileProviderRefs && code) {
+            for (let ref of profileProviderRefs) {
+                if (ref.value.code === code) {
+                    return ref.value;
+                }
             }
         }
         return null;
     }
 
     public getRelationshipType(relationshipTypeRefs: IHrefValue<IRelationshipType>[], relationship: IRelationship) {
-        let href = relationship.relationshipType.href;
-        for (let ref of relationshipTypeRefs) {
-            if (ref.href === href) {
-                return ref.value;
+        if (relationshipTypeRefs && relationship) {
+            let href = relationship.relationshipType.href;
+            for (let ref of relationshipTypeRefs) {
+                if (ref.href === href) {
+                    return ref.value;
+                }
             }
         }
         return null;
     }
 
     public getRoleType(roleTypeRefs: IHrefValue<IRoleType>[], role: IRole) {
-        let href = role.roleType.href;
-        for (let ref of roleTypeRefs) {
-            if (ref.href === href) {
-                return ref.value;
+        if (roleTypeRefs && role) {
+            let href = role.roleType.href;
+            for (let ref of roleTypeRefs) {
+                if (ref.href === href) {
+                    return ref.value;
+                }
             }
         }
         return null;
     }
 
     public getRelationshipStatus(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], code: string) {
-        for (let ref of relationshipStatusRefs) {
-            if (ref.value.code === code) {
-                return ref.value;
+        if (relationshipStatusRefs) {
+            for (let ref of relationshipStatusRefs) {
+                if (ref.value.code === code) {
+                    return ref.value;
+                }
             }
         }
         return null;
     }
 
     public getRoleStatus(roleStatusRefs: IHrefValue<IRoleStatus>[], code: string) {
-        for (let ref of roleStatusRefs) {
-            if (ref.value.code === code) {
-                return ref.value;
+        if (roleStatusRefs) {
+            for (let ref of roleStatusRefs) {
+                if (ref.value.code === code) {
+                    return ref.value;
+                }
             }
         }
         return null;
