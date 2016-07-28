@@ -1,4 +1,5 @@
 import {Injectable} from '@angular/core';
+import {DatePipe} from '@angular/common';
 
 import {
     IName,
@@ -6,11 +7,13 @@ import {
     IProfileProvider,
     IIdentity,
     IRelationship,
+    IRole,
     IRelationshipType,
+    IRoleType,
     ILink,
-    IHrefValue
-} from '../../../commons/RamAPI2';
-import {IRelationshipStatus} from '../../../commons/RamAPI2';
+    IHrefValue,
+    IRelationshipStatus
+} from '../../../commons/RamAPI';
 
 @Injectable()
 export class RAMModelService {
@@ -76,6 +79,16 @@ export class RAMModelService {
         return '';
     }
 
+    public roleTypeLabel(roleTypeRefs: IHrefValue<IRoleType>[], role: IRole) {
+        if (roleTypeRefs && role) {
+            let roleType = this.getRoleType(roleTypeRefs, role);
+            if (roleType) {
+                return roleType.shortDecodeText;
+            }
+        }
+        return '';
+    }
+
     public relationshipStatusLabel(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], code: string) {
         const status = this.getRelationshipStatus(relationshipStatusRefs, code);
         return status ? status.shortDecodeText : '';
@@ -99,9 +112,19 @@ export class RAMModelService {
     }
 
     public getRelationshipType(relationshipTypeRefs: IHrefValue<IRelationshipType>[], relationship: IRelationship) {
-        let relationshipTypeHref = relationship.relationshipType.href;
+        let href = relationship.relationshipType.href;
         for (let ref of relationshipTypeRefs) {
-            if (ref.href === relationshipTypeHref) {
+            if (ref.href === href) {
+                return ref.value;
+            }
+        }
+        return null;
+    }
+
+    public getRoleType(roleTypeRefs: IHrefValue<IRoleType>[], role: IRole) {
+        let href = role.roleType.href;
+        for (let ref of roleTypeRefs) {
+            if (ref.href === href) {
                 return ref.value;
             }
         }
@@ -124,6 +147,17 @@ export class RAMModelService {
             }
         }
         return null;
+    }
+
+    public displayDate(dateString: string) {
+        if (dateString) {
+            const date = new Date(dateString);
+            const datePipe = new DatePipe();
+            return datePipe.transform(date, 'd') + ' ' +
+                datePipe.transform(date, 'MMMM') + ' ' +
+                datePipe.transform(date, 'yyyy');
+        }
+        return 'Not specified';
     }
 
 }

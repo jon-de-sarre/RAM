@@ -5,8 +5,7 @@ import {
 } from './helpers';
 import {IPartyModel} from '../models/party.model';
 import {IRelationshipModel, RelationshipStatus} from '../models/relationship.model';
-import {IInvitationCodeRelationshipAddDTO, ICreateInvitationCodeDTO, IAttributeDTO} from '../../../commons/RamAPI2';
-import {FilterParams} from '../../../commons/RamAPI2';
+import {FilterParams, IInvitationCodeRelationshipAddDTO, ICreateInvitationCodeDTO, IAttributeDTO} from '../../../commons/RamAPI';
 import {PartyModel} from '../models/party.model';
 import {Headers} from './headers';
 

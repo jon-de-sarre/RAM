@@ -9,7 +9,7 @@ import {conf} from './bootstrap';
 import {logStream, logger} from './logger';
 // import {continueOnlyIfJWTisValid} from './security'
 import expressValidator = require('express-validator');
-import {ErrorResponse} from '../../commons/RamAPI2';
+import {ErrorResponse} from '../../commons/RamAPI';
 
 import {forgeRockSimulator} from './controllers/forgeRock.simulator.middleware';
 import {security} from './controllers/security.middleware';
@@ -28,6 +28,8 @@ import {IdentityController} from './controllers/identity.controller';
 import {RelationshipController} from './controllers/relationship.controller';
 import {RelationshipTypeController} from './controllers/relationshipType.controller';
 import {RelationshipAttributeNameController} from './controllers/relationshipAttributeName.controller';
+import {RoleController} from "./controllers/role.controller";
+import {RoleTypeController} from "./controllers/roleType.controller";
 
 import {IdentityModel} from './models/identity.model';
 import {PartyModel} from './models/party.model';
@@ -35,6 +37,8 @@ import {ProfileModel} from './models/profile.model';
 import {RelationshipModel} from './models/relationship.model';
 import {RelationshipTypeModel} from './models/relationshipType.model';
 import {RelationshipAttributeNameModel} from './models/relationshipAttributeName.model';
+import {RoleModel} from "./models/role.model";
+import {RoleTypeModel} from "./models/roleType.model";
 
 // connect to the database ............................................................................................
 
@@ -120,6 +124,14 @@ server.use('/api/',
 
 server.use('/api/',
     new RelationshipController(RelationshipModel, PartyModel)
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new RoleController(RoleModel, PartyModel)
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new RoleTypeController(RoleTypeModel, PartyModel)
         .assignRoutes(express.Router()));
 
 // setup error handlers ...............................................................................................

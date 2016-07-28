@@ -18,8 +18,9 @@ import {
     IRelationshipType,
     IRelationshipStatus,
     IRole,
+    IRoleType,
     INotifyDelegateDTO
-} from '../../../commons/RamAPI2';
+} from '../../../commons/RamAPI';
 
 @Injectable()
 export class RAMRestService {
@@ -170,6 +171,12 @@ export class RAMRestService {
                                  page: number): Observable<ISearchResult<IHrefValue<IRole>>> {
         return this.http
             .get(`/api/v1/roles/identity/${idValue}?page=${page}`)
+            .map(this.extractData);
+    }
+
+    public listRoleTypes(): Observable<IHrefValue<IRoleType>[]> {
+        return this.http
+            .get('/api/v1/roleTypes')
             .map(this.extractData);
     }
 

@@ -12,7 +12,7 @@ import {
     IParty,
     IHrefValue,
     FilterParams
-} from '../../../../commons/RamAPI2';
+} from '../../../../commons/RamAPI';
 import {
     SearchResultPaginationDelegate,
     SearchResultPaginationComponent

@@ -270,6 +270,7 @@ RelationshipSchema.method('statusEnum', function () {
     return RelationshipStatus.valueOf(this.status);
 });
 
+// todo what is the href we use here?
 RelationshipSchema.method('toHrefValue', async function (includeValue: boolean) {
     const relationshipId: string = this._id.toString();
     return new HrefValue(
