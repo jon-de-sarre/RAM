@@ -740,7 +740,7 @@ RelationshipSchema.static('searchDistinctSubjectsForMe',
         return new Promise<SearchResult<IParty>>(async (resolve, reject) => {
             const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
             try {
-                const where: Object =  {
+                const where: {[key: string]: Object} =  {
                     '$match': {
                         '$and': [ { 'delegate': new mongoose.Types.ObjectId(requestingParty.id) } ]
                     }
