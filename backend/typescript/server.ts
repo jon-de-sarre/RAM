@@ -21,6 +21,7 @@ import {ResetController} from './controllers/reset.server.controller';
 
 // PRODUCTION RESOURCES
 import {PrincipalController} from './controllers/principal.controller';
+import {BusinessController} from './controllers/business.controller';
 import {PartyController} from './controllers/party.controller';
 import {ProfileController} from './controllers/profile.controller';
 import {IdentityController} from './controllers/identity.controller';
@@ -111,6 +112,10 @@ server.use('/api/',
 
 server.use('/api/',
     new PartyController(PartyModel)
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new BusinessController()
         .assignRoutes(express.Router()));
 
 server.use('/api/',
