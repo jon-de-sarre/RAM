@@ -139,6 +139,7 @@ export class Seeder {
     public static associate_delegate_relationshipType:IRelationshipType;
     public static universal_delegate_relationshipType:IRelationshipType;
     public static custom_delegate_relationshipType:IRelationshipType;
+    public static osp_delegate_relationshipType:IRelationshipType;
 
     public static ssid_roleAttributeName:IRoleAttributeName;
 
@@ -800,6 +801,16 @@ export class Seeder {
                 {attribute: Seeder.depthscentrelink_ppl_attributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.deptimm_skillselect_attributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.deptemp_wageconnect_attributeName, optionalInd: false, defaultValue: null}
+            ]);
+
+            Seeder.osp_delegate_relationshipType = await Seeder.createRelationshipTypeModel({
+                code: 'OSP',
+                shortDecodeText: 'Online Software Provider',
+                longDecodeText: 'Online Software Provider',
+                startDate: now,
+                managedExternallyInd: false,
+                category: RelationshipTypeCategory.Notification.code
+            } as any, [
             ]);
 
         } catch (e) {
