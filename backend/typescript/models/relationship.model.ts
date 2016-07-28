@@ -52,11 +52,11 @@ export class RelationshipStatus extends RAMEnum {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue: boolean): HrefValue<RelationshipStatusDTO> {
-        return new HrefValue(
+    public toHrefValue(includeValue: boolean): Promise<HrefValue<RelationshipStatusDTO>> {
+        return Promise.resolve(new HrefValue(
             '/api/v1/relationshipStatus/' + this.code,
             includeValue ? this.toDTO() : undefined
-        );
+        ));
     }
 
     public toDTO(): RelationshipStatusDTO {
@@ -591,11 +591,11 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
                 .exec();
 
             let arrays = [
-                listOfDelegateIds.map((obj):string => obj['_id'].toString()),
-                listOfSubjectIds.map((obj) => obj['_id'].toString())
+                listOfDelegateIds.map((obj: {_id: string}): string => obj['_id'].toString()),
+                listOfSubjectIds.map((obj: {_id: string}) => obj['_id'].toString())
             ];
 
-            const listOfIntersectingPartyIds = arrays.shift().filter(function (v) {
+            const listOfIntersectingPartyIds = arrays.shift().filter(function (v: string) {
                 return arrays.every(function (a) {
                     return a.indexOf(v) !== -1;
                 });
@@ -659,11 +659,10 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
         const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
         try {
             const party = await PartyModel.findByIdentityIdValue(identityIdValue);
-            const where: Object = {};
-            where['$and'] = [];
-            where['$and'].push({'$or': [{subject: party}, {delegate: party}]});
+            let mainAnd: {[key: string]: Object}[] = [];
+            mainAnd.push({'$or': [{subject: party}, {delegate: party}]});
             if (partyType) {
-                where['$and'].push({
+                mainAnd.push({
                     '$or': [
                         {'_delegatePartyTypeCode': partyType},
                         {'_subjectPartyTypeCode': partyType}
@@ -671,10 +670,10 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                 });
             }
             if (relationshipType) {
-                where['$and'].push({'_relationshipTypeCode': relationshipType});
+                mainAnd.push({'_relationshipTypeCode': relationshipType});
             }
             if (profileProvider) {
-                where['$and'].push({
+                mainAnd.push({
                     '$or': [
                         {'_delegateProfileProviderCodes': profileProvider},
                         {'_subjectProfileProviderCodes': profileProvider}
@@ -682,10 +681,10 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                 });
             }
             if (status) {
-                where['$and'].push({'status': status});
+                mainAnd.push({'status': status});
             }
             if (text) {
-                where['$and'].push({
+                mainAnd.push({
                     '$or': [
                         {'_subjectNickNameString': new RegExp(text, 'i')},
                         {'_delegateNickNameString': new RegExp(text, 'i')},
@@ -694,6 +693,8 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                     ]
                 });
             }
+            const where: {[key: string]: Object} = {};
+            where['$and'] = mainAnd;
             const count = await this.RelationshipModel
                 .count(where)
                 .exec();

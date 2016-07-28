@@ -137,7 +137,7 @@ export class Seeder {
 
     public static ssid_roleAttributeName:IRoleAttributeName;
 
-    public static osiUsi_roleType:IRoleType;
+    public static osp_roleType:IRoleType;
 
     public static dob_sharedSecretType:ISharedSecretType;
 
@@ -787,10 +787,10 @@ export class Seeder {
 
             Seeder.log('\nInserting Role Types:\n'.underline);
 
-            Seeder.osiUsi_roleType = await Seeder.createRoleTypeModel({
-                code: 'OSIUSI',
-                shortDecodeText: 'OSI USI',
-                longDecodeText: 'OSI USI',
+            Seeder.osp_roleType = await Seeder.createRoleTypeModel({
+                code: 'OSP',
+                shortDecodeText: 'OSP',
+                longDecodeText: 'Online Software Provider',
                 startDate: now
             } as any, [
                 {attribute: Seeder.ssid_roleAttributeName, optionalInd: false, defaultValue: null}

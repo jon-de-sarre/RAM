@@ -17,6 +17,7 @@ import {
     IRelationship,
     IRelationshipType,
     IRelationshipStatus,
+    IRole,
     INotifyDelegateDTO
 } from '../../../commons/RamAPI2';
 
@@ -162,6 +163,13 @@ export class RAMRestService {
             .post(`/api/v1/relationship`, JSON.stringify(relationship), {
                 headers: this.headersForJson()
             })
+            .map(this.extractData);
+    }
+
+    public searchRolesByIdentity(idValue: string,
+                                 page: number): Observable<ISearchResult<IHrefValue<IRole>>> {
+        return this.http
+            .get(`/api/v1/roles/identity/${idValue}?page=${page}`)
             .map(this.extractData);
     }
 

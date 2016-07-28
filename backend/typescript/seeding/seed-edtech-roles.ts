@@ -10,7 +10,7 @@ export class EdTechRolesSeeder {
     private static async load_edTech() {
         try {
 
-            Seeder.log('\nInserting Sample Role - Ed Tech OSI USI:\n'.underline);
+            Seeder.log('\nInserting Sample Role - Ed Tech OSP:\n'.underline);
 
             if (!conf.devMode) {
 
@@ -19,7 +19,7 @@ export class EdTechRolesSeeder {
             } else {
 
                 Seeder.edTech_osiUsi_relationship = await Seeder.createRoleModel({
-                    roleType: Seeder.osiUsi_roleType,
+                    roleType: Seeder.osp_roleType,
                     startTimestamp: new Date(),
                     attributes: [
                         await Seeder.createRoleAttributeModel({

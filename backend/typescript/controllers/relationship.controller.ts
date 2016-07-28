@@ -388,7 +388,7 @@ export class RelationshipController {
     private listStatuses = (req:Request, res:Response) => {
         const schema = {};
         validateReqSchema(req, schema)
-            .then((req:Request) => RelationshipStatus.values())
+            .then((req:Request) => RelationshipStatus.values() as RelationshipStatus[])
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
             .then(sendList(res))
             .then(sendNotFoundError(res))

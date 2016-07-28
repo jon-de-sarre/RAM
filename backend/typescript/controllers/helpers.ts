@@ -1,7 +1,7 @@
 import {logger} from '../logger';
 import {Response, Request} from 'express';
 import {SearchResult, HrefValue} from '../../../commons/RamAPI';
-import {IResponse, ErrorResponse} from '../../../commons/RamAPI2';
+import {ErrorResponse} from '../../../commons/RamAPI2';
 import * as _ from 'lodash';
 
 export const REGULAR_CHARS = '^([A-Za-z0-9 +&\'\*\-]+)?$';
@@ -18,7 +18,7 @@ export function sendResource<T>(res: Response) {
     };
 }
 
-export function sendList<T extends HrefValue<U>, U>(res: Response) {
+export function sendList<T extends HrefValue<U>|U, U>(res: Response) {
     'use strict';
     return async (results: Promise<T>[]): Promise<T[]> => {
         const resolvedResults = await Promise.all<T>(results);
@@ -32,7 +32,7 @@ export function sendList<T extends HrefValue<U>, U>(res: Response) {
 export function sendSearchResult<T extends HrefValue<U>, U>(res: Response) {
     'use strict';
     return async (results: SearchResult<Promise<T>>): Promise<SearchResult<T>> => {
-        const resolvedResults = new SearchResult(
+        const resolvedResults = new SearchResult<T>(
             results.page,
             results.totalCount,
             results.pageSize,
@@ -42,21 +42,6 @@ export function sendSearchResult<T extends HrefValue<U>, U>(res: Response) {
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify(resolvedResults, null, 4));
         return resolvedResults;
-    };
-}
-
-// @deprecated
-export function sendDocument<T>(res: Response) {
-    'use strict';
-    return (doc: T): T => {
-        if (doc) {
-            const response: IResponse<T> = {
-                data: doc
-            };
-            res.status(200);
-            res.json(response);
-        }
-        return doc;
     };
 }
 

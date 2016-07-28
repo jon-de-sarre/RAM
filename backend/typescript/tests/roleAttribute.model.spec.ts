@@ -33,7 +33,7 @@ describe('RAM Role Attribute', () => {
 
                 try {
 
-                    roleTypeCustom = Seeder.osiUsi_roleType;
+                    roleTypeCustom = Seeder.osp_roleType;
 
                     roleAttribute1 = await RoleAttributeModel.create({
                         value: 'true',
