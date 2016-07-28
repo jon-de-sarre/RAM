@@ -52,11 +52,11 @@ export class RelationshipStatus extends RAMEnum {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue: boolean): HrefValue<RelationshipStatusDTO> {
-        return new HrefValue(
+    public toHrefValue(includeValue: boolean): Promise<HrefValue<RelationshipStatusDTO>> {
+        return Promise.resolve(new HrefValue(
             '/api/v1/relationshipStatus/' + this.code,
             includeValue ? this.toDTO() : undefined
-        );
+        ));
     }
 
     public toDTO(): RelationshipStatusDTO {

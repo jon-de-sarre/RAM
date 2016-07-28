@@ -45,7 +45,7 @@ export class PartyController {
             }
         };
         validateReqSchema(req, schema)
-            .then((req:Request) => PartyType.valueOf(req.params.code))
+            .then((req:Request) => PartyType.valueOf(req.params.code) as PartyType)
             .then((model) => model ? model.toDTO() : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
@@ -56,7 +56,7 @@ export class PartyController {
         const schema = {
         };
         validateReqSchema(req, schema)
-            .then((req:Request) => PartyType.values())
+            .then((req:Request) => PartyType.values() as PartyType[])
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
             .then(sendList(res))
             .then(sendNotFoundError(res))

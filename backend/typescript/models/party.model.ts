@@ -29,11 +29,11 @@ export class PartyType extends RAMEnum {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue: boolean): HrefValue<PartyTypeDTO> {
-        return new HrefValue(
+    public toHrefValue(includeValue: boolean): Promise<HrefValue<PartyTypeDTO>> {
+        return Promise.resolve(new HrefValue(
             '/api/v1/partyType/' + this.code,
             includeValue ? this.toDTO() : undefined
-        );
+        ));
     }
 
     public toDTO(): PartyTypeDTO {

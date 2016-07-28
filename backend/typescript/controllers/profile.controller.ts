@@ -16,7 +16,7 @@ export class ProfileController {
             }
         };
         validateReqSchema(req, schema)
-            .then((req:Request) => ProfileProvider.valueOf(req.params.code))
+            .then((req:Request) => ProfileProvider.valueOf(req.params.code) as ProfileProvider)
             .then((model) => model ? model.toDTO() : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
@@ -27,7 +27,7 @@ export class ProfileController {
         const schema = {
         };
         validateReqSchema(req, schema)
-            .then((req:Request) => ProfileProvider.values())
+            .then((req:Request) => ProfileProvider.values() as ProfileProvider[])
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
             .then(sendList(res))
             .then(sendNotFoundError(res))
