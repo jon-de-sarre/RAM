@@ -28,6 +28,7 @@ import {RelationshipController} from './controllers/relationship.controller';
 import {RelationshipTypeController} from './controllers/relationshipType.controller';
 import {RelationshipAttributeNameController} from './controllers/relationshipAttributeName.controller';
 import {RoleController} from "./controllers/role.controller";
+import {RoleTypeController} from "./controllers/roleType.controller";
 
 import {IdentityModel} from './models/identity.model';
 import {PartyModel} from './models/party.model';
@@ -36,6 +37,7 @@ import {RelationshipModel} from './models/relationship.model';
 import {RelationshipTypeModel} from './models/relationshipType.model';
 import {RelationshipAttributeNameModel} from './models/relationshipAttributeName.model';
 import {RoleModel} from "./models/role.model";
+import {RoleTypeModel} from "./models/roleType.model";
 
 // connect to the database ............................................................................................
 
@@ -121,6 +123,10 @@ server.use('/api/',
 
 server.use('/api/',
     new RoleController(RoleModel, PartyModel)
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new RoleTypeController(RoleTypeModel, PartyModel)
         .assignRoutes(express.Router()));
 
 // setup error handlers ...............................................................................................
