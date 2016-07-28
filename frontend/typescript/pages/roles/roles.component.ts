@@ -10,11 +10,12 @@ import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
 import {RAMServices} from '../../services/ram-services';
 
 import {
+    IHrefValue,
     ISearchResult,
     IIdentity,
     IRole,
-    IRoleType,
-    IHrefValue
+    IRoleStatus,
+    IRoleType
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -39,6 +40,7 @@ export class RolesComponent extends AbstractPageComponent {
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
     public identity: IIdentity;
     public roleTypeRefs: IHrefValue<IRoleType>[];
+    public roleStatusRefs: IHrefValue<IRoleStatus>[];
 
     public paginationDelegate: SearchResultPaginationDelegate;
     public form: FormGroup;
@@ -67,6 +69,11 @@ export class RolesComponent extends AbstractPageComponent {
         // role types
         this.services.rest.listRoleTypes().subscribe((roleTypeRefs) => {
             this.roleTypeRefs = roleTypeRefs;
+        });
+
+        // role statuses
+        this.services.rest.listRoleStatuses().subscribe((roleStatusRefs) => {
+            this.roleStatusRefs = roleStatusRefs;
         });
 
         // load roles

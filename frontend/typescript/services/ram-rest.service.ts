@@ -19,6 +19,7 @@ import {
     IRelationshipStatus,
     IRole,
     IRoleType,
+    IRoleStatus,
     INotifyDelegateDTO
 } from '../../../commons/RamAPI';
 
@@ -177,6 +178,12 @@ export class RAMRestService {
     public listRoleTypes(): Observable<IHrefValue<IRoleType>[]> {
         return this.http
             .get('/api/v1/roleTypes')
+            .map(this.extractData);
+    }
+
+    public listRoleStatuses(): Observable<IHrefValue<IRoleStatus>[]> {
+        return this.http
+            .get('/api/v1/roleStatuses')
             .map(this.extractData);
     }
 
