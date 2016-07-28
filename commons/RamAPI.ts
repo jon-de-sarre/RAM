@@ -506,10 +506,22 @@ export class FilterParams {
 export interface IRole {
     _links: ILink[];
     roleType: IHrefValue<IRoleType>;
-    startTimestamp: string;
-    endTimestamp?: string;
-    endEventTimestamp?: string,
+    startTimestamp: Date;
+    endTimestamp?: Date;
+    endEventTimestamp?: Date,
+    assignedTimestamp?: Date,
     attributes: IRoleAttribute[];
+}
+
+export class Role implements IRole {
+    constructor(public _links:Link[],
+                public roleType:IHrefValue<IRoleType>,
+                public startTimestamp:Date,
+                public endTimestamp:Date,
+                public endEventTimestamp:Date,
+                public assignedTimestamp:Date,
+                public attributes:RoleAttribute[]) {
+    }
 }
 
 export interface IRoleStatus {
@@ -533,6 +545,12 @@ export interface IRoleAttribute {
     attributeName: IHrefValue<IRoleAttributeName>;
 }
 
+export class RoleAttribute implements IRoleAttribute {
+    constructor(public value:string,
+                public attributeName:HrefValue<RoleAttributeName>) {
+    }
+}
+
 export interface IRoleAttributeNameUsage {
     mandatory: boolean;
     defaultValue: string;
@@ -544,21 +562,4 @@ export interface IRoleAttributeName extends ICodeDecode {
     classifier: string;
     category: string;
     permittedValues: string[];
-}
-
-
-export class Role {
-    constructor(public _links:Link[],
-                public roleType:RoleType,
-                public startTimestamp:Date,
-                public endTimestamp:Date,
-                public endEventTimestamp:Date,
-                public attributes:RoleAttribute[]) {
-    }
-}
-
-export class RoleAttribute {
-    constructor(public value:string,
-                public attributeName:HrefValue<RoleAttributeName>) {
-    }
 }

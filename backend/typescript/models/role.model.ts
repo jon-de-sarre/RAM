@@ -99,7 +99,7 @@ RoleSchema.method('toHrefValue', async function (includeValue: boolean) {
     const roleId: string = this._id.toString();
     return new HrefValue(
         '/api/v1/role/' + encodeURIComponent(roleId),
-        includeValue ? await this.toDTO(null) : undefined
+        includeValue ? await this.toDTO() : undefined
     );
 });
 
@@ -113,6 +113,7 @@ RoleSchema.method('toDTO', async function () {
         this.startTimestamp,
         this.endTimestamp,
         this.endEventTimestamp,
+        this.createdAt,
         await Promise.all<RoleAttributeDTO>(this.attributes.map(
             async (attribute: IRoleAttribute) => {
                 return await attribute.toDTO();
