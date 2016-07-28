@@ -1,12 +1,11 @@
 import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
 import {
-    sendResource, sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema, REGULAR_CHARS
+    sendSearchResult, sendError, sendNotFoundError, validateReqSchema
 } from './helpers';
 import {IPartyModel} from '../models/party.model';
 import {IRoleModel} from '../models/role.model';
 import {FilterParams} from '../../../commons/RamAPI2';
-import {PartyModel} from '../models/party.model';
 import {Headers} from './headers';
 
 // todo add data security
@@ -61,7 +60,6 @@ export class RoleController {
             .catch(sendError(res));
     };
 
-
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/roles/identity/:identity_id',
@@ -71,4 +69,5 @@ export class RoleController {
         return router;
 
     };
+
 }
