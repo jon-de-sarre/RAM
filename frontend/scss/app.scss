@@ -107,7 +107,7 @@ div.navbar-header {
   font-weight: bold;
 }
 
-.table > tbody > tr > td {
+.table > thead > tr > th, .table > tbody > tr > td {
   padding: 15px;
 }
 
