@@ -15,7 +15,7 @@ var tsProject = ts.createProject("tsconfig.json", {
 });
 
 gulp.task("clean", function () {
-    return gulp.src(["dist"], { read: false }).pipe(rimraf());
+    return gulp.src(["dist"], {read: false}).pipe(rimraf());
 });
 
 gulp.task("ts:lint", function () {
@@ -32,9 +32,9 @@ gulp.task("ts:lint", function () {
 
 gulp.task("ts:compile", ["ts:lint"], function () {
     var tsResult = gulp.src([
-      "typescript/**/*.ts",
-      "slec.**/*.ts",
-      "../commons/**/*.ts"
+        "typescript/**/*.ts",
+        "slec.**/*.ts",
+        "../commons/**/*.ts"
     ])
         .pipe(sourcemaps.init())
         .pipe(ts(tsProject));
@@ -47,7 +47,6 @@ gulp.task("ts:compile", ["ts:lint"], function () {
 gulp.task("ts:watch", ["ts:compile"], function () {
     gulp.watch(["typescript/**/*.ts", "../commons/**/*.ts", "typings/**/*.d.ts"], ["ts:compile"]);
 });
-
 
 gulp.task('serve', ["ts:watch"], function () {
     nodemon({
@@ -99,27 +98,27 @@ gulp.task("copy:resources", function (params) {
 gulp.task("publish:tarball",
     ["ts:compile", "copy:resources"], function () {
         return gulp.src("dist/**/*")
-            .pipe(tar('backend-dist.tar', { mode: null }))
+            .pipe(tar('backend-dist.tar', {mode: null}))
             .pipe(gzip())
             .pipe(gulp.dest('./'));
     });
 
 gulp.task('test', ['ts:compile'], function () {
-  var pattern = ['dist/{**,./}/*.spec.js'];
-  if (args.test) {
-    pattern = ['dist/{**,./}/' + args.test + '.spec.js'];
-  }
-  console.log('Running tests with pattern ' + args.test);
-  return gulp.src(pattern).pipe(
-    jasmine({
-      verbose: true,
-      includeStackTrace: true,
-      config: {
-        stopSpecOnExpectationFailure: false,
-        random: false
-      }
-    })
-  );
+    var pattern = ['dist/{**,./}/*.spec.js'];
+    if (args.test) {
+        pattern = ['dist/{**,./}/' + args.test + '.spec.js'];
+    }
+    console.log('Running tests with pattern ' + args.test);
+    return gulp.src(pattern).pipe(
+        jasmine({
+            verbose: true,
+            includeStackTrace: true,
+            config: {
+                stopSpecOnExpectationFailure: false,
+                random: false
+            }
+        })
+    );
 });
 
 gulp.task('default', ['ts:watch']);
