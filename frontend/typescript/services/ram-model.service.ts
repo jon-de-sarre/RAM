@@ -62,7 +62,7 @@ export class RAMModelService {
         }
     }
 
-    public isIndividual(identity: IIdentity): string {
+    public isIndividual(identity: IIdentity): boolean {
         return identity && identity.identityType === 'LINK_ID';
     }
 
