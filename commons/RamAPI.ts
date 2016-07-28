@@ -183,17 +183,17 @@ export interface IRelationship {
 }
 
 export class Relationship implements IRelationship {
-    constructor(public _links:ILink[],
-                public relationshipType:IHrefValue<IRelationshipType>,
-                public subject:IHrefValue<IParty>,
+    constructor(public _links:Link[],
+                public relationshipType:HrefValue<RelationshipType>,
+                public subject:HrefValue<Party>,
                 public subjectNickName:Name,
-                public delegate:IHrefValue<IParty>,
-                public delegateNickName:IName,
+                public delegate:HrefValue<Party>,
+                public delegateNickName:Name,
                 public startTimestamp:Date,
                 public endTimestamp:Date,
                 public endEventTimestamp:Date,
                 public status:string,
-                public attributes:IRelationshipAttribute[]) {
+                public attributes:RelationshipAttribute[]) {
     }
 }
 
@@ -348,7 +348,7 @@ export interface IProfile {
 export class Profile implements IProfile {
     constructor(public provider:string,
                 public name:Name,
-                public sharedSecrets:ISharedSecret[]) {
+                public sharedSecrets:SharedSecret[]) {
     }
 }
 
@@ -396,7 +396,7 @@ export class Identity implements IIdentity {
                 public linkIdScheme:string,
                 public linkIdConsumer:string,
                 public profile:Profile,
-                public party:HrefValue<IParty>) {
+                public party:HrefValue<Party>) {
     }
 }
 
@@ -451,57 +451,6 @@ export interface IInvitationCodeRelationshipAddDTO {
 export interface INotifyDelegateDTO {
     email:string;
 }
-
-declare type FilterParamsData = {
-    [key: string]: string;
-};
-
-export class FilterParams {
-
-    private data: FilterParamsData = {};
-
-    public get(key:string, defaultValue?:string):string {
-        const value = this.data[key];
-        return value ? value: defaultValue;
-    }
-
-    public add(key:string, value:Object):FilterParams {
-        this.data[key] = value ? value.toString() : null;
-        return this;
-    }
-
-    public encode(): string {
-        let filter = '';
-        for (let key of Object.keys(this.data)) {
-            if (this.data.hasOwnProperty(key)) {
-                const value = this.data[key];
-                if (value && value !== '' && value !== '-') {
-                    if (filter.length > 0) {
-                        filter += '&';
-                    }
-                    filter += encodeURIComponent(key) + '=' + encodeURIComponent(value);
-                }
-            }
-        }
-        filter = encodeURIComponent(filter);
-        return filter;
-    };
-
-    public static decode(filter: string): FilterParams {
-        const filterParams = new FilterParams();
-        if (filter) {
-            const params = decodeURIComponent(filter).split('&');
-            for (let param of params) {
-                const key = param.split('=')[0];
-                const value = param.split('=')[1];
-                filterParams.add(decodeURIComponent(key), decodeURIComponent(value));
-            }
-        }
-        return filterParams;
-    }
-
-}
-
 
 export interface IRole {
     _links: ILink[];
@@ -562,4 +511,70 @@ export interface IRoleAttributeName extends ICodeDecode {
     classifier: string;
     category: string;
     permittedValues: string[];
+}
+
+export class Role {
+    constructor(public _links:Link[],
+                public roleType:RoleType,
+                public startTimestamp:Date,
+                public endTimestamp:Date,
+                public endEventTimestamp:Date,
+                public attributes:RoleAttribute[]) {
+    }
+}
+
+export class RoleAttribute {
+    constructor(public value:string,
+                public attributeName:HrefValue<RoleAttributeName>) {
+    }
+}
+
+declare type FilterParamsData = {
+    [key: string]: string;
+};
+
+export class FilterParams {
+
+    private data: FilterParamsData = {};
+
+    public get(key:string, defaultValue?:string):string {
+        const value = this.data[key];
+        return value ? value: defaultValue;
+    }
+
+    public add(key:string, value:Object):FilterParams {
+        this.data[key] = value ? value.toString() : null;
+        return this;
+    }
+
+    public encode(): string {
+        let filter = '';
+        for (let key of Object.keys(this.data)) {
+            if (this.data.hasOwnProperty(key)) {
+                const value = this.data[key];
+                if (value && value !== '' && value !== '-') {
+                    if (filter.length > 0) {
+                        filter += '&';
+                    }
+                    filter += encodeURIComponent(key) + '=' + encodeURIComponent(value);
+                }
+            }
+        }
+        filter = encodeURIComponent(filter);
+        return filter;
+    };
+
+    public static decode(filter: string): FilterParams {
+        const filterParams = new FilterParams();
+        if (filter) {
+            const params = decodeURIComponent(filter).split('&');
+            for (let param of params) {
+                const key = param.split('=')[0];
+                const value = param.split('=')[1];
+                filterParams.add(decodeURIComponent(key), decodeURIComponent(value));
+            }
+        }
+        return filterParams;
+    }
+
 }
