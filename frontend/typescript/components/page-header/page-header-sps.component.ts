@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 
 import {RAMServices} from '../../services/ram-services';
 
-import {IIdentity} from '../../../../commons/RamAPI2';
+import {IIdentity} from '../../../../commons/RamAPI';
 
 @Component({
     selector: 'page-header',

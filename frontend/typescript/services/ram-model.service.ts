@@ -8,9 +8,9 @@ import {
     IRelationship,
     IRelationshipType,
     ILink,
-    IHrefValue
-} from '../../../commons/RamAPI2';
-import {IRelationshipStatus} from '../../../commons/RamAPI2';
+    IHrefValue,
+    IRelationshipStatus
+} from '../../../commons/RamAPI';
 
 @Injectable()
 export class RAMModelService {

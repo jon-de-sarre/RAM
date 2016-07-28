@@ -4,7 +4,7 @@ import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {RAMServices} from '../../services/ram-services';
 
-import {IPrincipal} from '../../../../commons/RamAPI2';
+import {IPrincipal} from '../../../../commons/RamAPI';
 
 @Component({
     selector: 'landing-home',

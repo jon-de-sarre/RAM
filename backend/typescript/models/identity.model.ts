@@ -6,14 +6,15 @@ import {RAMEnum, IRAMObject, RAMSchema} from './base';
 import {
     HrefValue,
     Identity as DTO,
-    SearchResult
+    SearchResult,
+    ICreateInvitationCodeDTO,
+    ICreateIdentityDTO
 } from '../../../commons/RamAPI';
 import {NameModel} from './name.model';
 import {SharedSecretModel} from './sharedSecret.model';
 import {IProfile, ProfileModel, ProfileProvider} from './profile.model';
 import {IParty, PartyModel, PartyType} from './party.model';
 import {SharedSecretTypeModel, DOB_SHARED_SECRET_TYPE_CODE} from './sharedSecretType.model';
-import {ICreateInvitationCodeDTO, ICreateIdentityDTO} from '../../../commons/RamAPI2';
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
 

@@ -7,7 +7,7 @@ import {RAMServices} from '../../services/ram-services';
 
 import {
     IIdentity
-} from '../../../../commons/RamAPI2';
+} from '../../../../commons/RamAPI';
 
 @Component({
     selector: 'ram-osp-notification-add',
