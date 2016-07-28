@@ -7,9 +7,9 @@ import * as methodOverride from 'method-override';
 import * as mongoose from 'mongoose';
 import {conf} from './bootstrap';
 import {logStream, logger} from './logger';
-import * as cApi from '../../commons/RamAPI';
 // import {continueOnlyIfJWTisValid} from './security'
 import expressValidator = require('express-validator');
+import {ErrorResponse} from '../../commons/RamAPI2';
 
 import {forgeRockSimulator} from './controllers/forgeRock.simulator.middleware';
 import {security} from './controllers/security.middleware';
@@ -121,7 +121,7 @@ server.use('/api/',
 
 // catch 404 and forward to error handler
 server.use((req: express.Request, res: express.Response) => {
-    const err = new cApi.ErrorResponse('Request Not Found');
+    const err = new ErrorResponse('Request Not Found');
     res.send(err);
 });
 
