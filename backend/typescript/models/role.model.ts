@@ -91,6 +91,7 @@ export interface IRoleModel extends mongoose.Model<IRole> {
 
 // instance methods ...................................................................................................
 
+// todo what is the href we use here?
 RoleSchema.method('toHrefValue', async function (includeValue: boolean) {
     const roleId: string = this._id.toString();
     return new HrefValue(
