@@ -789,7 +789,7 @@ export class Seeder {
 
             Seeder.osp_roleType = await Seeder.createRoleTypeModel({
                 code: 'OSP',
-                shortDecodeText: 'OSP',
+                shortDecodeText: 'Online Software Provider',
                 longDecodeText: 'Online Software Provider',
                 startDate: now
             } as any, [
