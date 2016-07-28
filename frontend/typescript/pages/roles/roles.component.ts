@@ -23,6 +23,8 @@ export class RolesComponent extends AbstractPageComponent {
 
     public form: FormGroup;
 
+    private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
+
     constructor(route: ActivatedRoute,
                 router: Router,
                 services: RAMServices,
@@ -41,10 +43,21 @@ export class RolesComponent extends AbstractPageComponent {
             this.identity = identity;
         });
 
+        // load roles
+        this._isLoading = false;
+        // todo
+        // ...
+        // ...
+        // ...
+
         // forms
         this.form = this._fb.group({
         });
 
+    }
+
+    public get isLoading() {
+        return this._isLoading;
     }
 
 }

@@ -31,6 +31,7 @@ import {
 })
 
 export class BusinessesComponent extends AbstractPageComponent {
+
     public filter: FilterParams;
     public page: number;
 
@@ -124,4 +125,5 @@ export class BusinessesComponent extends AbstractPageComponent {
     public goToHomePage() {
         this.services.route.goToHomePage();
     };
+
 }
