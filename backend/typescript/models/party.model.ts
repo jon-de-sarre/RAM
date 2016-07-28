@@ -5,9 +5,9 @@ import {
     HrefValue,
     Party as DTO,
     PartyType as PartyTypeDTO,
-    Identity as IdentityDTO
+    Identity as IdentityDTO,
+    IInvitationCodeRelationshipAddDTO
 } from '../../../commons/RamAPI';
-import {IInvitationCodeRelationshipAddDTO} from  '../../../commons/RamAPI2';
 import {RelationshipModel, IRelationship} from './relationship.model';
 import {RelationshipTypeModel} from './relationshipType.model';
 import {RelationshipAttributeModel, IRelationshipAttribute} from './relationshipAttribute.model';

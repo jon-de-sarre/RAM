@@ -32,7 +32,7 @@ import {
     IRelationshipAttributeNameUsage,
     IRelationshipType,
     IHrefValue
-} from '../../../../commons/RamAPI2';
+} from '../../../../commons/RamAPI';
 
 @Component({
     selector: 'add-relationship',

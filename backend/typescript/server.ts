@@ -9,7 +9,7 @@ import {conf} from './bootstrap';
 import {logStream, logger} from './logger';
 // import {continueOnlyIfJWTisValid} from './security'
 import expressValidator = require('express-validator');
-import {ErrorResponse} from '../../commons/RamAPI2';
+import {ErrorResponse} from '../../commons/RamAPI';
 
 import {forgeRockSimulator} from './controllers/forgeRock.simulator.middleware';
 import {security} from './controllers/security.middleware';

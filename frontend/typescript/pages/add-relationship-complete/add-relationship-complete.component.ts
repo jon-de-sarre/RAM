@@ -7,7 +7,7 @@ import {PageHeaderAuthComponent} from '../../components/page-header/page-header-
 import {RAMNgValidators} from '../../commons/ram-ng-validators';
 import {RAMServices} from '../../services/ram-services';
 
-import {IIdentity, INotifyDelegateDTO} from '../../../../commons/RamAPI2';
+import {IIdentity, INotifyDelegateDTO} from '../../../../commons/RamAPI';
 
 @Component({
     selector: 'add-relationship-complete',

@@ -19,7 +19,7 @@ import {
     IRelationshipStatus,
     IRole,
     INotifyDelegateDTO
-} from '../../../commons/RamAPI2';
+} from '../../../commons/RamAPI';
 
 @Injectable()
 export class RAMRestService {

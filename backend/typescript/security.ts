@@ -1,6 +1,6 @@
 import * as jwt from 'jsonwebtoken';
 import {Request, Response, NextFunction} from 'express';
-import {ErrorResponse} from '../../commons/RamAPI2';
+import {ErrorResponse} from '../../commons/RamAPI';
 import * as sApi from './ram/ServerAPI';
 
 export const signToken = (secret: string, jwtExpiryInMinutes: number) => {
