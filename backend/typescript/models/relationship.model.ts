@@ -52,11 +52,11 @@ export class RelationshipStatus extends RAMEnum {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue: boolean): HrefValue<RelationshipStatusDTO> {
-        return new HrefValue(
+    public toHrefValue(includeValue: boolean): Promise<HrefValue<RelationshipStatusDTO>> {
+        return Promise.resolve(new HrefValue(
             '/api/v1/relationshipStatus/' + this.code,
             includeValue ? this.toDTO() : undefined
-        );
+        ));
     }
 
     public toDTO(): RelationshipStatusDTO {
@@ -270,6 +270,7 @@ RelationshipSchema.method('statusEnum', function () {
     return RelationshipStatus.valueOf(this.status);
 });
 
+// todo what is the href we use here?
 RelationshipSchema.method('toHrefValue', async function (includeValue: boolean) {
     const relationshipId: string = this._id.toString();
     return new HrefValue(
@@ -591,11 +592,11 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
                 .exec();
 
             let arrays = [
-                listOfDelegateIds.map((obj) => obj['_id'].toString()),
-                listOfSubjectIds.map((obj) => obj['_id'].toString())
+                listOfDelegateIds.map((obj: {_id: string}): string => obj['_id'].toString()),
+                listOfSubjectIds.map((obj: {_id: string}) => obj['_id'].toString())
             ];
 
-            const listOfIntersectingPartyIds = arrays.shift().filter(function (v) {
+            const listOfIntersectingPartyIds = arrays.shift().filter(function (v: string) {
                 return arrays.every(function (a) {
                     return a.indexOf(v) !== -1;
                 });
@@ -659,11 +660,10 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
         const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
         try {
             const party = await PartyModel.findByIdentityIdValue(identityIdValue);
-            const where: Object = {};
-            where['$and'] = [];
-            where['$and'].push({'$or': [{subject: party}, {delegate: party}]});
+            let mainAnd: {[key: string]: Object}[] = [];
+            mainAnd.push({'$or': [{subject: party}, {delegate: party}]});
             if (partyType) {
-                where['$and'].push({
+                mainAnd.push({
                     '$or': [
                         {'_delegatePartyTypeCode': partyType},
                         {'_subjectPartyTypeCode': partyType}
@@ -671,10 +671,10 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                 });
             }
             if (relationshipType) {
-                where['$and'].push({'_relationshipTypeCode': relationshipType});
+                mainAnd.push({'_relationshipTypeCode': relationshipType});
             }
             if (profileProvider) {
-                where['$and'].push({
+                mainAnd.push({
                     '$or': [
                         {'_delegateProfileProviderCodes': profileProvider},
                         {'_subjectProfileProviderCodes': profileProvider}
@@ -682,10 +682,10 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                 });
             }
             if (status) {
-                where['$and'].push({'status': status});
+                mainAnd.push({'status': status});
             }
             if (text) {
-                where['$and'].push({
+                mainAnd.push({
                     '$or': [
                         {'_subjectNickNameString': new RegExp(text, 'i')},
                         {'_delegateNickNameString': new RegExp(text, 'i')},
@@ -694,6 +694,8 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                     ]
                 });
             }
+            const where: {[key: string]: Object} = {};
+            where['$and'] = mainAnd;
             const count = await this.RelationshipModel
                 .count(where)
                 .exec();
@@ -722,11 +724,9 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
 });
 
 /**
- * Returns a paginated list of distinct subjects for relationships which have a subject or delegate matching the one supplied.
+ * Returns a paginated list of distinct subjects for relationships which have a delegate matching the one supplied.
  *
- * todo need to optional filters (term, relationship type, status)
- * todo need to add sorting
- * todo this search might no longer be useful after SS2 spike
+ * todo need to optional filters (authorisation management)
  */
 /* tslint:disable:max-func-body-length */
 RelationshipSchema.static('searchDistinctSubjectsForMe',
@@ -748,7 +748,7 @@ RelationshipSchema.static('searchDistinctSubjectsForMe',
                 if (partyType) {
                     where['$match']['$and'].push({ '_subjectPartyTypeCode': partyType });
                 }
-                // todo authorisation management 
+                // todo authorisation management
                 if (text) {
                     where['$match']['$and'].push({
                         '$or': [

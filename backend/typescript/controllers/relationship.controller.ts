@@ -5,8 +5,7 @@ import {
 } from './helpers';
 import {IPartyModel} from '../models/party.model';
 import {IRelationshipModel, RelationshipStatus} from '../models/relationship.model';
-import {IInvitationCodeRelationshipAddDTO, ICreateInvitationCodeDTO, IAttributeDTO} from '../../../commons/RamAPI2';
-import {FilterParams} from '../../../commons/RamAPI2';
+import {FilterParams, IInvitationCodeRelationshipAddDTO, ICreateInvitationCodeDTO, IAttributeDTO} from '../../../commons/RamAPI';
 import {PartyModel} from '../models/party.model';
 import {Headers} from './headers';
 
@@ -388,7 +387,7 @@ export class RelationshipController {
     private listStatuses = (req:Request, res:Response) => {
         const schema = {};
         validateReqSchema(req, schema)
-            .then((req:Request) => RelationshipStatus.values())
+            .then((req:Request) => RelationshipStatus.values() as RelationshipStatus[])
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
             .then(sendList(res))
             .then(sendNotFoundError(res))

@@ -14,25 +14,25 @@ const mongooseDeepPopulate = require('mongoose-deep-populate')(mongoose);
  */
 export class Query {
 
-    private data:{[name:string]:Promise<Object>} = {};
+    private data: {[name: string]: Promise<Object>} = {};
 
     /**
      * Adds the given filter (name:value) only if 'condition' is truthy.
      */
-    public when(condition:Object, name:string, callback:() => Promise<Object>) {
+    public when(condition: Object, name: string, callback: () => Promise<Object>) {
         if (condition) {
             this.data[name] = callback();
         }
         return this;
     }
 
-    public async build():Promise<Object> {
+    public async build(): Promise<Object> {
         try {
             const promises = Object.keys(this.data).map(val => this.data[val]);
-            const values:Object[] = await Promise.all<Object>(promises);
+            const values: Object[] = await Promise.all<Object>(promises);
 
             let i = 0;
-            let result:{[name:string]:Object} = {};
+            let result: {[name: string]: Object} = {};
             for (let key of Object.keys(this.data)) {
                 result[key] = values[i];
                 i = i + 1;
@@ -50,17 +50,17 @@ export class Query {
  */
 export class RAMEnum {
 
-    protected static AllValues:RAMEnum[];
+    protected static AllValues: RAMEnum[];
 
-    public static values<T extends RAMEnum>():T[] {
+    public static values<T extends RAMEnum>(): T[] {
         return this.AllValues as T[];
     }
 
-    public static valueStrings<T extends RAMEnum>():string[] {
-        return this.AllValues.map((value:T) => value.code);
+    public static valueStrings<T extends RAMEnum>(): string[] {
+        return this.AllValues.map((value: T) => value.code);
     }
 
-    public static valueOf<T extends RAMEnum>(code:string):T {
+    public static valueOf<T extends RAMEnum>(code: string): T {
         for (let type of this.AllValues) {
             if ((type as T).code === code) {
                 return type as T;
@@ -69,7 +69,7 @@ export class RAMEnum {
         return null;
     }
 
-    constructor(public code:string, public shortDecodeText:string) {
+    constructor(public code: string, public shortDecodeText: string) {
     }
 }
 
@@ -78,16 +78,16 @@ export class RAMEnum {
  * Most objects in RAM extend off the RAMObject
  */
 export interface IRAMObject extends mongoose.Document {
-    createdAt:Date;
-    updatedAt:Date;
-    deleteInd:boolean;
-    resourceVersion:string;
+    createdAt: Date;
+    updatedAt: Date;
+    deleteInd: boolean;
+    resourceVersion: string;
 
     /** Instance methods */
-    delete():void;
+    delete(): void;
 }
 
-export const RAMSchema = (schema:Object) => {
+export const RAMSchema = (schema: Object) => {
 
     const result = new mongoose.Schema({
         deleteInd: {type: Boolean, default: false},
@@ -108,18 +108,18 @@ export const RAMSchema = (schema:Object) => {
 };
 
 export interface ICodeDecode extends mongoose.Document {
-    shortDecodeText:string;
-    longDecodeText:string;
-    startDate:Date;
-    endDate:Date;
-    code:string;
+    shortDecodeText: string;
+    longDecodeText: string;
+    startDate: Date;
+    endDate: Date;
+    code: string;
 
     /** Instance methods below */
 
 }
 
 /* tslint:disable:max-func-body-length */
-export const CodeDecodeSchema = (schema:Object) => {
+export const CodeDecodeSchema = (schema: Object) => {
 
     const result = new mongoose.Schema({
         shortDecodeText: {
@@ -157,21 +157,22 @@ export const CodeDecodeSchema = (schema:Object) => {
 };
 
 export class Assert {
-    public static assertTrue(condition:boolean, failMessage:string, detail?:string) {
+
+    public static assertTrue(condition: boolean, failMessage: string, detail?: string) {
         if (!condition) {
-            if(detail) {
+            if (detail) {
                 logger.debug(`Assertion Failed: ${detail}`);
             }
             throw new Error(failMessage);
         }
     }
 
-    public static assertEqual(value1: string, value2: string, failMessage:string) {
+    public static assertEqual(value1: string, value2: string, failMessage: string) {
         const condition = value1 === value2;
         this.assertTrue(condition, failMessage, `${value1} != ${value2}`);
     }
 
-    public static assertCaseInsensitiveEqual(value1: string, value2: string, failMessage:string, detail?:string) {
+    public static assertCaseInsensitiveEqual(value1: string, value2: string, failMessage: string, detail?: string) {
         const condition = _.trim(value1).toLowerCase() === _.trim(value2).toLowerCase();
         this.assertTrue(condition, failMessage, detail);
     }

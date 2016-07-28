@@ -3,6 +3,10 @@
              [messages]="globalMessages"
              [giveAuthorisationsEnabled]="giveAuthorisationsEnabled"></page-header>
 
+<h4>Please enter the authorisation code for the relationship you wish to establish.</h4>
+
+<br/>
+
 <form class="form-horizontal" [formGroup]='form'>
     <div class="form-group">
         <div class="col-lg-8" [class.has-error]="!form.controls['relationshipCode'].valid">
@@ -14,10 +18,3 @@
         </div>
     </div>
 </form>
-
-<div class="clearfix"></div>
-<div class="padding-btn-20"></div>
-<a class="btn btn-default col-md-3 align-center" (click)="goToRelationshipsPage()"> ← Go to relationships </a>
-<div class="clearfix"></div>
-<div class="padding-btn-20"></div>
-<div class="padding-btn-20"></div>

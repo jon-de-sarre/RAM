@@ -6,7 +6,7 @@ import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
 import {RAMServices} from '../../services/ram-services';
 
-import {IIdentity} from '../../../../commons/RamAPI2';
+import {IIdentity} from '../../../../commons/RamAPI';
 
 @Component({
     selector: 'enter-invitation-code',

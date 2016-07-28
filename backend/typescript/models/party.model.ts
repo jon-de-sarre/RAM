@@ -5,9 +5,9 @@ import {
     HrefValue,
     Party as DTO,
     PartyType as PartyTypeDTO,
-    Identity as IdentityDTO
+    Identity as IdentityDTO,
+    IInvitationCodeRelationshipAddDTO
 } from '../../../commons/RamAPI';
-import {IInvitationCodeRelationshipAddDTO} from  '../../../commons/RamAPI2';
 import {RelationshipModel, IRelationship} from './relationship.model';
 import {RelationshipTypeModel} from './relationshipType.model';
 import {RelationshipAttributeModel, IRelationshipAttribute} from './relationshipAttribute.model';
@@ -29,11 +29,11 @@ export class PartyType extends RAMEnum {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue: boolean): HrefValue<PartyTypeDTO> {
-        return new HrefValue(
+    public toHrefValue(includeValue: boolean): Promise<HrefValue<PartyTypeDTO>> {
+        return Promise.resolve(new HrefValue(
             '/api/v1/partyType/' + this.code,
             includeValue ? this.toDTO() : undefined
-        );
+        ));
     }
 
     public toDTO(): PartyTypeDTO {

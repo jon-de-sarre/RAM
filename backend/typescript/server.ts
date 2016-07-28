@@ -7,9 +7,9 @@ import * as methodOverride from 'method-override';
 import * as mongoose from 'mongoose';
 import {conf} from './bootstrap';
 import {logStream, logger} from './logger';
-import * as cApi from '../../commons/RamAPI';
 // import {continueOnlyIfJWTisValid} from './security'
 import expressValidator = require('express-validator');
+import {ErrorResponse} from '../../commons/RamAPI';
 
 import {forgeRockSimulator} from './controllers/forgeRock.simulator.middleware';
 import {security} from './controllers/security.middleware';
@@ -21,12 +21,15 @@ import {ResetController} from './controllers/reset.server.controller';
 
 // PRODUCTION RESOURCES
 import {PrincipalController} from './controllers/principal.controller';
+import {BusinessController} from './controllers/business.controller';
 import {PartyController} from './controllers/party.controller';
 import {ProfileController} from './controllers/profile.controller';
 import {IdentityController} from './controllers/identity.controller';
 import {RelationshipController} from './controllers/relationship.controller';
 import {RelationshipTypeController} from './controllers/relationshipType.controller';
 import {RelationshipAttributeNameController} from './controllers/relationshipAttributeName.controller';
+import {RoleController} from "./controllers/role.controller";
+import {RoleTypeController} from "./controllers/roleType.controller";
 
 import {IdentityModel} from './models/identity.model';
 import {PartyModel} from './models/party.model';
@@ -34,6 +37,8 @@ import {ProfileModel} from './models/profile.model';
 import {RelationshipModel} from './models/relationship.model';
 import {RelationshipTypeModel} from './models/relationshipType.model';
 import {RelationshipAttributeNameModel} from './models/relationshipAttributeName.model';
+import {RoleModel} from "./models/role.model";
+import {RoleTypeModel} from "./models/roleType.model";
 
 // connect to the database ............................................................................................
 
@@ -110,6 +115,10 @@ server.use('/api/',
         .assignRoutes(express.Router()));
 
 server.use('/api/',
+    new BusinessController()
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
     new ProfileController(ProfileModel)
         .assignRoutes(express.Router()));
 
@@ -117,11 +126,19 @@ server.use('/api/',
     new RelationshipController(RelationshipModel, PartyModel)
         .assignRoutes(express.Router()));
 
+server.use('/api/',
+    new RoleController(RoleModel, PartyModel)
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new RoleTypeController(RoleTypeModel, PartyModel)
+        .assignRoutes(express.Router()));
+
 // setup error handlers ...............................................................................................
 
 // catch 404 and forward to error handler
 server.use((req: express.Request, res: express.Response) => {
-    const err = new cApi.ErrorResponse('Request Not Found');
+    const err = new ErrorResponse('Request Not Found');
     res.send(err);
 });
 

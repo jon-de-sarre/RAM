@@ -1,23 +1,23 @@
 import * as mongoose from 'mongoose';
-import {RelationshipModel} from './relationship.model';
-import {IRelationshipAttributeName, RelationshipAttributeNameModel} from './relationshipAttributeName.model';
+import {RoleModel} from './role.model';
+import {IRoleAttributeName, RoleAttributeNameModel} from './roleAttributeName.model';
 import {
-    IRelationshipAttribute as DTO
-} from '../../../commons/RamAPI';
+    IRoleAttribute as DTO
+} from '../../../commons/RamAPI2';
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
 
 /* tslint:disable:no-unused-variable */
-const _RelationshipModel = RelationshipModel;
+const _RoleModel = RoleModel;
 
 /* tslint:disable:no-unused-variable */
-const _RelationshipAttributeNameModel = RelationshipAttributeNameModel;
+const _RoleAttributeNameModel = RoleAttributeNameModel;
 
 // enums, utilities, helpers ..........................................................................................
 
 // schema .............................................................................................................
 
-const RelationshipAttributeSchema = new mongoose.Schema({
+const RoleAttributeSchema = new mongoose.Schema({
     value: {
       type: String,
       required: false,
@@ -25,26 +25,26 @@ const RelationshipAttributeSchema = new mongoose.Schema({
     },
     attributeName: {
         type: mongoose.Schema.Types.ObjectId,
-        ref: 'RelationshipAttributeName',
+        ref: 'RoleAttributeName',
         required: true
     }
 });
 
 // interfaces .........................................................................................................
 
-export interface IRelationshipAttribute extends mongoose.Document {
+export interface IRoleAttribute extends mongoose.Document {
     value?: string;
-    attributeName: IRelationshipAttributeName;
+    attributeName: IRoleAttributeName;
     toDTO():Promise<DTO>;
 }
 
 /* tslint:disable:no-empty-interfaces */
-export interface IRelationshipAttributeModel extends mongoose.Model<IRelationshipAttribute> {
+export interface IRoleAttributeModel extends mongoose.Model<IRoleAttribute> {
 }
 
 // instance methods ...................................................................................................
 
-RelationshipAttributeSchema.method('toDTO', async function () {
+RoleAttributeSchema.method('toDTO', async function () {
     const dto: DTO = {
         value: this.value,
         attributeName: await this.attributeName.toHrefValue(true)
@@ -57,6 +57,6 @@ RelationshipAttributeSchema.method('toDTO', async function () {
 
 // concrete model .....................................................................................................
 
-export const RelationshipAttributeModel = mongoose.model(
-    'RelationshipAttribute',
-    RelationshipAttributeSchema) as IRelationshipAttributeModel;
+export const RoleAttributeModel = mongoose.model(
+    'RoleAttribute',
+    RoleAttributeSchema) as IRoleAttributeModel;

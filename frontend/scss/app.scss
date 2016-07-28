@@ -339,6 +339,25 @@ color: $color;
   padding: 3px 20px;
 }
 
+#action-button-bar {
+  border-top: 1px solid #e6e6e6;
+  margin: 3em 0 0 0;
+  padding: 2em 0 0 0;
+  overflow: hidden;
+}
+
+#action-button-bar .btn {
+  min-width: 85px;
+}
+
+.pull-right > .btn {
+  margin-left: 5px;
+}
+
+.pull-left > .btn {
+  margin-right: 5px;
+}
+
 .panel-heading .badge.square {
     border-radius: 0;
     padding: 10px 15px;
