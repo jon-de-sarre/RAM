@@ -21,14 +21,15 @@ import {ResetController} from './controllers/reset.server.controller';
 
 // PRODUCTION RESOURCES
 import {PrincipalController} from './controllers/principal.controller';
+import {BusinessController} from './controllers/business.controller';
 import {PartyController} from './controllers/party.controller';
 import {ProfileController} from './controllers/profile.controller';
 import {IdentityController} from './controllers/identity.controller';
 import {RelationshipController} from './controllers/relationship.controller';
 import {RelationshipTypeController} from './controllers/relationshipType.controller';
 import {RelationshipAttributeNameController} from './controllers/relationshipAttributeName.controller';
-import {RoleController} from "./controllers/role.controller";
-import {RoleTypeController} from "./controllers/roleType.controller";
+import {RoleController} from './controllers/role.controller';
+import {RoleTypeController} from './controllers/roleType.controller';
 
 import {IdentityModel} from './models/identity.model';
 import {PartyModel} from './models/party.model';
@@ -36,8 +37,8 @@ import {ProfileModel} from './models/profile.model';
 import {RelationshipModel} from './models/relationship.model';
 import {RelationshipTypeModel} from './models/relationshipType.model';
 import {RelationshipAttributeNameModel} from './models/relationshipAttributeName.model';
-import {RoleModel} from "./models/role.model";
-import {RoleTypeModel} from "./models/roleType.model";
+import {RoleModel} from './models/role.model';
+import {RoleTypeModel} from './models/roleType.model';
 
 // connect to the database ............................................................................................
 
@@ -111,6 +112,10 @@ server.use('/api/',
 
 server.use('/api/',
     new PartyController(PartyModel)
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new BusinessController()
         .assignRoutes(express.Router()));
 
 server.use('/api/',
