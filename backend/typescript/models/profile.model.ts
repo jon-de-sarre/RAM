@@ -40,11 +40,11 @@ export class ProfileProvider extends RAMEnum {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue:boolean): HrefValue<ProfileProviderDTO> {
-        return new HrefValue(
+    public toHrefValue(includeValue:boolean): Promise<HrefValue<ProfileProviderDTO>> {
+        return Promise.resolve(new HrefValue(
             '/api/v1/profileProvider/' + this.code,
             includeValue ? this.toDTO() : undefined
-        );
+        ));
     }
 
     public toDTO(): ProfileProviderDTO {
