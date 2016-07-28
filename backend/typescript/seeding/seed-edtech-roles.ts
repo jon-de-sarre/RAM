@@ -20,6 +20,7 @@ export class EdTechRolesSeeder {
 
                 Seeder.edTech_osiUsi_relationship = await Seeder.createRoleModel({
                     roleType: Seeder.osp_roleType,
+                    party: Seeder.edtech_party,
                     startTimestamp: new Date(),
                     attributes: [
                         await Seeder.createRoleAttributeModel({

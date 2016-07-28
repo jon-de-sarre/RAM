@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import {IRAMObject, RAMSchema, Query} from './base';
+import {IParty, PartyModel} from './party.model';
 import {IRoleType, RoleTypeModel} from './roleType.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
 import {
@@ -9,7 +10,6 @@ import {
     RoleAttribute as RoleAttributeDTO,
     SearchResult
 } from '../../../commons/RamAPI';
-import {PartyModel} from './party.model';
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
 
@@ -30,6 +30,11 @@ const RoleSchema = RAMSchema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'RoleType',
         required: [true, 'Role Type is required']
+    },
+    party: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Party',
+        required: [true, 'Party is required']
     },
     startTimestamp: {
         type: Date,
@@ -72,6 +77,7 @@ RoleSchema.pre('validate', function (next: () => void) {
 
 export interface IRole extends IRAMObject {
     roleType:IRoleType;
+    party:IParty;
     startTimestamp:Date;
     endTimestamp?:Date;
     endEventTimestamp?:Date;
@@ -83,6 +89,7 @@ export interface IRole extends IRAMObject {
 
 export interface IRoleModel extends mongoose.Model<IRole> {
     add:(roleType: IRoleType,
+         party: IParty,
          startTimestamp: Date,
          endTimestamp: Date,
          attributes: IRoleAttribute[]) => Promise<IRole>;
@@ -110,6 +117,7 @@ RoleSchema.method('toDTO', async function () {
     return new DTO(
         links,
         await this.roleType.toHrefValue(false),
+        await this.party.toHrefValue(true),
         this.startTimestamp,
         this.endTimestamp,
         this.endEventTimestamp,
@@ -124,11 +132,13 @@ RoleSchema.method('toDTO', async function () {
 // static methods .....................................................................................................
 
 RoleSchema.static('add', async (roleType: IRoleType,
-                                        startTimestamp: Date,
-                                        endTimestamp: Date,
-                                        attributes: IRoleAttribute[]) => {
+                                party: IParty,
+                                startTimestamp: Date,
+                                endTimestamp: Date,
+                                attributes: IRoleAttribute[]) => {
     return await this.RoleModel.create({
         roleType: roleType,
+        party: party,
         startTimestamp: startTimestamp,
         endTimestamp: endTimestamp,
         attributes: attributes
@@ -149,6 +159,7 @@ RoleSchema.static('search', (page: number,
                 .find(query)
                 .deepPopulate([
                     'roleType',
+                    'party',
                     'attributes.attributeName'
                 ])
                 .skip((page - 1) * pageSize)
@@ -178,6 +189,7 @@ RoleSchema.static('searchByIdentity', (identityIdValue: string, page: number, re
                 .find(where)
                 .deepPopulate([
                     'roleType',
+                    'party',
                     'attributes.attributeName'
                 ])
                 .skip((page - 1) * pageSize)

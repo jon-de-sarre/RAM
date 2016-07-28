@@ -15,7 +15,9 @@ import {
 
 import {
     IRelationshipType,
-    RelationshipTypeModel} from '../models/relationshipType.model';
+    RelationshipTypeModel,
+    RelationshipTypeCategory
+} from '../models/relationshipType.model';
 
 import {
     IRoleAttributeName,
@@ -97,6 +99,9 @@ import {AgencyUsersSeeder} from './seed-agency-users';
 
 import {LDIFExporter} from './ldifExporter';
 import {EdTechRolesSeeder} from './seed-edtech-roles';
+import {EdOanerIdentitySeeder} from './seed-edoaner-identity';
+import {EdTechIdentitySeeder} from './seed-edtech-identity';
+import {EdTechRelationshipsSeeder} from './seed-edtech-relationships';
 
 const now = new Date();
 
@@ -151,6 +156,19 @@ export class Seeder {
     public static bobsmith_party:IParty;
     public static bobsmith_identity_1:IIdentity;
 
+    // individual identity
+    public static edoaner_name:IName;
+    public static edoaner_dob:ISharedSecret;
+    public static edoaner_profile:IProfile;
+    public static edoaner_party:IParty;
+    public static edoaner_identity_1:IIdentity;
+
+    // ABN identity
+    public static edtech_name:IName;
+    public static edtech_profile:IProfile;
+    public static edtech_party:IParty;
+    public static edtech_identity_1:IIdentity;
+
     // ABN identity
     public static cakerybakery_name:IName;
     public static cakerybakery_profile:IProfile;
@@ -204,6 +222,8 @@ export class Seeder {
     public static jenscatering_and_robertsmith_relationship:IRelationship;
     public static jenscatering_and_fredjohnson_relationship:IRelationship;
     public static jmfoodpackaging_and_jenscatering_relationship:IRelationship;
+
+    public static edtech_and_edoaner_relationship:IRelationship;
 
     public static edTech_osiUsi_relationship:IRole;
 
@@ -702,7 +722,9 @@ export class Seeder {
                 code: 'ASSOCIATE',
                 shortDecodeText: 'Associate',
                 longDecodeText: 'Associate',
-                startDate: now
+                startDate: now,
+                managedExternallyInd: true,
+                category: RelationshipTypeCategory.Authorisation.code
             } as any, [
                 {attribute: Seeder.permissionCustomisationAllowedInd_attributeName, optionalInd: false, defaultValue: 'false'},
                 {attribute: Seeder.delegateManageAuthorisationAllowedInd_attributeName, optionalInd: false, defaultValue: 'false'},
@@ -732,7 +754,9 @@ export class Seeder {
                 code: 'UNIVERSAL_REPRESENTATIVE',
                 shortDecodeText: 'Universal Representative',
                 longDecodeText: 'Universal Representative',
-                startDate: now
+                startDate: now,
+                managedExternallyInd: false,
+                category: RelationshipTypeCategory.Authorisation.code
             } as any, [
                 {attribute: Seeder.permissionCustomisationAllowedInd_attributeName, optionalInd: false, defaultValue: 'false'},
                 {attribute: Seeder.delegateManageAuthorisationAllowedInd_attributeName, optionalInd: false, defaultValue: 'false'},
@@ -756,7 +780,9 @@ export class Seeder {
                 code: 'CUSTOM_REPRESENTATIVE',
                 shortDecodeText: 'Custom Representative',
                 longDecodeText: 'Custom Representative',
-                startDate: now
+                startDate: now,
+                managedExternallyInd: false,
+                category: RelationshipTypeCategory.Authorisation.code
             } as any, [
                 {attribute: Seeder.permissionCustomisationAllowedInd_attributeName, optionalInd: false, defaultValue: 'true'},
                 {attribute: Seeder.delegateManageAuthorisationAllowedInd_attributeName, optionalInd: false, defaultValue: 'false'},
@@ -847,6 +873,8 @@ export class Seeder {
 
             // identities
             .then(BobSmithIdentitySeeder.load)
+            .then(EdOanerIdentitySeeder.load)
+            .then(EdTechIdentitySeeder.load)
             .then(CakeryBakeryIdentitySeeder.load)
             .then(JenniferMaximsIdentitySeeder.load)
             .then(JohnMaximsIdentitySeeder.load)
@@ -857,6 +885,7 @@ export class Seeder {
             .then(CakeryBakeryRelationshipsSeeder.load)
             .then(JensCateringRelationshipsSeeder.load)
             .then(JMFoodPackagingRelationshipsSeeder.load)
+            .then(EdTechRelationshipsSeeder.load)
 
             // roles
             .then(EdTechRolesSeeder.load)
