@@ -4,7 +4,6 @@ var ts = require("gulp-typescript");
 var sourcemaps = require("gulp-sourcemaps");
 var tslint = require("gulp-tslint");
 var rimraf = require("gulp-rimraf");
-var seq = require("gulp-sequence");
 var gzip = require('gulp-gzip');
 var tar = require('gulp-tar');
 var jasmine = require('gulp-jasmine');
@@ -123,3 +122,4 @@ gulp.task('test', ['ts:compile'], function () {
   );
 });
 
+gulp.task('default', ['ts:watch']);
