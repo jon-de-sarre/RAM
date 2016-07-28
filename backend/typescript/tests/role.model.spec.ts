@@ -2,9 +2,14 @@ import {connectDisconnectMongo} from './helpers';
 import {Seeder} from '../seeding/seed';
 import {
     IRole,
-    RoleModel
+    RoleModel,
+    RoleStatus
 } from '../models/role.model';
 import {IRoleType} from '../models/roleType.model';
+import {IParty, PartyModel, PartyType} from '../models/party.model';
+import {IIdentity, IdentityModel, IdentityType, IdentityLinkIdScheme} from '../models/identity.model';
+import {IProfile, ProfileModel, ProfileProvider} from '../models/profile.model';
+import {IName, NameModel} from '../models/name.model';
 
 /* tslint:disable:max-func-body-length */
 describe('RAM Role', () => {
@@ -12,6 +17,11 @@ describe('RAM Role', () => {
     connectDisconnectMongo();
 
     let roleTypeCustom:IRoleType;
+
+    let partyNickName1:IName;
+    let partyProfile1:IProfile;
+    let party1:IParty;
+    let partyIdentity1:IIdentity;
 
     let role1:IRole;
 
@@ -29,9 +39,34 @@ describe('RAM Role', () => {
 
                     roleTypeCustom = Seeder.osp_roleType;
 
+                    partyNickName1 = await NameModel.create({
+                        givenName: 'Jane',
+                        familyName: 'Subject 1'
+                    });
+
+                    partyProfile1 = await ProfileModel.create({
+                        provider: ProfileProvider.MyGov.code,
+                        name: partyNickName1
+                    });
+
+                    party1 = await PartyModel.create({
+                        partyType: PartyType.Individual.code
+                    });
+
+                    partyIdentity1 = await IdentityModel.create({
+                        rawIdValue: 'uuid_1',
+                        identityType: IdentityType.LinkId.code,
+                        defaultInd: true,
+                        linkIdScheme: IdentityLinkIdScheme.MyGov.code,
+                        profile: partyProfile1,
+                        party: party1
+                    });
+
                     role1 = await RoleModel.add(roleTypeCustom,
+                        party1,
                         new Date(),
                         null,
+                        RoleStatus.Active,
                         []
                     );
 
@@ -50,7 +85,10 @@ describe('RAM Role', () => {
 
             const instance = await RoleModel.create({
                 roleType: roleTypeCustom,
-                startTimestamp: new Date()
+                party: party1,
+                startTimestamp: new Date(),
+                status: RoleStatus.Active.code,
+                attributes: []
             });
 
             expect(instance).not.toBeNull();
@@ -70,8 +108,10 @@ describe('RAM Role', () => {
 
             const instance = await RoleModel.create({
                 roleType: roleTypeCustom,
+                party: party1,
                 startTimestamp: new Date(),
-                endTimestamp: new Date()
+                endTimestamp: new Date(),
+                status: RoleStatus.Active.code
             });
 
             expect(instance).not.toBeNull();

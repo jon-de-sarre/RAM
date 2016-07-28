@@ -1,15 +1,16 @@
 import * as mongoose from 'mongoose';
-import {IRAMObject, RAMSchema, Query} from './base';
+import {RAMEnum, IRAMObject, RAMSchema, Query} from './base';
+import {IParty, PartyModel} from './party.model';
 import {IRoleType, RoleTypeModel} from './roleType.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
 import {
     Link,
     HrefValue,
     Role as DTO,
+    RoleStatus as RoleStatusDTO,
     RoleAttribute as RoleAttributeDTO,
     SearchResult
 } from '../../../commons/RamAPI';
-import {PartyModel} from './party.model';
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
 
@@ -23,6 +24,34 @@ const MAX_PAGE_SIZE = 10;
 
 // enums, utilities, helpers ..........................................................................................
 
+export class RoleStatus extends RAMEnum {
+
+    public static Active = new RoleStatus('ACTIVE', 'Active');
+    public static Suspended = new RoleStatus('SUSPENDED', 'Suspended');
+    public static Removed = new RoleStatus('REMOVED', 'Removed');
+
+    protected static AllValues = [
+        RoleStatus.Active,
+        RoleStatus.Suspended,
+        RoleStatus.Removed
+    ];
+
+    constructor(code: string, shortDecodeText: string) {
+        super(code, shortDecodeText);
+    }
+
+    public toHrefValue(includeValue: boolean): Promise<HrefValue<RoleStatusDTO>> {
+        return Promise.resolve(new HrefValue(
+            '/api/v1/roleStatus/' + this.code,
+            includeValue ? this.toDTO() : undefined
+        ));
+    }
+
+    public toDTO(): RoleStatusDTO {
+        return new RoleStatusDTO(this.code, this.shortDecodeText);
+    }
+}
+
 // schema .............................................................................................................
 
 const RoleSchema = RAMSchema({
@@ -30,6 +59,11 @@ const RoleSchema = RAMSchema({
         type: mongoose.Schema.Types.ObjectId,
         ref: 'RoleType',
         required: [true, 'Role Type is required']
+    },
+    party: {
+        type: mongoose.Schema.Types.ObjectId,
+        ref: 'Party',
+        required: [true, 'Party is required']
     },
     startTimestamp: {
         type: Date,
@@ -49,6 +83,12 @@ const RoleSchema = RAMSchema({
         required: [function () {
             return this.endTimestamp;
         }, 'End Event Timestamp is required']
+    },
+    status: {
+        type: String,
+        required: [true, 'Status is required'],
+        trim: true,
+        enum: RoleStatus.valueStrings()
     },
     attributes: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -72,9 +112,11 @@ RoleSchema.pre('validate', function (next: () => void) {
 
 export interface IRole extends IRAMObject {
     roleType:IRoleType;
+    party:IParty;
     startTimestamp:Date;
     endTimestamp?:Date;
     endEventTimestamp?:Date;
+    roleStatus:RoleStatus;
     attributes:IRoleAttribute[];
     _roleTypeCode:string;
     toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
@@ -83,8 +125,10 @@ export interface IRole extends IRAMObject {
 
 export interface IRoleModel extends mongoose.Model<IRole> {
     add:(roleType: IRoleType,
+         party: IParty,
          startTimestamp: Date,
          endTimestamp: Date,
+         roleStatus:RoleStatus,
          attributes: IRoleAttribute[]) => Promise<IRole>;
     search:(page: number, pageSize: number)
         => Promise<SearchResult<IRole>>;
@@ -110,10 +154,12 @@ RoleSchema.method('toDTO', async function () {
     return new DTO(
         links,
         await this.roleType.toHrefValue(false),
+        await this.party.toHrefValue(true),
         this.startTimestamp,
         this.endTimestamp,
         this.endEventTimestamp,
         this.createdAt,
+        this.status,
         await Promise.all<RoleAttributeDTO>(this.attributes.map(
             async (attribute: IRoleAttribute) => {
                 return await attribute.toDTO();
@@ -124,13 +170,17 @@ RoleSchema.method('toDTO', async function () {
 // static methods .....................................................................................................
 
 RoleSchema.static('add', async (roleType: IRoleType,
-                                        startTimestamp: Date,
-                                        endTimestamp: Date,
-                                        attributes: IRoleAttribute[]) => {
+                                party: IParty,
+                                startTimestamp: Date,
+                                endTimestamp: Date,
+                                roleStatus: RoleStatus,
+                                attributes: IRoleAttribute[]) => {
     return await this.RoleModel.create({
         roleType: roleType,
+        party: party,
         startTimestamp: startTimestamp,
         endTimestamp: endTimestamp,
+        status: roleStatus.code,
         attributes: attributes
     });
 });
@@ -149,6 +199,7 @@ RoleSchema.static('search', (page: number,
                 .find(query)
                 .deepPopulate([
                     'roleType',
+                    'party',
                     'attributes.attributeName'
                 ])
                 .skip((page - 1) * pageSize)
@@ -178,6 +229,7 @@ RoleSchema.static('searchByIdentity', (identityIdValue: string, page: number, re
                 .find(where)
                 .deepPopulate([
                     'roleType',
+                    'party',
                     'attributes.attributeName'
                 ])
                 .skip((page - 1) * pageSize)

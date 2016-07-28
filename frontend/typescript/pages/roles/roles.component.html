@@ -15,7 +15,7 @@
         <tr *ngFor="let roleRef of (roles$|async)?.list">
             <td>{{services.model.roleTypeLabel(roleTypeRefs, roleRef.value)}}</td>
             <td>{{services.model.displayDate(roleRef.value.assignedTimestamp)}}</td>
-            <td>{{services.model.roleStatusLabel(roleStatusRefs, roleRef.value)}}</td>
+            <td>{{services.model.roleStatusLabel(roleStatusRefs, roleRef.value.status)}}</td>
         </tr>
     </tbody>
     <tbody *ngIf="isLoading">

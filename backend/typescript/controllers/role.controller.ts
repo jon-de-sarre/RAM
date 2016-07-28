@@ -1,10 +1,10 @@
 import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
 import {
-    sendSearchResult, sendError, sendNotFoundError, validateReqSchema
+    sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema
 } from './helpers';
 import {IPartyModel} from '../models/party.model';
-import {IRoleModel} from '../models/role.model';
+import {IRoleModel, RoleStatus} from '../models/role.model';
 import {Headers} from './headers';
 
 // todo add data security
@@ -58,11 +58,24 @@ export class RoleController {
             .catch(sendError(res));
     };
 
+    private listStatuses = (req:Request, res:Response) => {
+        const schema = {};
+        validateReqSchema(req, schema)
+            .then((req:Request) => RoleStatus.values() as RoleStatus[])
+            .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
+            .then(sendList(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
+    };
+
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/roles/identity/:identity_id',
             security.isAuthenticated,
             this.searchByIdentity);
+
+        router.get('/v1/roleStatuses',
+            this.listStatuses);
 
         return router;
 
