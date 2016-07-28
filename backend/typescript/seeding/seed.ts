@@ -15,7 +15,9 @@ import {
 
 import {
     IRelationshipType,
-    RelationshipTypeModel} from '../models/relationshipType.model';
+    RelationshipTypeModel,
+    RelationshipTypeCategory
+} from '../models/relationshipType.model';
 
 import {
     IRoleAttributeName,
@@ -702,7 +704,9 @@ export class Seeder {
                 code: 'ASSOCIATE',
                 shortDecodeText: 'Associate',
                 longDecodeText: 'Associate',
-                startDate: now
+                startDate: now,
+                managedExternallyInd: true,
+                category: RelationshipTypeCategory.Authorisation.code
             } as any, [
                 {attribute: Seeder.permissionCustomisationAllowedInd_attributeName, optionalInd: false, defaultValue: 'false'},
                 {attribute: Seeder.delegateManageAuthorisationAllowedInd_attributeName, optionalInd: false, defaultValue: 'false'},
@@ -732,7 +736,9 @@ export class Seeder {
                 code: 'UNIVERSAL_REPRESENTATIVE',
                 shortDecodeText: 'Universal Representative',
                 longDecodeText: 'Universal Representative',
-                startDate: now
+                startDate: now,
+                managedExternallyInd: false,
+                category: RelationshipTypeCategory.Authorisation.code
             } as any, [
                 {attribute: Seeder.permissionCustomisationAllowedInd_attributeName, optionalInd: false, defaultValue: 'false'},
                 {attribute: Seeder.delegateManageAuthorisationAllowedInd_attributeName, optionalInd: false, defaultValue: 'false'},
@@ -756,7 +762,9 @@ export class Seeder {
                 code: 'CUSTOM_REPRESENTATIVE',
                 shortDecodeText: 'Custom Representative',
                 longDecodeText: 'Custom Representative',
-                startDate: now
+                startDate: now,
+                managedExternallyInd: false,
+                category: RelationshipTypeCategory.Authorisation.code
             } as any, [
                 {attribute: Seeder.permissionCustomisationAllowedInd_attributeName, optionalInd: false, defaultValue: 'true'},
                 {attribute: Seeder.delegateManageAuthorisationAllowedInd_attributeName, optionalInd: false, defaultValue: 'false'},

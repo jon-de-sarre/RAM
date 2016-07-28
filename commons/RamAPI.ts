@@ -275,6 +275,8 @@ export class RelationshipType extends CodeDecode implements RelationshipType {
                 startTimestamp:Date,
                 endTimestamp:Date,
                 public voluntaryInd:boolean,
+                public managedExternallyInd:boolean,
+                public category:string,
                 public relationshipAttributeNames:RelationshipAttributeNameUsage[]) {
         super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
     }
