@@ -46,6 +46,55 @@ export class SearchResult<T> implements ISearchResult<T> {
     }
 }
 
+declare type FilterParamsData = {
+    [key: string]: string;
+};
+
+export class FilterParams {
+
+    private data: FilterParamsData = {};
+
+    public get(key:string, defaultValue?:string):string {
+        const value = this.data[key];
+        return value ? value: defaultValue;
+    }
+
+    public add(key:string, value:Object):FilterParams {
+        this.data[key] = value ? value.toString() : null;
+        return this;
+    }
+
+    public encode(): string {
+        let filter = '';
+        for (let key of Object.keys(this.data)) {
+            if (this.data.hasOwnProperty(key)) {
+                const value = this.data[key];
+                if (value && value !== '' && value !== '-') {
+                    if (filter.length > 0) {
+                        filter += '&';
+                    }
+                    filter += encodeURIComponent(key) + '=' + encodeURIComponent(value);
+                }
+            }
+        }
+        filter = encodeURIComponent(filter);
+        return filter;
+    };
+
+    public static decode(filter: string): FilterParams {
+        const filterParams = new FilterParams();
+        if (filter) {
+            const params = decodeURIComponent(filter).split('&');
+            for (let param of params) {
+                const key = param.split('=')[0];
+                const value = param.split('=')[1];
+                filterParams.add(decodeURIComponent(key), decodeURIComponent(value));
+            }
+        }
+        return filterParams;
+    }
+
+}
 // business domain ....................................................................................................
 
 export interface IPrincipal {
@@ -271,25 +320,6 @@ interface ISharedSecret {
     sharedSecretType: ISharedSecretType;
 }
 
-export class RoleType extends CodeDecode {
-    constructor(code:string,
-                shortDecodeText:string,
-                longDecodeText:string,
-                startTimestamp:Date,
-                endTimestamp:Date,
-                public voluntaryInd:boolean,
-                public roleAttributeNames:RoleAttributeNameUsage[]) {
-        super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
-    }
-}
-
-export class RoleAttributeNameUsage {
-    constructor(public mandatory:boolean,
-                public defaultValue:string,
-                public attributeNameDef:HrefValue<RoleAttributeName>) {
-    }
-}
-
 export class RoleAttributeName extends CodeDecode {
     constructor(code:string,
                 shortDecodeText:string,
@@ -478,15 +508,40 @@ export interface IRoleStatus {
     shortDecodeText: string;
 }
 
-export interface RoleSearchDTO {
+export class RolesStatus implements IRoleStatus {
+    constructor(public code: string,
+                public shortDecodeText: string) {
+    }
+}
+
+export interface IRoleSearchDTO {
     totalCount: number;
     pageSize: number;
     list: Array<IHrefValue<IRole>>;
 }
 
+export class RoleSearchDTO implements IRoleSearchDTO {
+    constructor(public totalCount: number,
+                public pageSize: number,
+                public list: Array<IHrefValue<IRole>>) {
+    }
+}
+
 export interface IRoleType extends ICodeDecode {
     voluntaryInd: boolean;
     roleAttributeNames: IRoleAttributeNameUsage[];
+}
+
+export class RoleType extends CodeDecode implements IRoleType {
+    constructor(code: string,
+                shortDecodeText: string,
+                longDecodeText: string,
+                startTimestamp: Date,
+                endTimestamp: Date,
+                public  voluntaryInd: boolean,
+                public roleAttributeNames: IRoleAttributeNameUsage[]) {
+        super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
+    }
 }
 
 export interface IRoleAttribute {
@@ -506,75 +561,16 @@ export interface IRoleAttributeNameUsage {
     attributeNameDef: IHrefValue<IRoleAttributeName>;
 }
 
+export class RoleAttributeNameUsage implements IRelationshipAttributeNameUsage {
+    constructor(public mandatory: boolean,
+                public defaultValue: string,
+                public attributeNameDef: IHrefValue<IRoleAttributeName>) {
+    }
+}
+
 export interface IRoleAttributeName extends ICodeDecode {
     domain: string;
     classifier: string;
     category: string;
     permittedValues: string[];
-}
-
-export class Role {
-    constructor(public _links:Link[],
-                public roleType:RoleType,
-                public startTimestamp:Date,
-                public endTimestamp:Date,
-                public endEventTimestamp:Date,
-                public attributes:RoleAttribute[]) {
-    }
-}
-
-export class RoleAttribute {
-    constructor(public value:string,
-                public attributeName:HrefValue<RoleAttributeName>) {
-    }
-}
-
-declare type FilterParamsData = {
-    [key: string]: string;
-};
-
-export class FilterParams {
-
-    private data: FilterParamsData = {};
-
-    public get(key:string, defaultValue?:string):string {
-        const value = this.data[key];
-        return value ? value: defaultValue;
-    }
-
-    public add(key:string, value:Object):FilterParams {
-        this.data[key] = value ? value.toString() : null;
-        return this;
-    }
-
-    public encode(): string {
-        let filter = '';
-        for (let key of Object.keys(this.data)) {
-            if (this.data.hasOwnProperty(key)) {
-                const value = this.data[key];
-                if (value && value !== '' && value !== '-') {
-                    if (filter.length > 0) {
-                        filter += '&';
-                    }
-                    filter += encodeURIComponent(key) + '=' + encodeURIComponent(value);
-                }
-            }
-        }
-        filter = encodeURIComponent(filter);
-        return filter;
-    };
-
-    public static decode(filter: string): FilterParams {
-        const filterParams = new FilterParams();
-        if (filter) {
-            const params = decodeURIComponent(filter).split('&');
-            for (let param of params) {
-                const key = param.split('=')[0];
-                const value = param.split('=')[1];
-                filterParams.add(decodeURIComponent(key), decodeURIComponent(value));
-            }
-        }
-        return filterParams;
-    }
-
 }
