@@ -18,6 +18,9 @@
  * The name can be sole trader name, company name, trading name
  * or a number of industry specific name types.
  * 
+ * If no results are found the result is returned as undefined.
+ * At the controller level this is used to send a 404.
+ * 
  * ## Configuration
  * 
  * conf.abrAuthenticationGuid // supplied by Industry to use ABR
@@ -64,27 +67,37 @@ const extractName = (item:any) =>
 
 // build the static typed organisation details for the rest
 // of the system to use (client and server)
-const buildOrganisationEntry = (item:any):ABRentry => { return {
-    abn:        item.ABN[0].identifierValue[0],
-    name:       extractName(item),
-    state:      item.mainBusinessPhysicalAddress[0].stateCode[0],
-    postcode:   item.mainBusinessPhysicalAddress[0].postcode[0],
-}};
+const buildOrganisationEntry = (item:any):ABRentry => {
+    return {
+        abn:        item.ABN[0].identifierValue[0],
+        name:       extractName(item),
+        state:      item.mainBusinessPhysicalAddress[0].stateCode[0],
+        postcode:   item.mainBusinessPhysicalAddress[0].postcode[0]
+    };
+};
 
 // Retrieval by name will return a list of organisations that
 // may match the name given. Inactive records are removed and
 // the data is pushed into the ABRentry format.
-const extractOrganisations = (response:any):[ABRentry] =>
-    response.ABRPayloadSearchResults.response[0]
-    .searchResultsList[0].searchResultsRecord
-    // === does not work. What is xml2js returning?
-    .filter((item:any) => item.ABN[0].identifierStatus == 'Active')
-    .map(buildOrganisationEntry);
+const extractOrganisations = (response:any):[ABRentry] => {
+    const list = response.ABRPayloadSearchResults
+    .response[0].searchResultsList;
+    if (list) {
+        return list[0].searchResultsRecord
+        // === does not work without toString(). What is xml2js returning?
+        .filter((item:any) =>
+            item.ABN[0].identifierStatus.toString() === 'Active')
+        .map(buildOrganisationEntry);
+    } else {
+        return undefined;
+    }
+};
 
 // This is the container for the version that talks to the ABR API
 class RealABR {
+    // split string so the linter doesn't have a hissy fit
     private static domain =
-    'http://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/';
+    'http'+'://abr.business.gov.au/abrxmlsearchRPC/AbrXmlSearch.asmx/';
 
     public static searchABN(abn:string) {
         return new Promise((resolve, reject) =>
@@ -98,11 +111,16 @@ class RealABR {
                 xml2js(resp.text, (err2:any, result:any) => {
                     if (err2) { return reject(err2); }
                     try {
-                        resolve([buildOrganisationEntry(
-                            result.ABRPayloadSearchResults
-                            .response[0].businessEntity[0]
-                        )]);
-                    } catch (err3) { reject(err3) }
+                        const businessEntity =
+                        result.ABRPayloadSearchResults
+                        .response[0].businessEntity;
+                        if (businessEntity) {
+                                resolve([buildOrganisationEntry(
+                                businessEntity[0])]);
+                            } else {
+                                resolve(undefined)
+                            }
+                    } catch (err3) { reject(err3); }
                 });
             }));
     }
@@ -123,8 +141,11 @@ class RealABR {
             if (err) { reject(err); }
             xml2js(resp.text, (err2:any, result:any) => {
                 if (err2) { return reject(err2); }
-                try { resolve(extractOrganisations(result)); }
-                catch (err3) { reject(err3) }
+                try {
+                    resolve(extractOrganisations(result));
+                } catch (err3) {
+                    reject(err3);
+                }
             });
         }));
     }
@@ -132,7 +153,11 @@ class RealABR {
 
 // This is the container for the version that returns mock data
 class MockABR {
-    private static xml = `<ABRPayloadSearchResults xmlns:xsd="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns="http://abr.business.gov.au/ABRXMLSearch/">
+    // in two places I had to break lines so the linter was happy
+    private static xml = `<ABRPayloadSearchResults
+        xmlns:xsd="http://www.w3.org/2001/XMLSchema"
+        xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+        xmlns="http://abr.business.gov.au/ABRXMLSearch/">
         <request>
         <nameSearchRequest>
         <authenticationGUID>cd30d8cc-3180-4afa-a16b-7faea008fa1c</authenticationGUID>
@@ -158,7 +183,14 @@ class MockABR {
         </request>
         <response>
         <usageStatement>
-        The Registrar of the ABR monitors the quality of the information available on this website and updates the information regularly. However, neither the Registrar of the ABR nor the Commonwealth guarantee that the information available through this service (including search results) is accurate, up to date, complete or accept any liability arising from the use of or reliance upon this site.
+        The Registrar of the ABR monitors the quality of the
+        information available on this website and updates the
+        information regularly. However, neither the Registrar
+        of the ABR nor the Commonwealth guarantee that the
+        information available through this service (including
+        search results) is accurate, up to date, complete or
+        accept any liability arising from the use of or reliance 
+        upon this site.
         </usageStatement>
         <dateRegisterLastUpdated>2016-07-26</dateRegisterLastUpdated>
         <dateTimeRetrieved>2016-07-26T16:10:45.3359657+10:00</dateTimeRetrieved>
