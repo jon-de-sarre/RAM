@@ -13,9 +13,9 @@
             <div class="form-group">
                 <div class="col-md-12">
                     <h4>Role type*</h4>
-                    <select class="form-control" [formControl]="form.controls['roleType']" (change)="onRoleTypeChange($event.target.value)">
+                    <select class="form-control" [formControl]="form.controls['roleType']" #t (change)="onRoleTypeChange(t.value)">
                         <option value="-" disabled hidden>Please Choose...</option>
-                        <option *ngFor="let roleTypeRef of roleTypeRefs" value={{roleTypeRef.value.shortDecodeText}}>{{roleTypeRef.value.shortDecodeText}}</option>
+                        <option *ngFor="let roleTypeRef of roleTypeRefs" value={{roleTypeRef.value.code}}>{{roleTypeRef.value.shortDecodeText}}</option>
                     </select>
                 </div>
             </div>
