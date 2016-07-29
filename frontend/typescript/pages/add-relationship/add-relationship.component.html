@@ -6,7 +6,7 @@
 <representative-details [(data)]='newRelationship.representativeDetails' (isValid)='representativeIsValid=$event'>
 </representative-details>
 
-<authorisation-type [(data)]='newRelationship.authType' (isValid)='authTypeIsValid=$event'>
+<authorisation-type [(data)]='newRelationship.authType' [options]='relationshipTypeRefs' (isValid)='authTypeIsValid=$event'>
 </authorisation-type>
 
 <access-period [(data)]='newRelationship.accessPeriod' (isValid)='accessPeriodIsValid=$event'>
