@@ -17,6 +17,7 @@
                         <option value="-" disabled hidden>Please Choose...</option>
                         <option *ngFor="let roleTypeRef of roleTypeRefs" value={{roleTypeRef.value.code}}>{{roleTypeRef.value.shortDecodeText}}</option>
                     </select>
+                    <br/>
                 </div>
             </div>
         </div>
@@ -40,6 +41,13 @@
         </div>
     </div>
 
-    <a (click)="clickMe()">Click Me</a>
-
 </form>
+
+<div id="action-button-bar">
+    <div class="pull-left">
+        <a class="btn btn-default align-center" (click)="back()">← Back</a>
+    </div>
+    <div class="pull-right">
+        <a class="btn btn-primary align-center" (click)="save()">Save →</a>
+    </div>
+</div>
