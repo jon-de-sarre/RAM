@@ -734,7 +734,18 @@ export class Seeder {
                 domain: RoleAttributeNameDomain.String.code,
                 classifier: RoleAttributeNameClassifier.AgencyService.code,
                 category: null,
-                purposeText: 'Unique Student Identifier'
+                purposeText: 'Unique Student Identifier (USI)'
+            } as any);
+
+            Seeder.sbr_roleAttributeName = await Seeder.createRoleAttributeNameModel({
+                code: 'SBR',
+                shortDecodeText: 'SBR',
+                longDecodeText: 'Standard Business Reporting',
+                startDate: now,
+                domain: RoleAttributeNameDomain.String.code,
+                classifier: RoleAttributeNameClassifier.AgencyService.code,
+                category: null,
+                purposeText: 'Standard Business Reporting (SBR) - ATO'
             } as any);
 
         } catch (e) {
