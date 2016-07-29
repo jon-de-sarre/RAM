@@ -139,16 +139,11 @@ describe('RAM Role Type', () => {
     it('inserts with valid values', async (done) => {
         try {
 
-            const minCredentialStrength = 5;
-            const minIdentityStrength = 6;
-
             const instance = await RoleTypeModel.create({
                 code: 'CODE_1',
                 shortDecodeText: 'Some short decode text',
                 longDecodeText: 'Some long decode text',
-                startDate: new Date(),
-                minCredentialStrength: minCredentialStrength,
-                minIdentityStrength: minIdentityStrength
+                startDate: new Date()
             });
 
             expect(instance).not.toBeNull();
@@ -158,8 +153,6 @@ describe('RAM Role Type', () => {
             const retrievedInstance = await RoleTypeModel.findByCodeInDateRange(instance.code, new Date());
             expect(retrievedInstance).not.toBeNull();
             expect(retrievedInstance.id).toBe(instance.id);
-            expect(retrievedInstance.minCredentialStrength).toBe(minCredentialStrength);
-            expect(retrievedInstance.minIdentityStrength).toBe(minIdentityStrength);
 
             done();
 
