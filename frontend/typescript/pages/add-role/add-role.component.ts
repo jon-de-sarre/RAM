@@ -124,17 +124,21 @@ export class AddRoleComponent extends AbstractPageComponent {
 
     public save() {
         this.clearGlobalMessages();
-        const selectedRoleTypeCode = this.form.controls['roleType'].value;
-        const selectedAgencyServiceCodes = this.form.controls['agencyServices'].value;
-        if (!selectedRoleTypeCode || selectedRoleTypeCode === '-') {
+        const roleTypeCode = this.form.controls['roleType'].value;
+        const agencyServiceCodes = this.form.controls['agencyServices'].value;
+        const additionalNotes = this.form.controls['additionalNotes'].value;
+        if (!roleTypeCode || roleTypeCode === '-') {
             this.addGlobalMessage('Please select a role type.');
         } else if (!this.agencyServiceRoleAttributeNameUsages || this.agencyServiceRoleAttributeNameUsages.length === 0) {
             this.addGlobalMessage('You do not have access to any government services.');
-        } else if (selectedAgencyServiceCodes.length === 0) {
+        } else if (agencyServiceCodes.length === 0) {
             this.addGlobalMessage('Please select at least one government agency service.');
         } else {
             // todo rock and roll for all
             alert('TODO: Not yet implemented');
+            console.log('Role=', roleTypeCode);
+            console.log('Agency Services=', agencyServiceCodes);
+            console.log('Additional Notes=', additionalNotes);
         }
     }
 
