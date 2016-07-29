@@ -63,8 +63,12 @@ export class AddRoleComponent extends AbstractPageComponent {
 
         // forms
         this.form = this._fb.group({
+            roleType: '-'
         });
 
+    }
+
+    public onRoleTypeChange(newRoleTypeCode: string) {
     }
 
 }
