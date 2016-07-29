@@ -733,7 +733,7 @@ export class Seeder {
                 startDate: now,
                 domain: RoleAttributeNameDomain.String.code,
                 classifier: RoleAttributeNameClassifier.AgencyService.code,
-                category: null,
+                category: 'EDUCATION',
                 purposeText: 'Unique Student Identifier (USI)'
             } as any);
 
@@ -744,7 +744,7 @@ export class Seeder {
                 startDate: now,
                 domain: RoleAttributeNameDomain.String.code,
                 classifier: RoleAttributeNameClassifier.AgencyService.code,
-                category: null,
+                category: 'TAXATION',
                 purposeText: 'Standard Business Reporting (SBR) - ATO'
             } as any);
 
