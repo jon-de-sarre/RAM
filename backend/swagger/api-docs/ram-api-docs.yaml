@@ -1297,8 +1297,26 @@ definitions:
   RoleType:
     allOf:
       - $ref: '#/definitions/ICodeDecode'
-      - $ref: '#/definitions/RelationshipAttributeNameBusinessIdentifier'
-      - $ref: '#/definitions/RelationshipAttributeNameDetails'
+      - $ref: '#/definitions/RoleTypeAttributeNameBusinessIdentifier'
+      - $ref: '#/definitions/RoleTypeAttributeNameDetails'
+
+  RoleTypeAttributeNameBusinessIdentifier:
+    type: object
+    required: ["code"]
+    properties:
+      code:
+        type: string
+        description: This is the short code value by which Relationship Types may be known
+
+  RoleTypeAttributeNameDetails:
+    type: object
+    required: ["roleAttributeNames"]
+    properties:
+      roleAttributeNames:
+        type: array
+        description: Role attributes that may be used with this resource
+        items:
+          $ref: '#/definitions/RoleAttributeNameUsage'
 
   RoleTypesResourceReference:
     type: object
@@ -1312,6 +1330,79 @@ definitions:
         description: The content of this field is optional, it is the same content for a get request on the href
         schema:
           $ref: '#/definitions/RoleType'
+
+  # Role Attribute Name Usage .........................................................................................
+
+  RoleAttributeNameUsage:
+    allOf:
+      - $ref: '#/definitions/RoleAttributeNameUsageDetails'
+
+  RoleAttributeNameUsageDetails:
+    type: object
+    required: ["mandatory","defaultValue"]
+    properties:
+      mandatory:
+        description: Indicator of whether the attribute is mandatory or not
+        type: boolean
+      defaultValue:
+        description: The default value of the attribute
+        type: string
+      attributeNameDef:
+        description: The attribute name
+        $ref: '#/definitions/RoleAttributeNameResourceReference'
+
+  # Role Attribute Name ...............................................................................................
+
+  RoleAttributeName:
+    allOf:
+      - $ref: '#/definitions/ICodeDecode'
+      - $ref: '#/definitions/RoleAttributeNameBusinessIdentifier'
+      - $ref: '#/definitions/RoleAttributeNameDetails'
+
+  RoleAttributeNameBusinessIdentifier:
+    type: object
+    required: ["code"]
+    properties:
+      name:
+        type: string
+        description: This is the short code value by which Role Attribute Names may be known
+
+  RoleAttributeNameDetails:
+    type: object
+    required: ["mandatory","fieldType"]
+    properties:
+      domain:
+        description: It is the field type
+        type: string
+        enum: ['NULL','BOOLEAN','NUMBER','STRING','DATE','MARKDOWN','SINGLE_SELECT','MULTI_SELECT']
+      classifier:
+        description: It is the classifier to indicate what type of attribute this is and how it is meant to be used (eg this is a permission)
+        type: string
+        enum: ['AGENCY_SERVICE', 'PERMISSION', 'OTHER']
+      category:
+        description: An optional category or grouping for additional meta data (eg a permission in Administrative Services)
+        type: string
+      purposeText:
+        description: An optional purpose text to indicate how this attribute is meant to be used
+        type: string
+      permittedValues:
+        description: An array of the accepted values
+        type: array
+        items:
+          type: string
+
+  RoleAttributeNameResourceReference:
+    type: object
+    description: A reference to a RoleAttributeName Resource
+    required: ["href"]
+    properties:
+      href:
+        type: string
+        description: URL that uniquely identifies this RoleAttributeName
+      value:
+        description: The content of this field is optional, it is the same content for a get request on the href
+        schema:
+          $ref: '#/definitions/RoleAttributeName'
 
   # -------------------------------------------------------------------------------------------------------------------
   # Base and System Models
