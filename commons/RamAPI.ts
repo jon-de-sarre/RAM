@@ -270,6 +270,8 @@ export interface RelationshipSearchDTO {
 export interface IRelationshipType extends ICodeDecode {
     voluntaryInd: boolean;
     relationshipAttributeNames: IRelationshipAttributeNameUsage[];
+    managedExternallyInd: boolean;
+    category: string;
 }
 
 export class RelationshipType extends CodeDecode implements RelationshipType {
