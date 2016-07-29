@@ -12,6 +12,16 @@ export class RoleTypeController {
     constructor(private roleTypeModel:IRoleTypeModel, private partyModel:IPartyModel) {
     }
 
+    private listIgnoringDateRange = async (req:Request, res:Response) => {
+        const schema = {};
+        validateReqSchema(req, schema)
+            .then((req:Request) => this.roleTypeModel.listIgnoringDateRange())
+            .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
+            .then(sendList(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
+    };
+
     private findByCodeIgnoringDateRange = async (req:Request, res:Response) => {
         const schema = {
             'code': {
@@ -28,24 +38,13 @@ export class RoleTypeController {
             .catch(sendError(res));
     };
 
-    private listIgnoringDateRange = async (req:Request, res:Response) => {
-        const schema = {};
-        validateReqSchema(req, schema)
-            .then((req:Request) => this.roleTypeModel.listIgnoringDateRange())
-            .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
-            .then(sendList(res))
-            .then(sendNotFoundError(res))
-            .catch(sendError(res));
-    };
-
     public assignRoutes = (router:Router) => {
-
-        router.get('/v1/roleType/:code',
-            security.isAuthenticated,
-            this.findByCodeIgnoringDateRange);
 
         router.get('/v1/roleTypes',
             this.listIgnoringDateRange);
+
+        router.get('/v1/roleType/:code',
+            this.findByCodeIgnoringDateRange);
 
         return router;
 
