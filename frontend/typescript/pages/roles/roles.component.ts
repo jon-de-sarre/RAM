@@ -76,7 +76,7 @@ export class RolesComponent extends AbstractPageComponent {
             this.roleStatusRefs = roleStatusRefs;
         });
 
-        // load roles
+        // roles
         this.roles$ = this.services.rest.searchRolesByIdentity(this.idValue, this.page);
         this.roles$.subscribe((searchResult) => {
             this._isLoading = false;
