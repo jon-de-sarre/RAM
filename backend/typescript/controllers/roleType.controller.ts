@@ -41,6 +41,7 @@ export class RoleTypeController {
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/roleTypes',
+            security.isAuthenticated,
             this.listIgnoringDateRange);
 
         router.get('/v1/roleType/:code',
