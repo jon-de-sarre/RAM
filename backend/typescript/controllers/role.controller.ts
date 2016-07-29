@@ -5,7 +5,6 @@ import {
 } from './helpers';
 import {IPartyModel} from '../models/party.model';
 import {IRoleModel, RoleStatus} from '../models/role.model';
-import {Headers} from './headers';
 
 // todo add data security
 export class RoleController {
