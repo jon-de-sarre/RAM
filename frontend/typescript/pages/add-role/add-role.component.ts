@@ -104,13 +104,11 @@ export class AddRoleComponent extends AbstractPageComponent {
             }
             if (roleTypeRef) {
                 this.agencyServiceRoleAttributeNameUsages = this.services.model.getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, programs);
-                console.log(JSON.stringify(this.agencyServiceRoleAttributeNameUsages, null, 4));
             }
         }
     }
 
     public onAgencyServiceChange(attributeCode: string) {
-        console.log('Triggered:', attributeCode);
         let agencyServices = this.form.controls['agencyServices'].value;
         let index = agencyServices.indexOf(attributeCode);
         if (index === -1) {
@@ -125,8 +123,23 @@ export class AddRoleComponent extends AbstractPageComponent {
     }
 
     public save() {
-        console.log('Role Type=', JSON.stringify(this.form.controls['roleType'].value, null, 4));
-        console.log('Agency Services=', JSON.stringify(this.form.controls['agencyServices'].value, null, 4));
+        this.clearGlobalMessages();
+        const roleTypeCode = this.form.controls['roleType'].value;
+        const agencyServiceCodes = this.form.controls['agencyServices'].value;
+        const additionalNotes = this.form.controls['additionalNotes'].value;
+        if (!roleTypeCode || roleTypeCode === '-') {
+            this.addGlobalMessage('Please select a role type.');
+        } else if (!this.agencyServiceRoleAttributeNameUsages || this.agencyServiceRoleAttributeNameUsages.length === 0) {
+            this.addGlobalMessage('You do not have access to any government services.');
+        } else if (agencyServiceCodes.length === 0) {
+            this.addGlobalMessage('Please select at least one government agency service.');
+        } else {
+            // todo rock and roll for all
+            alert('TODO: Not yet implemented');
+            console.log('Role=', roleTypeCode);
+            console.log('Agency Services=', agencyServiceCodes);
+            console.log('Additional Notes=', additionalNotes);
+        }
     }
 
 }
