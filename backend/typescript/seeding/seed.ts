@@ -230,7 +230,7 @@ export class Seeder {
 
     public static edtech_and_edoaner_relationship:IRelationship;
 
-    public static edTech_osiUsi_relationship:IRole;
+    public static edTech_ospUsi_relationship:IRole;
 
     public static log(msg:String) {
         if(Seeder.verboseMode) {
