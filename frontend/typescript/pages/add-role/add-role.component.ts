@@ -85,6 +85,7 @@ export class AddRoleComponent extends AbstractPageComponent {
 
     public onRoleTypeChange(newRoleTypeCode: string) {
         if (this.me) {
+            this.form.controls['agencyServices'].value = [];
             let roleTypeRef: IHrefValue<IRoleType>;
             for (let ref of this.roleTypeRefs) {
                 if (ref.value.code === newRoleTypeCode) {
