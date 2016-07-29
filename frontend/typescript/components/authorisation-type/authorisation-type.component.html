@@ -10,8 +10,9 @@
                     <h4>Authorisation type*</h4>
                     <select class="form-control" [formControl]="form.controls['authType']">
                         <option value="choose" disabled hidden>Please Choose...</option>
-                        <option value="UNIVERSAL_REPRESENTATIVE">Universal Representative</option>
-                        <!--option value="CUSTOM_REPRESENTATIVE">Custom Representative</option-->
+                        <template ngFor let-item="$implicit" [ngForOf]="options">
+                            <option value="{{item.value.code}}">{{item.value.shortDecodeText}}</option>
+                        </template>
                     </select>
                     <dl class="padding-top-10">
                         <dt *ngIf="form.controls['authType'].value==='UNIVERSAL_REPRESENTATIVE'" >Universal Representative</dt>

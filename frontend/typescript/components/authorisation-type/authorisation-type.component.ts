@@ -1,5 +1,17 @@
 import {OnInit, Input, Output, EventEmitter, Component} from '@angular/core';
 import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FormControl, FORM_DIRECTIVES } from '@angular/forms';
+import {Observable} from 'rxjs/Observable';
+
+import {
+    IAttributeDTO,
+    IIdentity,
+    ICreateIdentityDTO,
+    IInvitationCodeRelationshipAddDTO,
+    IRelationshipAttributeNameUsage,
+    IRelationshipType,
+    IHrefValue
+} from '../../../../commons/RamAPI';
+
 
 @Component({
     selector: 'authorisation-type',
@@ -12,6 +24,7 @@ export class AuthorisationTypeComponent implements OnInit {
     public form: FormGroup;
 
     @Input('data') public data: AuthorisationTypeComponentData;
+    @Input('options') public options: Observable<IHrefValue<IRelationshipType>[]>;
 
     @Output('dataChange') public dataChanges = new EventEmitter<AuthorisationTypeComponentData>();
 
