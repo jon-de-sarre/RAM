@@ -6,6 +6,7 @@ import {ErrorResponse, ICreateIdentityDTO} from '../../../commons/RamAPI';
 import {AgencyUser, IAgencyUserProgramRole, AgencyUserProgramRole} from '../models/agencyUser.model';
 import {IPrincipal, Principal} from '../models/principal.model';
 import {IIdentity, IdentityModel} from '../models/identity.model';
+import {IAgencyUser} from '../models/agencyUser.model';
 import {DOB_SHARED_SECRET_TYPE_CODE} from '../models/sharedSecretType.model';
 
 // todo determine if we need to base64 decode header values to be spec compliant?
@@ -173,6 +174,14 @@ class Security {
 
     public getAuthenticatedIdentity(res: Response): IIdentity {
         return res.locals[Headers.Identity];
+    }
+
+    public getAuthenticatedAgencyUserLoginId(res: Response): string {
+        return res.locals[Headers.AgencyUserLoginId];
+    }
+
+    public getAuthenticatedAgencyUser(res: Response): IAgencyUser {
+        return res.locals[Headers.AgencyUser];
     }
 
     public getAuthenticatedPrincipalIdValue(res: Response): string {
