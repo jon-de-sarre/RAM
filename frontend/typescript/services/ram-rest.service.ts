@@ -9,6 +9,7 @@ import {
     ISearchResult,
     IHrefValue,
     IPrincipal,
+    IAgencyUser,
     IIdentity,
     IParty,
     IPartyType,
@@ -49,6 +50,12 @@ export class RAMRestService {
     public findMyPrincipal(): Observable<IPrincipal> {
         return this.http
             .get(`/api/v1/me`)
+            .map(this.extractData);
+    }
+
+    public findMyAgencyUser(): Observable<IAgencyUser> {
+        return this.http
+            .get(`/api/v1/agencyUser/me`)
             .map(this.extractData);
     }
 
