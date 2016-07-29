@@ -219,9 +219,8 @@ RoleSchema.static('searchByIdentity', (identityIdValue: string, page: number, re
         const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
         try {
             const party = await PartyModel.findByIdentityIdValue(identityIdValue);
-            const where: Object = {};
-            where['$and'] = [];
-            where['$and'].push({party: party});
+            let where: {[key: string]: Object}[] = [];
+            where.push({party: party});
             const count = await this.RoleModel
                 .count(where)
                 .exec();
