@@ -871,7 +871,9 @@ export class Seeder {
                 longDecodeText: 'Online Software Provider',
                 startDate: now
             } as any, [
-                {attribute: Seeder.ssid_roleAttributeName, optionalInd: false, defaultValue: null}
+                {attribute: Seeder.ssid_roleAttributeName, optionalInd: false, defaultValue: null},
+                {attribute: Seeder.usi_roleAttributeName, optionalInd: false, defaultValue: null},
+                {attribute: Seeder.sbr_roleAttributeName, optionalInd: false, defaultValue: null}
             ]);
 
         } catch (e) {
