@@ -675,7 +675,7 @@ paths:
   /roleTypes:
     get:
       tags:
-        - Reference - RoleTypes
+        - Reference - RoleType
       operationId: RoleTypes.listIgnoringDateRange
       summary: List RoleTypes resources
       description: List RoleTypes resources
@@ -685,6 +685,34 @@ paths:
             type: array
             items:
               $ref: '#/definitions/RoleTypesResourceReference'
+        500:
+          schema:
+          $ref: '#/responses/500'
+
+  /roleType/{code}:
+    get:
+      tags:
+        - Reference - RoleType
+      operationId: RoleTypes.findByCodeIgnoringDateRange
+      summary: Get a role type by its code
+      description: Get a role type  by its code
+      parameters:
+        - name: code
+          in: path
+          type: string
+          required: true
+          description: Role type id to be retrieved
+      responses:
+        200:
+          description: Role types in RAM
+          schema:
+            $ref: '#/definitions/RoleType'
+        400:
+          $ref: '#/responses/400'
+        404:
+          $ref: '#/responses/404'
+        500:
+          $ref: '#/responses/500'
 
 # ---------------------------------------------------------------------------------------------------------------------
 # Models
