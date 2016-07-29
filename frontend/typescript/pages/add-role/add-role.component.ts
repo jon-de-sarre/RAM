@@ -78,6 +78,7 @@ export class AddRoleComponent extends AbstractPageComponent {
         // forms
         this.form = this._fb.group({
             roleType: '-',
+            additionalNotes: '',
             agencyServices: [[]]
         });
 
@@ -85,7 +86,7 @@ export class AddRoleComponent extends AbstractPageComponent {
 
     public onRoleTypeChange(newRoleTypeCode: string) {
         if (this.me) {
-            this.form.controls['agencyServices'].value = [];
+            this.form.controls['agencyServices'].updateValueAndValidity([]);
             let roleTypeRef: IHrefValue<IRoleType>;
             for (let ref of this.roleTypeRefs) {
                 if (ref.value.code === newRoleTypeCode) {
