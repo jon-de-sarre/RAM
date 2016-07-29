@@ -118,7 +118,11 @@ export class AddRoleComponent extends AbstractPageComponent {
         }
     }
 
-    public clickMe() {
+    public back() {
+        this.services.route.goToRolesPage(this.idValue);
+    }
+
+    public save() {
         console.log('Role Type=', JSON.stringify(this.form.controls['roleType'].value, null, 4));
         console.log('Agency Services=', JSON.stringify(this.form.controls['agencyServices'].value, null, 4));
     }
