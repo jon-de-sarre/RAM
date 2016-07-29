@@ -133,6 +133,8 @@ export class Seeder {
     public static deptimm_skillselect_attributeName:IRelationshipAttributeName;
     public static deptemp_wageconnect_attributeName:IRelationshipAttributeName;
 
+    public static selectedGovernmentServicesList_attributeName:IRelationshipAttributeName; // for storing the selected services on an OSP relationship
+
     public static full_accessLevel = 'Full access';
     public static accessLevels = [Seeder.full_accessLevel, 'Limited access', 'No access'];
 
@@ -686,6 +688,20 @@ export class Seeder {
                 permittedValues: Seeder.accessLevels
             } as any);
 
+            const ospServices_category = 'OSP Services';
+
+            Seeder.selectedGovernmentServicesList_attributeName = await Seeder.createRelationshipAttributeNameModel({
+                code: 'SELECTED_GOVERNMENT_SERVICES_LIST',
+                shortDecodeText: 'Selected Services for OSP',
+                longDecodeText: 'Selected Services for OSP',
+                startDate: now,
+                domain: RelationshipAttributeNameDomain.SelectMulti.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
+                category: ospServices_category,
+                purposeText: 'Selected Services for OSP',
+                permittedValues: null
+            } as any);
+
         } catch (e) {
             Seeder.log('Seeding failed!');
             Seeder.log(e);
@@ -811,6 +827,7 @@ export class Seeder {
                 managedExternallyInd: false,
                 category: RelationshipTypeCategory.Notification.code
             } as any, [
+                {attribute: Seeder.selectedGovernmentServicesList_attributeName, optionalInd: false, defaultValue: null}
             ]);
 
         } catch (e) {
