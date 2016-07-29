@@ -144,6 +144,8 @@ export class Seeder {
     public static osp_delegate_relationshipType:IRelationshipType;
 
     public static ssid_roleAttributeName:IRoleAttributeName;
+    public static usi_roleAttributeName:IRoleAttributeName;
+    public static sbr_roleAttributeName:IRoleAttributeName;
 
     public static osp_roleType:IRoleType;
 
@@ -228,7 +230,7 @@ export class Seeder {
 
     public static edtech_and_edoaner_relationship:IRelationship;
 
-    public static edTech_osiUsi_relationship:IRole;
+    public static edTech_ospUsi_relationship:IRole;
 
     public static log(msg:String) {
         if(Seeder.verboseMode) {
@@ -722,6 +724,28 @@ export class Seeder {
                 classifier: RoleAttributeNameClassifier.Other.code,
                 category: null,
                 purposeText: 'Software serial number'
+            } as any);
+
+            Seeder.usi_roleAttributeName = await Seeder.createRoleAttributeNameModel({
+                code: 'USI',
+                shortDecodeText: 'USI',
+                longDecodeText: 'Unique Student Identifier',
+                startDate: now,
+                domain: RoleAttributeNameDomain.String.code,
+                classifier: RoleAttributeNameClassifier.AgencyService.code,
+                category: 'EDUCATION',
+                purposeText: 'Unique Student Identifier (USI)'
+            } as any);
+
+            Seeder.sbr_roleAttributeName = await Seeder.createRoleAttributeNameModel({
+                code: 'SBR',
+                shortDecodeText: 'SBR',
+                longDecodeText: 'Standard Business Reporting',
+                startDate: now,
+                domain: RoleAttributeNameDomain.String.code,
+                classifier: RoleAttributeNameClassifier.AgencyService.code,
+                category: 'TAXATION',
+                purposeText: 'Standard Business Reporting (SBR) - ATO'
             } as any);
 
         } catch (e) {
