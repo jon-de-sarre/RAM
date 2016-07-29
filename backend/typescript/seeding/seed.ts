@@ -144,6 +144,8 @@ export class Seeder {
     public static osp_delegate_relationshipType:IRelationshipType;
 
     public static ssid_roleAttributeName:IRoleAttributeName;
+    public static usi_roleAttributeName:IRoleAttributeName;
+    public static sbr_roleAttributeName:IRoleAttributeName;
 
     public static osp_roleType:IRoleType;
 
@@ -722,6 +724,17 @@ export class Seeder {
                 classifier: RoleAttributeNameClassifier.Other.code,
                 category: null,
                 purposeText: 'Software serial number'
+            } as any);
+
+            Seeder.usi_roleAttributeName = await Seeder.createRoleAttributeNameModel({
+                code: 'USI',
+                shortDecodeText: 'USI',
+                longDecodeText: 'Unique Student Identifier',
+                startDate: now,
+                domain: RoleAttributeNameDomain.String.code,
+                classifier: RoleAttributeNameClassifier.AgencyService.code,
+                category: null,
+                purposeText: 'Unique Student Identifier'
             } as any);
 
         } catch (e) {
