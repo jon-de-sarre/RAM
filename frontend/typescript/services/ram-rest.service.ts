@@ -194,6 +194,14 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
+    public createRole(role: IRole): Observable<IRole> {
+        return this.http
+            .post(`/api/v1/role`, JSON.stringify(role), {
+                headers: this.headersForJson()
+            })
+            .map(this.extractData);
+    }
+
     public extractErrorMessages(response: Response): string[] {
         const json = response.json();
         if (json && json.alert && json.alert.messages) {

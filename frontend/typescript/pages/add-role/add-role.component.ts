@@ -9,9 +9,12 @@ import {RAMServices} from '../../services/ram-services';
 
 import {
     IHrefValue,
+    HrefValue,
     ISearchResult,
     IAgencyUser,
     IIdentity,
+    Role,
+    RoleAttribute,
     IRole,
     IRoleType,
     IRoleAttributeNameUsage
@@ -87,13 +90,7 @@ export class AddRoleComponent extends AbstractPageComponent {
     public onRoleTypeChange(newRoleTypeCode: string) {
         if (this.me) {
             this.form.controls['agencyServices'].updateValueAndValidity([]);
-            let roleTypeRef: IHrefValue<IRoleType>;
-            for (let ref of this.roleTypeRefs) {
-                if (ref.value.code === newRoleTypeCode) {
-                    roleTypeRef = ref;
-                    break;
-                }
-            }
+            let roleTypeRef: IHrefValue<IRoleType> = this.services.model.getRoleTypeRef(this.roleTypeRefs, newRoleTypeCode);
             const programs: string[] = [];
             for (let programRole of this.me.programRoles) {
                 if (programRole.role === 'ROLE_ADMIN') {
@@ -134,11 +131,28 @@ export class AddRoleComponent extends AbstractPageComponent {
         } else if (agencyServiceCodes.length === 0) {
             this.addGlobalMessage('Please select at least one government agency service.');
         } else {
-            // todo rock and roll for all
-            alert('TODO: Not yet implemented');
-            console.log('Role=', roleTypeCode);
-            console.log('Agency Services=', agencyServiceCodes);
-            console.log('Additional Notes=', additionalNotes);
+            let roleTypeRef: IHrefValue<IRoleType> = this.services.model.getRoleTypeRef(this.roleTypeRefs, roleTypeCode);
+            let attributes: RoleAttribute[] = [];
+            attributes.push(new RoleAttribute(additionalNotes, this.services.model.getRoleTypeAttributeNameRef(roleTypeRef, 'ADDITIONAL_NOTES')));
+            for (let agencyServiceCode of agencyServiceCodes) {
+                attributes.push(new RoleAttribute('true', this.services.model.getRoleTypeAttributeNameRef(roleTypeRef, agencyServiceCode)));
+            }
+            const role = new Role(
+                [],
+                roleTypeRef,
+                new HrefValue('', this.identity) /* todo no real way of constructing the href */,
+                new Date(),
+                null,
+                null,
+                new Date(),
+                'ACTIVE',
+                attributes
+            );
+            this.services.rest.createRole(role).subscribe((role) => {
+                this.services.route.goToRolesPage(this.idValue);
+            }, (err) => {
+                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+            });
         }
     }
 

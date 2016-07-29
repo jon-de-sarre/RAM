@@ -560,7 +560,7 @@ export interface IRoleAttribute {
 
 export class RoleAttribute implements IRoleAttribute {
     constructor(public value:string,
-                public attributeName:HrefValue<RoleAttributeName>) {
+                public attributeName:IHrefValue<IRoleAttributeName>) {
     }
 }
 

@@ -14,7 +14,8 @@ import {
     IRole,
     IRoleStatus,
     IRoleType,
-    IRoleAttributeNameUsage
+    IRoleAttributeNameUsage,
+    IRoleAttributeName
 } from '../../../commons/RamAPI';
 
 @Injectable()
@@ -206,6 +207,25 @@ export class RAMModelService {
             }
         }
         return agencyServiceRoleAttributeNameUsages;
+    }
+
+    public getRoleTypeRef(roleTypeRefs: IHrefValue<IRoleType>[], code: string): IHrefValue<IRoleType> {
+        for (let ref of roleTypeRefs) {
+            if (ref.value.code === code) {
+                return ref;
+            }
+        }
+        return null;
+    }
+
+    public getRoleTypeAttributeNameRef(roleTypeRef: IHrefValue<IRoleType>, code: string): IHrefValue<IRoleAttributeName> {
+        for (let usage of roleTypeRef.value.roleAttributeNames) {
+            const attributeNameRef = usage.attributeNameDef;
+            if (attributeNameRef.value.code === code) {
+                return attributeNameRef;
+            }
+        }
+        return null;
     }
 
 }
