@@ -750,7 +750,7 @@ export class Seeder {
             } as any);
 
             Seeder.notes_roleAttributeName = await Seeder.createRoleAttributeNameModel({
-                code: 'NOTES',
+                code: 'ADDITIONAL_NOTES',
                 shortDecodeText: 'Additional Notes',
                 longDecodeText: 'Additional Notes',
                 startDate: now,
