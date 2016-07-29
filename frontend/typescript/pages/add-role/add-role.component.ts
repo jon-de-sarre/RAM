@@ -77,7 +77,8 @@ export class AddRoleComponent extends AbstractPageComponent {
 
         // forms
         this.form = this._fb.group({
-            roleType: '-'
+            roleType: '-',
+            agencyServices: [[]]
         });
 
     }
@@ -104,6 +105,22 @@ export class AddRoleComponent extends AbstractPageComponent {
                 console.log(JSON.stringify(this.agencyServiceRoleAttributeNameUsages, null, 4));
             }
         }
+    }
+
+    public onAgencyServiceChange(attributeCode: string) {
+        console.log('Triggered:', attributeCode);
+        let agencyServices = this.form.controls['agencyServices'].value;
+        let index = agencyServices.indexOf(attributeCode);
+        if (index === -1) {
+            agencyServices.push(attributeCode);
+        } else {
+            agencyServices.splice(index, 1);
+        }
+    }
+
+    public clickMe() {
+        console.log('Role Type=', JSON.stringify(this.form.controls['roleType'].value, null, 4));
+        console.log('Agency Services=', JSON.stringify(this.form.controls['agencyServices'].value, null, 4));
     }
 
 }

@@ -32,12 +32,14 @@
                     <h4>Access to government agencies services</h4>
                     <div class="checkbox" *ngFor="let attributeUsage of agencyServiceRoleAttributeNameUsages">
                         <label>
-                            <input type="checkbox"> {{attributeUsage.attributeNameDef.value.shortDecodeText}}
+                            <input type="checkbox" (change)="onAgencyServiceChange(attributeUsage.attributeNameDef.value.code)"> {{attributeUsage.attributeNameDef.value.shortDecodeText}}
                         </label>
                     </div>
                 </div>
             </div>
         </div>
     </div>
+
+    <a (click)="clickMe()">Click Me</a>
 
 </form>
