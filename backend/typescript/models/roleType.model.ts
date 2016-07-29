@@ -21,21 +21,6 @@ const _RoleAttributeNameUsageModel = RoleAttributeNameUsageModel;
 // schema .............................................................................................................
 
 const RoleTypeSchema = CodeDecodeSchema({
-    minCredentialStrength: {
-        type: Number,
-        required: [true, 'Min Credential Strength is required'],
-        default: 0
-    },
-    minIdentityStrength: {
-        type: Number,
-        required: [true, 'Min Identity Strength is required'],
-        default: 0
-    },
-    voluntaryInd: {
-        type: Boolean,
-        required: [true, 'Voluntary Ind is required'],
-        default: false
-    },
     attributeNameUsages: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'RoleAttributeNameUsage'
@@ -45,9 +30,6 @@ const RoleTypeSchema = CodeDecodeSchema({
 // interfaces .........................................................................................................
 
 export interface IRoleType extends ICodeDecode {
-    minCredentialStrength: number;
-    minIdentityStrength: number;
-    voluntaryInd: boolean;
     attributeNameUsages: IRoleAttributeNameUsage[];
     toHrefValue(includeValue:boolean): Promise<HrefValue<DTO>>;
     toDTO(): Promise<DTO>;
@@ -76,7 +58,6 @@ RoleTypeSchema.method('toDTO', async function () {
         this.longDecodeText,
         this.startDate,
         this.endDate,
-        this.voluntaryInd,
         await Promise.all<RoleAttributeNameUsageDTO>(this.attributeNameUsages.map(
             async (attributeNameUsage:IRoleAttributeNameUsage) => {
                 return new RoleAttributeNameUsageDTO(

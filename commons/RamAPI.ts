@@ -539,7 +539,6 @@ export class RoleSearchDTO implements IRoleSearchDTO {
 }
 
 export interface IRoleType extends ICodeDecode {
-    voluntaryInd: boolean;
     roleAttributeNames: IRoleAttributeNameUsage[];
 }
 
@@ -549,7 +548,6 @@ export class RoleType extends CodeDecode implements IRoleType {
                 longDecodeText: string,
                 startTimestamp: Date,
                 endTimestamp: Date,
-                public  voluntaryInd: boolean,
                 public roleAttributeNames: IRoleAttributeNameUsage[]) {
         super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
     }
