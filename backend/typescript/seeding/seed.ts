@@ -728,8 +728,8 @@ export class Seeder {
 
             Seeder.usi_roleAttributeName = await Seeder.createRoleAttributeNameModel({
                 code: 'USI',
-                shortDecodeText: 'USI',
-                longDecodeText: 'Unique Student Identifier',
+                shortDecodeText: 'Unique Student Identifier (USI)',
+                longDecodeText: 'Unique Student Identifier (USI)',
                 startDate: now,
                 domain: RoleAttributeNameDomain.String.code,
                 classifier: RoleAttributeNameClassifier.AgencyService.code,
@@ -739,8 +739,8 @@ export class Seeder {
 
             Seeder.sbr_roleAttributeName = await Seeder.createRoleAttributeNameModel({
                 code: 'SBR',
-                shortDecodeText: 'SBR',
-                longDecodeText: 'Standard Business Reporting',
+                shortDecodeText: 'Standard Business Reporting (SBR) - ATO',
+                longDecodeText: 'Standard Business Reporting (SBR) - ATO',
                 startDate: now,
                 domain: RoleAttributeNameDomain.String.code,
                 classifier: RoleAttributeNameClassifier.AgencyService.code,
