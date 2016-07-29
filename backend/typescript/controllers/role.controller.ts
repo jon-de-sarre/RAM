@@ -5,7 +5,6 @@ import {
 } from './helpers';
 import {IPartyModel} from '../models/party.model';
 import {IRoleModel, RoleStatus} from '../models/role.model';
-import {Headers} from './headers';
 
 // todo add data security
 export class RoleController {
@@ -39,14 +38,6 @@ export class RoleController {
             }
         };
         validateReqSchema(req, schema)
-            .then(async (req:Request) => {
-                const me = res.locals[Headers.Identity];
-                const hasAccess = await this.partyModel.hasAccess(me.party, req.params.identity_id);
-                if (!hasAccess) {
-                    throw new Error('You do not have access to this party.');
-                }
-                return req;
-            })
             .then((req:Request) => this.roleModel.searchByIdentity(
                 req.params.identity_id,
                 parseInt(req.query.page),
@@ -71,7 +62,7 @@ export class RoleController {
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/roles/identity/:identity_id',
-            security.isAuthenticated,
+            security.isAuthenticatedAsAgencyUser,
             this.searchByIdentity);
 
         router.get('/v1/roleStatuses',

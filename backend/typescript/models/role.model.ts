@@ -220,8 +220,8 @@ RoleSchema.static('searchByIdentity', (identityIdValue: string, page: number, re
         try {
             const party = await PartyModel.findByIdentityIdValue(identityIdValue);
             const where: Object = {};
-            // where['$and'] = [];
-            // where['$and'].push({'$or': [{subject: party}, {delegate: party}]});
+            where['$and'] = [];
+            where['$and'].push({party: party});
             const count = await this.RoleModel
                 .count(where)
                 .exec();
