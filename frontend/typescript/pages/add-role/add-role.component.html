@@ -30,6 +30,11 @@
             <div class="form-group">
                 <div class="col-md-12">
                     <h4>Access to government agencies services</h4>
+                    <div class="checkbox" *ngFor="let attributeUsage of agencyServiceRoleAttributeNameUsages">
+                        <label>
+                            <input type="checkbox"> {{attributeUsage.attributeNameDef.value.shortDecodeText}}
+                        </label>
+                    </div>
                 </div>
             </div>
         </div>

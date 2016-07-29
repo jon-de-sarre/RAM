@@ -13,7 +13,8 @@ import {
     IRelationshipType,
     IRole,
     IRoleStatus,
-    IRoleType
+    IRoleType,
+    IRoleAttributeNameUsage
 } from '../../../commons/RamAPI';
 
 @Injectable()
@@ -189,6 +190,22 @@ export class RAMModelService {
             }
         }
         return null;
+    }
+
+    public getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef: IHrefValue<IRoleType>, programs: string[]) {
+        let agencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[] = [];
+        if (roleTypeRef) {
+            for (let roleAttributeNameUsage of roleTypeRef.value.roleAttributeNames) {
+                let classifier = roleAttributeNameUsage.attributeNameDef.value.classifier;
+                if (classifier === 'AGENCY_SERVICE') {
+                    let category = roleAttributeNameUsage.attributeNameDef.value.category;
+                    if (category && programs.indexOf(category) !== -1) {
+                        agencyServiceRoleAttributeNameUsages.push(roleAttributeNameUsage);
+                    }
+                }
+            }
+        }
+        return agencyServiceRoleAttributeNameUsages;
     }
 
 }

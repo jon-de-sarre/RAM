@@ -110,7 +110,7 @@ export class RelationshipsComponent extends AbstractPageComponent {
         this.services.rest.listRelationshipTypes().subscribe((relationshipTypeRefs) => {
             this.relationshipTypeRefs = relationshipTypeRefs.filter((relationshipType) => {
                 return relationshipType.value.managedExternallyInd === false
-                    && relationshipType.value.category === this.services.constants.RelationshipTypeCategory.AUTHORISATION
+                    && relationshipType.value.category === this.services.constants.RelationshipTypeCategory.AUTHORISATION;
             });
         });
 

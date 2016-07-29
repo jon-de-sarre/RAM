@@ -10,9 +10,11 @@ import {RAMServices} from '../../services/ram-services';
 import {
     IHrefValue,
     ISearchResult,
+    IAgencyUser,
     IIdentity,
     IRole,
-    IRoleType
+    IRoleType,
+    IRoleAttributeNameUsage
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -33,8 +35,10 @@ export class AddRoleComponent extends AbstractPageComponent {
     public roles$: Observable<ISearchResult<IHrefValue<IRole>>>;
 
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
+    public me: IAgencyUser;
     public identity: IIdentity;
     public roleTypeRefs: IHrefValue<IRoleType>[];
+    public agencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[];
 
     public form: FormGroup;
 
@@ -50,6 +54,16 @@ export class AddRoleComponent extends AbstractPageComponent {
 
         // extract path and query parameters
         this.idValue = decodeURIComponent(params.path['idValue']);
+
+        // me (agency user)
+        this.services.rest.findMyAgencyUser().subscribe((me) => {
+            this.me = me;
+        }, (err) => {
+            const status = err.status;
+            if (status === 401) {
+                this.services.route.goToHomePage();
+            }
+        });
 
         // identity in focus
         this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
@@ -69,6 +83,27 @@ export class AddRoleComponent extends AbstractPageComponent {
     }
 
     public onRoleTypeChange(newRoleTypeCode: string) {
+        if (this.me) {
+            let roleTypeRef: IHrefValue<IRoleType>;
+            for (let ref of this.roleTypeRefs) {
+                if (ref.value.code === newRoleTypeCode) {
+                    roleTypeRef = ref;
+                    break;
+                }
+            }
+            const programs: string[] = [];
+            for (let programRole of this.me.programRoles) {
+                if (programRole.role === 'ROLE_ADMIN') {
+                    if (programs.indexOf(programRole.program) === -1) {
+                        programs.push(programRole.program);
+                    }
+                }
+            }
+            if (roleTypeRef) {
+                this.agencyServiceRoleAttributeNameUsages = this.services.model.getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, programs);
+                console.log(JSON.stringify(this.agencyServiceRoleAttributeNameUsages, null, 4));
+            }
+        }
     }
 
 }
