@@ -146,6 +146,7 @@ export class Seeder {
     public static ssid_roleAttributeName:IRoleAttributeName;
     public static usi_roleAttributeName:IRoleAttributeName;
     public static sbr_roleAttributeName:IRoleAttributeName;
+    public static notes_roleAttributeName:IRoleAttributeName;
 
     public static osp_roleType:IRoleType;
 
@@ -744,10 +745,20 @@ export class Seeder {
                 startDate: now,
                 domain: RoleAttributeNameDomain.String.code,
                 classifier: RoleAttributeNameClassifier.AgencyService.code,
-                category: 'TAXATION',
+                category: 'TAX',
                 purposeText: 'Standard Business Reporting (SBR) - ATO'
             } as any);
 
+            Seeder.notes_roleAttributeName = await Seeder.createRoleAttributeNameModel({
+                code: 'ADDITIONAL_NOTES',
+                shortDecodeText: 'Additional Notes',
+                longDecodeText: 'Additional Notes',
+                startDate: now,
+                domain: RoleAttributeNameDomain.Markdown.code,
+                classifier: RoleAttributeNameClassifier.Other.code,
+                category: null,
+                purposeText: 'Additional Notes (in markdown format)'
+            } as any);
         } catch (e) {
             Seeder.log('Seeding failed!');
             Seeder.log(e);
@@ -873,7 +884,8 @@ export class Seeder {
             } as any, [
                 {attribute: Seeder.ssid_roleAttributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.usi_roleAttributeName, optionalInd: false, defaultValue: null},
-                {attribute: Seeder.sbr_roleAttributeName, optionalInd: false, defaultValue: null}
+                {attribute: Seeder.sbr_roleAttributeName, optionalInd: false, defaultValue: null},
+                {attribute: Seeder.notes_roleAttributeName, optionalInd: false, defaultValue: null}
             ]);
 
         } catch (e) {

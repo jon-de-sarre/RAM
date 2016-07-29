@@ -54,6 +54,7 @@ export class AddRelationshipComponent extends AbstractPageComponent {
     public idValue: string;
 
     public relationshipTypes$: Observable<IHrefValue<IRelationshipType>[]>;
+    public relationshipTypeRefs: IHrefValue<IRelationshipType>[];
 
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
     public identity: IIdentity;
@@ -81,7 +82,7 @@ export class AddRelationshipComponent extends AbstractPageComponent {
         authorisationManagement: {
             value: ''
         },
-        decalaration: {
+        declaration: {
             accepted: false
         }
     };
@@ -104,6 +105,12 @@ export class AddRelationshipComponent extends AbstractPageComponent {
 
         // relationship types
         this.relationshipTypes$ = this.services.rest.listRelationshipTypes();
+        this.relationshipTypes$.subscribe((relationshipTypeRefs) => {
+            this.relationshipTypeRefs = relationshipTypeRefs.filter((relationshipType) => {
+                return relationshipType.value.managedExternallyInd === false
+                    && relationshipType.value.category === this.services.constants.RelationshipTypeCategory.AUTHORISATION;
+            });
+        });
 
         // delegate managed attribute
         this.resolveManageAuthAttribute('UNIVERSAL_REPRESENTATIVE', 'DELEGATE_MANAGE_AUTHORISATION_ALLOWED_IND');
@@ -212,5 +219,5 @@ export interface AddRelationshipComponentData {
     authType: AuthorisationTypeComponentData;
     representativeDetails: RepresentativeDetailsComponentData;
     authorisationManagement: AuthorisationManagementComponentData;
-    decalaration: DeclarationComponentData;
+    declaration: DeclarationComponentData;
 }

@@ -26,8 +26,16 @@ export class EdTechRolesSeeder {
                     status: RoleStatus.Active.code,
                     attributes: [
                         await Seeder.createRoleAttributeModel({
-                            value: true,
+                            value: 'mySSID',
                             attributeName: Seeder.ssid_roleAttributeName
+                        } as any),
+                        await Seeder.createRoleAttributeModel({
+                            value: true,
+                            attributeName: Seeder.usi_roleAttributeName
+                        } as any),
+                        await Seeder.createRoleAttributeModel({
+                            value: 'Here are some notes',
+                            attributeName: Seeder.notes_roleAttributeName
                         } as any)
                     ]
                 } as any);
