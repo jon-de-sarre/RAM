@@ -34,10 +34,12 @@ export class RoleAttributeNameDomain extends RAMEnum {
 
 export class RoleAttributeNameClassifier extends RAMEnum {
 
+    public static AgencyService = new RoleAttributeNameClassifier('AGENCY_SERVICE', 'Agency Service');
     public static Other = new RoleAttributeNameClassifier('OTHER', 'Other');
     public static Permission = new RoleAttributeNameClassifier('PERMISSION', 'Permission');
 
     protected static AllValues = [
+        RoleAttributeNameClassifier.AgencyService,
         RoleAttributeNameClassifier.Other,
         RoleAttributeNameClassifier.Permission
     ];
