@@ -744,7 +744,7 @@ export class Seeder {
                 startDate: now,
                 domain: RoleAttributeNameDomain.String.code,
                 classifier: RoleAttributeNameClassifier.AgencyService.code,
-                category: 'TAXATION',
+                category: 'TAX',
                 purposeText: 'Standard Business Reporting (SBR) - ATO'
             } as any);
 
