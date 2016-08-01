@@ -3,15 +3,9 @@ import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FormContro
 import {Observable} from 'rxjs/Observable';
 
 import {
-    IAttributeDTO,
-    IIdentity,
-    ICreateIdentityDTO,
-    IInvitationCodeRelationshipAddDTO,
-    IRelationshipAttributeNameUsage,
     IRelationshipType,
     IHrefValue
 } from '../../../../commons/RamAPI';
-
 
 @Component({
     selector: 'authorisation-type',
