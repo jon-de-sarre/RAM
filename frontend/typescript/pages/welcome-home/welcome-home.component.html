@@ -1,24 +1,28 @@
-<div class="centered">
-    <h2>Welcome to Relationship Access Manager</h2>
-    <p>Please login with a Credentials Service Provider to access your authorised relationships or software provider services.</p>
-    <p>&nbsp;</p>
-</div>
+<div *ngIf="!isLoading">
 
-<div class="container">
-    <div *ngIf="hasGlobalMessages()">
+    <div class="centered">
+        <h2>Welcome to Relationship Access Manager</h2>
+        <p>Please login with a Credentials Service Provider to access your authorised relationships or software provider services.</p>
+        <p>&nbsp;</p>
+    </div>
+
+    <div class="container">
+        <div *ngIf="hasGlobalMessages()">
+            <div class="row">
+                <div class="col-md-8 col-md-offset-2 centered">
+                    <div class="alert alert-warning" role="alert" *ngFor="let message of globalMessages">{{message}}</div>
+                </div>
+            </div>
+            <br/>
+        </div>
         <div class="row">
-            <div class="col-md-8 col-md-offset-2 centered">
-                <div class="alert alert-warning" role="alert" *ngFor="let message of globalMessages">{{message}}</div>
+            <div class="col-md-4 col-md-offset-2 centered">
+                <a class="btn btn-default btn-lg btn-block" (click)="goToAuthorisationsPage()">Go to Authorisations</a>
+            </div>
+            <div class="col-md-4 centered">
+                <a class="btn btn-default btn-lg btn-block" (click)="goToSoftwareProviderServicesPage()">Go to Software Provider Services</a>
             </div>
         </div>
-        <br/>
     </div>
-    <div class="row">
-        <div class="col-md-4 col-md-offset-2 centered">
-            <a class="btn btn-default btn-lg btn-block" (click)="goToAuthorisationsPage()">Go to Authorisations</a>
-        </div>
-        <div class="col-md-4 centered">
-            <a class="btn btn-default btn-lg btn-block" (click)="goToSoftwareProviderServicesPage()">Go to Software Provider Services</a>
-        </div>
-    </div>
+
 </div>

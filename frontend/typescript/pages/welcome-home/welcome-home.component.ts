@@ -15,6 +15,7 @@ import {IPrincipal} from '../../../../commons/RamAPI';
 export class WelcomeHomeComponent extends AbstractPageComponent {
 
     private me: IPrincipal = null;
+    private _isLoading = true;
 
     constructor(route: ActivatedRoute,
                 router: Router,
@@ -36,8 +37,12 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
                 this.goToAuthorisationsPage();
             } else if (dashboard === 'sps') {
                 this.goToSoftwareProviderServicesPage();
+            } else {
+                this._isLoading = false;
             }
 
+        }, (err) => {
+            this._isLoading = false;
         });
 
     }
@@ -74,6 +79,10 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
 
     private isAgencyUser() {
         return this.me.agencyUserInd;
+    }
+
+    public get isLoading() {
+        return this._isLoading;
     }
 
 }
