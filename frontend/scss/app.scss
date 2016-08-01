@@ -103,6 +103,10 @@ div.navbar-header {
   text-align: center;
 }
 
+.table > thead > tr > th {
+  background: #f5f5f5;
+}
+
 .table > thead > tr > th h4 {
   font-weight: bold;
 }
@@ -373,7 +377,7 @@ color: $color;
 }
 
 .table > tbody > tr.relationship-subject-heading > td > div {
-  background: #eee;
+  background: #f5f5f5;
   padding: 10px 15px;
 }
 
