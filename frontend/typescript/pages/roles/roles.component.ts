@@ -12,6 +12,7 @@ import {RAMServices} from '../../services/ram-services';
 import {
     IHrefValue,
     ISearchResult,
+    IAgencyUser,
     IIdentity,
     IRole,
     IRoleStatus,
@@ -38,6 +39,7 @@ export class RolesComponent extends AbstractPageComponent {
     public roles$: Observable<ISearchResult<IHrefValue<IRole>>>;
 
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
+    public agencyUser: IAgencyUser;
     public identity: IIdentity;
     public roleTypeRefs: IHrefValue<IRoleType>[];
     public roleStatusRefs: IHrefValue<IRoleStatus>[];
@@ -60,6 +62,11 @@ export class RolesComponent extends AbstractPageComponent {
         // extract path and query parameters
         this.idValue = decodeURIComponent(params.path['idValue']);
         this.page = params.query['page'] ? +params.query['page'] : 1;
+
+        // agency user
+        this.services.rest.findMyAgencyUser().subscribe((me) => {
+            this.agencyUser = me;
+        });
 
         // identity in focus
         this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
@@ -100,6 +107,16 @@ export class RolesComponent extends AbstractPageComponent {
 
     public get isLoading() {
         return this._isLoading;
+    }
+
+    public goToAddRolePage() {
+        if (this.agencyUser) {
+            this.services.route.goToAddRolePage(this.idValue);
+        }
+    }
+
+    public isAddRoleEnabled() {
+        return this.agencyUser !== null && this.agencyUser !== undefined;
     }
 
 }

@@ -67,14 +67,6 @@ export class PageHeaderAuthComponent {
         }
     };
 
-    public goToAddRolePage() {
-        if (this.identity) {
-            if (this.isAddRolePageEnabled()) {
-                this.services.route.goToAddRolePage(this.identity.idValue);
-            }
-        }
-    };
-
     public isGiveAuthorisationsPageEnabled() {
         return this.identity !== null && this.identity !== undefined && this.giveAuthorisationsEnabled;
     }
@@ -86,13 +78,6 @@ export class PageHeaderAuthComponent {
 
     // todo verify logic
     public isRolesPageEnabled() {
-        return this.identity !== null &&
-            this.identity !== undefined &&
-            !this.services.model.isIndividual(this.identity);
-    }
-
-    // todo verify logic
-    public isAddRolePageEnabled() {
         return this.identity !== null &&
             this.identity !== undefined &&
             !this.services.model.isIndividual(this.identity);
