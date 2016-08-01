@@ -1,9 +1,9 @@
 import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
 import {
-    sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema
+    sendResource, sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema
 } from './helpers';
-import {IPartyModel} from '../models/party.model';
+import {IPartyModel, PartyModel, IParty} from '../models/party.model';
 import {IRoleModel, RoleStatus} from '../models/role.model';
 
 // todo add data security
@@ -49,6 +49,32 @@ export class RoleController {
             .catch(sendError(res));
     };
 
+    private createByIdentity = async(req:Request, res:Response) => {
+        const schema = {
+            'roleType.value.code': {
+                in: 'body',
+                notEmpty: true,
+                errorMessage: 'Code is not valid'
+            },
+            'party.value.idValue': {
+                in: 'body',
+                notEmpty: true,
+                errorMessage: 'Party is missing'
+            }
+        };
+        validateReqSchema(req, schema)
+            .then((req: Request) => {
+                return PartyModel.findByIdentityIdValue(req.body.party.value.idValue);
+            })
+            .then((party:IParty) => {
+                return party.addRole(req.body);
+            })
+            .then((model) => model ? model.toDTO() : null)
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
+    };
+
     private listStatuses = (req:Request, res:Response) => {
         const schema = {};
         validateReqSchema(req, schema)
@@ -64,6 +90,10 @@ export class RoleController {
         router.get('/v1/roles/identity/:identity_id',
             security.isAuthenticatedAsAgencyUser,
             this.searchByIdentity);
+
+        router.post('/v1/role',
+            security.isAuthenticatedAsAgencyUser,
+            this.createByIdentity);
 
         router.get('/v1/roleStatuses',
             this.listStatuses);

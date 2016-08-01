@@ -1,17 +1,22 @@
 import * as mongoose from 'mongoose';
-import {RAMEnum, IRAMObject, RAMSchema} from './base';
+import {RAMEnum, IRAMObject, RAMSchema, Assert} from './base';
 import {IIdentity, IdentityModel} from './identity.model';
 import {
     HrefValue,
     Party as DTO,
     PartyType as PartyTypeDTO,
     Identity as IdentityDTO,
-    IInvitationCodeRelationshipAddDTO
+    IInvitationCodeRelationshipAddDTO,
+    Role as RoleDTO
 } from '../../../commons/RamAPI';
 import {RelationshipModel, IRelationship} from './relationship.model';
 import {RelationshipTypeModel} from './relationshipType.model';
 import {RelationshipAttributeModel, IRelationshipAttribute} from './relationshipAttribute.model';
 import {RelationshipAttributeNameModel} from './relationshipAttributeName.model';
+import {RoleTypeModel} from './roleType.model';
+import {RoleAttributeModel, IRoleAttribute} from './roleAttribute.model';
+import {RoleAttributeNameModel} from './roleAttributeName.model';
+import {IRole, RoleModel, RoleStatus} from './role.model';
 
 // enums, utilities, helpers ..........................................................................................
 
@@ -60,6 +65,7 @@ export interface IParty extends IRAMObject {
     toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
     toDTO():Promise<DTO>;
     addRelationship(dto: IInvitationCodeRelationshipAddDTO):Promise<IRelationship>;
+    addRole(role: IRole):Promise<IRole>;
 }
 
 /* tslint:disable:no-empty-interfaces */
@@ -141,6 +147,46 @@ PartySchema.method('addRelationship', async (dto: IInvitationCodeRelationshipAdd
     );
 
     return relationship;
+
+});
+
+PartySchema.method('addRole', async function (role: RoleDTO) {
+
+    const roleTypeCode = role.roleType.value.code;
+    const roleType = await RoleTypeModel.findByCodeInDateRange(roleTypeCode, new Date());
+    Assert.assertTrue(roleType !== null, 'Role type invalid');
+
+    // todo validate agency user has access to this role type
+
+    let theRole:IRole = await RoleModel.findByRoleTypeAndParty(roleType, this);
+    // Assert.assertTrue(theRole === null, 'Role type already exists');
+
+    theRole = null;
+    if (theRole === null) {
+        let attributes:IRoleAttribute[] = [];
+        for (let attribute of role.attributes) {
+            const roleAttributeValue = attribute.value;
+            const roleAttributeNameCode = attribute.attributeName.value.code;
+            const roleAttributeName = await RoleAttributeNameModel.findByCodeInDateRange(roleAttributeNameCode, new Date());
+            Assert.assertTrue(roleAttributeName !== null, 'Role attribute invalid');
+
+            attributes.push(await RoleAttributeModel.create({
+                value: roleAttributeValue,
+                attributeName: roleAttributeName
+            }));
+        }
+
+        return RoleModel.create({
+            roleType: roleType,
+            party: this,
+            startTimestamp: new Date(),
+            status: RoleStatus.Active.code,
+            attributes: attributes
+        });
+    } else {
+        console.log(JSON.stringify(theRole, null, 4));
+        return theRole.saveAttributes();
+    }
 
 });
 

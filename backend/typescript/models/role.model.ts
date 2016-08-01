@@ -119,8 +119,9 @@ export interface IRole extends IRAMObject {
     roleStatus:RoleStatus;
     attributes:IRoleAttribute[];
     _roleTypeCode:string;
+    saveAttributes():Promise<IRole>;
     toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
-    toDTO(invitationCode: string):Promise<DTO>;
+    toDTO():Promise<DTO>;
 }
 
 export interface IRoleModel extends mongoose.Model<IRole> {
@@ -130,6 +131,7 @@ export interface IRoleModel extends mongoose.Model<IRole> {
          endTimestamp: Date,
          roleStatus:RoleStatus,
          attributes: IRoleAttribute[]) => Promise<IRole>;
+    findByRoleTypeAndParty:(roleType: IRoleType, party: IParty) => Promise<IRole>;
     search:(page: number, pageSize: number)
         => Promise<SearchResult<IRole>>;
     searchByIdentity:(identityIdValue: string, page: number, pageSize: number)
@@ -137,6 +139,10 @@ export interface IRoleModel extends mongoose.Model<IRole> {
 }
 
 // instance methods ...................................................................................................
+
+RoleSchema.method('saveAttributes', async function() {
+    return this.save();
+});
 
 // todo what is the href we use here?
 RoleSchema.method('toHrefValue', async function (includeValue: boolean) {
@@ -183,6 +189,15 @@ RoleSchema.static('add', async (roleType: IRoleType,
         status: roleStatus.code,
         attributes: attributes
     });
+});
+
+RoleSchema.static('findByRoleTypeAndParty', (roleType: IRoleType, party: IParty) => {
+    return this.RoleModel
+        .findOne({
+            roleType: roleType,
+            party: party
+        })
+        .exec();
 });
 
 RoleSchema.static('search', (page: number,
