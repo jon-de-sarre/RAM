@@ -9,7 +9,6 @@ import {RAMServices} from '../../services/ram-services';
 
 import {
     IHrefValue,
-    HrefValue,
     ISearchResult,
     IAgencyUser,
     IIdentity,
@@ -140,7 +139,7 @@ export class AddRoleComponent extends AbstractPageComponent {
             const role = new Role(
                 [],
                 roleTypeRef,
-                new HrefValue('', this.identity) /* todo no real way of constructing the href */,
+                this.identity.party,
                 new Date(),
                 null,
                 null,
