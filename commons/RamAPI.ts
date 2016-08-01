@@ -503,8 +503,8 @@ export interface IRole {
 
 export class Role implements IRole {
     constructor(public _links:Link[],
-                public roleType:IHrefValue<IRoleType>,
-                public party:IHrefValue<IParty>,
+                public roleType:HrefValue<IRoleType>,
+                public party:HrefValue<IParty>,
                 public startTimestamp:Date,
                 public endTimestamp:Date,
                 public endEventTimestamp:Date,
