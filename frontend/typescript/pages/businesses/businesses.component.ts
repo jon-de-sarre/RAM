@@ -101,7 +101,6 @@ export class BusinessesComponent extends AbstractPageComponent {
             .add('text', this.form.controls['text'].value)
             .add('sort', this.form.controls['sort'].value)
             .encode();
-        console.log('here');
         this.services.route.goToBusinessesPage(filterString);
     }
 
@@ -110,7 +109,7 @@ export class BusinessesComponent extends AbstractPageComponent {
     }
 
     public hasParties() {
-        return this.partyRefs && this.partyRefs.length > 0;
+        return (this.partyRefs && this.partyRefs.length > 0) || !this.filter.isEmpty();
     }
 
     public goToNotificationsContext(partyResource: IHrefValue<IParty>) {
