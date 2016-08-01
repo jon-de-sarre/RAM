@@ -88,7 +88,7 @@ export class RoleController {
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/roles/identity/:identity_id',
-            security.isAuthenticatedAsAgencyUser,
+            security.isAuthenticated,
             this.searchByIdentity);
 
         router.post('/v1/role',
