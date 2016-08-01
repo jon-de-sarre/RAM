@@ -40,6 +40,8 @@ export class BusinessesComponent extends AbstractPageComponent {
     public paginationDelegate: SearchResultPaginationDelegate;
     public form: FormGroup;
 
+    public hasAccess:boolean = false;
+
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
     constructor(route: ActivatedRoute,
@@ -75,6 +77,9 @@ export class BusinessesComponent extends AbstractPageComponent {
                     this.goToNotificationsContext(this.partyRefs[0]);
                 } else if (partyRefs.totalCount === 0) {
                     this.addGlobalMessage('You do not have authorisation administrator access to any businesses - see your administrator');
+                    this.hasAccess = false;
+                } else {
+                    this.hasAccess = true;
                 }
             }
         }, (err) => {
@@ -109,7 +114,7 @@ export class BusinessesComponent extends AbstractPageComponent {
     }
 
     public hasParties() {
-        return (this.partyRefs && this.partyRefs.length > 0) || !this.filter.isEmpty();
+        return (this.partyRefs && this.partyRefs.length > 0) || !this.filter.get('text');
     }
 
     public goToNotificationsContext(partyResource: IHrefValue<IParty>) {
