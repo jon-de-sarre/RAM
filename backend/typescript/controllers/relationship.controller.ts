@@ -200,10 +200,13 @@ export class RelationshipController {
         const filterParams = FilterParams.decode(req.query.filter);
         validateReqSchema(req, schema)
             .then(async (req:Request) => {
-                const me = res.locals[Headers.Identity];
-                const hasAccess = await this.partyModel.hasAccess(me.party, req.params.identity_id);
-                if (!hasAccess) {
-                    throw new Error('You do not have access to this party.');
+                const myPrincipal = security.getAuthenticatedPrincipal(res);
+                if (!myPrincipal.agencyUserInd) {
+                    const myIdentity = security.getAuthenticatedIdentity(res);
+                    const hasAccess = await this.partyModel.hasAccess(myIdentity.party, req.params.identity_id);
+                    if (!hasAccess) {
+                        throw new Error('You do not have access to this party.');
+                    }
                 }
                 return req;
             })
