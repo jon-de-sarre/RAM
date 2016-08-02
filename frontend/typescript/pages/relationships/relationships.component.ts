@@ -75,7 +75,7 @@ export class RelationshipsComponent extends AbstractPageComponent {
         this.page = params.query['page'] ? +params.query['page'] : 1;
 
         // restrict to authorisations
-        this.filter.add('relationshipTypeCategory', this.services.constants.RelationshipTypeCategory.AUTHORISATION)
+        this.filter.add('relationshipTypeCategory', this.services.constants.RelationshipTypeCategory.AUTHORISATION);
 
         // message
         const msg = params.query['msg'];
