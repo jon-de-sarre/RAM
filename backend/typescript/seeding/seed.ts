@@ -939,7 +939,8 @@ export class Seeder {
                 managedExternallyInd: false,
                 category: RelationshipTypeCategory.Notification.code
             } as any, [
-                {attribute: Seeder.selectedGovernmentServicesList_relAttributeName, optionalInd: false, defaultValue: null}
+                {attribute: Seeder.selectedGovernmentServicesList_relAttributeName, optionalInd: false, defaultValue: null},
+                {attribute: Seeder.ssid_relAttributeName, optionalInd: false, defaultValue: null}
             ]);
 
         } catch (e) {
