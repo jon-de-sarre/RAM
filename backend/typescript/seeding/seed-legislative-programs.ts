@@ -15,8 +15,8 @@ export class LegislativeProgramsSeeder {
 
             Seeder.education_legislativeProgram = await Seeder.createLegislativeProgramModel({
                 code: 'EDUCATION',
-                shortDecodeText: 'Department of Education',
-                longDecodeText: 'Department of Education',
+                shortDecodeText: 'Education program',
+                longDecodeText: 'Education program',
                 startDate: now
             } as any);
 
