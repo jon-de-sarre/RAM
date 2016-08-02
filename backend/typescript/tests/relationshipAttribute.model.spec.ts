@@ -94,7 +94,7 @@ describe('RAM Relationship Attribute', () => {
 
                     relationshipAttribute1 = await RelationshipAttributeModel.create({
                         value: 'true',
-                        attributeName: Seeder.delegateManageAuthorisationAllowedInd_attributeName
+                        attributeName: Seeder.delegateManageAuthorisationAllowedInd_relAttributeName
                     });
 
                     relationship1 = await RelationshipModel.create({
@@ -143,7 +143,7 @@ describe('RAM Relationship Attribute', () => {
         try {
 
             const value = 'true';
-            const attributeName = Seeder.delegateManageAuthorisationAllowedInd_attributeName;
+            const attributeName = Seeder.delegateManageAuthorisationAllowedInd_relAttributeName;
 
             const instance = await RelationshipAttributeModel.create({
                 value: value,

@@ -41,19 +41,19 @@ export class JensCateringRelationshipsSeeder {
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.permissionCustomisationAllowedInd_attributeName
+                            attributeName: Seeder.permissionCustomisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_attributeName
+                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.delegateRelationshipTypeDeclaration_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.subjectRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.subjectRelationshipTypeDeclaration_relAttributeName
                         } as any)
                     ]
                 } as any);
@@ -90,19 +90,19 @@ export class JensCateringRelationshipsSeeder {
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.permissionCustomisationAllowedInd_attributeName
+                            attributeName: Seeder.permissionCustomisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: false,
-                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_attributeName
+                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.delegateRelationshipTypeDeclaration_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.subjectRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.subjectRelationshipTypeDeclaration_relAttributeName
                         } as any)
                     ]
                 } as any);
@@ -172,19 +172,19 @@ export class JensCateringRelationshipsSeeder {
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.permissionCustomisationAllowedInd_attributeName
+                            attributeName: Seeder.permissionCustomisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_attributeName
+                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.delegateRelationshipTypeDeclaration_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.subjectRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.subjectRelationshipTypeDeclaration_relAttributeName
                         } as any)
                     ]
                 } as any);
@@ -252,19 +252,19 @@ export class JensCateringRelationshipsSeeder {
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.permissionCustomisationAllowedInd_attributeName
+                            attributeName: Seeder.permissionCustomisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_attributeName
+                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.delegateRelationshipTypeDeclaration_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.subjectRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.subjectRelationshipTypeDeclaration_relAttributeName
                         } as any)
                     ]
                 } as any);
@@ -336,19 +336,19 @@ export class JensCateringRelationshipsSeeder {
                         attributes: [
                             await Seeder.createRelationshipAttributeModel({
                                 value: true,
-                                attributeName: Seeder.permissionCustomisationAllowedInd_attributeName
+                                attributeName: Seeder.permissionCustomisationAllowedInd_relAttributeName
                             } as any),
                             await Seeder.createRelationshipAttributeModel({
                                 value: true,
-                                attributeName: Seeder.delegateManageAuthorisationAllowedInd_attributeName
+                                attributeName: Seeder.delegateManageAuthorisationAllowedInd_relAttributeName
                             } as any),
                             await Seeder.createRelationshipAttributeModel({
                                 value: true,
-                                attributeName: Seeder.delegateRelationshipTypeDeclaration_attributeName
+                                attributeName: Seeder.delegateRelationshipTypeDeclaration_relAttributeName
                             } as any),
                             await Seeder.createRelationshipAttributeModel({
                                 value: true,
-                                attributeName: Seeder.subjectRelationshipTypeDeclaration_attributeName
+                                attributeName: Seeder.subjectRelationshipTypeDeclaration_relAttributeName
                             } as any)
                         ]
                     } as any);

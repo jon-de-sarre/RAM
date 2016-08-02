@@ -111,7 +111,7 @@ describe('RAM Party', () => {
             };
 
             const attribute: IAttributeDTO = {
-                code: Seeder.permissionCustomisationAllowedInd_attributeName.code,
+                code: Seeder.permissionCustomisationAllowedInd_relAttributeName.code,
                 value: 'true'
             };
 
