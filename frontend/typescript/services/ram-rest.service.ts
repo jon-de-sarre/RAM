@@ -40,22 +40,41 @@ export class RAMRestService {
         return body || {};
     }
 
+    /*
+     * Old interface used when adding a business relationship. Now
+     * delegates to the ABR for the real work.
+     */
     public getOrganisationNameFromABN(abn: string) {
         return this.getABRfromABN(abn).map((abr:ABRentry) => abr.name);
     }
 
+    /*
+     * This goes out to the ABR (external source) and returns with
+     * limited company data for a single organisation - or an 404
+     * if the abn doesn't exist.
+     */
     public getABRfromABN(abn:string) {
         return this.http
             .get(`/api/v1/business/abn/`+abn)
             .map(this.extractData);
     }
 
+    /*
+     * This goes out to the ABR (external source) and returns with
+     * limited company data for a many organisations. Not sure if the
+     * name doesn't match anything because I could not find one :)
+     */
     public getABRfromName(name:string) {
         return this.http
             .get(`/api/v1/business/name/`+name)
             .map(this.extractData);
     }
 
+    /*
+     * This is RAM internal to create identity and party records
+     * (if needed) for an organisation of interest retrieved
+     * from the ABR.
+     */
     public registerABRCompany(abr:ABRentry) {
         return this.http
             .get(`/api/v1/business/register/`+abr.abn+'/'+abr.name)

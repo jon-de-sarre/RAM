@@ -449,6 +449,10 @@ IdentitySchema.static('searchLinkIds', (page:number, reqPageSize:number) => {
     });
 });
 
+/*
+ * Used when looking for a company in the ABR. If the ABN already exists in RAM
+ * then only the name needs be checked and/or added (TBD). Otherwise a new identity and associated party are created. In either case the party idValue is returned (PUBLIC_IDENTIFIER:ABN:nnnnnnnnnnn).
+ */
 IdentitySchema.static('addCompany', async (abn: string, name: string):Promise<IIdentity> => {
     const identity = await this.IdentityModel.findByIdValue(abn);
     if (identity) {

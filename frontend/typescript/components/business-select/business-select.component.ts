@@ -1,3 +1,19 @@
+/*
+ * This component allows an operator to enter an ABN or (partial)
+ * name for an organisation. It asks the RAM server to query the
+ * external ABR API for matching company information. It then lists
+ * the ABR information returned (up to the 201 record limit) and makes
+ * the ABN a link. The operator can choose the organisation of interest.
+ * If only one record is returns (as in when the ABN is given), it is
+ * automatically chosen.
+ * 
+ * This component sends a dataChange even when an organisation is chosen
+ * and an error even on errors or when there are no results.
+ *     <business-select
+ *       (dataChange)="selectBusiness($event)"
+ *       (error)="displayErrors($event)"
+ *     ></business-select>
+ */
 import {Output, EventEmitter, Component} from '@angular/core';
 import {REACTIVE_FORM_DIRECTIVES, FORM_DIRECTIVES } from '@angular/forms';
 import {ABRentry} from '../../../../commons/abr';
@@ -10,18 +26,57 @@ import {Observable} from 'rxjs/Observable';
     directives: [REACTIVE_FORM_DIRECTIVES,FORM_DIRECTIVES]
 })
 export class BusinessSelectComponent {
-
+    /*
+     * Containter for the user input field. They can enter an ABN
+     * or a partial company name, trading name, sole trader name, etc.
+     */
     public abn_or_name = '';
+    /*
+     * A search is triggered when a user tabs out of the input field
+     * or presses enter. After a search we don't want to initiate
+     * another until necessary. It is reset to true whenever the
+     * operator types or after a business is selected. The latter
+     * is because they may want to change their mind before
+     * confirming their selection.
+     */
     public new_search = true;
-    public businesses:ABRentry[] = [];
+    /*
+     * Display a loading message while we are off asking the ABR
+     * for details. The rest of the page is still active so that
+     * the operator can change their mind and not wait for a response.
+     */
     public isLoading = false;
+    /*
+     * The ABR returns a list of matching businesses. They are displayed
+     * from this array.
+     */
+    public businesses:ABRentry[] = [];
+    /*
+     * If their is only one business returned or the operator clicks
+     * on one of the businesses in the list, it becomes the selected
+     * business. Once a business is selected it becomes the only one
+     * displayed and the ABN is no longer a link.
+     */
     public selectedBusiness:ABRentry = null;
 
+    /*
+     * Tell the parent component that the operator has selected a business.
+     * Does not trigger on search, only when there is one business in focus.
+     */
     @Output('dataChange') public dataChanges = new EventEmitter<ABRentry>();
+    /*
+     * Tell the parent component of a problem so it can display an error
+     * message. If no records are returned this becomes a 404 error. Others
+     * will occur due to server, database or external ABR api faults.
+     */
     @Output('error') public errorEvent = new EventEmitter<string[]>();
 
     constructor(private rest: RAMRestService) {}
 
+    /*
+     * Called to display the results of a search once they become available.
+     * Also looks for and responds to server errors.
+     */
     private display(abrListObservable:Observable<ABRentry[]>) {
         this.isLoading = true;
         this.selectedBusiness = null;
@@ -43,6 +98,11 @@ export class BusinessSelectComponent {
         );
     }
 
+    /*
+     * Called by component when a the operator selects a business of interest.
+     * Also called internally if a search only returns one record - which is
+     * always the case for an ABN search.
+     */
     public selectBusiness(business:ABRentry) {
         if (!this.selectedBusiness) {
             this.new_search = true;
@@ -52,6 +112,12 @@ export class BusinessSelectComponent {
         }
     }
 
+    /*
+     * Triggered by the component when the operator presses tab or enter
+     * in the input field. If the data has changed it initiates a search
+     * of the ABR after determining whether the entry is an ABN or potential
+     * company name. ABNs can include spaces.
+     */
     public findCompanies() {
         if (this.new_search && this.abn_or_name.length) {
             this.new_search = false;
@@ -64,6 +130,9 @@ export class BusinessSelectComponent {
             }
         }
     }
-
+    /*
+     * Triggered bu the component if the user changes the data in the input
+     * field. Records whether a new search is to be initiated on tab or enter.
+     */
     public valueChange() { this.new_search = true; }
 }
