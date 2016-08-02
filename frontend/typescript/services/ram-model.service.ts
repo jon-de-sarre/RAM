@@ -23,7 +23,7 @@ export class RAMModelService {
 
     // helpers ........................................................................................................
 
-    public displayDate(dateString: string) {
+    public displayDate(dateString: string): string {
         if (dateString) {
             const date = new Date(dateString);
             const datePipe = new DatePipe();
@@ -76,12 +76,12 @@ export class RAMModelService {
         return identity && identity.identityType === 'LINK_ID';
     }
 
-    public profileProviderLabel(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string) {
+    public profileProviderLabel(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string): string {
         const profileProvider = this.getProfileProvider(profileProviderRefs, code);
         return profileProvider ? profileProvider.shortDecodeText : '';
     }
 
-    public relationshipTypeLabel(relationshipTypeRefs: IHrefValue<IRelationshipType>[], relationship: IRelationship) {
+    public relationshipTypeLabel(relationshipTypeRefs: IHrefValue<IRelationshipType>[], relationship: IRelationship): string {
         if (relationshipTypeRefs && relationship) {
             let relationshipType = this.getRelationshipType(relationshipTypeRefs, relationship);
             if (relationshipType) {
@@ -91,7 +91,7 @@ export class RAMModelService {
         return '';
     }
 
-    public roleTypeLabel(roleTypeRefs: IHrefValue<IRoleType>[], role: IRole) {
+    public roleTypeLabel(roleTypeRefs: IHrefValue<IRoleType>[], role: IRole): string {
         if (roleTypeRefs && role) {
             let roleType = this.getRoleType(roleTypeRefs, role);
             if (roleType) {
@@ -101,14 +101,23 @@ export class RAMModelService {
         return '';
     }
 
-    public relationshipStatusLabel(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], code: string) {
+    public relationshipStatusLabel(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], code: string): string {
         const status = this.getRelationshipStatus(relationshipStatusRefs, code);
         return status ? status.shortDecodeText : '';
     }
 
-    public roleStatusLabel(roleStatusRefs: IHrefValue<IRoleStatus>[], code: string) {
+    public roleStatusLabel(roleStatusRefs: IHrefValue<IRoleStatus>[], code: string): string {
         const status = this.getRoleStatus(roleStatusRefs, code);
         return status ? status.shortDecodeText : '';
+    }
+
+    public roleAttributeLabel(role: IRole, code: string): string {
+        for (let attribute of role.attributes) {
+            if (attribute.attributeName.value.code === code) {
+                return attribute.value;
+            }
+        }
+        return '';
     }
 
     // model lookups ..................................................................................................
@@ -136,7 +145,7 @@ export class RAMModelService {
         return null;
     }
 
-    public getProfileProvider(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string) {
+    public getProfileProvider(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string): IProfileProvider {
         if (profileProviderRefs && code) {
             for (let ref of profileProviderRefs) {
                 if (ref.value.code === code) {
@@ -147,7 +156,7 @@ export class RAMModelService {
         return null;
     }
 
-    public getRelationshipType(relationshipTypeRefs: IHrefValue<IRelationshipType>[], relationship: IRelationship) {
+    public getRelationshipType(relationshipTypeRefs: IHrefValue<IRelationshipType>[], relationship: IRelationship): IRelationshipType {
         if (relationshipTypeRefs && relationship) {
             let href = relationship.relationshipType.href;
             for (let ref of relationshipTypeRefs) {
@@ -159,7 +168,7 @@ export class RAMModelService {
         return null;
     }
 
-    public getRoleType(roleTypeRefs: IHrefValue<IRoleType>[], role: IRole) {
+    public getRoleType(roleTypeRefs: IHrefValue<IRoleType>[], role: IRole): IRoleType {
         if (roleTypeRefs && role) {
             let href = role.roleType.href;
             for (let ref of roleTypeRefs) {
@@ -171,7 +180,7 @@ export class RAMModelService {
         return null;
     }
 
-    public getRelationshipStatus(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], code: string) {
+    public getRelationshipStatus(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], code: string): IRelationshipStatus {
         if (relationshipStatusRefs) {
             for (let ref of relationshipStatusRefs) {
                 if (ref.value.code === code) {
@@ -182,7 +191,7 @@ export class RAMModelService {
         return null;
     }
 
-    public getRoleStatus(roleStatusRefs: IHrefValue<IRoleStatus>[], code: string) {
+    public getRoleStatus(roleStatusRefs: IHrefValue<IRoleStatus>[], code: string): IRoleStatus {
         if (roleStatusRefs) {
             for (let ref of roleStatusRefs) {
                 if (ref.value.code === code) {
@@ -193,7 +202,7 @@ export class RAMModelService {
         return null;
     }
 
-    public getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef: IHrefValue<IRoleType>, programs: string[]) {
+    public getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef: IHrefValue<IRoleType>, programs: string[]): IRoleAttributeNameUsage[] {
         let agencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[] = [];
         if (roleTypeRef) {
             for (let roleAttributeNameUsage of roleTypeRef.value.roleAttributeNames) {
