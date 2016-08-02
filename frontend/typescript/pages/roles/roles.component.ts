@@ -115,6 +115,11 @@ export class RolesComponent extends AbstractPageComponent {
         }
     }
 
+    // todo not yet implemented
+    public goToRolePage(rolRef: IHrefValue<IRole>) {
+        alert('TODO: Not yet implemented');
+    }
+
     public isAddRoleEnabled() {
         return this.agencyUser !== null && this.agencyUser !== undefined;
     }

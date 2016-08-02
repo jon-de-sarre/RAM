@@ -1,60 +1,113 @@
-$brand-primary:                        #0F979B;
-$brand-primary-bg:                     darken($brand-primary,10%);
-$brand-primary-border:                 darken($brand-primary,12%);
+$brand-primary: #0F979B;
+$brand-primary-bg: darken($brand-primary, 10%);
+$brand-primary-border: darken($brand-primary, 12%);
 
-$pagination-color:                     $brand-primary;
-$pagination-bg:                        #fff !default;
-$pagination-border:                    $brand-primary;
+$pagination-color: $brand-primary;
+$pagination-bg: #fff !default;
+$pagination-border: $brand-primary;
 
-$pagination-hover-color:               #f5f5f5 ;
-$pagination-hover-bg:                  $brand-primary-bg;
-$pagination-hover-border:              $brand-primary-bg;
+$pagination-hover-color: #f5f5f5;
+$pagination-hover-bg: $brand-primary-bg;
+$pagination-hover-border: $brand-primary-bg;
 
-$pagination-active-color:              #f5f5f5;
-$pagination-active-bg:                 $brand-primary;
-$pagination-active-border:             $brand-primary;
+$pagination-active-color: #f5f5f5;
+$pagination-active-bg: $brand-primary;
+$pagination-active-border: $brand-primary;
 
-$pagination-disabled-color:            $brand-primary;
-$pagination-disabled-bg:               #fff !default;
-$pagination-disabled-border:           $brand-primary;
+$pagination-disabled-color: $brand-primary;
+$pagination-disabled-bg: #fff !default;
+$pagination-disabled-border: $brand-primary;
 
 @import "bootstrap_ram";
 @import "ie10-viewport-bug-workaround";
 
 /******************************************************************************************************/
 
-.text-xs-left { text-align: left; }
-.text-xs-right { text-align: right; }
-.text-xs-center { text-align: center;  }
-.text-xs-justify { text-align: justify; }
-.pull-xs-left { float: left !important;}
-.pull-xs-right { float: right !important;}
+.text-xs-left {
+  text-align: left;
+}
+
+.text-xs-right {
+  text-align: right;
+}
+
+.text-xs-center {
+  text-align: center;
+}
+
+.text-xs-justify {
+  text-align: justify;
+}
+
+.pull-xs-left {
+  float: left !important;
+}
+
+.pull-xs-right {
+  float: right !important;
+}
 
 @media (min-width: $screen-sm-min) {
-   .text-sm-left { text-align: left;  }
-   .text-sm-right { text-align: right; }
-   .text-sm-center { text-align: center; }
-   .text-sm-justify { text-align: justify; }
-   .pull-sm-left { float: left !important;}
-   .pull-sm-right { float: right !important;}
+  .text-sm-left {
+    text-align: left;
+  }
+  .text-sm-right {
+    text-align: right;
+  }
+  .text-sm-center {
+    text-align: center;
+  }
+  .text-sm-justify {
+    text-align: justify;
+  }
+  .pull-sm-left {
+    float: left !important;
+  }
+  .pull-sm-right {
+    float: right !important;
+  }
 }
 
 @media (min-width: $screen-md-min) {
-    .text-md-left { text-align: left; }
-    .text-md-right { text-align: right; }
-    .text-md-center { text-align: center; }
-    .text-md-justify { text-align: justify; }
-   .pull-md-left { float: left !important;}
-   .pull-md-right { float: right !important;}
+  .text-md-left {
+    text-align: left;
+  }
+  .text-md-right {
+    text-align: right;
+  }
+  .text-md-center {
+    text-align: center;
+  }
+  .text-md-justify {
+    text-align: justify;
+  }
+  .pull-md-left {
+    float: left !important;
+  }
+  .pull-md-right {
+    float: right !important;
+  }
 }
 
 @media (min-width: $screen-lg-min) {
-   .text-lg-left { text-align: left; }
-   .text-lg-right { text-align: right; }
-   .text-lg-center { text-align: center; }
-   .text-lg-justify { text-align: justify; }
-   .pull-lg-left { float: left !important;}
-   .pull-lg-right { float: right !important;}
+  .text-lg-left {
+    text-align: left;
+  }
+  .text-lg-right {
+    text-align: right;
+  }
+  .text-lg-center {
+    text-align: center;
+  }
+  .text-lg-justify {
+    text-align: justify;
+  }
+  .pull-lg-left {
+    float: left !important;
+  }
+  .pull-lg-right {
+    float: right !important;
+  }
 }
 
 /******************************************************************************************************/
@@ -66,37 +119,37 @@ $pagination-disabled-border:           $brand-primary;
 }
 
 a {
-    cursor: pointer;
+  cursor: pointer;
 }
 
 .active > a {
-    cursor: default;
+  cursor: default;
 }
 
 .page-header {
-    margin-top:0px;
-    h2 {
-        margin-top:0px;
-    }
+  margin-top: 0px;
+  h2 {
+    margin-top: 0px;
+  }
 }
 
 .list-group {
-    a {
-        // font-weight: 300;
-        font-size: 1.25em;
-        color: #333;
-    }
+  a {
+    // font-weight: 300;
+    font-size: 1.25em;
+    color: #333;
+  }
 }
 
-div.page-header  {
-    padding-bottom: 0px;
+div.page-header {
+  padding-bottom: 0px;
 }
 
 div.navbar-header {
-    h1 {
-        padding-top: 25px;
-        padding-left:10px;
-    }
+  h1 {
+    padding-top: 25px;
+    padding-left: 10px;
+  }
 }
 
 .centered {
@@ -145,121 +198,129 @@ select:-moz-focusring, select.form-control:-moz-focusring {
 }
 
 .padding-top-5 {
-    padding-top: 5px;
+  padding-top: 5px;
 }
+
 .padding-top-10 {
-    padding-top: 10px;
+  padding-top: 10px;
 }
+
 .padding-top-20 {
-    padding-top: 20px;
+  padding-top: 20px;
 }
+
 .padding-top-30 {
-    padding-top: 30px;
+  padding-top: 30px;
 }
 
 .padding-btn-5 {
-    padding-bottom: 5px;
+  padding-bottom: 5px;
 }
+
 .padding-btn-10 {
-    padding-bottom: 10px;
+  padding-bottom: 10px;
 }
+
 .padding-btn-20 {
-    padding-bottom: 20px;
+  padding-bottom: 20px;
 }
+
 .padding-btn-30 {
-    padding-bottom: 30px;
+  padding-bottom: 30px;
 }
 
 .no-padding {
-    padding: 0;
+  padding: 0;
 }
+
 .no-margin {
-    margin: 0;
+  margin: 0;
 }
+
 .full-width {
-    width: 100%;
+  width: 100%;
 }
+
 .vcenter {
-    display: inline-block;
-    vertical-align: middle;
-    float: none;
+  display: inline-block;
+  vertical-align: middle;
+  float: none;
 }
 
 .neg-margin-left-20 {
-    margin-left: -20px;
+  margin-left: -20px;
 }
 
-.section{
-    .btn-width-70.btn.btn-default ,.btn-width-70.btn.btn-primary  {
-        width:70px;
+.section {
+  .btn-width-70.btn.btn-default, .btn-width-70.btn.btn-primary {
+    width: 70px;
+  }
+  thead tr {
+    background: #EEE;
+  }
+  thead tr th.header {
+    padding-top: 15px;
+    padding-bottom: 15px;
+    padding-left: 15px;
+  }
+  margin-bottom: 50px;
+  margin-top: 50px;
+  .pagination.ng-table-pagination {
+    margin: 0;
+  }
+  .ng-table-pager {
+    .btn {
+      margin-left: 1px;
     }
-    thead tr {
-        background: #EEE;
-    }
-    thead tr th.header {
-        padding-top: 15px;
-        padding-bottom: 15px;
-        padding-left: 15px;
-    }
-    margin-bottom: 50px;
-    margin-top: 50px;
-    .pagination.ng-table-pagination{
-        margin:0;
-    }
-    .ng-table-pager {
-        .btn {
-            margin-left:1px;
-        }
-    }
+  }
 }
+
 footer {
-    font-size: 20px;
+  font-size: 20px;
+  color: #999;
+  a {
     color: #999;
-    a {
-        color: #999;
-        &:hover  {
-            color: #aaa;
-            text-decoration: none;
-        }
+    &:hover {
+      color: #aaa;
+      text-decoration: none;
     }
-    background: #555;
-    padding-top: 50px;
-    padding-bottom: 50px;
+  }
+  background: #555;
+  padding-top: 50px;
+  padding-bottom: 50px;
 }
 
 .btn.btn-inverse {
-    $color:              $gray-darker !default;
-    $background:         #fff !default;
-    $border:             $btn-default-bg !default;
-
-color: $color;
+  $color: $gray-darker !default;
+  $background: #fff !default;
+  $border: $btn-default-bg !default;
+  color: $color;
   background-color: $background;
   border-color: $border;
-
   &:focus,
   &.focus {
     color: $background;
     background-color: darken($color, 10%);
-        border-color: darken($border, 25%);
+    border-color: darken($border, 25%);
   }
   &:hover {
     color: $background;
     background-color: lighten($color, 30%);
-        border-color: darken($border, 12%);
+    border-color: darken($border, 12%);
   }
   &:active,
   &.active,
   .open > &.dropdown-toggle {
     color: $background;
     background-color: darken($color, 10%);
-        border-color: darken($border, 12%);
+    border-color: darken($border, 12%);
 
     &:hover,
     &:focus,
     &.focus {
       color: $background;
       background-color: darken($color, 17%);
-          border-color: darken($border, 25%);
+      border-color: darken($border, 25%);
     }
   }
   &:active,
@@ -274,14 +335,70 @@ color: $color;
     &:focus,
     &.focus {
       background-color: $border;
-          border-color: $background;
+      border-color: $background;
     }
   }
-
   .badge {
     color: $color;
     background-color: $background;
   }
+}
+
+.btn.btn-secondary {
+  $color: #fff !default;
+  $background: $gray !default;
+  $border: $gray !default;
+  color: $color;
+  background-color: $background;
+  border-color: $border;
+  &:focus,
+  &.focus {
+    color: $color;
+    background-color: darken($background, 10%);
+    border-color: darken($border, 10%);
+  }
+  &:hover {
+    color: $color;
+    background-color: darken($background, 10%);
+    border-color: darken($border, 10%);
+  }
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle {
+    color: $color;
+    background-color: darken($background, 17%);
+    border-color: darken($border, 17%);
+    &:hover,
+    &:focus,
+    &.focus {
+      color: $color;
+      background-color: darken($background, 17%);
+      border-color: darken($border, 17%);
+    }
+  }
+  &:active,
+  &.active,
+  .open > &.dropdown-toggle {
+    background-image: none;
+  }
+  &.disabled,
+  &[disabled],
+  fieldset[disabled] & {
+    &:hover,
+    &:focus,
+    &.focus {
+      background-color: $border;
+      border-color: $background;
+    }
+  }
+  .badge {
+    color: $color;
+    background-color: $background;
+  }
+}
+
+.btn > span, .btn .caret {
+  margin-left: 5px;
 }
 
 .todo {
@@ -293,8 +410,8 @@ color: $color;
 }
 
 .big-checkbox {
-    width: 30px;
-    height: 30px;
+  width: 30px;
+  height: 30px;
 }
 
 #page-header {
@@ -309,7 +426,7 @@ color: $color;
 }
 
 #top-nav .row > div {
-    background:url('../images/commonwealth-trans-w-full.png') no-repeat 15px 22px;
+  background: url('../images/commonwealth-trans-w-full.png') no-repeat 15px 22px;
 }
 
 #top-nav h1 {
@@ -363,10 +480,10 @@ color: $color;
 }
 
 .panel-heading .badge.square {
-    border-radius: 0;
-    padding: 10px 15px;
-    font-size:15px;
-    margin-right: 10px;
+  border-radius: 0;
+  padding: 10px 15px;
+  font-size: 15px;
+  margin-right: 10px;
 }
 
 .table > tbody > tr.relationship-subject-heading {
