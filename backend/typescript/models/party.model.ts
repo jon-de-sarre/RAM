@@ -14,8 +14,6 @@ import {RelationshipTypeModel} from './relationshipType.model';
 import {RelationshipAttributeModel, IRelationshipAttribute} from './relationshipAttribute.model';
 import {RelationshipAttributeNameModel} from './relationshipAttributeName.model';
 import {RoleTypeModel} from './roleType.model';
-import {RoleAttributeModel, IRoleAttribute} from './roleAttribute.model';
-import {RoleAttributeNameModel} from './roleAttributeName.model';
 import {IRole, RoleModel, RoleStatus} from './role.model';
 import {IAgencyUser} from './agencyUser.model';
 
@@ -158,50 +156,55 @@ PartySchema.method('addRole', async function (role: RoleDTO, agencyUser: IAgency
     const roleType = await RoleTypeModel.findByCodeInDateRange(roleTypeCode, now);
     Assert.assertTrue(roleType !== null, 'Role type invalid');
 
-    // todo validate agency user has access to this role type
-
-    let attributes:IRoleAttribute[] = [];
-    for (let attribute of role.attributes) {
-        const roleAttributeValue = attribute.value;
-        const roleAttributeNameCode = attribute.attributeName.value.code;
-        const roleAttributeName = await RoleAttributeNameModel.findByCodeInDateRange(roleAttributeNameCode, now);
-        Assert.assertTrue(roleAttributeName !== null, 'Role attribute invalid');
-
-        attributes.push(await RoleAttributeModel.create({
-            value: roleAttributeValue,
-            attributeName: roleAttributeName
-        }));
+    let theRole:IRole = await RoleModel.findByRoleTypeAndParty(roleType, this);
+    if (theRole === null) {
+        theRole = await RoleModel.create({
+            roleType: roleType,
+            party: this,
+            startTimestamp: now,
+            status: RoleStatus.Active.code,
+            attributes: []
+        });
     }
 
-    const creatorIdRoleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_ID');
-    if (creatorIdRoleAttributeName !== null) {
-        attributes.push(await RoleAttributeModel.create({
-            value: agencyUser.id,
-            attributeName: creatorIdRoleAttributeName
-        }));
-    }
-    const creatorNameRoleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_NAME');
-    if (creatorNameRoleAttributeName !== null) {
-        attributes.push(await RoleAttributeModel.create({
-            value: agencyUser.displayName,
-            attributeName: creatorNameRoleAttributeName
-        }));
-    }
-    const creatorAgencyRoleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_AGENCY');
-    if (creatorAgencyRoleAttributeName !== null) {
-        attributes.push(await RoleAttributeModel.create({
-            value: agencyUser.agency,
-            attributeName: creatorAgencyRoleAttributeName
-        }));
+    theRole.updateOrCreateAttribute('CREATOR_ID', agencyUser.id);
+    theRole.updateOrCreateAttribute('CREATOR_NAME', agencyUser.displayName);
+    theRole.updateOrCreateAttribute('CREATOR_AGENCY', agencyUser.agency);
+
+    for (let roleAttribute of role.attributes) {
+        const roleAttributeValue = roleAttribute.value;
+        const roleAttributeNameCode = roleAttribute.attributeName.value.code;
+        const roleAttributeNameCategory = roleAttribute.attributeName.value.category;
+
+        console.log('roleAttributeValue=' + roleAttributeValue);
+        console.log('roleAttributeNameCode=' + roleAttributeNameCode);
+        console.log('roleAttributeNameCategory=' + roleAttributeNameCategory);
+
+        if (roleAttribute.attributeName.value.classifier === 'AGENCY_SERVICE') {
+            let hasPermission: boolean = false; // agencyUser.hasProgramRole('');
+            for (let programRole of agencyUser.programRoles) {
+                console.log('programRole.program=' + programRole.program);
+                console.log('programRole.role=' + programRole.role);
+
+                if (programRole.role === 'ROLE_ADMIN' && programRole.program === roleAttributeNameCategory) {
+                    hasPermission = true;
+                    break;
+                }
+            }
+            console.log('hasPermission=' + hasPermission);
+            if (hasPermission) {
+                theRole.updateOrCreateAttribute(roleAttributeNameCode, roleAttributeValue);
+            }
+        } else {
+            theRole.updateOrCreateAttribute(roleAttributeNameCode, roleAttributeValue);
+        }
+
+        console.log('----');
+
     }
 
-    return RoleModel.create({
-        roleType: roleType,
-        party: this,
-        startTimestamp: now,
-        status: RoleStatus.Active.code,
-        attributes: attributes
-    });
+    theRole.saveAttributes();
+    return Promise.resolve(theRole);
 
 });
 

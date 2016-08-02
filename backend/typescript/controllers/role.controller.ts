@@ -3,6 +3,7 @@ import {security} from './security.middleware';
 import {
     sendResource, sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema
 } from './helpers';
+import {Assert} from '../models/base';
 import {IPartyModel, PartyModel, IParty} from '../models/party.model';
 import {IRoleModel, RoleStatus} from '../models/role.model';
 
@@ -76,9 +77,7 @@ export class RoleController {
                 return idValue !== null ? PartyModel.findByIdentityIdValue(idValue) : null;
             })
             .then((party:IParty) => {
-                if (party === null) {
-                    throw new Error('Party not found');
-                }
+                Assert.assertTrue(party !== null, 'Party not found');
                 const agencyUser = security.getAuthenticatedAgencyUser(res);
                 return party.addRole(req.body, agencyUser);
             })
