@@ -1,0 +1,58 @@
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4>Find and Select Business</h4>
+    </div>
+    <div class="panel-body">
+        <form>
+            <div class="panel panel-default container-fluid">
+                <div class="panel-heading row">
+                    <div class="form-group col-md-2">
+                        <h4>ABN or Name*</h4>
+                    </div><div class="form-group col-md-10">
+                        
+                        <input type="text" class="form-control" placeholder=
+                        "Enter ABN or Name and press <Tab> for listing"
+                        (blur)="findCompanies()"
+                        name="name" [(ngModel)]="abn_or_name"
+                        (ngModelChange)="valueChange($event)"
+                        />
+                    </div>
+                <button type="submit" (click)="findCompanies()" style="display:none"></button>
+                </div>
+                <div class="panel-heading row">
+                    <table class="table">
+                        <thead>
+                            <tr>
+                                <th><h4>ABN</h4></th>
+                                <th><h4>Name</h4></th>
+                                <th><h4>State</h4></th>
+                                <th><h4>Postcode</h4></th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            <tr *ngFor="let business of businesses">
+                                <td><span *ngIf="!selectedBusiness">
+                                    <a (click)="selectBusiness(business)">
+                                        {{business.abn}}
+                                    </a>
+                                </span><span *ngIf="!!selectedBusiness">
+                                    {{business.abn}}
+                                </span></td>
+                                <td>{{business.name}}</td>
+                                <td>{{business.state}}</td>
+                                <td>{{business.postcode}}</td>
+                            </tr>
+                        </tbody>
+                        <tbody *ngIf="isLoading">
+                            <tr>
+                                <td colspan="5" class="text-center">
+                                    <h3>Loading ...</h3>
+                                </td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </form>
+    </div>
+</div>

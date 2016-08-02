@@ -3,6 +3,7 @@ import {RAMEnum, IRAMObject, RAMSchema, Query} from './base';
 import {IParty, PartyModel} from './party.model';
 import {IRoleType, RoleTypeModel} from './roleType.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
+import {RoleAttributeNameModel} from './roleAttributeName.model';
 import {
     Link,
     HrefValue,
@@ -119,6 +120,7 @@ export interface IRole extends IRAMObject {
     roleStatus:RoleStatus;
     attributes:IRoleAttribute[];
     _roleTypeCode:string;
+    updateOrCreateAttribute(roleAttributeNameCode: string, value: string):Promise<IRoleAttribute>;
     saveAttributes():Promise<IRole>;
     toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
     toDTO():Promise<DTO>;
@@ -139,6 +141,29 @@ export interface IRoleModel extends mongoose.Model<IRole> {
 }
 
 // instance methods ...................................................................................................
+
+RoleSchema.method('updateOrCreateAttribute', async function(roleAttributeNameCode: string, value: string) {
+
+    // todo if attributeName is not inflated and was an object id, should we inflate it?
+
+    for (let attribute of this.attributes) {
+        if (attribute.attributeName.code === roleAttributeNameCode) {
+            attribute.value = value;
+            await attribute.save();
+            return Promise.resolve(attribute);
+        }
+    }
+
+    const roleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(roleAttributeNameCode);
+    const roleAttribute = await RoleAttributeModel.create({
+        value: value,
+        attributeName: roleAttributeName
+    });
+    this.attributes.push(roleAttribute);
+    await this.save();
+    return Promise.resolve(roleAttribute);
+
+});
 
 RoleSchema.method('saveAttributes', async function() {
     return this.save();
@@ -197,6 +222,11 @@ RoleSchema.static('findByRoleTypeAndParty', (roleType: IRoleType, party: IParty)
             roleType: roleType,
             party: party
         })
+        .deepPopulate([
+            'roleType',
+            'party',
+            'attributes.attributeName'
+        ])
         .exec();
 });
 
