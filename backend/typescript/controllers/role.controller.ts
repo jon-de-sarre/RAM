@@ -56,7 +56,7 @@ export class RoleController {
                 notEmpty: true,
                 errorMessage: 'Code is not valid'
             },
-            'party.value.idValue': {
+            'party.href': {
                 in: 'body',
                 notEmpty: true,
                 errorMessage: 'Party is missing'
@@ -64,9 +64,21 @@ export class RoleController {
         };
         validateReqSchema(req, schema)
             .then((req: Request) => {
-                return PartyModel.findByIdentityIdValue(req.body.party.value.idValue);
+                const partyHref = req.body.party.href;
+
+                // todo move to util
+                const searchString = '/api/v1/party/identity/';
+                let idValue:string = null;
+                if (partyHref.startsWith(searchString, partyHref)) {
+                    idValue = decodeURIComponent(partyHref.substr(searchString.length));
+                }
+
+                return idValue !== null ? PartyModel.findByIdentityIdValue(idValue) : null;
             })
             .then((party:IParty) => {
+                if (party === null) {
+                    throw new Error('Party not found');
+                }
                 return party.addRole(req.body);
             })
             .then((model) => model ? model.toDTO() : null)

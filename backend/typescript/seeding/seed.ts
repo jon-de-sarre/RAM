@@ -151,6 +151,7 @@ export class Seeder {
     public static notes_roleAttributeName:IRoleAttributeName;
     public static creatorId_roleAttributeName:IRoleAttributeName;
     public static creatorName_roleAttributeName:IRoleAttributeName;
+    public static creatorAgency_roleAttributeName:IRoleAttributeName;
 
     // role attribute names (agency service)
     public static usi_roleAttributeName:IRoleAttributeName;
@@ -241,7 +242,7 @@ export class Seeder {
     public static edtech_and_edoaner_relationship:IRelationship;
 
     // roles
-    public static edTech_ospUsi_relationship:IRole;
+    public static edTech_osp_relationship:IRole;
 
     public static log(msg:String) {
         if(Seeder.verboseMode) {
@@ -792,6 +793,17 @@ export class Seeder {
                 purposeText: 'Creator Name'
             } as any);
 
+            Seeder.creatorAgency_roleAttributeName = await Seeder.createRoleAttributeNameModel({
+                code: 'CREATOR_AGENCY',
+                shortDecodeText: 'Creator Agency',
+                longDecodeText: 'Creator Agency',
+                startDate: now,
+                domain: RoleAttributeNameDomain.String.code,
+                classifier: RoleAttributeNameClassifier.Other.code,
+                category: null,
+                purposeText: 'Creator Agency'
+            } as any);
+
         } catch (e) {
             Seeder.log('Seeding failed!');
             Seeder.log(e);
@@ -920,7 +932,8 @@ export class Seeder {
                 {attribute: Seeder.sbr_roleAttributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.notes_roleAttributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.creatorId_roleAttributeName, optionalInd: false, defaultValue: null},
-                {attribute: Seeder.creatorName_roleAttributeName, optionalInd: false, defaultValue: null}
+                {attribute: Seeder.creatorName_roleAttributeName, optionalInd: false, defaultValue: null},
+                {attribute: Seeder.creatorAgency_roleAttributeName, optionalInd: false, defaultValue: null}
             ]);
 
         } catch (e) {
