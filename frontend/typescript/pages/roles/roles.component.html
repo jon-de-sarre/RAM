@@ -7,8 +7,8 @@
     <thead>
         <tr>
             <th><h4>Role</h4></th>
-            <th class="col-md-3"><h4>Date Assigned</h4></th>
-            <th class="col-md-2"><h4>Operator</h4></th>
+            <th class="col-md-2"><h4>Date Assigned</h4></th>
+            <th class="col-md-3"><h4>Operator</h4></th>
             <th class="col-md-2"><h4>Status</h4></th>
             <th class="col-md-2"><a class="btn btn-primary align-center" [class.disabled]="!isAddRoleEnabled()" (click)="goToAddRolePage()">Add Role</a></th>
         </tr>
@@ -17,7 +17,10 @@
         <tr *ngFor="let roleRef of (roles$|async)?.list">
             <td>{{services.model.roleTypeLabel(roleTypeRefs, roleRef.value)}}</td>
             <td>{{services.model.displayDate(roleRef.value.assignedTimestamp)}}</td>
-            <td>{{services.model.roleAttributeLabel(roleRef.value, 'CREATOR_NAME')}}</td>
+            <td>
+                {{services.model.roleAttributeLabel(roleRef.value, 'CREATOR_AGENCY')}}
+                <div class="text-muted">{{services.model.roleAttributeLabel(roleRef.value, 'CREATOR_NAME')}}</div>
+            </td>
             <td>{{services.model.roleStatusLabel(roleStatusRefs, roleRef.value.status)}}</td>
             <td>&nbsp;</td>
         </tr>
