@@ -214,6 +214,7 @@ export class RelationshipController {
                 req.params.identity_id,
                 filterParams.get('partyType'),
                 filterParams.get('relationshipType'),
+                filterParams.get('relationshipTypeCategory'),
                 filterParams.get('profileProvider'),
                 filterParams.get('status'),
                 filterParams.get('text'),

@@ -130,6 +130,11 @@ const RelationshipSchema = RAMSchema({
         required: [true, 'Relationship Type Code is required'],
         trim: true
     },
+    _relationshipTypeCategory: {
+         type: String,
+         required: [true, 'Relationship Type Category is required'],
+         trim: true
+     },
     _subjectNickNameString: {
         type: String,
         required: [true, 'Subject Nick Name String is required'],
@@ -169,6 +174,9 @@ const RelationshipSchema = RAMSchema({
 RelationshipSchema.pre('validate', function (next: () => void) {
     if (this.relationshipType) {
         this._relationshipTypeCode = this.relationshipType.code;
+    }
+    if (this.relationshipType) {
+        this._relationshipTypeCategory = this.relationshipType.category;
     }
     if (this.subjectNickName) {
         this._subjectNickNameString = this.subjectNickName._displayName;
@@ -255,6 +263,7 @@ export interface IRelationshipModel extends mongoose.Model<IRelationship> {
     searchByIdentity:(identityIdValue: string,
                       partyType: string,
                       relationshipType: string,
+                      relationshipTypeCategory: string,
                       profileProvider: string,
                       status: string,
                       text: string,
@@ -650,6 +659,7 @@ RelationshipSchema.static('search', (subjectIdentityIdValue: string,
 RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                                                partyType: string,
                                                relationshipType: string,
+                                               relationshipTypeCategory: string,
                                                profileProvider: string,
                                                status: string,
                                                text: string,
@@ -672,6 +682,9 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
             }
             if (relationshipType) {
                 mainAnd.push({'_relationshipTypeCode': relationshipType});
+            }
+            if (relationshipTypeCategory) {
+                mainAnd.push({'_relationshipTypeCategory': relationshipTypeCategory});
             }
             if (profileProvider) {
                 mainAnd.push({
