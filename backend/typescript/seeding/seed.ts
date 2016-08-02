@@ -228,9 +228,9 @@ export class Seeder {
     public static jenscatering_and_robertsmith_relationship:IRelationship;
     public static jenscatering_and_fredjohnson_relationship:IRelationship;
     public static jmfoodpackaging_and_jenscatering_relationship:IRelationship;
-
     public static edtech_and_edoaner_relationship:IRelationship;
 
+    // roles
     public static edTech_ospUsi_relationship:IRole;
 
     public static log(msg:String) {
