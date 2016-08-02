@@ -8,6 +8,7 @@ import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
 import {sendResource, sendError, sendNotFoundError} from './helpers';
 import { ABR } from '../providers/abr.provider';
+import {IdentityModel} from '../models/identity.model';
 
 export class BusinessController {
 
@@ -25,6 +26,13 @@ export class BusinessController {
         .catch(sendError(res));
     };
 
+    private registerABRRetrievedCompany = (req:Request, res:Response) => {
+        IdentityModel.addCompany(req.params.abn, req.params.name)
+        .then(sendResource(res))
+        .then(sendNotFoundError(res))
+        .catch(sendError(res));
+    };
+
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/business/abn/:abn',
@@ -34,6 +42,10 @@ export class BusinessController {
         router.get('/v1/business/name/:name',
             security.isAuthenticated,
             this.findByName);
+
+        router.get('/v1/business/register/:abn/:name',
+            security.isAuthenticated,
+            this.registerABRRetrievedCompany);
 
         return router;
 

@@ -18,7 +18,7 @@ export class BannerComponent {
     }
 
     public ngOnInit() {
-        this.title = 'Relationship Access Manager';
+        this.title = 'Relationship Authorisation Manager';
         this.bannerService.subscribe((title: string) => {
             this.title = title;
         });

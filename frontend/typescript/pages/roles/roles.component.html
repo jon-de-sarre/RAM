@@ -22,7 +22,7 @@
                 <div class="text-muted">{{services.model.roleAttributeLabel(roleRef.value, 'CREATOR_NAME')}}</div>
             </td>
             <td>{{services.model.roleStatusLabel(roleStatusRefs, roleRef.value.status)}}</td>
-            <td>&nbsp;</td>
+            <td><a class="btn btn-sm btn-secondary align-center" (click)="goToRolePage(roleRef)">Manage <span class="caret"></span></a></td>
         </tr>
     </tbody>
     <tbody *ngIf="isLoading">

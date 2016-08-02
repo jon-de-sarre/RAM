@@ -129,7 +129,7 @@ describe('RAM Relationship Attribute', () => {
             expect(retrievedInstance.attributes).not.toBeNull();
             expect(retrievedInstance.attributes.length).toBe(1);
             expect(retrievedInstance.attributes[0].id).toBe(relationshipAttribute1.id);
-            expect(retrievedInstance.attributes[0].value).toBe(relationshipAttribute1.value);
+            expect(retrievedInstance.attributes[0].value[0]).toBe(relationshipAttribute1.value[0]);
 
             done();
 
@@ -152,7 +152,7 @@ describe('RAM Relationship Attribute', () => {
 
             expect(instance).not.toBeNull();
             expect(instance.id).not.toBeNull();
-            expect(instance.value).toBe(value);
+            expect(instance.value[0]).toBe(value);
             expect(instance.attributeName.id).toBe(attributeName.id);
 
             done();

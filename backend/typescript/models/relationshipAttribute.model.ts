@@ -19,7 +19,7 @@ const _RelationshipAttributeNameModel = RelationshipAttributeNameModel;
 
 const RelationshipAttributeSchema = new mongoose.Schema({
     value: {
-      type: String,
+      type: [String],
       required: false,
       trim: true
     },
@@ -33,7 +33,7 @@ const RelationshipAttributeSchema = new mongoose.Schema({
 // interfaces .........................................................................................................
 
 export interface IRelationshipAttribute extends mongoose.Document {
-    value?: string;
+    value?: [string];
     attributeName: IRelationshipAttributeName;
     toDTO():Promise<DTO>;
 }

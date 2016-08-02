@@ -23,6 +23,7 @@ import {
     IRoleStatus,
     INotifyDelegateDTO
 } from '../../../commons/RamAPI';
+import {ABRentry} from '../../../commons/abr';
 
 @Injectable()
 export class RAMRestService {
@@ -31,20 +32,34 @@ export class RAMRestService {
                 private modelService: RAMModelService) {
     }
 
-    // TODO remove temporary api
-    // A call external to RAM to get organisation name from ABN
-    public getOrganisationNameFromABN(abn: string) {
-        // This is temporary until we can talk to the server
-        // How about mocking framework?
-        return Promise.resolve('The End of Time Pty Limited');
-    }
-
     private extractData(res: Response) {
         if (res.status < 200 || res.status >= 300) {
             throw new Error('Status code is:' + res.status);
         }
         const body = res.json();
         return body || {};
+    }
+
+    public getOrganisationNameFromABN(abn: string) {
+        return this.getABRfromABN(abn).map((abr:ABRentry) => abr.name);
+    }
+
+    public getABRfromABN(abn:string) {
+        return this.http
+            .get(`/api/v1/business/abn/`+abn)
+            .map(this.extractData);
+    }
+
+    public getABRfromName(name:string) {
+        return this.http
+            .get(`/api/v1/business/name/`+name)
+            .map(this.extractData);
+    }
+
+    public registerABRCompany(abr:ABRentry) {
+        return this.http
+            .get(`/api/v1/business/register/`+abr.abn+'/'+abr.name)
+            .map(this.extractData);
     }
 
     public findMyPrincipal(): Observable<IPrincipal> {
