@@ -79,7 +79,8 @@ export class RoleController {
                 if (party === null) {
                     throw new Error('Party not found');
                 }
-                return party.addRole(req.body);
+                const agencyUser = security.getAuthenticatedAgencyUser(res);
+                return party.addRole(req.body, agencyUser);
             })
             .then((model) => model ? model.toDTO() : null)
             .then(sendResource(res))

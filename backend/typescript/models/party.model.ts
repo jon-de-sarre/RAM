@@ -17,6 +17,7 @@ import {RoleTypeModel} from './roleType.model';
 import {RoleAttributeModel, IRoleAttribute} from './roleAttribute.model';
 import {RoleAttributeNameModel} from './roleAttributeName.model';
 import {IRole, RoleModel, RoleStatus} from './role.model';
+import {IAgencyUser} from './agencyUser.model';
 
 // enums, utilities, helpers ..........................................................................................
 
@@ -65,7 +66,7 @@ export interface IParty extends IRAMObject {
     toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
     toDTO():Promise<DTO>;
     addRelationship(dto: IInvitationCodeRelationshipAddDTO):Promise<IRelationship>;
-    addRole(role: IRole):Promise<IRole>;
+    addRole(role: IRole, agencyUser: IAgencyUser):Promise<IRole>;
 }
 
 /* tslint:disable:no-empty-interfaces */
@@ -150,43 +151,57 @@ PartySchema.method('addRelationship', async (dto: IInvitationCodeRelationshipAdd
 
 });
 
-PartySchema.method('addRole', async function (role: RoleDTO) {
+PartySchema.method('addRole', async function (role: RoleDTO, agencyUser: IAgencyUser) {
 
+    const now = new Date();
     const roleTypeCode = role.roleType.value.code;
-    const roleType = await RoleTypeModel.findByCodeInDateRange(roleTypeCode, new Date());
+    const roleType = await RoleTypeModel.findByCodeInDateRange(roleTypeCode, now);
     Assert.assertTrue(roleType !== null, 'Role type invalid');
 
     // todo validate agency user has access to this role type
 
-    let theRole:IRole = await RoleModel.findByRoleTypeAndParty(roleType, this);
-    // Assert.assertTrue(theRole === null, 'Role type already exists');
+    let attributes:IRoleAttribute[] = [];
+    for (let attribute of role.attributes) {
+        const roleAttributeValue = attribute.value;
+        const roleAttributeNameCode = attribute.attributeName.value.code;
+        const roleAttributeName = await RoleAttributeNameModel.findByCodeInDateRange(roleAttributeNameCode, now);
+        Assert.assertTrue(roleAttributeName !== null, 'Role attribute invalid');
 
-    theRole = null;
-    if (theRole === null) {
-        let attributes:IRoleAttribute[] = [];
-        for (let attribute of role.attributes) {
-            const roleAttributeValue = attribute.value;
-            const roleAttributeNameCode = attribute.attributeName.value.code;
-            const roleAttributeName = await RoleAttributeNameModel.findByCodeInDateRange(roleAttributeNameCode, new Date());
-            Assert.assertTrue(roleAttributeName !== null, 'Role attribute invalid');
-
-            attributes.push(await RoleAttributeModel.create({
-                value: roleAttributeValue,
-                attributeName: roleAttributeName
-            }));
-        }
-
-        return RoleModel.create({
-            roleType: roleType,
-            party: this,
-            startTimestamp: new Date(),
-            status: RoleStatus.Active.code,
-            attributes: attributes
-        });
-    } else {
-        console.log(JSON.stringify(theRole, null, 4));
-        return theRole.saveAttributes();
+        attributes.push(await RoleAttributeModel.create({
+            value: roleAttributeValue,
+            attributeName: roleAttributeName
+        }));
     }
+
+    const creatorIdRoleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_ID');
+    if (creatorIdRoleAttributeName !== null) {
+        attributes.push(await RoleAttributeModel.create({
+            value: agencyUser.id,
+            attributeName: creatorIdRoleAttributeName
+        }));
+    }
+    const creatorNameRoleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_NAME');
+    if (creatorNameRoleAttributeName !== null) {
+        attributes.push(await RoleAttributeModel.create({
+            value: agencyUser.displayName,
+            attributeName: creatorNameRoleAttributeName
+        }));
+    }
+    const creatorAgencyRoleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_AGENCY');
+    if (creatorAgencyRoleAttributeName !== null) {
+        attributes.push(await RoleAttributeModel.create({
+            value: agencyUser.agency,
+            attributeName: creatorAgencyRoleAttributeName
+        }));
+    }
+
+    return RoleModel.create({
+        roleType: roleType,
+        party: this,
+        startTimestamp: now,
+        status: RoleStatus.Active.code,
+        attributes: attributes
+    });
 
 });
 
