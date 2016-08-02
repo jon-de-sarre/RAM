@@ -44,6 +44,10 @@ export class EdTechRolesSeeder {
                         await Seeder.createRoleAttributeModel({
                             value: 'Ted Agent',
                             attributeName: Seeder.creatorName_roleAttributeName
+                        } as any),
+                        await Seeder.createRoleAttributeModel({
+                            value: 'Department of Education',
+                            attributeName: Seeder.creatorAgency_roleAttributeName
                         } as any)
                     ]
                 } as any);
