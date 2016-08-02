@@ -102,11 +102,15 @@ import {EdTechRolesSeeder} from './seed-edtech-roles';
 import {EdOanerIdentitySeeder} from './seed-edoaner-identity';
 import {EdTechIdentitySeeder} from './seed-edtech-identity';
 import {EdTechRelationshipsSeeder} from './seed-edtech-relationships';
+import {TrevorTrainingIdentitySeeder} from './seed-trevortraining-identity';
+import {TrevorTrainingRelationshipsSeeder} from './seed-trevortraining-relationships';
+import {TrungTrainingIdentitySeeder} from './seed-trungtraining-identity';
+import {TrungTrainingRelationshipsSeeder} from './seed-trungtraining-relationships';
 
 const now = new Date();
 
 const truncateString = (input:String):String => {
-    return input && input.length > 20 ? (input.substring(0, 20) + '...') : input;
+    return input && input.length > 60 ? (input.substring(0, 60) + '...') : input;
 };
 
 // seeder .............................................................................................................
@@ -133,6 +137,7 @@ export class Seeder {
     public static delegateRelationshipTypeDeclaration_relAttributeName:IRelationshipAttributeName;
     public static subjectRelationshipTypeDeclaration_relAttributeName:IRelationshipAttributeName;
     public static selectedGovernmentServicesList_relAttributeName:IRelationshipAttributeName; // for storing the selected services on an OSP relationship
+    public static ssid_relAttributeName:IRelationshipAttributeName;
 
     // relationship attribute names (permission)
     public static asic_abn_relAttributeName:IRelationshipAttributeName;
@@ -185,6 +190,18 @@ export class Seeder {
     public static edtech_profile:IProfile;
     public static edtech_party:IParty;
     public static edtech_identity_1:IIdentity;
+
+    // ABN identity
+    public static trevortraining_name:IName;
+    public static trevortraining_profile:IProfile;
+    public static trevortraining_party:IParty;
+    public static trevortraining_identity_1:IIdentity;
+
+    // ABN identity
+    public static trungtraining_name:IName;
+    public static trungtraining_profile:IProfile;
+    public static trungtraining_party:IParty;
+    public static trungtraining_identity_1:IIdentity;
 
     // ABN identity
     public static cakerybakery_name:IName;
@@ -240,6 +257,8 @@ export class Seeder {
     public static jenscatering_and_fredjohnson_relationship:IRelationship;
     public static jmfoodpackaging_and_jenscatering_relationship:IRelationship;
     public static edtech_and_edoaner_relationship:IRelationship;
+    public static trevortraining_and_edtech_relationship:IRelationship;
+    public static trungtraining_and_edtech_relationship:IRelationship;
 
     // roles
     public static edTech_osp_relationship:IRole;
@@ -482,7 +501,8 @@ export class Seeder {
         Seeder.log(`- ${values.relationshipType.code}`.magenta);
         if (values.attributes) {
             for (let attribute of values.attributes) {
-                const truncatedValue = truncateString(attribute.value);
+                var value:[string] = attribute.value;
+                const truncatedValue = truncateString(value.toString());
                 Seeder.log(`  - ${attribute.attributeName.code} (${truncatedValue})`.green);
             }
         }
@@ -567,6 +587,17 @@ export class Seeder {
                 classifier: RelationshipAttributeNameClassifier.Other.code,
                 category: null,
                 purposeText: 'Subject specific declaration in Markdown for a relationship type'
+            } as any);
+
+            Seeder.ssid_relAttributeName = await Seeder.createRelationshipAttributeNameModel({
+                code: 'SSID',
+                shortDecodeText: 'Software serial number',
+                longDecodeText: 'Software serial number',
+                startDate: now,
+                domain: RelationshipAttributeNameDomain.String.code,
+                classifier: RelationshipAttributeNameClassifier.Other.code,
+                category: null,
+                purposeText: 'Software serial number'
             } as any);
 
         } catch (e) {
@@ -995,12 +1026,16 @@ export class Seeder {
             .then(JohnMaximsIdentitySeeder.load)
             .then(JMFoodPackagingIdentitySeeder.load)
             .then(JensCateringIdentitySeeder.load)
+            .then(TrevorTrainingIdentitySeeder.load)
+            .then(TrungTrainingIdentitySeeder.load)
 
             // relationships
             .then(CakeryBakeryRelationshipsSeeder.load)
             .then(JensCateringRelationshipsSeeder.load)
             .then(JMFoodPackagingRelationshipsSeeder.load)
             .then(EdTechRelationshipsSeeder.load)
+            .then(TrevorTrainingRelationshipsSeeder.load)
+            .then(TrungTrainingRelationshipsSeeder.load)
 
             // roles
             .then(EdTechRolesSeeder.load)

@@ -440,12 +440,12 @@ export class Identity implements IIdentity {
 }
 
 export interface IRelationshipAttribute {
-    value: string;
+    value: [string];
     attributeName: IHrefValue<IRelationshipAttributeName>;
 }
 
 export class RelationshipAttribute implements IRelationshipAttribute {
-    constructor(public value:string,
+    constructor(public value:[string],
                 public attributeName:HrefValue<RelationshipAttributeName>) {
     }
 }
