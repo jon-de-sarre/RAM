@@ -2,11 +2,44 @@
 	"variables": [],
 	"info": {
 		"name": "RAM",
-		"_postman_id": "8bd00525-6f41-ce2b-6310-52b7d165a131",
+		"_postman_id": "0b6442ab-608a-367c-3e98-6f49a593d0f6",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
 	"item": [
+		{
+			"name": "Agency User",
+			"description": "",
+			"item": [
+				{
+					"name": "Get (me)",
+					"request": {
+						"url": "{{host}}/api/v1/agencyUser/me",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
 		{
 			"name": "Authentication",
 			"description": "",
