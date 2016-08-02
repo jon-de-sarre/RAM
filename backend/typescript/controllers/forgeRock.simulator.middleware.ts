@@ -14,8 +14,8 @@ class ForgeRockSimulator {
         return (req: Request, res: Response, next: () => void) => {
             const idFromAuthenticationSimulator = req.body.credentials;
             const idFromCookie = SecurityHelper.getValueFromCookies(req, Headers.AuthToken);
-            console.log('idFromAuthenticationSimulator=', idFromAuthenticationSimulator);
-            console.log('idFromCookie=', idFromCookie);
+            //console.log('idFromAuthenticationSimulator=', idFromAuthenticationSimulator);
+            //console.log('idFromCookie=', idFromCookie);
             const id = idFromAuthenticationSimulator ? idFromAuthenticationSimulator : idFromCookie;
             if (id) {
                 const agencyUser = AgencyUsersSeeder.findById(id);
