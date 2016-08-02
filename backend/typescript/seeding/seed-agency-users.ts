@@ -9,6 +9,7 @@ const users: IAgencyUser[] = [
         'Ted',
         'Agent',
         'Ted Agent',
+        'Department of Education',
         [
             new AgencyUserProgramRole('EDUCATION', 'ROLE_ADMIN')
         ]
@@ -19,6 +20,7 @@ const users: IAgencyUser[] = [
         'Max',
         'Agent',
         'Max Agent',
+        'Australian Tax Office',
         [
             new AgencyUserProgramRole('TAX', 'ROLE_ADMIN')
         ]

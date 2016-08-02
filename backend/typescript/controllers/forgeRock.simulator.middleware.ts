@@ -14,6 +14,8 @@ class ForgeRockSimulator {
         return (req: Request, res: Response, next: () => void) => {
             const idFromAuthenticationSimulator = req.body.credentials;
             const idFromCookie = SecurityHelper.getValueFromCookies(req, Headers.AuthToken);
+            console.log('idFromAuthenticationSimulator=', idFromAuthenticationSimulator);
+            console.log('idFromCookie=', idFromCookie);
             const id = idFromAuthenticationSimulator ? idFromAuthenticationSimulator : idFromCookie;
             if (id) {
                 const agencyUser = AgencyUsersSeeder.findById(id);
@@ -44,6 +46,7 @@ class ForgeRockSimulator {
                 res.locals[Headers.AgencyUserLoginId] = agencyUser.id;
                 res.locals[Headers.GivenName] = agencyUser.givenName;
                 res.locals[Headers.FamilyName] = agencyUser.familyName;
+                res.locals[Headers.AgencyUserAgency] = agencyUser.agency;
                 res.locals[Headers.AgencyUserProgramRoles] = programRolesString;
             }
             next();

@@ -127,6 +127,7 @@ export class AgencyUser implements IAgencyUser {
                 public givenName:string,
                 public familyName:string,
                 public displayName:string,
+                public agency:string,
                 public programRoles:AgencyUserProgramRole[]) {
     }
 }

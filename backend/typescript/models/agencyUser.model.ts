@@ -9,6 +9,7 @@ export interface IAgencyUser {
     givenName: string;
     familyName: string;
     displayName: string;
+    agency: string;
     programRoles: IAgencyUserProgramRole[];
     toHrefValue(includeValue: boolean): Promise<HrefValue<AgencyUserDTO>>;
     toDTO(): Promise<AgencyUserDTO>;
@@ -26,6 +27,7 @@ export class AgencyUser implements IAgencyUser {
                 public givenName: string,
                 public familyName: string,
                 public displayName: string,
+                public agency: string,
                 public programRoles: IAgencyUserProgramRole[]) {
     }
 
@@ -42,6 +44,7 @@ export class AgencyUser implements IAgencyUser {
             this.givenName,
             this.familyName,
             this.displayName,
+            this.agency,
             await Promise.all<AgencyUserProgramRoleDTO>(this.programRoles.map(
                 async (programRole:IAgencyUserProgramRole) => {
                     return programRole.toDTO();

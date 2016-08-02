@@ -18,6 +18,8 @@ class Security {
             //this.logHeaders(req);
             const agencyUserLoginIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserLoginId);
             const identityIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.IdentityIdValue);
+            console.log('agencyUserLoginIdValue=', agencyUserLoginIdValue);
+            console.log('identityIdValue=', identityIdValue);
             if (agencyUserLoginIdValue) {
                 // agency login supplied, carry on
                 Promise.resolve(agencyUserLoginIdValue)
@@ -120,6 +122,7 @@ class Security {
                     givenName,
                     familyName,
                     displayName,
+                    this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserAgency),
                     programRoles
                 );
             }
