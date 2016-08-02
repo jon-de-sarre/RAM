@@ -16,9 +16,10 @@ import {
 export class AuthorisationTypeComponent implements OnInit {
 
     public form: FormGroup;
+    public selectedAuthType: IHrefValue<IRelationshipType>;
 
     @Input('data') public data: AuthorisationTypeComponentData;
-    @Input('options') public options: Observable<IHrefValue<IRelationshipType>[]>;
+    @Input('options') public options: IHrefValue<IRelationshipType>[];
 
     @Output('dataChange') public dataChanges = new EventEmitter<AuthorisationTypeComponentData>();
 
@@ -36,6 +37,14 @@ export class AuthorisationTypeComponent implements OnInit {
             this.dataChanges.emit(v);
             this.isValid.emit(this.form.valid);
         });
+    }
+
+    public onAuthTypeChange(value: string) {
+        for (let type of this.options) {
+            if (type.value.code === value) {
+                this.selectedAuthType = type;
+            }
+        }
     }
 
     private isAuthTypeSelected = (authType: FormControl) => {

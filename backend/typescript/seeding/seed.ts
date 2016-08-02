@@ -850,7 +850,7 @@ export class Seeder {
             Seeder.universal_delegate_relationshipType = await Seeder.createRelationshipTypeModel({
                 code: 'UNIVERSAL_REPRESENTATIVE',
                 shortDecodeText: 'Universal Representative',
-                longDecodeText: 'Universal Representative',
+                longDecodeText: 'The same level of authorisation as an Associate of the organisation (e.g., Owner, Director). All permissions will be defaulted to maximum access.',
                 startDate: now,
                 managedExternallyInd: false,
                 category: RelationshipTypeCategory.Authorisation.code
@@ -876,7 +876,7 @@ export class Seeder {
             Seeder.custom_delegate_relationshipType = await Seeder.createRelationshipTypeModel({
                 code: 'CUSTOM_REPRESENTATIVE',
                 shortDecodeText: 'Custom Representative',
-                longDecodeText: 'Custom Representative',
+                longDecodeText: 'Select the representative authorisation type if you want to customise access. Select which permissions this representative will have, including restricting access to some services.',
                 startDate: now,
                 managedExternallyInd: false,
                 category: RelationshipTypeCategory.Authorisation.code
