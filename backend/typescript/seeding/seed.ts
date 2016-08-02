@@ -821,6 +821,8 @@ export class Seeder {
                 longDecodeText: 'Associate',
                 startDate: now,
                 managedExternallyInd: true,
+                autoAcceptIfInitiatedFromDelegate: false,
+                autoAcceptIfInitiatedFromSubject: false,
                 category: RelationshipTypeCategory.Authorisation.code
             } as any, [
                 {attribute: Seeder.permissionCustomisationAllowedInd_relAttributeName, optionalInd: false, defaultValue: 'false'},
@@ -853,6 +855,8 @@ export class Seeder {
                 longDecodeText: 'The same level of authorisation as an Associate of the organisation (e.g., Owner, Director). All permissions will be defaulted to maximum access.',
                 startDate: now,
                 managedExternallyInd: false,
+                autoAcceptIfInitiatedFromDelegate: false,
+                autoAcceptIfInitiatedFromSubject: false,
                 category: RelationshipTypeCategory.Authorisation.code
             } as any, [
                 {attribute: Seeder.permissionCustomisationAllowedInd_relAttributeName, optionalInd: false, defaultValue: 'false'},
@@ -880,6 +884,8 @@ export class Seeder {
                 Select which permissions this representative will have, including restricting access to some services.`,
                 startDate: now,
                 managedExternallyInd: false,
+                autoAcceptIfInitiatedFromDelegate: false,
+                autoAcceptIfInitiatedFromSubject: false,
                 category: RelationshipTypeCategory.Authorisation.code
             } as any, [
                 {attribute: Seeder.permissionCustomisationAllowedInd_relAttributeName, optionalInd: false, defaultValue: 'true'},
@@ -906,6 +912,8 @@ export class Seeder {
                 longDecodeText: 'Online Software Provider',
                 startDate: now,
                 managedExternallyInd: false,
+                autoAcceptIfInitiatedFromDelegate: true,
+                autoAcceptIfInitiatedFromSubject: false,
                 category: RelationshipTypeCategory.Notification.code
             } as any, [
                 {attribute: Seeder.selectedGovernmentServicesList_relAttributeName, optionalInd: false, defaultValue: null}
