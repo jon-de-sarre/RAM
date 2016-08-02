@@ -114,14 +114,27 @@ const truncateString = (input:String):String => {
 /* tslint:disable:no-any */
 /* tslint:disable:max-func-body-length */
 export class Seeder {
+
     private static verboseMode:boolean = true;
     private static exportLDIFMode:boolean = true;
 
+    public static full_accessLevel = 'Full access';
+    public static accessLevels = [Seeder.full_accessLevel, 'Limited access', 'No access'];
+
+    // relationship types
+    public static associate_delegate_relationshipType:IRelationshipType;
+    public static universal_delegate_relationshipType:IRelationshipType;
+    public static custom_delegate_relationshipType:IRelationshipType;
+    public static osp_delegate_relationshipType:IRelationshipType;
+
+    // relationship attribute names (other)
     public static permissionCustomisationAllowedInd_attributeName:IRelationshipAttributeName;
     public static delegateManageAuthorisationAllowedInd_attributeName:IRelationshipAttributeName;
     public static delegateRelationshipTypeDeclaration_attributeName:IRelationshipAttributeName;
     public static subjectRelationshipTypeDeclaration_attributeName:IRelationshipAttributeName;
+    public static selectedGovernmentServicesList_attributeName:IRelationshipAttributeName; // for storing the selected services on an OSP relationship
 
+    // relationship attribute names (permission)
     public static asic_abn_attributeName:IRelationshipAttributeName;
     public static wgea_activate_attributeName:IRelationshipAttributeName;
     public static deptindustry_aba_attributeName:IRelationshipAttributeName;
@@ -133,26 +146,21 @@ export class Seeder {
     public static deptimm_skillselect_attributeName:IRelationshipAttributeName;
     public static deptemp_wageconnect_attributeName:IRelationshipAttributeName;
 
-    public static selectedGovernmentServicesList_attributeName:IRelationshipAttributeName; // for storing the selected services on an OSP relationship
-
-    public static full_accessLevel = 'Full access';
-    public static accessLevels = [Seeder.full_accessLevel, 'Limited access', 'No access'];
-
-    public static associate_delegate_relationshipType:IRelationshipType;
-    public static universal_delegate_relationshipType:IRelationshipType;
-    public static custom_delegate_relationshipType:IRelationshipType;
-    public static osp_delegate_relationshipType:IRelationshipType;
-
+    // role attribute names (other)
     public static ssid_roleAttributeName:IRoleAttributeName;
-    public static usi_roleAttributeName:IRoleAttributeName;
-    public static sbr_roleAttributeName:IRoleAttributeName;
     public static notes_roleAttributeName:IRoleAttributeName;
 
+    // role attribute names (agency service)
+    public static usi_roleAttributeName:IRoleAttributeName;
+    public static sbr_roleAttributeName:IRoleAttributeName;
+
+    // role types
     public static osp_roleType:IRoleType;
 
+    // shared secrets
     public static dob_sharedSecretType:ISharedSecretType;
 
-    // Legislative Programs
+    // legislative programs
     public static education_legislativeProgram:ILegislativeProgram;
 
     // individual identity
