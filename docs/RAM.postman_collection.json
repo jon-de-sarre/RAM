@@ -216,7 +216,7 @@
 					"response": []
 				},
 				{
-					"name": "Authenticate Agency User (Ted Agency User)",
+					"name": "Authenticate Agency User (Ted Agent)",
 					"request": {
 						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
 						"method": "POST",
@@ -232,7 +232,7 @@
 							"urlencoded": [
 								{
 									"key": "credentials",
-									"value": "ted_agency_user",
+									"value": "ted_agent",
 									"type": "text",
 									"enabled": true
 								}
