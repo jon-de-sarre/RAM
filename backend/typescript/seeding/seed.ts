@@ -501,7 +501,7 @@ export class Seeder {
         Seeder.log(`- ${values.relationshipType.code}`.magenta);
         if (values.attributes) {
             for (let attribute of values.attributes) {
-                var value:[string] = attribute.value;
+                let value:[string] = attribute.value;
                 const truncatedValue = truncateString(value.toString());
                 Seeder.log(`  - ${attribute.attributeName.code} (${truncatedValue})`.green);
             }

@@ -6,7 +6,7 @@ import {RelationshipStatus} from '../models/relationship.model';
 
 /* tslint:disable:no-any */
 /* tslint:disable:max-func-body-length */
-export class TrungTrainingRelationshipsSeeder{
+export class TrungTrainingRelationshipsSeeder {
 
     private static async load_trungtraining_associate() {
         try {
