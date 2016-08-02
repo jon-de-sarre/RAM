@@ -876,7 +876,8 @@ export class Seeder {
             Seeder.custom_delegate_relationshipType = await Seeder.createRelationshipTypeModel({
                 code: 'CUSTOM_REPRESENTATIVE',
                 shortDecodeText: 'Custom Representative',
-                longDecodeText: 'Select the representative authorisation type if you want to customise access. Select which permissions this representative will have, including restricting access to some services.',
+                longDecodeText: `Select the representative authorisation type if you want to customise access. 
+                Select which permissions this representative will have, including restricting access to some services.`,
                 startDate: now,
                 managedExternallyInd: false,
                 category: RelationshipTypeCategory.Authorisation.code
