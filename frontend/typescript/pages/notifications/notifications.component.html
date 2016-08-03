@@ -2,19 +2,13 @@
              tab="MANAGE_NOTIFICATIONS"
              [messages]="globalMessages"></page-header>
 
-<div class="centered">
-    <p class="todo">List OSP notification relationships for business in focus</p>
-</div>
-
-
-<br/>
-
 <table class="table">
     <thead>
         <tr>
             <th><h4>My software service subscriptions</h4></th>
             <th class="col-md-2"><h4>Status</h4></th>
             <th class="col-md-2"></th>
+            <th class="col-md-2"><a class="btn btn-primary align-center" [class.disabled]="!isAddNotificationEnabled()" (click)="goToAddNotificationPage()">Add Notification</a></th>
         </tr>
     </thead>
     <tbody *ngIf="!isLoading">

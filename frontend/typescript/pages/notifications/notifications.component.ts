@@ -117,6 +117,16 @@ export class NotificationsComponent extends AbstractPageComponent {
     public goToBusinessesPage() {
         this.services.route.goToBusinessesPage();
     }
+
+    public goToAddNotificationPage() {
+        this.services.route.goToAddNotificationPage(this.idValue);
+    }
+
+    // todo what is the logic here?
+    public isAddNotificationEnabled() {
+        return true;
+    }
+
 }
 
 class SubjectGroupWithRelationships {
