@@ -66,7 +66,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
         });
 
         // osp relationship type
-        this.services.rest.findRelationshipTypeByCode('OSP').subscribe((relationshipType) => {
+        this.services.rest.findRelationshipTypeByCode(this.services.constants.RelationshipTypeCode.OSP).subscribe((relationshipType) => {
             this.ospRelationshipType = relationshipType;
         });
 
@@ -108,10 +108,17 @@ export class AddNotificationComponent extends AbstractPageComponent {
             for (let identity of party.identities) {
                 if (identity.value.rawIdValue === abn) {
                     this.delegateIdentityRef = identity;
+                    this.listServicesByIdValue(identity.value.idValue)
                 }
             }
         }, (err) => {
             this.addGlobalMessages(['Cannot match ABN']);
         });
+    }
+
+    public listServicesByIdValue(idValue: string) {
+        var page = 0;
+        this.services.rest.searchRolesByIdentity(idValue).subscribe((party) => {
+
     }
 }
