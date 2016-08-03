@@ -1,7 +1,106 @@
-<page-header [identity]="identity"
-             tab="MANAGE_NOTIFICATIONS"
-             [messages]="globalMessages"></page-header>
 
-<div class="centered">
-    <p class="todo">Add OSP notification relationship for business in focus</p>
+<form [formGroup]="form">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>Add notification</h4>
+        </div>
+        <div class="panel-body">
+            <h4>Enter the ABN of the software provider:</h4>
+            <div *ngIf="!delegateParty" class="form-group">
+                <div class="col-md-12">
+                    <h4>ABN*</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control col-md-4" [formControl]="form.controls['abn']"/>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-secondary align-center" (click)="findByABN()">Check</button>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <div *ngIf="delegateParty && delegateIdentityRef">
+                <div class="col-md-12">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h4>ABN:</h4>
+                            {{delegateIdentityRef.value.rawIdValue}}
+                        </div>
+                        <div class="col-md-4">
+                            <h4>Business name:</h4>
+                            {{delegateIdentityRef.value.profile.name.unstructuredName}}
+                        </div>
+                    </div>
+                    <br/>
+                    <button class="btn btn-secondary align-center" (click)="resetDelegate()">Change ABN</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>Notification Details</h4>
+        </div>
+        <div class="panel-body">
+            <p>TODO -- software id</p>
+
+
+
+
+            <div class="panel-body">
+                        <div class="form-group col-md-4" [class.has-error]="!form.controls['startDate'].valid">
+                            <h4>Start date*</h4>
+                            <p-calendar
+                                    placeholder="Start date ..."
+                                    inputStyleClass="form-control"
+                                    [formControl]="form.controls['startDate']"
+                                    dateFormat="yy-mm-dd"></p-calendar>
+                        </div>
+                        <div class="form-group col-md-4"
+                        [class.has-error]="!form.controls['endDate'].valid || form.hasError('isEndDateBeforeStartDate')">
+                            <h4>End date</h4>
+                            <p-calendar
+                                    placeholder="End date ..."
+                                    inputStyleClass="form-control"
+                                    [disabled]='form.controls["noEndDate"].value'
+                                    [formControl]="form.controls['endDate']"
+                                    dateFormat="yy-mm-dd"></p-calendar>
+                        </div>
+                        <div class="form-group col-md-4">
+                            <h4>No end date</h4>
+                            <input [formControl]='form.controls["noEndDate"]' class="big-checkbox" type="checkbox" name="noEndDate" value="false">
+                        </div>
+                </div>
+            </div>
+
+        <p>TODO -- agencies</p>
+
+        </div>
+    </div>
+
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>Declaration</h4>
+        </div>
+        <div class="panel-body">
+            TODO
+        </div>
+    </div>
+
+</form>
+
+<br/>
+<br/>
+
+<div id="action-button-bar">
+    <div class="pull-left">
+        <a class="btn btn-default align-center" (click)="back()">← Back</a>
+    </div>
+    <div class="pull-right">
+        <a class="btn btn-primary align-center" (click)="save()">Save →</a>
+    </div>
 </div>

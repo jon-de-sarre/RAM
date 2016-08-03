@@ -61,6 +61,8 @@ export class AgencySelectBusinessComponent extends AbstractPageComponent {
      */
     public selectBusiness(business: ABRentry) {
         this.business = business;
+        // remove this if you want a next button
+        this.acceptBusiness();
     }
 
     /*
@@ -92,6 +94,6 @@ export class AgencySelectBusinessComponent extends AbstractPageComponent {
      * inner business-select component.
      */
     public displayErrors(errors:string[]) {
-        alert(errors.join('\n'));
+        this.addGlobalMessages(errors);
     }
 }

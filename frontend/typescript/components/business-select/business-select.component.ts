@@ -70,6 +70,11 @@ export class BusinessSelectComponent {
      * will occur due to server, database or external ABR api faults.
      */
     @Output('error') public errorEvent = new EventEmitter<string[]>();
+    /*
+     * An event sent every time the operator changes something. No data
+     * is returned. It is so that a page can clear old error messages
+     */
+    @Output('editing') public editing = new EventEmitter();
 
     constructor(private rest: RAMRestService) {}
 
@@ -134,5 +139,8 @@ export class BusinessSelectComponent {
      * Triggered bu the component if the user changes the data in the input
      * field. Records whether a new search is to be initiated on tab or enter.
      */
-    public valueChange() { this.new_search = true; }
+    public valueChange() {
+        this.new_search = true;
+        this.editing.emit(null);
+    }
 }

@@ -1,32 +1,50 @@
+// import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
+import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FormControl, FORM_DIRECTIVES} from '@angular/forms';
+import {RAMNgValidators} from '../../commons/ram-ng-validators';
+import {Utils} from '../../../../commons/ram-utils';
+import {Calendar} from 'primeng/primeng';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
 import {RAMServices} from '../../services/ram-services';
 
 import {
-    IIdentity
+    IIdentity,
+    IParty,
+    IHrefValue
 } from '../../../../commons/RamAPI';
 
 @Component({
     selector: 'ram-osp-notification-add',
     templateUrl: 'add-notification.component.html',
     directives: [
+        REACTIVE_FORM_DIRECTIVES,
+        FORM_DIRECTIVES,
         ROUTER_DIRECTIVES,
-        PageHeaderSPSComponent
+        PageHeaderSPSComponent,
+        Calendar
     ]
 })
 
 export class AddNotificationComponent extends AbstractPageComponent {
 
     public idValue: string;
+    public delegateParty: IParty;
+    public delegateIdentityRef: IHrefValue<IIdentity>;
+    public startDate: Date;
+    public endDate: Date;
+    public noEndDate: boolean;
 
     public identity: IIdentity;
 
+    public form: FormGroup;
+
     constructor(route: ActivatedRoute,
                 router: Router,
-                services: RAMServices) {
+                services: RAMServices,
+                private _fb: FormBuilder) {
         super(route, router, services);
         this.setBannerTitle('Software Provider Services');
     }
@@ -40,6 +58,62 @@ export class AddNotificationComponent extends AbstractPageComponent {
             this.identity = identity;
         });
 
+        // forms
+        this.form = this._fb.group({
+            abn: '',
+            'startDate': [this.startDate,
+                Validators.compose([Validators.required, RAMNgValidators.dateFormatValidator])],
+            'endDate': [this.endDate,
+                Validators.compose([RAMNgValidators.dateFormatValidator])],
+            'noEndDate': [this.noEndDate]
+        }, { validator: Validators.compose([this._isDateBefore('startDate', 'endDate')]) });
+
     }
 
+    public back() {
+        this.services.route.goToNotificationsPage(this.idValue);
+    }
+
+    // todo to be implemented
+    public save() {
+        this.clearGlobalMessages();
+        alert('TODO: Not yet implemented');
+    }
+
+    public resetDelegate() {
+        this.delegateParty = null;
+        this.delegateIdentityRef = null;
+    }
+
+    public findByABN() {
+        const abn = this.form.controls['abn'].value;
+        this.clearGlobalMessages();
+
+        this.services.rest.findPartyByABN(abn).subscribe((party) => {
+
+            // TODO check party has OSR role
+
+            this.delegateParty = party;
+            for (let identity of party.identities) {
+                if (identity.value.rawIdValue === abn) {
+                    this.delegateIdentityRef = identity;
+                }
+            }
+        }, (err) => {
+            this.addGlobalMessages(['Cannot match ABN']);
+        });
+    }
+
+    private _isDateBefore = (startDateCtrlName: string, endDateCtrlName: string) => {
+        return (cg: FormGroup) => {
+            let startDate = Utils.parseDate((cg.controls[startDateCtrlName] as FormControl).value);
+            let endDate = Utils.parseDate((cg.controls[endDateCtrlName] as FormControl).value);
+
+            return (startDate !== null && endDate !== null && startDate.getTime() > endDate.getTime()) ? {
+                isEndDateBeforeStartDate: {
+                    valid: false
+                }
+            } : null;
+        };
+    }
 }
