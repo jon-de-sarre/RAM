@@ -1,7 +1,7 @@
 // import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
-import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES} from '@angular/forms';
+import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES, FormControl} from '@angular/forms';
 import {Calendar} from 'primeng/primeng';
 import {AccessPeriodComponent, AccessPeriodComponentData} from '../../components/access-period/access-period.component';
 
@@ -93,13 +93,14 @@ export class AddNotificationComponent extends AbstractPageComponent {
         this.services.route.goToNotificationsPage(this.idValue);
     }
 
-    // todo to be implemented
     public save() {
 
         this.clearGlobalMessages();
 
         let validationOk = true;
         let ssids = this.getSSIDs();
+        const agencyServiceCodes = this.form.controls['agencyServices'].value;
+        let accepted = this.form.controls['accepted'].value;
 
         if (!this.delegateIdentityRef) {
             validationOk = false;
@@ -120,6 +121,14 @@ export class AddNotificationComponent extends AbstractPageComponent {
                 validationOk = false;
                 this.addGlobalMessage('Please specify valid software ids.');
             }
+            if (!agencyServiceCodes || agencyServiceCodes.length === 0) {
+                validationOk = false;
+                this.addGlobalMessage('Please specify at least one agency service.');
+            }
+            if (!accepted) {
+                validationOk = false;
+                this.addGlobalMessage('Please accept the declaration.');
+            }
         }
 
         if (validationOk && this.ospRelationshipTypeRef) {
@@ -132,7 +141,6 @@ export class AddNotificationComponent extends AbstractPageComponent {
                     this.ospRelationshipTypeRef, this.services.constants.RelationshipTypeAttributeCode.SSID)));
 
             // agency services
-            const agencyServiceCodes = this.form.controls['agencyServices'].value;
             attributes.push(new RelationshipAttribute(agencyServiceCodes,
                 this.services.model.getRelationshipTypeAttributeNameRef(
                     this.ospRelationshipTypeRef, this.services.constants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST)));
@@ -169,8 +177,12 @@ export class AddNotificationComponent extends AbstractPageComponent {
     }
 
     public resetDelegate() {
+        console.log('AM AT RESET');
         this.delegateParty = null;
         this.delegateIdentityRef = null;
+        (this.form.controls['abn'] as FormControl).updateValue('');
+        (this.form.controls['agencyServices'] as FormControl).updateValue([]);
+        (this.form.controls['accepted'] as FormControl).updateValue(false);
     }
 
     public findByABN() {
