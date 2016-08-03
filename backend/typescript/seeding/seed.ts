@@ -98,10 +98,10 @@ import {JensCateringRelationshipsSeeder} from './seed-jenscatering-relationships
 import {AgencyUsersSeeder} from './seed-agency-users';
 
 import {LDIFExporter} from './ldifExporter';
-import {EdTechRolesSeeder} from './seed-edtech-roles';
+import {EdTechOspRolesSeeder} from './seed-edtechosp-roles';
 import {EdOanerIdentitySeeder} from './seed-edoaner-identity';
-import {EdTechIdentitySeeder} from './seed-edtech-identity';
-import {EdTechRelationshipsSeeder} from './seed-edtech-relationships';
+import {EdTechOSPIdentitySeeder} from './seed-edtechosp-identity';
+import {EdTechOspRelationshipsSeeder} from './seed-edtechosp-relationships';
 import {TrevorTrainingIdentitySeeder} from './seed-trevortraining-identity';
 import {TrevorTrainingRelationshipsSeeder} from './seed-trevortraining-relationships';
 import {TrungTrainingIdentitySeeder} from './seed-trungtraining-identity';
@@ -186,10 +186,10 @@ export class Seeder {
     public static edoaner_identity_1:IIdentity;
 
     // ABN identity
-    public static edtech_name:IName;
-    public static edtech_profile:IProfile;
-    public static edtech_party:IParty;
-    public static edtech_identity_1:IIdentity;
+    public static edtechosp_name:IName;
+    public static edtechosp_profile:IProfile;
+    public static edtechosp_party:IParty;
+    public static edtechosp_identity_1:IIdentity;
 
     // ABN identity
     public static trevortraining_name:IName;
@@ -252,11 +252,12 @@ export class Seeder {
     // relationships
     public static cakerybakery_and_jennifermaxims_relationship:IRelationship;
     public static jenscatering_and_jennifermaxims_relationship:IRelationship;
+    public static jenscatering_and_edtech_relationship:IRelationship;
     public static jenscatering_and_johnmaxims_relationship:IRelationship;
     public static jenscatering_and_robertsmith_relationship:IRelationship;
     public static jenscatering_and_fredjohnson_relationship:IRelationship;
     public static jmfoodpackaging_and_jenscatering_relationship:IRelationship;
-    public static edtech_and_edoaner_relationship:IRelationship;
+    public static edtechosp_and_edoaner_relationship:IRelationship;
     public static trevortraining_and_edtech_relationship:IRelationship;
     public static trungtraining_and_edtech_relationship:IRelationship;
 
@@ -741,7 +742,7 @@ export class Seeder {
                 longDecodeText: 'Selected Services for OSP',
                 startDate: now,
                 domain: RelationshipAttributeNameDomain.SelectMulti.code,
-                classifier: RelationshipAttributeNameClassifier.Other.code,
+                classifier: RelationshipAttributeNameClassifier.Permission.code,
                 category: ospServices_category,
                 purposeText: 'Selected Services for OSP',
                 permittedValues: null
@@ -1029,7 +1030,7 @@ export class Seeder {
             // identities
             .then(BobSmithIdentitySeeder.load)
             .then(EdOanerIdentitySeeder.load)
-            .then(EdTechIdentitySeeder.load)
+            .then(EdTechOSPIdentitySeeder.load)
             .then(CakeryBakeryIdentitySeeder.load)
             .then(JenniferMaximsIdentitySeeder.load)
             .then(JohnMaximsIdentitySeeder.load)
@@ -1042,12 +1043,12 @@ export class Seeder {
             .then(CakeryBakeryRelationshipsSeeder.load)
             .then(JensCateringRelationshipsSeeder.load)
             .then(JMFoodPackagingRelationshipsSeeder.load)
-            .then(EdTechRelationshipsSeeder.load)
+            .then(EdTechOspRelationshipsSeeder.load)
             .then(TrevorTrainingRelationshipsSeeder.load)
             .then(TrungTrainingRelationshipsSeeder.load)
 
             // roles
-            .then(EdTechRolesSeeder.load)
+            .then(EdTechOspRolesSeeder.load)
 
             // agency users
             .then(Seeder.exportAgencyUsers)

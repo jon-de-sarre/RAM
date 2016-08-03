@@ -6,7 +6,7 @@ import {RoleStatus} from '../models/role.model';
 
 /* tslint:disable:no-any */
 /* tslint:disable:max-func-body-length */
-export class EdTechRolesSeeder {
+export class EdTechOspRolesSeeder {
 
     private static async load_edTech() {
         try {
@@ -21,12 +21,12 @@ export class EdTechRolesSeeder {
 
                 Seeder.edTech_osp_relationship = await Seeder.createRoleModel({
                     roleType: Seeder.osp_roleType,
-                    party: Seeder.edtech_party,
+                    party: Seeder.edtechosp_party,
                     startTimestamp: new Date(),
                     status: RoleStatus.Active.code,
                     attributes: [
                         await Seeder.createRoleAttributeModel({
-                            value: 'mySSID',
+                            value: true,
                             attributeName: Seeder.ssid_roleAttributeName
                         } as any),
                         await Seeder.createRoleAttributeModel({
@@ -62,7 +62,7 @@ export class EdTechRolesSeeder {
         }
     }
     public static async load() {
-        await EdTechRolesSeeder.load_edTech();
+        await EdTechOspRolesSeeder.load_edTech();
     }
 
 }

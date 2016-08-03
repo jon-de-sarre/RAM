@@ -6,12 +6,12 @@ import {RelationshipStatus} from '../models/relationship.model';
 
 /* tslint:disable:no-any */
 /* tslint:disable:max-func-body-length */
-export class EdTechRelationshipsSeeder {
+export class EdTechOspRelationshipsSeeder {
 
     private static async load_edtech_associate() {
         try {
 
-            Seeder.log('\nInserting Sample Relationship - Ed Tech Pty Ltd / Ed Oaner:\n'.underline);
+            Seeder.log('\nInserting Sample Relationship - Ed Tech OSP Pty Ltd / Ed Oaner:\n'.underline);
 
             if (!conf.devMode) {
 
@@ -19,10 +19,10 @@ export class EdTechRelationshipsSeeder {
 
             } else {
 
-                Seeder.edtech_and_edoaner_relationship = await Seeder.createRelationshipModel({
+                Seeder.edtechosp_and_edoaner_relationship = await Seeder.createRelationshipModel({
                     relationshipType: Seeder.associate_delegate_relationshipType,
-                    subject: Seeder.edtech_party,
-                    subjectNickName: Seeder.edtech_name,
+                    subject: Seeder.edtechosp_party,
+                    subjectNickName: Seeder.edtechosp_name,
                     delegate: Seeder.edoaner_party,
                     delegateNickName: Seeder.edoaner_name,
                     startTimestamp: new Date(),
@@ -58,7 +58,7 @@ export class EdTechRelationshipsSeeder {
     }
 
     public static async load() {
-        await EdTechRelationshipsSeeder.load_edtech_associate();
+        await EdTechOspRelationshipsSeeder.load_edtech_associate();
     }
 
 }

@@ -8,12 +8,12 @@ import {IdentityType, IdentityPublicIdentifierScheme} from '../models/identity.m
 
 /* tslint:disable:no-any */
 /* tslint:disable:max-func-body-length */
-export class EdTechIdentitySeeder {
+export class EdTechOSPIdentitySeeder {
 
     public static async load() {
         try {
 
-            Seeder.log('\nInserting Sample Identity - Ed Tech Pty Ltd:\n'.underline);
+            Seeder.log('\nInserting Sample Identity - Ed Tech OSP Pty Ltd:\n'.underline);
 
             if (!conf.devMode) {
 
@@ -21,29 +21,29 @@ export class EdTechIdentitySeeder {
 
             } else {
 
-                Seeder.edtech_name = await Seeder.createNameModel({
-                    unstructuredName: 'Ed Tech Pty Ltd'
+                Seeder.edtechosp_name = await Seeder.createNameModel({
+                    unstructuredName: 'Ed Tech OSP Pty Ltd'
                 } as any);
 
-                Seeder.edtech_profile = await Seeder.createProfileModel({
+                Seeder.edtechosp_profile = await Seeder.createProfileModel({
                     provider: ProfileProvider.ABR.code,
-                    name: Seeder.edtech_name,
+                    name: Seeder.edtechosp_name,
                     sharedSecrets: []
                 } as any);
 
-                Seeder.edtech_party = await Seeder.createPartyModel({
+                Seeder.edtechosp_party = await Seeder.createPartyModel({
                     partyType: PartyType.ABN.code
                 } as any);
 
                 Seeder.log('');
 
-                Seeder.edtech_identity_1 = await Seeder.createIdentityModel({
-                    rawIdValue: 'edtech_identity_1',
+                Seeder.edtechosp_identity_1 = await Seeder.createIdentityModel({
+                    rawIdValue: 'EdTechABN',
                     identityType: IdentityType.PublicIdentifier.code,
                     defaultInd: true,
                     publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.code,
-                    profile: Seeder.edtech_profile,
-                    party: Seeder.edtech_party
+                    profile: Seeder.edtechosp_profile,
+                    party: Seeder.edtechosp_party
                 } as any);
 
             }
