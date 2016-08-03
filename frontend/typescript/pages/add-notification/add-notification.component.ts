@@ -223,7 +223,5 @@ export class AddNotificationComponent extends AbstractPageComponent {
         } else {
             agencyServices.splice(index, 1);
         }
-
-        console.log("agencyServices = ", agencyServices);
     }
 }
