@@ -15,7 +15,12 @@ import {RelationshipAttributeModel, IRelationshipAttribute} from './relationship
 import {RelationshipAttributeNameModel} from './relationshipAttributeName.model';
 import {RoleTypeModel} from './roleType.model';
 import {IRole, RoleModel, RoleStatus} from './role.model';
+import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
 import {IAgencyUser} from './agencyUser.model';
+import {RoleAttributeNameModel} from './roleAttributeName.model';
+
+/* tslint:disable:no-unused-variable */
+const _RoleAttributeModel = RoleAttributeModel;
 
 // enums, utilities, helpers ..........................................................................................
 
@@ -149,16 +154,18 @@ PartySchema.method('addRelationship', async (dto: IInvitationCodeRelationshipAdd
 
 });
 
-PartySchema.method('addRole', async function (role: RoleDTO, agencyUser: IAgencyUser) {
+PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAgencyUser) {
+
+    console.log('roleDTO', JSON.stringify(roleDTO, null, 4));
 
     const now = new Date();
-    const roleTypeCode = role.roleType.value.code;
+    const roleTypeCode = roleDTO.roleType.value.code;
     const roleType = await RoleTypeModel.findByCodeInDateRange(roleTypeCode, now);
     Assert.assertTrue(roleType !== null, 'Role type invalid');
 
-    let theRole:IRole = await RoleModel.findByRoleTypeAndParty(roleType, this);
-    if (theRole === null) {
-        theRole = await RoleModel.create({
+    let role:IRole = await RoleModel.findByRoleTypeAndParty(roleType, this);
+    if (role === null) {
+        role = await RoleModel.create({
             roleType: roleType,
             party: this,
             startTimestamp: now,
@@ -167,11 +174,9 @@ PartySchema.method('addRole', async function (role: RoleDTO, agencyUser: IAgency
         });
     }
 
-    theRole.updateOrCreateAttribute('CREATOR_ID', agencyUser.id);
-    theRole.updateOrCreateAttribute('CREATOR_NAME', agencyUser.displayName);
-    theRole.updateOrCreateAttribute('CREATOR_AGENCY', agencyUser.agency);
+    const roleAttributes: IRoleAttribute[] = [];
 
-    for (let roleAttribute of role.attributes) {
+    for (let roleAttribute of roleDTO.attributes) {
         const roleAttributeValue = roleAttribute.value;
         const roleAttributeNameCode = roleAttribute.attributeName.value.code;
         const roleAttributeNameCategory = roleAttribute.attributeName.value.category;
@@ -180,31 +185,61 @@ PartySchema.method('addRole', async function (role: RoleDTO, agencyUser: IAgency
         console.log('roleAttributeNameCode=' + roleAttributeNameCode);
         console.log('roleAttributeNameCategory=' + roleAttributeNameCategory);
 
+        let shouldSave = false;
         if (roleAttribute.attributeName.value.classifier === 'AGENCY_SERVICE') {
-            let hasPermission: boolean = false; // agencyUser.hasProgramRole('');
             for (let programRole of agencyUser.programRoles) {
-                console.log('programRole.program=' + programRole.program);
-                console.log('programRole.role=' + programRole.role);
-
                 if (programRole.role === 'ROLE_ADMIN' && programRole.program === roleAttributeNameCategory) {
-                    hasPermission = true;
+                    shouldSave = true;
                     break;
                 }
             }
-            console.log('hasPermission=' + hasPermission);
-            if (hasPermission) {
-                theRole.updateOrCreateAttribute(roleAttributeNameCode, roleAttributeValue);
-            }
         } else {
-            theRole.updateOrCreateAttribute(roleAttributeNameCode, roleAttributeValue);
+            shouldSave = true;
         }
+
+        if (shouldSave) {
+            const roleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(roleAttributeNameCode);
+            if (roleAttributeName) {
+                roleAttributes.push(await RoleAttributeModel.create({
+                    value: roleAttributeValue,
+                    attributeName: roleAttributeName
+                }));
+            }
+        }
+
+        const creatorIdRoleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_ID');
+        if (creatorIdRoleAttributeName) {
+            roleAttributes.push(await RoleAttributeModel.create({
+                value: agencyUser.id,
+                attributeName: creatorIdRoleAttributeName
+            }));
+        }
+
+        const creatorNameRoleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_NAME');
+        if (creatorNameRoleAttributeName) {
+            roleAttributes.push(await RoleAttributeModel.create({
+                value: agencyUser.displayName,
+                attributeName: creatorNameRoleAttributeName
+            }));
+        }
+
+        const creatorAgencyRoleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_AGENCY');
+        if (creatorAgencyRoleAttributeName) {
+            roleAttributes.push(await RoleAttributeModel.create({
+                value: agencyUser.agency,
+                attributeName: creatorAgencyRoleAttributeName
+            }));
+        }
+
+        role.attributes = roleAttributes;
+        role.saveAttributes();
 
         console.log('----');
 
     }
 
-    theRole.saveAttributes();
-    return Promise.resolve(theRole);
+    role.saveAttributes();
+    return Promise.resolve(role);
 
 });
 
