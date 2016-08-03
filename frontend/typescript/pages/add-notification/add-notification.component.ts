@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
-import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
+import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
+import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
@@ -13,6 +14,8 @@ import {
     selector: 'ram-osp-notification-add',
     templateUrl: 'add-notification.component.html',
     directives: [
+        REACTIVE_FORM_DIRECTIVES,
+        FORM_DIRECTIVES,
         ROUTER_DIRECTIVES,
         PageHeaderSPSComponent
     ]
@@ -24,9 +27,12 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
     public identity: IIdentity;
 
+    public form: FormGroup;
+
     constructor(route: ActivatedRoute,
                 router: Router,
-                services: RAMServices) {
+                services: RAMServices,
+                private _fb: FormBuilder) {
         super(route, router, services);
         this.setBannerTitle('Software Provider Services');
     }
@@ -38,6 +44,10 @@ export class AddNotificationComponent extends AbstractPageComponent {
         // identity in focus
         this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
             this.identity = identity;
+        });
+
+        // forms
+        this.form = this._fb.group({
         });
 
     }
