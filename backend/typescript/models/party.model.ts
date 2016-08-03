@@ -15,7 +15,12 @@ import {RelationshipAttributeModel, IRelationshipAttribute} from './relationship
 import {RelationshipAttributeNameModel} from './relationshipAttributeName.model';
 import {RoleTypeModel} from './roleType.model';
 import {IRole, RoleModel, RoleStatus} from './role.model';
+import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
 import {IAgencyUser} from './agencyUser.model';
+import {RoleAttributeNameModel} from './roleAttributeName.model';
+
+/* tslint:disable:no-unused-variable */
+const _RoleAttributeModel = RoleAttributeModel;
 
 // enums, utilities, helpers ..........................................................................................
 
@@ -149,16 +154,16 @@ PartySchema.method('addRelationship', async (dto: IInvitationCodeRelationshipAdd
 
 });
 
-PartySchema.method('addRole', async function (role: RoleDTO, agencyUser: IAgencyUser) {
+PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAgencyUser) {
 
     const now = new Date();
-    const roleTypeCode = role.roleType.value.code;
+    const roleTypeCode = roleDTO.roleType.value.code;
     const roleType = await RoleTypeModel.findByCodeInDateRange(roleTypeCode, now);
     Assert.assertTrue(roleType !== null, 'Role type invalid');
 
-    let theRole:IRole = await RoleModel.findByRoleTypeAndParty(roleType, this);
-    if (theRole === null) {
-        theRole = await RoleModel.create({
+    let role:IRole = await RoleModel.findByRoleTypeAndParty(roleType, this);
+    if (role === null) {
+        role = await RoleModel.create({
             roleType: roleType,
             party: this,
             startTimestamp: now,
@@ -167,44 +172,59 @@ PartySchema.method('addRole', async function (role: RoleDTO, agencyUser: IAgency
         });
     }
 
-    theRole.updateOrCreateAttribute('CREATOR_ID', agencyUser.id);
-    theRole.updateOrCreateAttribute('CREATOR_NAME', agencyUser.displayName);
-    theRole.updateOrCreateAttribute('CREATOR_AGENCY', agencyUser.agency);
+    const roleAttributes: IRoleAttribute[] = [];
 
-    for (let roleAttribute of role.attributes) {
+    let processAttribute = async (code: string, value: string, roleAttributes: IRoleAttribute[], role: IRole) => {
+        const roleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(code);
+        if (roleAttributeName) {
+            const filteredRoleAttributes = role.attributes.filter((item) => {
+                return item.attributeName.code === code;
+            });
+            if (filteredRoleAttributes.length === 0) {
+                roleAttributes.push(await RoleAttributeModel.create({
+                    value: value,
+                    attributeName: roleAttributeName
+                }));
+            } else {
+                const filteredRoleAttribute = filteredRoleAttributes[0];
+                filteredRoleAttribute.value = value;
+                await filteredRoleAttribute.save();
+                roleAttributes.push(filteredRoleAttribute);
+            }
+        }
+    };
+
+    await processAttribute('CREATOR_ID', agencyUser.id, roleAttributes, role);
+    await processAttribute('CREATOR_NAME', agencyUser.displayName, roleAttributes, role);
+    await processAttribute('CREATOR_AGENCY', agencyUser.agency, roleAttributes, role);
+
+    for (let roleAttribute of roleDTO.attributes) {
         const roleAttributeValue = roleAttribute.value;
         const roleAttributeNameCode = roleAttribute.attributeName.value.code;
         const roleAttributeNameCategory = roleAttribute.attributeName.value.category;
 
-        console.log('roleAttributeValue=' + roleAttributeValue);
-        console.log('roleAttributeNameCode=' + roleAttributeNameCode);
-        console.log('roleAttributeNameCategory=' + roleAttributeNameCategory);
-
+        let shouldSave = false;
         if (roleAttribute.attributeName.value.classifier === 'AGENCY_SERVICE') {
-            let hasPermission: boolean = false; // agencyUser.hasProgramRole('');
             for (let programRole of agencyUser.programRoles) {
-                console.log('programRole.program=' + programRole.program);
-                console.log('programRole.role=' + programRole.role);
-
                 if (programRole.role === 'ROLE_ADMIN' && programRole.program === roleAttributeNameCategory) {
-                    hasPermission = true;
+                    shouldSave = true;
                     break;
                 }
             }
-            console.log('hasPermission=' + hasPermission);
-            if (hasPermission) {
-                theRole.updateOrCreateAttribute(roleAttributeNameCode, roleAttributeValue);
-            }
         } else {
-            theRole.updateOrCreateAttribute(roleAttributeNameCode, roleAttributeValue);
+            shouldSave = true;
         }
 
-        console.log('----');
-
+        if (shouldSave) {
+            await processAttribute(roleAttributeNameCode, roleAttributeValue, roleAttributes, role);
+        }
     }
 
-    theRole.saveAttributes();
-    return Promise.resolve(theRole);
+    role.attributes = roleAttributes;
+
+    role.saveAttributes();
+
+    return Promise.resolve(role);
 
 });
 
