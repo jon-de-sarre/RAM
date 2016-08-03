@@ -4,7 +4,7 @@ import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
-import {SearchResultPaginationDelegate}
+import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
     from '../../components/search-result-pagination/search-result-pagination.component';
 import {RAMServices} from '../../services/ram-services';
 
@@ -13,6 +13,7 @@ import {
     IParty,
     IIdentity,
     IRelationship,
+    IRelationshipStatus,
     IHrefValue,
     FilterParams
 } from '../../../../commons/RamAPI';
@@ -22,7 +23,8 @@ import {
     templateUrl: 'notifications.component.html',
     directives: [
         ROUTER_DIRECTIVES,
-        PageHeaderSPSComponent
+        PageHeaderSPSComponent,
+        SearchResultPaginationComponent
     ]
 })
 
@@ -33,6 +35,7 @@ export class NotificationsComponent extends AbstractPageComponent {
     public page: number;
 
     public relationships$: Observable<ISearchResult<IHrefValue<IRelationship>>>;
+    public relationshipStatusRefs: IHrefValue<IRelationshipStatus>[];
 
     public canReturnToDashboard: boolean = false;
 
@@ -63,9 +66,10 @@ export class NotificationsComponent extends AbstractPageComponent {
         this.filter.add('relationshipTypeCategory', this.services.constants.RelationshipTypeCategory.NOTIFICATION);
 
         // message
-        // const msg = params.query['msg'];
-
-        // TODO
+        const msg = params.query['msg'];
+        if (msg === 'CREATED_RELATIONSHIP') {
+            this.addGlobalMessage('A notification has been created.');
+        }
 
         // identity in focus
         this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
@@ -77,6 +81,11 @@ export class NotificationsComponent extends AbstractPageComponent {
         //     this.canReturnToDashboard = partyRefs.totalCount > 1;
         // });
         this.canReturnToDashboard = true; // TODO compute this properly
+
+        // relationship statuses
+        this.services.rest.listRelationshipStatuses().subscribe((relationshipStatusRefs) => {
+            this.relationshipStatusRefs = relationshipStatusRefs;
+        });
 
         // relationships
         this.subjectGroupsWithRelationships = [];
@@ -117,6 +126,21 @@ export class NotificationsComponent extends AbstractPageComponent {
     public goToBusinessesPage() {
         this.services.route.goToBusinessesPage();
     }
+
+    public goToAddNotificationPage() {
+        this.services.route.goToAddNotificationPage(this.idValue);
+    }
+
+    // todo not yet implemented
+    public goToNotificationPage(relationshipRef: IHrefValue<IRelationship>) {
+        alert('TODO: Not yet implemented');
+    }
+
+    // todo what is the logic here?
+    public isAddNotificationEnabled() {
+        return true;
+    }
+
 }
 
 class SubjectGroupWithRelationships {

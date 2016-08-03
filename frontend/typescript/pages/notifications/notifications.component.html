@@ -2,36 +2,22 @@
              tab="MANAGE_NOTIFICATIONS"
              [messages]="globalMessages"></page-header>
 
-<div class="centered">
-    <p class="todo">List OSP notification relationships for business in focus</p>
-</div>
-
-
-<br/>
-
 <table class="table">
     <thead>
         <tr>
             <th><h4>My software service subscriptions</h4></th>
             <th class="col-md-2"><h4>Status</h4></th>
             <th class="col-md-2"></th>
+            <th class="col-md-2"><a class="btn btn-primary align-center" [class.disabled]="!isAddNotificationEnabled()" (click)="goToAddNotificationPage()">Add Notification</a></th>
         </tr>
     </thead>
     <tbody *ngIf="!isLoading">
         <template ngFor let-item="$implicit" [ngForOf]="subjectGroupsWithRelationships">
-            <tr class="relationship-subject-heading">
-                <td colspan="5">
-                    <div>
-                        <h4>{{services.model.displayNameForParty(item.subjectRef.value)}}</h4>
-                        <h5>{{services.model.abnLabelForParty(item.subjectRef.value)}} /
-                            {{services.model.partyTypeLabelForParty(item.subjectRef.value)}}</h5>
-                    </div>
-                </td>
-            </tr>
             <tr *ngFor="let relationshipRef of item.relationshipRefs">
                 <td>{{services.model.displayName(relationshipRef.value.delegateNickName)}}</td>
                 <td>{{services.model.relationshipStatusLabel(relationshipStatusRefs, relationshipRef.value.status)}}</td>
                 <td></td>
+                <td><a class="btn btn-sm btn-secondary align-center" (click)="goToNotificationPage(relationshipRef)">Manage <span class="caret"></span></a></td>
             </tr>
         </template>
     </tbody>
@@ -46,11 +32,6 @@
         [searchResult]="relationships$|async"
         [delegate]="paginationDelegate">
 </search-result-pagination>
-
-<br/>
-<br/>
-
-
 
 <div *ngIf="canReturnToDashboard">
     <div id="action-button-bar">
