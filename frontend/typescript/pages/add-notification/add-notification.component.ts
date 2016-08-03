@@ -118,7 +118,9 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
     public listServicesByIdValue(idValue: string) {
         var page = 0;
-        this.services.rest.searchRolesByIdentity(idValue).subscribe((party) => {
+        this.services.rest.searchRolesByIdentity(idValue, page).subscribe((party) => {
+
+        });
 
     }
 }
