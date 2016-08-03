@@ -95,6 +95,10 @@ export class AddNotificationComponent extends AbstractPageComponent {
         this.clearGlobalMessages();
         if (!this.delegateIdentityRef) {
             this.addGlobalMessage('Please select a software provider to link to.');
+        } else if (!this.accessPeriod.startDate) {
+            this.addGlobalMessage('Please specify a start date.');
+        } else if (!this.accessPeriod.endDate && !this.accessPeriod.noEndDate) {
+            this.addGlobalMessage('Please specify a end date.');
         } else if (this.ospRelationshipTypeRef) {
             let attributes: IRelationshipAttribute[] = [];
             // todo set attributes
