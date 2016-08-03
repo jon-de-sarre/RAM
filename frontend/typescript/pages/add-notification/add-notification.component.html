@@ -2,12 +2,6 @@
              tab="MANAGE_NOTIFICATIONS"
              [messages]="globalMessages"></page-header>
 
-<div class="centered">
-    <p class="todo">WORK IN PROGRESS - Add OSP notification relationship for business in focus</p>
-</div>
-
-
-
 <form [formGroup]="form">
 
     <div class="panel panel-default">
@@ -15,7 +9,7 @@
             <h4>Add notification</h4>
         </div>
         <div class="panel-body">
-            <p>Enter the ABN of the software provider:</p>
+            <h4>Enter the ABN of the software provider:</h4>
             <div *ngIf="!delegateParty" class="form-group">
                 <div class="col-md-12">
                     <h4>ABN*</h4>
