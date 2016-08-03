@@ -113,7 +113,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
                 validationOk = false;
                 this.addGlobalMessage('Please specify a end date.');
             }
-            let notEmpty = (element) => {
+            let notEmpty = (element: string) => {
                 return element !== null && element !== undefined && element !== '';
             };
             if (!ssids || ssids.length === 0 || !ssids.every(notEmpty)) {
@@ -132,8 +132,10 @@ export class AddNotificationComponent extends AbstractPageComponent {
                     this.ospRelationshipTypeRef, this.services.constants.RelationshipTypeAttributeCode.SSID)));
 
             // agency services
-            // todo
-            // ...
+            const agencyServiceCodes = this.form.controls['agencyServices'].value;
+            attributes.push(new RelationshipAttribute(agencyServiceCodes,
+                this.services.model.getRelationshipTypeAttributeNameRef(
+                    this.ospRelationshipTypeRef, this.services.constants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST)));
 
             // build relationship
             let relationship = new Relationship(

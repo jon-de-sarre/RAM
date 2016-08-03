@@ -17,7 +17,8 @@ export class RAMConstantsService {
     };
 
     public RelationshipTypeAttributeCode = {
-        SSID: 'SSID'
+        SSID: 'SSID',
+        SELECTED_GOVERNMENT_SERVICES_LIST: 'SELECTED_GOVERNMENT_SERVICES_LIST',
     };
 
 }
