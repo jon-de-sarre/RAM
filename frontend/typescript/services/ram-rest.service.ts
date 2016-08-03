@@ -216,6 +216,14 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
+    public createRelationship2(relationship: IRelationship): Observable<IRelationship> {
+        return this.http
+            .post(`/api/v1/relationship2`, JSON.stringify(relationship), {
+                headers: this.headersForJson()
+            })
+            .map(this.extractData);
+    }
+
     public searchRolesByIdentity(idValue: string,
                                  page: number): Observable<ISearchResult<IHrefValue<IRole>>> {
         return this.http

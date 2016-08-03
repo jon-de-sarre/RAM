@@ -153,8 +153,11 @@ export class AddNotificationComponent extends AbstractPageComponent {
             );
 
             // save relationship
-            alert('TODO: Not yet implemented');
-            console.log('relationship=' + relationship);
+            this.services.rest.createRelationship2(relationship).subscribe((role) => {
+                this.back();
+            }, (err) => {
+                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+            });
 
         }
 
