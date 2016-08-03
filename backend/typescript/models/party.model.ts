@@ -156,8 +156,6 @@ PartySchema.method('addRelationship', async (dto: IInvitationCodeRelationshipAdd
 
 PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAgencyUser) {
 
-    console.log('roleDTO', JSON.stringify(roleDTO, null, 4));
-
     const now = new Date();
     const roleTypeCode = roleDTO.roleType.value.code;
     const roleType = await RoleTypeModel.findByCodeInDateRange(roleTypeCode, now);
@@ -176,14 +174,34 @@ PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAge
 
     const roleAttributes: IRoleAttribute[] = [];
 
+    let processAttribute = async (code: string, value: string, roleAttributes: IRoleAttribute[], role: IRole) => {
+        const roleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(code);
+        if (roleAttributeName) {
+            const filteredRoleAttributes = role.attributes.filter((item) => {
+                return item.attributeName.code === code;
+            });
+            if (filteredRoleAttributes.length === 0) {
+                roleAttributes.push(await RoleAttributeModel.create({
+                    value: value,
+                    attributeName: roleAttributeName
+                }));
+            } else {
+                const filteredRoleAttribute = filteredRoleAttributes[0];
+                filteredRoleAttribute.value = value;
+                await filteredRoleAttribute.save();
+                roleAttributes.push(filteredRoleAttribute);
+            }
+        }
+    };
+
+    await processAttribute('CREATOR_ID', agencyUser.id, roleAttributes, role);
+    await processAttribute('CREATOR_NAME', agencyUser.displayName, roleAttributes, role);
+    await processAttribute('CREATOR_AGENCY', agencyUser.agency, roleAttributes, role);
+
     for (let roleAttribute of roleDTO.attributes) {
         const roleAttributeValue = roleAttribute.value;
         const roleAttributeNameCode = roleAttribute.attributeName.value.code;
         const roleAttributeNameCategory = roleAttribute.attributeName.value.category;
-
-        console.log('roleAttributeValue=' + roleAttributeValue);
-        console.log('roleAttributeNameCode=' + roleAttributeNameCode);
-        console.log('roleAttributeNameCategory=' + roleAttributeNameCategory);
 
         let shouldSave = false;
         if (roleAttribute.attributeName.value.classifier === 'AGENCY_SERVICE') {
@@ -198,47 +216,14 @@ PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAge
         }
 
         if (shouldSave) {
-            const roleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(roleAttributeNameCode);
-            if (roleAttributeName) {
-                roleAttributes.push(await RoleAttributeModel.create({
-                    value: roleAttributeValue,
-                    attributeName: roleAttributeName
-                }));
-            }
+            await processAttribute(roleAttributeNameCode, roleAttributeValue, roleAttributes, role);
         }
-
-        const creatorIdRoleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_ID');
-        if (creatorIdRoleAttributeName) {
-            roleAttributes.push(await RoleAttributeModel.create({
-                value: agencyUser.id,
-                attributeName: creatorIdRoleAttributeName
-            }));
-        }
-
-        const creatorNameRoleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_NAME');
-        if (creatorNameRoleAttributeName) {
-            roleAttributes.push(await RoleAttributeModel.create({
-                value: agencyUser.displayName,
-                attributeName: creatorNameRoleAttributeName
-            }));
-        }
-
-        const creatorAgencyRoleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_AGENCY');
-        if (creatorAgencyRoleAttributeName) {
-            roleAttributes.push(await RoleAttributeModel.create({
-                value: agencyUser.agency,
-                attributeName: creatorAgencyRoleAttributeName
-            }));
-        }
-
-        role.attributes = roleAttributes;
-        role.saveAttributes();
-
-        console.log('----');
-
     }
 
+    role.attributes = roleAttributes;
+
     role.saveAttributes();
+
     return Promise.resolve(role);
 
 });

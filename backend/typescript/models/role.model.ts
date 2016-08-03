@@ -198,7 +198,6 @@ RoleSchema.method('toDTO', async function () {
         this.status,
         await Promise.all<RoleAttributeDTO>(this.attributes.map(
             async (attribute: IRoleAttribute) => {
-                console.log('attribute=', JSON.stringify(attribute, null, 4));
                 return await attribute.toDTO();
             }))
     );

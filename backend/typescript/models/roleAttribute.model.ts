@@ -40,6 +40,7 @@ export interface IRoleAttribute extends mongoose.Document {
 
 /* tslint:disable:no-empty-interfaces */
 export interface IRoleAttributeModel extends mongoose.Model<IRoleAttribute> {
+
 }
 
 // instance methods ...................................................................................................
