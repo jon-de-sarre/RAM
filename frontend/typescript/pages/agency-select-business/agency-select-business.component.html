@@ -1,12 +1,17 @@
+<page-header [identity]="identity"
+             [messages]="globalMessages"
+             [giveAuthorisationsEnabled]="giveAuthorisationsEnabled"></page-header>
+
 <div class="centered">
     <business-select
         (dataChange)="selectBusiness($event)"
         (error)="displayErrors($event)"
+        (editing) ="clearGlobalMessages()"
     ></business-select>
-    <button class=" col-xs-6 col-sm-3 col-sm-offset-6 btn btn-primary"
+    <!-- button class=" col-xs-6 col-sm-3 col-sm-offset-6 btn btn-primary"
     [disabled]='!business' (click)="acceptBusiness()">
         Next →
-    </button>
+    </button-->
 
 </div>
 
