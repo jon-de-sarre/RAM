@@ -110,6 +110,13 @@ export class AddNotificationComponent extends AbstractPageComponent {
                 validationOk = false;
                 this.addGlobalMessage('Please specify a end date.');
             }
+            let notEmpty = (element) => {
+                return element !== null && element !== undefined && element !== '';
+            };
+            if (!ssids || ssids.length === 0 || !ssids.every(notEmpty)) {
+                validationOk = false;
+                this.addGlobalMessage('Please specify valid software ids.');
+            }
         }
 
         if (validationOk && this.ospRelationshipTypeRef) {
@@ -121,6 +128,10 @@ export class AddNotificationComponent extends AbstractPageComponent {
                 this.services.model.getRelationshipTypeAttributeNameRef(
                     this.ospRelationshipTypeRef, this.services.constants.RelationshipTypeAttributeCode.SSID)));
 
+            // agency services
+            // todo
+            // ...
+
             // build relationship
             let relationship = new Relationship(
                 [],
@@ -129,8 +140,8 @@ export class AddNotificationComponent extends AbstractPageComponent {
                 null,
                 this.delegateIdentityRef.value.party,
                 null,
-                new Date(),
-                null,
+                this.accessPeriod.startDate,
+                this.accessPeriod.endDate,
                 null,
                 null,
                 attributes
@@ -144,6 +155,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
     }
 
+    // todo nev can you please return this string[]
     public getSSIDs(): string[] {
         return [];
     }
@@ -177,7 +189,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
     }
 
     public listServicesByIdValue(idValue: string) {
-        let page = 0;
+        let page = 1;
         this.services.rest.searchRolesByIdentity(idValue, page).subscribe((party) => {
 
         });
