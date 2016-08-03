@@ -50,6 +50,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
     public ospRelationshipTypeRef: IHrefValue<IRelationshipType>;
     public ospRoleRef: IHrefValue<IRole>;
     public ospServices: IRoleAttributeName[];
+    public declarationText: string;
 
     public form: FormGroup;
 
@@ -75,6 +76,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
             for (let ref of relationshipTypeRefs) {
                 if (ref.value.code === this.services.constants.RelationshipTypeCode.OSP) {
                     this.ospRelationshipTypeRef = ref;
+                    this.declarationText = this.services.model.getRelationshipTypeAttributeNameUsage(ref, 'SUBJECT_RELATIONSHIP_TYPE_DECLARATION').defaultValue;
                     break;
                 }
             }
