@@ -43,7 +43,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
     };
 
     public identity: IIdentity;
-    public ospRelationshipType: IHrefValue<IRelationshipType>;
+    public ospRelationshipType: IRelationshipType;
     public ospRole: IHrefValue<IRole>;
 
     public form: FormGroup;
@@ -67,6 +67,9 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
         // todo load the osp relationship type
         // set opsRelationshipType
+        this.services.rest.findRelationshipTypeByCode('OSP').subscribe((relationshipType) => {
+            this.ospRelationshipType = relationshipType;
+        });
 
         // forms
         this.form = this._fb.group({
