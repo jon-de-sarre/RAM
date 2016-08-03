@@ -15,7 +15,8 @@ import {
     IRoleStatus,
     IRoleType,
     IRoleAttributeNameUsage,
-    IRoleAttributeName
+    IRoleAttributeName,
+    IRelationshipAttributeName
 } from '../../../commons/RamAPI';
 
 @Injectable()
@@ -197,6 +198,16 @@ export class RAMModelService {
                 if (ref.value.code === code) {
                     return ref.value;
                 }
+            }
+        }
+        return null;
+    }
+
+    public getRelationshipTypeAttributeNameRef(relationshipTypeRef: IHrefValue<IRelationshipType>, code: string): IHrefValue<IRelationshipAttributeName> {
+        for (let usage of relationshipTypeRef.value.relationshipAttributeNames) {
+            const attributeNameRef = usage.attributeNameDef;
+            if (attributeNameRef.value.code === code) {
+                return attributeNameRef;
             }
         }
         return null;

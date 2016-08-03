@@ -17,8 +17,7 @@ import {
     IRole,
     IRelationshipType,
     Relationship,
-    IRelationshipAttribute
-    IRoleAttributeName
+    IRelationshipAttribute, RelationshipAttribute
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -94,12 +93,47 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
     // todo to be implemented
     public save() {
+
         this.clearGlobalMessages();
+
+        let validationOk = true;
+        let ssids = this.getSSIDs();
+
         if (!this.delegateIdentityRef) {
+            validationOk = false;
             this.addGlobalMessage('Please select a software provider to link to.');
-        } else if (this.ospRelationshipTypeRef) {
+        } else {
+            if (!this.accessPeriod.startDate) {
+                validationOk = false;
+                this.addGlobalMessage('Please specify a start date.');
+            }
+            if (!this.accessPeriod.endDate && !this.accessPeriod.noEndDate) {
+                validationOk = false;
+                this.addGlobalMessage('Please specify a end date.');
+            }
+            let notEmpty = (element) => {
+                return element !== null && element !== undefined && element !== '';
+            };
+            if (!ssids || ssids.length === 0 || !ssids.every(notEmpty)) {
+                validationOk = false;
+                this.addGlobalMessage('Please specify valid software ids.');
+            }
+        }
+
+        if (validationOk && this.ospRelationshipTypeRef) {
+
             let attributes: IRelationshipAttribute[] = [];
-            // todo set attributes
+
+            // ssid attribute
+            attributes.push(new RelationshipAttribute(ssids,
+                this.services.model.getRelationshipTypeAttributeNameRef(
+                    this.ospRelationshipTypeRef, this.services.constants.RelationshipTypeAttributeCode.SSID)));
+
+            // agency services
+            // todo
+            // ...
+
+            // build relationship
             let relationship = new Relationship(
                 [],
                 this.ospRelationshipTypeRef,
@@ -107,15 +141,24 @@ export class AddNotificationComponent extends AbstractPageComponent {
                 null,
                 this.delegateIdentityRef.value.party,
                 null,
-                new Date(),
-                null,
+                this.accessPeriod.startDate,
+                this.accessPeriod.endDate,
                 null,
                 null,
                 attributes
             );
+
+            // save relationship
             alert('TODO: Not yet implemented');
             console.log('relationship=' + relationship);
+
         }
+
+    }
+
+    // todo nev can you please return this string[]
+    public getSSIDs(): string[] {
+        return ['SSID12345'];
     }
 
     public resetDelegate() {
@@ -167,4 +210,5 @@ export class AddNotificationComponent extends AbstractPageComponent {
             this.addGlobalMessages(['Cannot match ABN']);
         });
     }
+
 }

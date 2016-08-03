@@ -238,7 +238,7 @@ export interface IRelationship {
 
 export class Relationship implements IRelationship {
     constructor(public _links:ILink[],
-                public relationshipType:HrefValue<IRelationshipType>,
+                public relationshipType:IHrefValue<IRelationshipType>,
                 public subject:IHrefValue<IParty>,
                 public subjectNickName:Name,
                 public delegate:IHrefValue<IParty>,
@@ -446,7 +446,7 @@ export interface IRelationshipAttribute {
 
 export class RelationshipAttribute implements IRelationshipAttribute {
     constructor(public value:[string],
-                public attributeName:HrefValue<RelationshipAttributeName>) {
+                public attributeName:IHrefValue<IRelationshipAttributeName>) {
     }
 }
 
