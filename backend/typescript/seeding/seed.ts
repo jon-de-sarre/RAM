@@ -949,7 +949,15 @@ export class Seeder {
                 category: RelationshipTypeCategory.Notification.code
             } as any, [
                 {attribute: Seeder.selectedGovernmentServicesList_relAttributeName, optionalInd: false, defaultValue: null},
-                {attribute: Seeder.ssid_relAttributeName, optionalInd: false, defaultValue: null}
+                {attribute: Seeder.ssid_relAttributeName, optionalInd: false, defaultValue: null},
+                {attribute: Seeder.subjectRelationshipTypeDeclaration_relAttributeName, optionalInd: false,
+                    defaultValue: `# This is declaration text
+
+* written in markdown
+* kept in database
+* relationshipTypeUsage.defaultValue
+* Use seed or admin UI to change it
+                    `}
             ]);
 
         } catch (e) {
