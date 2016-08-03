@@ -25,10 +25,19 @@
 
 <!--authorisation-permissions (validationErrors)='authorisationPermissionErrors=$event'></authorisation-permissions-->
 
-<relationship-declaration [(data)]='newRelationship.decalaration'
-             (backEvent)="back()"
-             (createRelationshipEvent)="submit()"
-             (isValid)='declarationIsValid=$event'
-             [isAuthorizedBtnEnabled]='accessPeriodIsValid && authTypeIsValid && representativeIsValid'></relationship-declaration>
+<div class="panel panel-default">
+    <div class="panel-heading">
+        <h4><span class="badge square">5</span> Declaration</h4>
+    </div>
+    <div class="panel-body">
+
+        <relationship-declaration [(data)]='newRelationship.decalaration'
+                                  (backEvent)="back()"
+                                  (createRelationshipEvent)="submit()"
+                                  (isValid)='declarationIsValid=$event'
+                                  [isAuthorizedBtnEnabled]='accessPeriodIsValid && authTypeIsValid && representativeIsValid'></relationship-declaration>
+
+    </div>
+</div>
 
 <!--{{dumpObject(newRelationship)}}-->

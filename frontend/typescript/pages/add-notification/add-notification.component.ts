@@ -63,7 +63,8 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
         // forms
         this.form = this._fb.group({
-            abn: ''
+            abn: '',
+            accepted: false
         });
 
     }
