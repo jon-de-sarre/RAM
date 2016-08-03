@@ -33,7 +33,7 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
 
             this.me = principal;
 
-            if (dashboard === 'auth' || !principal.agencyUserInd) {
+            if (dashboard === 'auth') {
                 this.goToAuthorisationsPage();
             } else if (dashboard === 'sps') {
                 this.goToSoftwareProviderServicesPage();
