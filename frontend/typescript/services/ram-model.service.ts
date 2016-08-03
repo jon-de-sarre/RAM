@@ -209,7 +209,7 @@ export class RAMModelService {
                 let classifier = roleAttributeNameUsage.attributeNameDef.value.classifier;
                 if (classifier === 'AGENCY_SERVICE') {
                     let category = roleAttributeNameUsage.attributeNameDef.value.category;
-                    if (category && (!programs || programs.length == 0 || programs.indexOf(category) !== -1)) {
+                    if (category && (!programs || programs.length === 0 || programs.indexOf(category) !== -1)) {
                         agencyServiceRoleAttributeNameUsages.push(roleAttributeNameUsage);
                     }
                 }
