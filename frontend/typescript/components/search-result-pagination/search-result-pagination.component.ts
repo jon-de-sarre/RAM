@@ -87,6 +87,10 @@ export class SearchResultPaginationComponent {
         return false;
     }
 
+    public isNotEmpty(): boolean {
+        return this.searchResult && this.searchResult.totalCount > 0;
+    }
+
     public goToPage(page: number): void {
         if (this.searchResult && this.searchResult.page !== page) {
             if (this.delegate) {
