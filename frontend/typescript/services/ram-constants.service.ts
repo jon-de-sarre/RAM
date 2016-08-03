@@ -9,5 +9,8 @@ export class RAMConstantsService {
         AUTHORISATION: 'AUTHORISATION',
         NOTIFICATION: 'NOTIFICATION'
     };
+    public RelationshipTypeCode = {
+        OSP: 'OSP'
+    };
 
 }
