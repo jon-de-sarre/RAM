@@ -21,7 +21,7 @@
         <template ngFor let-item="$implicit" [ngForOf]="subjectGroupsWithRelationships">
             <tr class="relationship-subject-heading">
                 <td colspan="5">
-                    <div (click)="goToRelationshipsContext(item.subjectRef)" class="clickable">
+                    <div>
                         <h4>{{services.model.displayNameForParty(item.subjectRef.value)}}</h4>
                         <h5>{{services.model.abnLabelForParty(item.subjectRef.value)}} /
                             {{services.model.partyTypeLabelForParty(item.subjectRef.value)}}</h5>
