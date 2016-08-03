@@ -74,14 +74,17 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
     public findByABN() {
         const abn = this.form.controls['abn'].value;
+        this.clearGlobalMessages();
 
-        this.services.rest.findPartyByABN(abn).subscribe( (party) => {
+        this.services.rest.findPartyByABN(abn).subscribe((party) => {
             this.delegateParty = party;
-            for(let identity of party.identities) {
-                if(identity.value.rawIdValue === abn) {
+            for (let identity of party.identities) {
+                if (identity.value.rawIdValue === abn) {
                     this.delegateIdentityRef = identity;
                 }
             }
+        }, (err) => {
+            this.addGlobalMessages(['Cannot match ABN']);
         });
     }
 }

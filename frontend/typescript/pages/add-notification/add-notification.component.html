@@ -3,7 +3,7 @@
              [messages]="globalMessages"></page-header>
 
 <div class="centered">
-    <p class="todo">Add OSP notification relationship for business in focus</p>
+    <p class="todo">WORK IN PROGRESS - Add OSP notification relationship for business in focus</p>
 </div>
 
 
@@ -15,21 +15,35 @@
             <h4>Add notification</h4>
         </div>
         <div class="panel-body">
+            <p>Enter the ABN of the software provider:</p>
             <div *ngIf="!delegateParty" class="form-group">
                 <div class="col-md-12">
-                    <p>Enter the ABN of the software provider:</p>
                     <h4>ABN*</h4>
-                    <input type="text" class="form-control" [formControl]="form.controls['abn']"/>
-                    <button (click)="findByABN()">Check</button>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text" class="form-control col-md-4" [formControl]="form.controls['abn']"/>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-secondary align-center" (click)="findByABN()">Check</button>
+                        </div>
+                    </div>
                 </div>
             </div>
 
             <div *ngIf="delegateParty && delegateIdentityRef">
                 <div class="col-md-12">
-                    <h4>ABN:</h4>
-                    <p>{{delegateIdentityRef.value.rawIdValue}}</p>
-                    <p>{{delegateIdentityRef.value.profile.name.unstructuredName}}</p>
-                    <button (click)="resetDelegate()">Change</button>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h4>ABN:</h4>
+                            {{delegateIdentityRef.value.rawIdValue}}
+                        </div>
+                        <div class="col-md-4">
+                            <h4>Business name:</h4>
+                            {{delegateIdentityRef.value.profile.name.unstructuredName}}
+                        </div>
+                    </div>
+                    <br/>
+                    <button class="btn btn-secondary align-center" (click)="resetDelegate()">Change ABN</button>
                 </div>
             </div>
         </div>
