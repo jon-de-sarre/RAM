@@ -185,7 +185,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
                     // found business
                     // TODO iterate over pages
-                    var page = 1;
+                    let page = 1;
                     this.services.rest.searchRolesByIdentity(identity.value.idValue, page).subscribe((results) => {
 
                         // check for OSP role
