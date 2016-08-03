@@ -13,6 +13,7 @@ import {
     IParty,
     IIdentity,
     IRelationship,
+    IRelationshipStatus,
     IHrefValue,
     FilterParams
 } from '../../../../commons/RamAPI';
@@ -34,6 +35,7 @@ export class NotificationsComponent extends AbstractPageComponent {
     public page: number;
 
     public relationships$: Observable<ISearchResult<IHrefValue<IRelationship>>>;
+    public relationshipStatusRefs: IHrefValue<IRelationshipStatus>[];
 
     public canReturnToDashboard: boolean = false;
 
@@ -79,6 +81,11 @@ export class NotificationsComponent extends AbstractPageComponent {
         //     this.canReturnToDashboard = partyRefs.totalCount > 1;
         // });
         this.canReturnToDashboard = true; // TODO compute this properly
+
+        // relationship statuses
+        this.services.rest.listRelationshipStatuses().subscribe((relationshipStatusRefs) => {
+            this.relationshipStatusRefs = relationshipStatusRefs;
+        });
 
         // relationships
         this.subjectGroupsWithRelationships = [];
