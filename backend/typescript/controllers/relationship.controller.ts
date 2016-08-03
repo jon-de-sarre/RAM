@@ -372,6 +372,37 @@ export class RelationshipController {
             .catch(sendError(res));
     };
 
+    private create2 = async(req:Request, res:Response) => {
+        const schema = {
+            // todo
+        };
+
+        validateReqSchema(req, schema)
+            .then((req: Request) => {
+                // todo security
+
+                /* tslint:disable:max-func-body-length */
+                // todo move into somewhere
+                let findAfterSearchString = (href: string, searchString: string) => {
+                    let idValue:string = null;
+                    if (href.startsWith(searchString)) {
+                        idValue = decodeURIComponent(href.substr(searchString.length));
+                    }
+                    return idValue;
+                };
+
+                let idValue = findAfterSearchString(req.body.subject.href, '/api/v1/party/identity/');
+                return PartyModel.findByIdentityIdValue(idValue);
+            })
+            .then((subjectParty) => {
+                return subjectParty.addRelationship2(req.body);
+            })
+            .then((model) => model ? model.toDTO(null) : null)
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
+    };
+
     private findStatusByName = (req:Request, res:Response) => {
         const schema = {
             'name': {
@@ -439,6 +470,10 @@ export class RelationshipController {
         router.post('/v1/relationship',
             security.isAuthenticated,
             this.create);
+
+        router.post('/v1/relationship2',
+            security.isAuthenticated,
+            this.create2);
 
         router.get('/v1/relationshipStatus/:code',
             this.findStatusByName);

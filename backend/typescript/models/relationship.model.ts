@@ -254,6 +254,14 @@ export interface IRelationshipModel extends mongoose.Model<IRelationship> {
          startTimestamp: Date,
          endTimestamp: Date,
          attributes: IRelationshipAttribute[]) => Promise<IRelationship>;
+    add2:(relationshipType: IRelationshipType,
+          subject: IParty,
+          subjectNickName: IName,
+          delegate: IParty,
+          delegateNickName: IName,
+          startTimestamp: Date,
+          endTimestamp: Date,
+          attributes: IRelationshipAttribute[]) => Promise<IRelationship>;
     findByIdentifier:(id: string) => Promise<IRelationship>;
     findByInvitationCode:(invitationCode: string) => Promise<IRelationship>;
     findPendingByInvitationCodeInDateRange:(invitationCode: string, date: Date) => Promise<IRelationship>;
@@ -476,6 +484,27 @@ RelationshipSchema.static('add', async (relationshipType: IRelationshipType,
         startTimestamp: startTimestamp,
         endTimestamp: endTimestamp,
         status: RelationshipStatus.Pending.code,
+        attributes: attributes
+    });
+});
+
+RelationshipSchema.static('add2', async (relationshipType: IRelationshipType,
+                                        subject: IParty,
+                                        subjectNickName: IName,
+                                        delegate: IParty,
+                                        delegateNickName: IName,
+                                        startTimestamp: Date,
+                                        endTimestamp: Date,
+                                        attributes: IRelationshipAttribute[]) => {
+    return await this.RelationshipModel.create({
+        relationshipType: relationshipType,
+        subject: subject,
+        subjectNickName: subjectNickName,
+        delegate: delegate,
+        delegateNickName: delegateNickName,
+        startTimestamp: startTimestamp,
+        endTimestamp: endTimestamp,
+        status: RelationshipStatus.Active.code, // todo????
         attributes: attributes
     });
 });

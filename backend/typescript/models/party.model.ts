@@ -1,14 +1,6 @@
 import * as mongoose from 'mongoose';
 import {RAMEnum, IRAMObject, RAMSchema, Assert} from './base';
 import {IIdentity, IdentityModel} from './identity.model';
-import {
-    HrefValue,
-    Party as DTO,
-    PartyType as PartyTypeDTO,
-    Identity as IdentityDTO,
-    IInvitationCodeRelationshipAddDTO,
-    Role as RoleDTO
-} from '../../../commons/RamAPI';
 import {RelationshipModel, IRelationship} from './relationship.model';
 import {RelationshipTypeModel} from './relationshipType.model';
 import {RelationshipAttributeModel, IRelationshipAttribute} from './relationshipAttribute.model';
@@ -18,9 +10,21 @@ import {IRole, RoleModel, RoleStatus} from './role.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
 import {IAgencyUser} from './agencyUser.model';
 import {RoleAttributeNameModel} from './roleAttributeName.model';
+import {
+    HrefValue,
+    Party as DTO,
+    PartyType as PartyTypeDTO,
+    Identity as IdentityDTO,
+    IInvitationCodeRelationshipAddDTO,
+    Role as RoleDTO,
+    IRelationship as IRelationshipDTO
+} from '../../../commons/RamAPI';
 
 /* tslint:disable:no-unused-variable */
 const _RoleAttributeModel = RoleAttributeModel;
+
+/* tslint:disable:no-unused-variable */
+const _RelationshipTypeModel = RelationshipTypeModel;
 
 // enums, utilities, helpers ..........................................................................................
 
@@ -69,6 +73,7 @@ export interface IParty extends IRAMObject {
     toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
     toDTO():Promise<DTO>;
     addRelationship(dto: IInvitationCodeRelationshipAddDTO):Promise<IRelationship>;
+    addRelationship2(relationshipDTO: IRelationshipDTO):Promise<IRelationship>;
     addRole(role: IRole, agencyUser: IAgencyUser):Promise<IRole>;
 }
 
@@ -151,6 +156,62 @@ PartySchema.method('addRelationship', async (dto: IInvitationCodeRelationshipAdd
     );
 
     return relationship;
+
+});
+
+/* tslint:disable:max-func-body-length */
+PartySchema.method('addRelationship2', async function (dto: IRelationshipDTO) {
+
+    /* tslint:disable:max-func-body-length */
+    let findAfterSearchString = (href: string, searchString: string) => {
+        let idValue:string = null;
+        if (href.startsWith(searchString)) {
+            idValue = decodeURIComponent(href.substr(searchString.length));
+        }
+        return idValue;
+    };
+
+    // lookups
+    const relationshipTypeCode = findAfterSearchString(dto.relationshipType.href, '/api/v1/relationshipType/');
+    const relationshipType = await RelationshipTypeModel.findByCodeInDateRange(relationshipTypeCode, new Date()); // todo what if find after search string returns null?
+    const delegateIdValue = findAfterSearchString(dto.delegate.href, '/api/v1/party/identity/');
+    const delegateIdentity = await IdentityModel.findByIdValue(delegateIdValue);
+    const subjectIdentity = await IdentityModel.findDefaultByPartyId(this.id);
+
+    console.log('delegateIdValue=', delegateIdValue);
+    console.log('delegateIdentity=', delegateIdentity);
+
+    const attributes: IRelationshipAttribute[] = [];
+
+    console.log('hey1');
+    for (let attr of dto.attributes) {
+        const attributeName = await RelationshipAttributeNameModel.findByCodeInDateRange(attr.attributeName.value.code, new Date());
+        if (attributeName) {
+            attributes.push(await RelationshipAttributeModel.create({
+                value: attr.value,
+                attributeName: attributeName
+            }));
+        }
+    }
+
+    console.log('hey2');
+    console.log('this=', this);
+
+    // create the relationship
+    const iRelationship = await RelationshipModel.add2(
+        relationshipType,
+        this,
+        subjectIdentity.profile.name,
+        delegateIdentity.party,
+        delegateIdentity.profile.name,
+        dto.startTimestamp,
+        dto.endTimestamp,
+        attributes
+    );
+
+    console.log('iRelationship=', iRelationship);
+
+    return iRelationship;
 
 });
 
