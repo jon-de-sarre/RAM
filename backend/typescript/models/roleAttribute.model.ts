@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import {RoleModel} from './role.model';
 import {IRoleAttributeName, RoleAttributeNameModel} from './roleAttributeName.model';
 import {
-    IRoleAttribute as DTO
+    RoleAttribute as DTO
 } from '../../../commons/RamAPI';
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
@@ -45,12 +45,10 @@ export interface IRoleAttributeModel extends mongoose.Model<IRoleAttribute> {
 // instance methods ...................................................................................................
 
 RoleAttributeSchema.method('toDTO', async function () {
-    const dto: DTO = {
-        value: this.value,
-        attributeName: await this.attributeName.toHrefValue(true)
-    };
-
-    return dto;
+    return new DTO(
+        this.value,
+        await this.attributeName.toHrefValue(true)
+    );
 });
 
 // static methods .....................................................................................................

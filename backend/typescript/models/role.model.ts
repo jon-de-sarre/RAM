@@ -146,7 +146,12 @@ RoleSchema.method('updateOrCreateAttribute', async function(roleAttributeNameCod
 
     // todo if attributeName is not inflated and was an object id, should we inflate it?
 
+    console.log('role before =', JSON.stringify(this, null, 4));
+    console.log('roleAttributeNameCode=', roleAttributeNameCode);
+    console.log('value=', value);
+
     for (let attribute of this.attributes) {
+        console.log('attribute=', JSON.stringify(attribute, null, 4));
         if (attribute.attributeName.code === roleAttributeNameCode) {
             attribute.value = value;
             await attribute.save();
@@ -160,7 +165,7 @@ RoleSchema.method('updateOrCreateAttribute', async function(roleAttributeNameCod
         attributeName: roleAttributeName
     });
     this.attributes.push(roleAttribute);
-    await this.save();
+    console.log('role after attribute create=', JSON.stringify(this, null, 4));
     return Promise.resolve(roleAttribute);
 
 });
@@ -193,6 +198,7 @@ RoleSchema.method('toDTO', async function () {
         this.status,
         await Promise.all<RoleAttributeDTO>(this.attributes.map(
             async (attribute: IRoleAttribute) => {
+                console.log('attribute=', JSON.stringify(attribute, null, 4));
                 return await attribute.toDTO();
             }))
     );
