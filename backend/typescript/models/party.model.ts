@@ -178,12 +178,8 @@ PartySchema.method('addRelationship2', async function (dto: IRelationshipDTO) {
     const delegateIdentity = await IdentityModel.findByIdValue(delegateIdValue);
     const subjectIdentity = await IdentityModel.findDefaultByPartyId(this.id);
 
-    console.log('delegateIdValue=', delegateIdValue);
-    console.log('delegateIdentity=', delegateIdentity);
-
     const attributes: IRelationshipAttribute[] = [];
 
-    console.log('hey1');
     for (let attr of dto.attributes) {
         const attributeName = await RelationshipAttributeNameModel.findByCodeInDateRange(attr.attributeName.value.code, new Date());
         if (attributeName) {
@@ -194,11 +190,8 @@ PartySchema.method('addRelationship2', async function (dto: IRelationshipDTO) {
         }
     }
 
-    console.log('hey2');
-    console.log('this=', this);
-
     // create the relationship
-    const iRelationship = await RelationshipModel.add2(
+    return RelationshipModel.add2(
         relationshipType,
         this,
         subjectIdentity.profile.name,
@@ -208,10 +201,6 @@ PartySchema.method('addRelationship2', async function (dto: IRelationshipDTO) {
         dto.endTimestamp,
         attributes
     );
-
-    console.log('iRelationship=', iRelationship);
-
-    return iRelationship;
 
 });
 
