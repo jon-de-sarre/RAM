@@ -553,7 +553,7 @@ describe('RAM Relationship', () => {
         try {
 
             const relationships = await RelationshipModel.searchByIdentity(subjectIdentity1.idValue,
-                PartyType.ABN.code, null, null, null, null, null, 1, 10);
+                PartyType.ABN.code, null, null, null, null, null, null, 1, 10);
             expect(relationships.totalCount).toBe(0);
             expect(relationships.list.length).toBe(0);
 
