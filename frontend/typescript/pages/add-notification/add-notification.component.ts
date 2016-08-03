@@ -157,7 +157,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
     // todo nev can you please return this string[]
     public getSSIDs(): string[] {
-        return [];
+        return ['SSID12345'];
     }
 
     public resetDelegate() {
