@@ -21,10 +21,10 @@ export class TrevorTrainingRelationshipsSeeder {
 
                 Seeder.trevortraining_and_edtech_relationship = await Seeder.createRelationshipModel({
                     relationshipType: Seeder.osp_delegate_relationshipType,
-                    subject: Seeder.edtech_party,
-                    subjectNickName: Seeder.edtech_name,
-                    delegate: Seeder.trevortraining_party,
-                    delegateNickName: Seeder.trevortraining_name,
+                    subject: Seeder.trevortraining_party,
+                    subjectNickName: Seeder.trevortraining_name,
+                    delegate: Seeder.edtechosp_party,
+                    delegateNickName: Seeder.edtechosp_name,
                     startTimestamp: new Date(),
                     status: RelationshipStatus.Active.code,
                     attributes: [
