@@ -17,7 +17,7 @@ import {
     IRole,
     IRelationshipType,
     Relationship,
-    IRelationshipAttribute
+    IRelationshipAttribute, RelationshipAttribute
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -92,16 +92,36 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
     // todo to be implemented
     public save() {
+
         this.clearGlobalMessages();
+
+        let validationOk = true;
+        let ssids = this.getSSIDs();
+
         if (!this.delegateIdentityRef) {
+            validationOk = false;
             this.addGlobalMessage('Please select a software provider to link to.');
-        } else if (!this.accessPeriod.startDate) {
-            this.addGlobalMessage('Please specify a start date.');
-        } else if (!this.accessPeriod.endDate && !this.accessPeriod.noEndDate) {
-            this.addGlobalMessage('Please specify a end date.');
-        } else if (this.ospRelationshipTypeRef) {
+        } else {
+            if (!this.accessPeriod.startDate) {
+                validationOk = false;
+                this.addGlobalMessage('Please specify a start date.');
+            }
+            if (!this.accessPeriod.endDate && !this.accessPeriod.noEndDate) {
+                validationOk = false;
+                this.addGlobalMessage('Please specify a end date.');
+            }
+        }
+
+        if (validationOk && this.ospRelationshipTypeRef) {
+
             let attributes: IRelationshipAttribute[] = [];
-            // todo set attributes
+
+            // ssid attribute
+            attributes.push(new RelationshipAttribute(ssids,
+                this.services.model.getRelationshipTypeAttributeNameRef(
+                    this.ospRelationshipTypeRef, this.services.constants.RelationshipTypeAttributeCode.SSID)));
+
+            // build relationship
             let relationship = new Relationship(
                 [],
                 this.ospRelationshipTypeRef,
@@ -115,9 +135,17 @@ export class AddNotificationComponent extends AbstractPageComponent {
                 null,
                 attributes
             );
+
+            // save relationship
             alert('TODO: Not yet implemented');
             console.log('relationship=' + relationship);
+
         }
+
+    }
+
+    public getSSIDs(): string[] {
+        return [];
     }
 
     public resetDelegate() {

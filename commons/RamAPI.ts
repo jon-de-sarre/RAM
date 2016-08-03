@@ -446,7 +446,7 @@ export interface IRelationshipAttribute {
 
 export class RelationshipAttribute implements IRelationshipAttribute {
     constructor(public value:[string],
-                public attributeName:HrefValue<RelationshipAttributeName>) {
+                public attributeName:IHrefValue<IRelationshipAttributeName>) {
     }
 }
 
