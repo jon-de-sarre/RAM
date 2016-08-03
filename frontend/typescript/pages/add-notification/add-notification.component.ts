@@ -215,4 +215,15 @@ export class AddNotificationComponent extends AbstractPageComponent {
         });
     }
 
+    public onAgencyServiceChange(attributeCode: string) {
+        let agencyServices = this.form.controls['agencyServices'].value;
+        let index = agencyServices.indexOf(attributeCode);
+        if (index === -1) {
+            agencyServices.push(attributeCode);
+        } else {
+            agencyServices.splice(index, 1);
+        }
+
+        console.log("agencyServices = ", agencyServices);
+    }
 }

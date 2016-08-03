@@ -62,6 +62,11 @@
 
 
                 <p class="todo">TODO -- agencies</p>
+                <div class="checkbox" *ngFor="let attributeName of ospServices">
+                    <label>
+                        <input type="checkbox" (change)="onAgencyServiceChange(attributeName.code)"> {{attributeName.shortDecodeText}}
+                    </label>
+                </div>
             </div>
         </div>
 
