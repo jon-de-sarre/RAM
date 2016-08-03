@@ -29,7 +29,7 @@ export class TrungTrainingRelationshipsSeeder {
                     status: RelationshipStatus.Active.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
-                            value: true,
+                            value: ['USI'],
                             attributeName: Seeder.selectedGovernmentServicesList_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
