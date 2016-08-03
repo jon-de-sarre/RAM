@@ -65,8 +65,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
             this.identity = identity;
         });
 
-        // todo load the osp relationship type
-        // set opsRelationshipType
+        // osp relationship type
         this.services.rest.findRelationshipTypeByCode('OSP').subscribe((relationshipType) => {
             this.ospRelationshipType = relationshipType;
         });
