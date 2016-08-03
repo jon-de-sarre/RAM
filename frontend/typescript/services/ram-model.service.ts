@@ -218,6 +218,22 @@ export class RAMModelService {
         return agencyServiceRoleAttributeNameUsages;
     }
 
+    public getAccessibleAgencyServiceRoleAttributeNames(roleRef: IHrefValue<IRole>, programs: string[]): IRoleAttributeName[] {
+        let agencyServiceRoleAttributeNames: IRoleAttributeName[] = [];
+        if (roleRef) {
+            for (let roleAttribute of roleRef.value.attributes) {
+                let classifier = roleAttribute.attributeName.value.classifier;
+                if (classifier === 'AGENCY_SERVICE') {
+                    let category = roleAttribute.attributeName.value.category;
+                    if (category && (!programs || programs.length === 0 || programs.indexOf(category) !== -1)) {
+                        agencyServiceRoleAttributeNames.push(roleAttribute.attributeName.value);
+                    }
+                }
+            }
+        }
+        return agencyServiceRoleAttributeNames;
+    }
+
     public getRoleTypeRef(roleTypeRefs: IHrefValue<IRoleType>[], code: string): IHrefValue<IRoleType> {
         for (let ref of roleTypeRefs) {
             if (ref.value.code === code) {

@@ -17,8 +17,8 @@ import {
     IRole,
     IRelationshipType,
     Relationship,
-    RelationshipAttribute,
     IRelationshipAttribute
+    IRoleAttributeName
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -49,6 +49,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
     public identity: IIdentity;
     public ospRelationshipTypeRef: IHrefValue<IRelationshipType>;
     public ospRoleRef: IHrefValue<IRole>;
+    public ospServices: IRoleAttributeName[];
 
     public form: FormGroup;
 
@@ -136,20 +137,34 @@ export class AddNotificationComponent extends AbstractPageComponent {
             this.delegateParty = party;
             for (let identity of party.identities) {
                 if (identity.value.rawIdValue === abn) {
-                    this.delegateIdentityRef = identity;
-                    this.listServicesByIdValue(identity.value.idValue)
+
+                    // found business
+                    // TODO iterate over pages
+                    var page = 1;
+                    this.services.rest.searchRolesByIdentity(identity.value.idValue, page).subscribe((results) => {
+
+                        // check for OSP role
+                        for (let role of results.list) {
+                            // TODO is there a better way to match?
+                            if (role.value.roleType.href.endsWith(this.services.constants.RelationshipTypeCode.OSP)) {
+                                this.ospRoleRef = role;
+                                this.delegateIdentityRef = identity;
+                                this.ospServices = this.services.model.getAccessibleAgencyServiceRoleAttributeNames(role, []);
+                                return;
+                            }
+                        }
+
+                        // no OSP role found
+                        this.addGlobalMessages(['Cannot match ABN']);
+                    });
+
+                } else {
+                    // no identity found
+                    this.addGlobalMessages(['Cannot match ABN']);
                 }
             }
         }, (err) => {
             this.addGlobalMessages(['Cannot match ABN']);
         });
-    }
-
-    public listServicesByIdValue(idValue: string) {
-        var page = 0;
-        this.services.rest.searchRolesByIdentity(idValue, page).subscribe((party) => {
-
-        });
-
     }
 }
