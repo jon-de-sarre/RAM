@@ -1,18 +1,24 @@
+// import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
+import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
 import {RAMServices} from '../../services/ram-services';
 
 import {
-    IIdentity
+    IIdentity,
+    IParty,
+    IHrefValue
 } from '../../../../commons/RamAPI';
 
 @Component({
     selector: 'ram-osp-notification-add',
     templateUrl: 'add-notification.component.html',
     directives: [
+        REACTIVE_FORM_DIRECTIVES,
+        FORM_DIRECTIVES,
         ROUTER_DIRECTIVES,
         PageHeaderSPSComponent
     ]
@@ -21,12 +27,17 @@ import {
 export class AddNotificationComponent extends AbstractPageComponent {
 
     public idValue: string;
+    public delegateParty: IParty;
+    public delegateIdentityRef: IHrefValue<IIdentity>;
 
     public identity: IIdentity;
 
+    public form: FormGroup;
+
     constructor(route: ActivatedRoute,
                 router: Router,
-                services: RAMServices) {
+                services: RAMServices,
+                private _fb: FormBuilder) {
         super(route, router, services);
         this.setBannerTitle('Software Provider Services');
     }
@@ -40,6 +51,10 @@ export class AddNotificationComponent extends AbstractPageComponent {
             this.identity = identity;
         });
 
+        // forms
+        this.form = this._fb.group({
+            abn: ''
+        });
     }
 
     public back() {
@@ -52,4 +67,21 @@ export class AddNotificationComponent extends AbstractPageComponent {
         alert('TODO: Not yet implemented');
     }
 
+    public resetDelegate() {
+        this.delegateParty = null;
+        this.delegateIdentityRef = null;
+    }
+
+    public findByABN() {
+        const abn = this.form.controls['abn'].value;
+
+        this.services.rest.findPartyByABN(abn).subscribe( (party) => {
+            this.delegateParty = party;
+            for(let identity of party.identities) {
+                if(identity.value.rawIdValue === abn) {
+                    this.delegateIdentityRef = identity;
+                }
+            }
+        });
+    }
 }

@@ -93,6 +93,13 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
+    public findPartyByABN(abn: string): Observable<IParty> {
+        const idValue = `PUBLIC_IDENTIFIER:ABN:${abn}`;
+        return this.http
+            .get(`/api/v1/party/identity/${idValue}`)
+            .map(this.extractData);
+    }
+
     public findMyIdentity(): Observable<IIdentity> {
         return this.http
             .get(`/api/v1/identity/me`)

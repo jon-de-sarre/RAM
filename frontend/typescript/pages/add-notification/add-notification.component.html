@@ -6,6 +6,40 @@
     <p class="todo">Add OSP notification relationship for business in focus</p>
 </div>
 
+
+
+<form [formGroup]="form">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>Add notification</h4>
+        </div>
+        <div class="panel-body">
+            <div *ngIf="!delegateParty" class="form-group">
+                <div class="col-md-12">
+                    <p>Enter the ABN of the software provider:</p>
+                    <h4>ABN*</h4>
+                    <input type="text" class="form-control" [formControl]="form.controls['abn']"/>
+                    <button (click)="findByABN()">Check</button>
+                </div>
+            </div>
+
+            <div *ngIf="delegateParty && delegateIdentityRef">
+                <div class="col-md-12">
+                    <h4>ABN:</h4>
+                    <p>{{delegateIdentityRef.value.rawIdValue}}</p>
+                    <p>{{delegateIdentityRef.value.profile.name.unstructuredName}}</p>
+                    <button (click)="resetDelegate()">Change</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<br/>
+<br/>
+
 <div id="action-button-bar">
     <div class="pull-left">
         <a class="btn btn-default align-center" (click)="back()">← Back</a>
