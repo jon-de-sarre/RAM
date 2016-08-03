@@ -84,7 +84,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
         this.form = this._fb.group({
             abn: '',
             accepted: false,
-            agencyServices: [[]]
+            agencyServices: [[]],
             ssids: this._fb.array([this._fb.control('')])
         });
 
@@ -242,12 +242,12 @@ export class AddNotificationComponent extends AbstractPageComponent {
     }
 
     public addAnotherSSID() {
-        const ssids = <FormArray>this.form.controls['ssids'];
+        const ssids = this.form.controls['ssids'] as FormArray;
         ssids.push(this._fb.control(''));
     }
 
     public removeSSID() {
-        const ssids = <FormArray>this.form.controls['ssids'];
+        const ssids = this.form.controls['ssids'] as FormArray;
         ssids.removeAt(ssids.length - 1);
     }
 }
