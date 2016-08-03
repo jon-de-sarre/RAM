@@ -84,7 +84,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
         this.form = this._fb.group({
             abn: '',
             accepted: false,
-            agencyServices: [[]]
+            agencyServices: [[]],
             ssids: this._fb.array([this._fb.control('')])
         });
 
@@ -197,7 +197,6 @@ export class AddNotificationComponent extends AbstractPageComponent {
             // call model service getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, empty programs) ...
             // set the array of agency services ...
 
-            this.delegateParty = party;
             for (let identity of party.identities) {
                 if (identity.value.rawIdValue === abn) {
 
@@ -210,6 +209,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
                         for (let role of results.list) {
                             // TODO is there a better way to match?
                             if (role.value.roleType.href.endsWith(this.services.constants.RelationshipTypeCode.OSP)) {
+                                this.delegateParty = party;
                                 this.ospRoleRef = role;
                                 this.delegateIdentityRef = identity;
                                 this.ospServices = this.services.model.getAccessibleAgencyServiceRoleAttributeNames(role, []);
