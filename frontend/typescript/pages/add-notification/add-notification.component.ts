@@ -15,6 +15,7 @@ import {
     IHrefValue,
     HrefValue,
     IRole,
+    IRoleAttributeName,
     IRelationshipType,
     Relationship,
     IRelationshipAttribute, RelationshipAttribute
