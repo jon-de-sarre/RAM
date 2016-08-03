@@ -237,17 +237,17 @@ export interface IRelationship {
 }
 
 export class Relationship implements IRelationship {
-    constructor(public _links:Link[],
-                public relationshipType:HrefValue<RelationshipType>,
-                public subject:HrefValue<Party>,
+    constructor(public _links:ILink[],
+                public relationshipType:HrefValue<IRelationshipType>,
+                public subject:IHrefValue<IParty>,
                 public subjectNickName:Name,
-                public delegate:HrefValue<Party>,
+                public delegate:IHrefValue<IParty>,
                 public delegateNickName:Name,
                 public startTimestamp:Date,
                 public endTimestamp:Date,
                 public endEventTimestamp:Date,
                 public status:string,
-                public attributes:RelationshipAttribute[]) {
+                public attributes:IRelationshipAttribute[]) {
     }
 }
 

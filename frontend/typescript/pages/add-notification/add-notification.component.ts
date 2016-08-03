@@ -13,8 +13,12 @@ import {
     IIdentity,
     IParty,
     IHrefValue,
+    HrefValue,
     IRole,
-    IRelationshipType
+    IRelationshipType,
+    Relationship,
+    RelationshipAttribute,
+    IRelationshipAttribute
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -43,8 +47,8 @@ export class AddNotificationComponent extends AbstractPageComponent {
     };
 
     public identity: IIdentity;
-    public ospRelationshipType: IRelationshipType;
-    public ospRole: IHrefValue<IRole>;
+    public ospRelationshipTypeRef: IHrefValue<IRelationshipType>;
+    public ospRoleRef: IHrefValue<IRole>;
 
     public form: FormGroup;
 
@@ -66,8 +70,13 @@ export class AddNotificationComponent extends AbstractPageComponent {
         });
 
         // osp relationship type
-        this.services.rest.findRelationshipTypeByCode('OSP').subscribe((relationshipType) => {
-            this.ospRelationshipType = relationshipType;
+        this.services.rest.listRelationshipTypes().subscribe((relationshipTypeRefs) => {
+            for (let ref of relationshipTypeRefs) {
+                if (ref.value.code === 'OSP') {
+                    this.ospRelationshipTypeRef = ref;
+                    break;
+                }
+            }
         });
 
         // forms
@@ -85,7 +94,27 @@ export class AddNotificationComponent extends AbstractPageComponent {
     // todo to be implemented
     public save() {
         this.clearGlobalMessages();
-        alert('TODO: Not yet implemented');
+        if (!this.delegateIdentityRef) {
+            this.addGlobalMessage('Please select a software provider to link to.');
+        } else if (this.ospRelationshipTypeRef) {
+            let attributes: IRelationshipAttribute[] = [];
+            // todo set attributes
+            let relationship = new Relationship(
+                [],
+                this.ospRelationshipTypeRef,
+                new HrefValue(this.identity.party.href, null),
+                null,
+                this.delegateIdentityRef.value.party,
+                null,
+                new Date(),
+                null,
+                null,
+                null,
+                attributes
+            );
+            alert('TODO: Not yet implemented');
+            console.log('relationship=' + relationship);
+        }
     }
 
     public resetDelegate() {
@@ -100,7 +129,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
         this.services.rest.findPartyByABN(abn).subscribe((party) => {
 
             // TODO check party has OSR role
-            // set ospRole ...
+            // set ospRoleRef ...
             // call model service getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, empty programs) ...
             // set the array of agency services ...
 
