@@ -48,36 +48,15 @@
             <p>TODO -- software id</p>
 
 
-
-
-            <div class="panel-body">
-                        <div class="form-group col-md-4" [class.has-error]="!form.controls['startDate'].valid">
-                            <h4>Start date*</h4>
-                            <p-calendar
-                                    placeholder="Start date ..."
-                                    inputStyleClass="form-control"
-                                    [formControl]="form.controls['startDate']"
-                                    dateFormat="yy-mm-dd"></p-calendar>
-                        </div>
-                        <div class="form-group col-md-4"
-                        [class.has-error]="!form.controls['endDate'].valid || form.hasError('isEndDateBeforeStartDate')">
-                            <h4>End date</h4>
-                            <p-calendar
-                                    placeholder="End date ..."
-                                    inputStyleClass="form-control"
-                                    [disabled]='form.controls["noEndDate"].value'
-                                    [formControl]="form.controls['endDate']"
-                                    dateFormat="yy-mm-dd"></p-calendar>
-                        </div>
-                        <div class="form-group col-md-4">
-                            <h4>No end date</h4>
-                            <input [formControl]='form.controls["noEndDate"]' class="big-checkbox" type="checkbox" name="noEndDate" value="false">
-                        </div>
-                </div>
+            <div>
+                <access-period [(data)]='accessPeriod' (isValid)='accessPeriodIsValid=$event'>
+                </access-period>
             </div>
 
-        <p>TODO -- agencies</p>
+            <br style="clear: both"/>
 
+
+            <p>TODO -- agencies</p>
         </div>
     </div>
 

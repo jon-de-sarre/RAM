@@ -1,10 +1,9 @@
 // import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
-import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FormControl, FORM_DIRECTIVES} from '@angular/forms';
-import {RAMNgValidators} from '../../commons/ram-ng-validators';
-import {Utils} from '../../../../commons/ram-utils';
+import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES} from '@angular/forms';
 import {Calendar} from 'primeng/primeng';
+import {AccessPeriodComponent, AccessPeriodComponentData} from '../../components/access-period/access-period.component';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
@@ -24,7 +23,8 @@ import {
         FORM_DIRECTIVES,
         ROUTER_DIRECTIVES,
         PageHeaderSPSComponent,
-        Calendar
+        Calendar,
+        AccessPeriodComponent
     ]
 })
 
@@ -33,9 +33,12 @@ export class AddNotificationComponent extends AbstractPageComponent {
     public idValue: string;
     public delegateParty: IParty;
     public delegateIdentityRef: IHrefValue<IIdentity>;
-    public startDate: Date;
-    public endDate: Date;
-    public noEndDate: boolean;
+
+    public accessPeriod: AccessPeriodComponentData = {
+        startDate: null,
+        noEndDate: true,
+        endDate: null
+    };
 
     public identity: IIdentity;
 
@@ -60,13 +63,8 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
         // forms
         this.form = this._fb.group({
-            abn: '',
-            'startDate': [this.startDate,
-                Validators.compose([Validators.required, RAMNgValidators.dateFormatValidator])],
-            'endDate': [this.endDate,
-                Validators.compose([RAMNgValidators.dateFormatValidator])],
-            'noEndDate': [this.noEndDate]
-        }, { validator: Validators.compose([this._isDateBefore('startDate', 'endDate')]) });
+            abn: ''
+        });
 
     }
 
@@ -102,18 +100,5 @@ export class AddNotificationComponent extends AbstractPageComponent {
         }, (err) => {
             this.addGlobalMessages(['Cannot match ABN']);
         });
-    }
-
-    private _isDateBefore = (startDateCtrlName: string, endDateCtrlName: string) => {
-        return (cg: FormGroup) => {
-            let startDate = Utils.parseDate((cg.controls[startDateCtrlName] as FormControl).value);
-            let endDate = Utils.parseDate((cg.controls[endDateCtrlName] as FormControl).value);
-
-            return (startDate !== null && endDate !== null && startDate.getTime() > endDate.getTime()) ? {
-                isEndDateBeforeStartDate: {
-                    valid: false
-                }
-            } : null;
-        };
     }
 }
