@@ -38,7 +38,7 @@ export class JMFoodPackagingIdentitySeeder {
                 Seeder.log('');
 
                 Seeder.jmfoodpackaging_identity_1 = await Seeder.createIdentityModel({
-                    rawIdValue: 'jmfoodpackaging_identity_1',
+                    rawIdValue: 'jmfoodpackagingABN',
                     identityType: IdentityType.PublicIdentifier.code,
                     defaultInd: true,
                     publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.code,
