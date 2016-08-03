@@ -12,7 +12,9 @@ import {RAMServices} from '../../services/ram-services';
 import {
     IIdentity,
     IParty,
-    IHrefValue
+    IHrefValue,
+    IRole,
+    IRelationshipType
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -41,6 +43,8 @@ export class AddNotificationComponent extends AbstractPageComponent {
     };
 
     public identity: IIdentity;
+    public ospRelationshipType: IHrefValue<IRelationshipType>;
+    public ospRole: IHrefValue<IRole>;
 
     public form: FormGroup;
 
@@ -60,6 +64,9 @@ export class AddNotificationComponent extends AbstractPageComponent {
         this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
             this.identity = identity;
         });
+
+        // todo load the osp relationship type
+        // set opsRelationshipType
 
         // forms
         this.form = this._fb.group({
@@ -91,6 +98,9 @@ export class AddNotificationComponent extends AbstractPageComponent {
         this.services.rest.findPartyByABN(abn).subscribe((party) => {
 
             // TODO check party has OSR role
+            // set ospRole ...
+            // call model service getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, empty programs) ...
+            // set the array of agency services ...
 
             this.delegateParty = party;
             for (let identity of party.identities) {
