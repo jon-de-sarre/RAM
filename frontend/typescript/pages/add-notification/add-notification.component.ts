@@ -174,11 +174,6 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
     }
 
-    // todo nev can you please return this string[]
-    public getSSIDs(): string[] {
-        return ['SSID12345'];
-    }
-
     public resetDelegate() {
         console.log('AM AT RESET');
         this.delegateParty = null;
@@ -243,13 +238,19 @@ export class AddNotificationComponent extends AbstractPageComponent {
         }
     }
 
+    // todo nev can you please return this string[]
+    public getSSIDs(): string[] {
+        const ssids = this.form.controls['ssids'] as FormArray;
+        return ssids.value;
+    }
+
     public addAnotherSSID() {
-        const ssids = <FormArray>this.form.controls['ssids'];
+        const ssids = this.form.controls['ssids'] as FormArray;
         ssids.push(this._fb.control(''));
     }
 
     public removeSSID() {
-        const ssids = <FormArray>this.form.controls['ssids'];
+        const ssids = this.form.controls['ssids'] as FormArray;
         ssids.removeAt(ssids.length - 1);
     }
 }
