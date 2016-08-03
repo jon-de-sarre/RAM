@@ -238,19 +238,20 @@ export class AddNotificationComponent extends AbstractPageComponent {
         }
     }
 
-    // todo nev can you please return this string[]
     public getSSIDs(): string[] {
-        const ssids = this.form.controls['ssids'] as FormArray;
-        return ssids.value;
+        return this.getSSIDFormArray().value;
     }
 
     public addAnotherSSID() {
-        const ssids = this.form.controls['ssids'] as FormArray;
-        ssids.push(this._fb.control(''));
+        this.getSSIDFormArray().push(this._fb.control(''));
     }
 
     public removeSSID() {
-        const ssids = this.form.controls['ssids'] as FormArray;
+        const ssids = this.getSSIDFormArray();
         ssids.removeAt(ssids.length - 1);
+    }
+
+    private getSSIDFormArray() {
+        return this.form.controls['ssids'] as FormArray;
     }
 }
