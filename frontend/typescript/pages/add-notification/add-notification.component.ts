@@ -42,4 +42,14 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
     }
 
+    public back() {
+        this.services.route.goToNotificationsPage(this.idValue);
+    }
+
+    // todo to be implemented
+    public save() {
+        this.clearGlobalMessages();
+        alert('TODO: Not yet implemented');
+    }
+
 }
