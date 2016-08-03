@@ -17,6 +17,8 @@ import {
     selector: 'ram-osp-notification-add',
     templateUrl: 'add-notification.component.html',
     directives: [
+        REACTIVE_FORM_DIRECTIVES,
+        FORM_DIRECTIVES,
         ROUTER_DIRECTIVES,
         PageHeaderSPSComponent
     ]
@@ -30,9 +32,12 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
     public identity: IIdentity;
 
+    public form: FormGroup;
+
     constructor(route: ActivatedRoute,
                 router: Router,
-                services: RAMServices) {
+                services: RAMServices,
+                private _fb: FormBuilder) {
         super(route, router, services);
         this.setBannerTitle('Software Provider Services');
     }
