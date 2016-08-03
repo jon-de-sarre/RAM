@@ -43,39 +43,42 @@
         </div>
     </div>
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4>Notification Details</h4>
-        </div>
-        <div class="panel-body">
-            <p>TODO -- software id</p>
+    <div *ngIf="delegateParty && delegateIdentityRef">
 
-
-            <div>
-                <access-period [(data)]='accessPeriod' (isValid)='accessPeriodIsValid=$event'>
-                </access-period>
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Notification Details</h4>
             </div>
-
-            <br style="clear: both"/>
-
-
-            <p>TODO -- agencies</p>
-        </div>
-    </div>
+            <div class="panel-body">
+                <p class="todo">TODO -- software id</p>
 
 
-    <div class="panel panel-default">
-        <div class="panel-heading">
-            <h4>Declaration</h4>
-        </div>
-        <div class="panel-body">
-            <p>TODO -- list declarations</p>
-            <div class="form-group col-md-12">
-                <label><h4><input type="checkbox" [formControl]='form.controls["accepted"]'> I agree to this declaration</h4></label>
+                <div>
+                    <access-period [(data)]='accessPeriod' (isValid)='accessPeriodIsValid=$event'>
+                    </access-period>
+                </div>
+
+                <br style="clear: both"/>
+
+
+                <p class="todo">TODO -- agencies</p>
             </div>
         </div>
-    </div>
 
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Declaration</h4>
+            </div>
+            <div class="panel-body">
+                <p class="todo">TODO -- list declarations</p>
+                <div class="form-group col-md-12">
+                    <label><h4><input type="checkbox" [formControl]='form.controls["accepted"]'> I agree to this declaration</h4></label>
+                </div>
+            </div>
+        </div>
+
+    </div>
 </form>
 
 <br/>
