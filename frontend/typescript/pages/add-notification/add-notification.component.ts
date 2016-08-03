@@ -1,7 +1,7 @@
 // import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
-import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES, FormControl} from '@angular/forms';
+import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES, FormControl, FormArray} from '@angular/forms';
 import {Calendar} from 'primeng/primeng';
 import {AccessPeriodComponent, AccessPeriodComponentData} from '../../components/access-period/access-period.component';
 
@@ -85,6 +85,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
             abn: '',
             accepted: false,
             agencyServices: [[]]
+            ssids: this._fb.array([this._fb.control('')])
         });
 
     }
@@ -238,5 +239,15 @@ export class AddNotificationComponent extends AbstractPageComponent {
         } else {
             agencyServices.splice(index, 1);
         }
+    }
+
+    public addAnotherSSID() {
+        const ssids = <FormArray>this.form.controls['ssids'];
+        ssids.push(this._fb.control(''));
+    }
+
+    public removeSSID() {
+        const ssids = <FormArray>this.form.controls['ssids'];
+        ssids.removeAt(ssids.length - 1);
     }
 }

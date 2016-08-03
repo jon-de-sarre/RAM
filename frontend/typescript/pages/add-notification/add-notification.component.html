@@ -51,8 +51,16 @@
                 <h4>Notification Details</h4>
             </div>
             <div class="panel-body">
-                <p class="todo">TODO -- software id</p>
 
+                <h4>Software Serial Number*</h4>
+                <div class="row" *ngFor="let ssid of form.controls['ssids'].controls; let i = index">
+                    <div class="col-md-4">
+                        {{i+1}} {{form.controls['ssids'].controls[i].value}}
+                        <input type="text" class="form-control" [formControl]="form.controls['ssids'].controls[i]"/>
+                    </div>
+                </div>
+                <button class="btn btn-secondary align-center" (click)="addAnotherSSID()">Add</button>
+                <button *ngIf="form.controls['ssids'].controls.length > 1" class="btn btn-secondary align-center" (click)="removeSSID()">Remove</button>
 
                 <div>
                     <access-period [(data)]='accessPeriod' (isValid)='accessPeriodIsValid=$event'>
