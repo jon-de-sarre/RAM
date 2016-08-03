@@ -68,9 +68,9 @@
                 </div>
 
                 <br style="clear: both"/>
+                <hr/>
 
-
-                <p class="todo">TODO -- agencies</p>
+                <h4>Set the agencies to notify:</h4>
                 <div class="checkbox" *ngFor="let attributeName of ospServices">
                     <label>
                         <input type="checkbox" (change)="onAgencyServiceChange(attributeName.code)"> {{attributeName.shortDecodeText}}
@@ -86,6 +86,7 @@
             </div>
             <div class="panel-body">
                 <p class="todo">TODO -- list declarations</p>
+
                 <div class="form-group col-md-12">
                     <label><h4><input type="checkbox" [formControl]='form.controls["accepted"]'> I agree to this declaration</h4></label>
                 </div>
