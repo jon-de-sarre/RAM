@@ -106,7 +106,9 @@ export class NotificationsComponent extends AbstractPageComponent {
         // pagination delegate
         this.paginationDelegate = {
             goToPage: (page: number) => {
-                this.services.route.goToRelationshipsPage(this.idValue, this.filter.encode(), page);
+                // TODO
+                alert('NOT IMPLEMENTED');
+                // this.services.route.goToBusinessesPage(this.idValue, this.filter.encode(), page);
             }
         } as SearchResultPaginationDelegate;
 

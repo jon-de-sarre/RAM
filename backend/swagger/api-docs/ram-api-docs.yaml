@@ -670,6 +670,32 @@ paths:
           schema:
           $ref: '#/responses/500'
 
+  # Role ..............................................................................................................
+
+  /role:
+    post:
+      tags:
+        - Reference - Role
+      operationId: Role.createByIdentity
+      summary: Create a role with an agency service
+      description: Create a role with an agency service as an agency user
+      parameters:
+        - in: body
+          required: true
+          schema:
+            $ref: '#/definitions/Role'
+      responses:
+        200:
+          schema:
+            $ref: '#/definitions/Role'
+        400:
+          $ref: '#/responses/400'
+        404:
+          $ref: '#/responses/404'
+        500:
+          $ref: '#/responses/500'
+
+
   # Role Types ........................................................................................................
 
   /roleTypes:
@@ -1319,6 +1345,61 @@ definitions:
         description: The content of this field is optional, it is the same content for a get request on the href
         schema:
           $ref: '#/definitions/RelationshipAttributeName'
+
+  # Role ..............................................................................................................
+
+  Role:
+    allOf:
+    - $ref: '#/definitions/IRAMObject'
+    type: object
+    description: Role
+    properties:
+      roleType:
+        $ref: '#/definitions/RoleTypesResourceReference'
+      party:
+        $ref: '#/definitions/PartyResourceReference'
+      attributes:
+        type: array
+        description: Role attributes that may be used with this resource
+        items:
+          $ref: '#/definitions/RoleAttribute'
+
+  RoleAttribute:
+    type: object
+    description: Role Attribute
+    required: ["value", "attributeName"]
+    properties:
+      value:
+        type: string
+        description: Value of Role Attribute
+      attributeName:
+        description: Role Attribute Name Resource Reference
+        schema:
+          $ref: '#/definitions/RoleAttributeNameResourceReference'
+
+
+  RoleAttributeNameResourceReference:
+    type: object
+    description: A reference to a Role Attribute Resource
+    required: ["href"]
+    properties:
+      href:
+        type: string
+        description: URL that uniquely identifies this Role Attribute Name
+      value:
+        description: The content of this field is optional, it is the same content for a get request on the href
+        schema:
+          $ref: '#/definitions/RoleAttributeName'
+
+  RoleAttributeName:
+    allOf:
+      - $ref: '#/definitions/ICodeDecode'
+    type: object
+    required: ["code"]
+    properties:
+      code:
+        type: string
+        description: This is the short code value by which Role Attribute Name may be known
 
   # Role Type .........................................................................................................
 
