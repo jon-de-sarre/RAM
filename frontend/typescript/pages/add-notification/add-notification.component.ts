@@ -17,7 +17,6 @@ import {
     IRole,
     IRelationshipType,
     Relationship,
-    RelationshipAttribute,
     IRelationshipAttribute
 } from '../../../../commons/RamAPI';
 
@@ -137,7 +136,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
             for (let identity of party.identities) {
                 if (identity.value.rawIdValue === abn) {
                     this.delegateIdentityRef = identity;
-                    this.listServicesByIdValue(identity.value.idValue)
+                    this.listServicesByIdValue(identity.value.idValue);
                 }
             }
         }, (err) => {
@@ -146,7 +145,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
     }
 
     public listServicesByIdValue(idValue: string) {
-        var page = 0;
+        let page = 0;
         this.services.rest.searchRolesByIdentity(idValue, page).subscribe((party) => {
 
         });
