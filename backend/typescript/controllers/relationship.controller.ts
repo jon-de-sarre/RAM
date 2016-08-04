@@ -205,9 +205,7 @@ export class RelationshipController {
                 if (!myPrincipal.agencyUserInd) {
                     const myIdentity = security.getAuthenticatedIdentity(res);
                     const hasAccess = await this.partyModel.hasAccess(myIdentity.party, req.params.identity_id);
-                    if (!hasAccess) {
-                        throw new Error('You do not have access to this party.');
-                    }
+                    Assert.assertTrue(hasAccess, 'You do not have access to this party.');
                 }
                 return req;
             })
@@ -418,7 +416,6 @@ export class RelationshipController {
                 in: 'body'
             }
         };
-
         const subjectIdValue = substringAfter('/api/v1/party/identity/', req.body.subject.href);
         validateReqSchema(req, schema)
             .then(async (req:Request) => {
@@ -426,9 +423,7 @@ export class RelationshipController {
                 if (!myPrincipal.agencyUserInd) {
                     const myIdentity = security.getAuthenticatedIdentity(res);
                     const hasAccess = await this.partyModel.hasAccess(myIdentity.party, subjectIdValue);
-                    if (!hasAccess) {
-                        throw new Error('You do not have access to this party.');
-                    }
+                    Assert.assertTrue(hasAccess, 'You do not have access to this party.');
                 }
                 return req;
             })
