@@ -388,7 +388,38 @@ export class RelationshipController {
         Assert.assertTrue(subjectIdValue !== '', 'Subject identity id value in href not found');
 
         const schema = {
-            // todo
+            'relationshipType.href': {
+                in: 'body',
+                matches: {
+                    options: ['^/api/v1/relationshipType/'],
+                    errorMessage: 'Relationship type is not valid'
+                }
+            },
+            'subject.href': {
+                in: 'body',
+                matches: {
+                    options: ['^/api/v1/party/identity/'],
+                    errorMessage: 'Subject identity id value not valid'
+                }
+            },
+            'delegate.href': {
+                in: 'body',
+                matches: {
+                    options: ['^/api/v1/party/identity/'],
+                    errorMessage: 'Delegate identity id value not valid'
+                }
+            },
+            'startTimestamp': {
+                in: 'body',
+                notEmpty: true,
+                isDate: {
+                    errorMessage: 'Start timestamp is not valid'
+                },
+                errorMessage: 'Start timestamp is not valid'
+            },
+            'endTimestamp': {
+                in: 'body'
+            }
         };
 
         validateReqSchema(req, schema)
