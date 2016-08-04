@@ -3,29 +3,26 @@
  * Attempting to turn transpiler on causes an internal
  * error.
  */
-import { Directive, ElementRef, OnInit, Attribute } from '@angular/core';
+import {Directive, ElementRef, OnInit, Input} from '@angular/core';
 import Showdown from 'showdown';
-import { RelationshipTypesService } from '../../services/relationship-types.service';
 
 @Directive({
-  selector: 'ng2-markdown',
-  providers: [RelationshipTypesService]
+    selector: 'ng2-markdown'
 })
+
 export class MarkdownComponent implements OnInit {
-  constructor (
-    private elementRef:ElementRef,
-    private relationshipTypesService:RelationshipTypesService,
-    @Attribute('type') private type:string,
-    @Attribute('code') private code:string
-  ) { }
 
-  public ngOnInit () {
-    const prms = this.relationshipTypesService.getByCode(this.type, this.code);
-    prms.subscribe((data) => this.process(data.defaultValue));
-  }
+    @Input() public markdown: string;
 
-private process(markdown:string) {
-    let converter = new Showdown.Converter();
-    this.elementRef.nativeElement.innerHTML = converter.makeHtml(markdown);
-  }
+    constructor(private elementRef: ElementRef) {
+    }
+
+    public ngOnInit() {
+        this.process(this.markdown);
+    }
+
+    private process(markdown: string) {
+        let converter = new Showdown.Converter();
+        this.elementRef.nativeElement.innerHTML = converter.makeHtml(markdown);
+    }
 }

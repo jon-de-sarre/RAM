@@ -7,6 +7,7 @@ import {AccessPeriodComponent, AccessPeriodComponentData} from '../../components
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
+import {MarkdownComponent} from '../../components/ng2-markdown/ng2-markdown.component';
 import {RAMServices} from '../../services/ram-services';
 
 import {
@@ -30,7 +31,8 @@ import {
         ROUTER_DIRECTIVES,
         PageHeaderSPSComponent,
         Calendar,
-        AccessPeriodComponent
+        AccessPeriodComponent,
+        MarkdownComponent
     ]
 })
 
@@ -238,19 +240,20 @@ export class AddNotificationComponent extends AbstractPageComponent {
         }
     }
 
-    // todo nev can you please return this string[]
     public getSSIDs(): string[] {
-        const ssids = this.form.controls['ssids'] as FormArray;
-        return ssids.value;
+        return this.getSSIDFormArray().value;
     }
 
     public addAnotherSSID() {
-        const ssids = this.form.controls['ssids'] as FormArray;
-        ssids.push(this._fb.control(''));
+        this.getSSIDFormArray().push(this._fb.control(''));
     }
 
     public removeSSID() {
-        const ssids = this.form.controls['ssids'] as FormArray;
+        const ssids = this.getSSIDFormArray();
         ssids.removeAt(ssids.length - 1);
+    }
+
+    private getSSIDFormArray() {
+        return this.form.controls['ssids'] as FormArray;
     }
 }

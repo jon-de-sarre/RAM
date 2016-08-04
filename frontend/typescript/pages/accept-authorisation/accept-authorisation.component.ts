@@ -5,6 +5,7 @@ import {DatePipe} from '@angular/common';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
+import {MarkdownComponent} from '../../components/ng2-markdown/ng2-markdown.component';
 import {RAMServices} from '../../services/ram-services';
 
 import {
@@ -18,7 +19,7 @@ import {
 @Component({
     selector: 'accept-authorisation',
     templateUrl: 'accept-authorisation.component.html',
-    directives: [ROUTER_DIRECTIVES, PageHeaderAuthComponent]
+    directives: [ROUTER_DIRECTIVES, PageHeaderAuthComponent, MarkdownComponent]
 })
 
 export class AcceptAuthorisationComponent extends AbstractPageComponent {

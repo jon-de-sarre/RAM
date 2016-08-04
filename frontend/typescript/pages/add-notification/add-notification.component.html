@@ -55,12 +55,11 @@
                 <h4>Software Serial Number*</h4>
                 <div class="row" *ngFor="let ssid of form.controls['ssids'].controls; let i = index">
                     <div class="col-md-4">
-                        {{i+1}} {{form.controls['ssids'].controls[i].value}}
                         <input type="text" class="form-control" [formControl]="form.controls['ssids'].controls[i]"/>
                     </div>
                 </div>
-                <button class="btn btn-secondary align-center" (click)="addAnotherSSID()">Add</button>
-                <button *ngIf="form.controls['ssids'].controls.length > 1" class="btn btn-secondary align-center" (click)="removeSSID()">Remove</button>
+                <button class="btn btn-link align-center" (click)="addAnotherSSID()">+ Add another</button>
+                <button *ngIf="form.controls['ssids'].controls.length > 1" class="btn btn-link align-center" (click)="removeSSID()">Remove</button>
 
                 <div>
                     <access-period [(data)]='accessPeriod' (isValid)='accessPeriodIsValid=$event'>
@@ -85,7 +84,7 @@
                 <h4>Declaration</h4>
             </div>
             <div class="panel-body">
-                {{ declarationText }}
+                <ng2-markdown [markdown]="declarationText"></ng2-markdown>
                 <div class="form-group col-md-12">
                     <label><h4><input type="checkbox" [formControl]='form.controls["accepted"]'> I agree to this declaration</h4></label>
                 </div>
