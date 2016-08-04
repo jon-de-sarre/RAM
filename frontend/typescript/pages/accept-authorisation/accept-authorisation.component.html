@@ -92,7 +92,8 @@
     <div class="panel-body">
         <h4>By accepting to act on behalf of <b>{{services.model.displayName((relationship$ | async)?.subjectNickName)}}</b>,
             you acknowledge that:</h4>
-        <div>{{delegateRelationshipTypeDeclarationAttributeUsage?.defaultValue}}</div>
+        <div class="todo">TODO {{delegateRelationshipTypeDeclarationAttributeUsage?.defaultValue}}</div>
+        <ng2-markdown [markdown]="delegateRelationshipTypeDeclarationAttributeUsage?.defaultValue"></ng2-markdown>
         <h4><input type="checkbox" [(ngModel)]="accept"> I accept</h4>
     </div>
 </div>

@@ -42,6 +42,7 @@ export class AuthorisationTypeComponent implements OnInit {
         for (let type of this.options) {
             if (type.value.code === value) {
                 this.selectedAuthType = type;
+                this.data.authType = value;
             }
         }
     }

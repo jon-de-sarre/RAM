@@ -13,6 +13,7 @@ export class RelationshipDeclarationComponent implements OnInit {
     @Input() public isAuthorizedBtnEnabled: boolean;
 
     @Input('data') public data: DeclarationComponentData;
+    @Input('markdown') public markdown: string;
 
     @Output('dataChange') public dataChanges = new EventEmitter<DeclarationComponentData>();
 
@@ -48,4 +49,5 @@ export class RelationshipDeclarationComponent implements OnInit {
 
 export interface DeclarationComponentData {
     accepted: boolean;
+    markdown: string;
 }

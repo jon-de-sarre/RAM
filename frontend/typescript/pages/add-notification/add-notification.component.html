@@ -84,7 +84,7 @@
                 <h4>Declaration</h4>
             </div>
             <div class="panel-body">
-                {{ declarationText }}
+                <ng2-markdown [markdown]="declarationText"></ng2-markdown>
                 <div class="form-group col-md-12">
                     <label><h4><input type="checkbox" [formControl]='form.controls["accepted"]'> I agree to this declaration</h4></label>
                 </div>

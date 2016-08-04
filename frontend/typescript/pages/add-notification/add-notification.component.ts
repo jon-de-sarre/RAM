@@ -7,6 +7,7 @@ import {AccessPeriodComponent, AccessPeriodComponentData} from '../../components
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
+import {MarkdownComponent} from '../../components/ng2-markdown/ng2-markdown.component';
 import {RAMServices} from '../../services/ram-services';
 
 import {
@@ -30,7 +31,8 @@ import {
         ROUTER_DIRECTIVES,
         PageHeaderSPSComponent,
         Calendar,
-        AccessPeriodComponent
+        AccessPeriodComponent,
+        MarkdownComponent
     ]
 })
 

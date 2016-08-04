@@ -60,6 +60,8 @@ export class AddRelationshipComponent extends AbstractPageComponent {
     public identity: IIdentity;
     public manageAuthAttribute: IRelationshipAttributeNameUsage;
 
+    public authType: string = 'choose';
+
     public newRelationship: AddRelationshipComponentData = {
         accessPeriod: {
             startDate: null,
@@ -83,7 +85,8 @@ export class AddRelationshipComponent extends AbstractPageComponent {
             value: ''
         },
         declaration: {
-            accepted: false
+            accepted: false,
+            markdown: 'TODO'
         }
     };
 
@@ -212,6 +215,11 @@ export class AddRelationshipComponent extends AbstractPageComponent {
         }
     }
 
+    public authTypeChange = (data:AuthorisationTypeComponentData) => {
+        // TODO calculate declaration markdown based on relationship type and services selected
+        // TODO update declaration component to show new text
+        this.newRelationship.declaration.markdown = 'TODO '+data.authType;
+    }
 }
 
 export interface AddRelationshipComponentData {

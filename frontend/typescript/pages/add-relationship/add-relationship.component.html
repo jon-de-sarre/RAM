@@ -6,7 +6,7 @@
 <representative-details [(data)]='newRelationship.representativeDetails' (isValid)='representativeIsValid=$event'>
 </representative-details>
 
-<authorisation-type [(data)]='newRelationship.authType' [options]='relationshipTypeRefs' (isValid)='authTypeIsValid=$event'>
+<authorisation-type [data]='newRelationship.authType' [options]='relationshipTypeRefs' (dataChange)="authTypeChange($event)" (isValid)='authTypeIsValid=$event'>
 </authorisation-type>
 
 <div class="panel panel-default">
@@ -31,7 +31,8 @@
     </div>
     <div class="panel-body">
 
-        <relationship-declaration [(data)]='newRelationship.decalaration'
+        <relationship-declaration [(data)]='newRelationship.declaration'
+                                  [markdown]="markdown"
                                   (backEvent)="back()"
                                   (createRelationshipEvent)="submit()"
                                   (isValid)='declarationIsValid=$event'
