@@ -41,6 +41,8 @@
                     </div>
                     <br/>
                     <button class="btn btn-secondary align-center" (click)="resetDelegate()">Change ABN</button>
+                    <br/>
+                    <br/>
                 </div>
             </div>
         </div>
@@ -54,7 +56,6 @@
             </div>
             <div class="panel-body">
                 <div class="col-md-12">
-
                     <h4>Software Serial Number*</h4>
                     <div class="row" *ngFor="let ssid of form.controls['ssids'].controls; let i = index">
                         <div class="col-md-4">
@@ -62,9 +63,9 @@
                         </div>
                     </div>
                     <button class="btn btn-link align-center" (click)="addAnotherSSID()">+ Add another</button>
-                    <button *ngIf="form.controls['ssids'].controls.length > 1" class="btn btn-link align-center"
-                            (click)="removeSSID()">Remove
-                    </button>
+                    <button *ngIf="form.controls['ssids'].controls.length > 1"
+                            class="btn btn-link align-center"
+                            (click)="removeSSID()">Remove</button>
                 </div>
 
                 <div>
@@ -86,7 +87,6 @@
                 </div>
             </div>
         </div>
-
 
         <div class="panel panel-default">
             <div class="panel-heading">
