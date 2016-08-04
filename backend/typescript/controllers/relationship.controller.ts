@@ -75,7 +75,6 @@ export class RelationshipController {
         validateReqSchema(req, schema)
             .then((req:Request) => this.relationshipModel.findByInvitationCode(req.params.invitationCode))
             .then((model) => {
-                console.log('model ', model);
                 return model;
             })
             .then((model) => model ? model.acceptPendingInvitation(security.getAuthenticatedIdentity(res)) : null)
@@ -205,9 +204,7 @@ export class RelationshipController {
                 if (!myPrincipal.agencyUserInd) {
                     const myIdentity = security.getAuthenticatedIdentity(res);
                     const hasAccess = await this.partyModel.hasAccess(myIdentity.party, req.params.identity_id);
-                    if (!hasAccess) {
-                        throw new Error('You do not have access to this party.');
-                    }
+                    Assert.assertTrue(hasAccess, 'You do not have access to this party.');
                 }
                 return req;
             })
@@ -251,18 +248,25 @@ export class RelationshipController {
         };
         const filterParams = FilterParams.decode(req.query.filter);
         validateReqSchema(req, schema)
-            .then((req:Request) => this.relationshipModel.searchDistinctSubjectsForMe(
-                res.locals[Headers.Identity].party,
-                filterParams.get('partyType'),
-                filterParams.get('authorisationManagement'),
-                filterParams.get('text'),
-                filterParams.get('sort'),
-                parseInt(req.query.page),
-                req.query.pageSize)
-            )
+            .then((req: Request) => {
+                const principal = security.getAuthenticatedPrincipal(res);
+                if (principal.agencyUserInd) {
+                    throw new Error('403');
+                } else {
+                    return this.relationshipModel.searchDistinctSubjectsForMe(
+                        res.locals[Headers.Identity].party,
+                        filterParams.get('partyType'),
+                        filterParams.get('authorisationManagement'),
+                        filterParams.get('text'),
+                        filterParams.get('sort'),
+                        parseInt(req.query.page),
+                        req.query.pageSize);
+                }
+            })
             .then((results) => (results.map((model) => model.toHrefValue(true))))
-            .then(sendSearchResult(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendSearchResult(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     private createUsingInvitation = async(req:Request, res:Response) => {
@@ -384,22 +388,48 @@ export class RelationshipController {
             return idValue;
         };
 
-        const subjectIdValue = substringAfter('/api/v1/party/identity/', req.body.subject.href);
-        Assert.assertTrue(subjectIdValue !== '', 'Subject identity id value in href not found');
-
         const schema = {
-            // todo
+            'relationshipType.href': {
+                in: 'body',
+                matches: {
+                    options: ['^/api/v1/relationshipType/'],
+                    errorMessage: 'Relationship type is not valid'
+                }
+            },
+            'subject.href': {
+                in: 'body',
+                matches: {
+                    options: ['^/api/v1/party/identity/'],
+                    errorMessage: 'Subject identity id value not valid'
+                }
+            },
+            'delegate.href': {
+                in: 'body',
+                matches: {
+                    options: ['^/api/v1/party/identity/'],
+                    errorMessage: 'Delegate identity id value not valid'
+                }
+            },
+            'startTimestamp': {
+                in: 'body',
+                notEmpty: true,
+                isDate: {
+                    errorMessage: 'Start timestamp is not valid'
+                },
+                errorMessage: 'Start timestamp is not valid'
+            },
+            'endTimestamp': {
+                in: 'body'
+            }
         };
-
+        const subjectIdValue = substringAfter('/api/v1/party/identity/', req.body.subject.href); // todo may need to change as it could be initiated from a delegate
         validateReqSchema(req, schema)
             .then(async (req:Request) => {
                 const myPrincipal = security.getAuthenticatedPrincipal(res);
                 if (!myPrincipal.agencyUserInd) {
                     const myIdentity = security.getAuthenticatedIdentity(res);
                     const hasAccess = await this.partyModel.hasAccess(myIdentity.party, subjectIdValue);
-                    if (!hasAccess) {
-                        throw new Error('You do not have access to this party.');
-                    }
+                    Assert.assertTrue(hasAccess, 'You do not have access to this party.');
                 }
                 return req;
             })
@@ -482,6 +512,7 @@ export class RelationshipController {
             security.isAuthenticated,
             this.createUsingInvitation);
 
+        // todo need to add to swagger
         router.post('/v1/relationship2',
             security.isAuthenticated,
             this.create);

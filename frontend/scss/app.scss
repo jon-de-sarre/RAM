@@ -490,7 +490,12 @@ footer {
 }
 
 .table > tbody > tr.relationship-subject-heading > td {
+  border: none;
   padding: 3em 0 0 0;
+}
+
+.table.no-thead > tbody > tr.relationship-subject-heading:first-child > td {
+  padding: 0.7em 0 0 0;
 }
 
 .table > tbody > tr.relationship-subject-heading > td > div {
@@ -511,4 +516,8 @@ footer {
   border-radius: 0 !important;
   -moz-border-radius: 0 !important;
   -webkit-border-radius: 0 !important;
+}
+
+.has-error.form-control {
+  border: 1px solid #FF0039;
 }

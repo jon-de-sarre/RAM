@@ -64,6 +64,21 @@ export class RelationshipStatus extends RAMEnum {
     }
 }
 
+export class RelationshipInitiatedBy extends RAMEnum {
+
+    public static Subject = new RelationshipInitiatedBy('SUBJECT', 'Subject');
+    public static Delegate = new RelationshipInitiatedBy('DELEGATE', 'Delegate');
+
+    protected static AllValues = [
+        RelationshipInitiatedBy.Subject,
+        RelationshipInitiatedBy.Delegate
+    ];
+
+    constructor(code: string, shortDecodeText: string) {
+        super(code, shortDecodeText);
+    }
+}
+
 // schema .............................................................................................................
 
 const RelationshipSchema = RAMSchema({
@@ -120,6 +135,12 @@ const RelationshipSchema = RAMSchema({
         required: [true, 'Status is required'],
         trim: true,
         enum: RelationshipStatus.valueStrings()
+    },
+    initiatedBy: {
+        type: String,
+        required: [true, 'Initiated by is required'],
+        trim: true,
+        enum: RelationshipInitiatedBy.valueStrings()
     },
     attributes: [{
         type: mongoose.Schema.Types.ObjectId,
@@ -227,6 +248,7 @@ export interface IRelationship extends IRAMObject {
     endTimestamp?:Date;
     endEventTimestamp?:Date;
     status:string;
+    initiatedBy:string;
     attributes:IRelationshipAttribute[];
     _subjectNickNameString:string;
     _delegateNickNameString:string;
@@ -247,13 +269,6 @@ export interface IRelationship extends IRAMObject {
 }
 
 export interface IRelationshipModel extends mongoose.Model<IRelationship> {
-    add:(relationshipType: IRelationshipType,
-         subject: IParty,
-         subjectNickName: IName,
-         invitationCodeIdentity: IIdentity,
-         startTimestamp: Date,
-         endTimestamp: Date,
-         attributes: IRelationshipAttribute[]) => Promise<IRelationship>;
     add2:(relationshipType: IRelationshipType,
           subject: IParty,
           subjectNickName: IName,
@@ -261,6 +276,8 @@ export interface IRelationshipModel extends mongoose.Model<IRelationship> {
           delegateNickName: IName,
           startTimestamp: Date,
           endTimestamp: Date,
+          initiatedBy: RelationshipInitiatedBy,
+          invitationIdentity: IIdentity,
           attributes: IRelationshipAttribute[]) => Promise<IRelationship>;
     findByIdentifier:(id: string) => Promise<IRelationship>;
     findByInvitationCode:(invitationCode: string) => Promise<IRelationship>;
@@ -318,6 +335,7 @@ RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
         this.endTimestamp,
         this.endEventTimestamp,
         this.status,
+        this.initiatedBy,
         await Promise.all<RelationshipAttributeDTO>(this.attributes.map(
             async (attribute: IRelationshipAttribute) => {
                 return await attribute.toDTO();
@@ -467,27 +485,6 @@ RelationshipSchema.method('notifyDelegate', async function (email: string, notif
 
 // static methods .....................................................................................................
 
-RelationshipSchema.static('add', async (relationshipType: IRelationshipType,
-                                        subject: IParty,
-                                        subjectNickName: IName,
-                                        invitationCodeIdentity: IIdentity,
-                                        startTimestamp: Date,
-                                        endTimestamp: Date,
-                                        attributes: IRelationshipAttribute[]) => {
-    return await this.RelationshipModel.create({
-        relationshipType: relationshipType,
-        subject: subject,
-        subjectNickName: subjectNickName,
-        delegate: invitationCodeIdentity.party,
-        delegateNickName: invitationCodeIdentity.profile.name,
-        invitationIdentity: invitationCodeIdentity,
-        startTimestamp: startTimestamp,
-        endTimestamp: endTimestamp,
-        status: RelationshipStatus.Pending.code,
-        attributes: attributes
-    });
-});
-
 RelationshipSchema.static('add2', async (relationshipType: IRelationshipType,
                                         subject: IParty,
                                         subjectNickName: IName,
@@ -495,7 +492,22 @@ RelationshipSchema.static('add2', async (relationshipType: IRelationshipType,
                                         delegateNickName: IName,
                                         startTimestamp: Date,
                                         endTimestamp: Date,
+                                        initiatedBy: RelationshipInitiatedBy,
+                                        invitationIdentity: IIdentity,
                                         attributes: IRelationshipAttribute[]) => {
+
+    let status = RelationshipStatus.Pending;
+
+    // check subject
+    if(initiatedBy === RelationshipInitiatedBy.Subject && relationshipType.autoAcceptIfInitiatedFromSubject) {
+        status = RelationshipStatus.Active;
+    }
+
+    // check delegate
+    if(initiatedBy === RelationshipInitiatedBy.Delegate && relationshipType.autoAcceptIfInitiatedFromDelegate) {
+        status = RelationshipStatus.Active;
+    }
+
     return await this.RelationshipModel.create({
         relationshipType: relationshipType,
         subject: subject,
@@ -504,7 +516,9 @@ RelationshipSchema.static('add2', async (relationshipType: IRelationshipType,
         delegateNickName: delegateNickName,
         startTimestamp: startTimestamp,
         endTimestamp: endTimestamp,
-        status: RelationshipStatus.Active.code, // todo????
+        status: status.code,
+        initiatedBy: initiatedBy.code,
+        invitationIdentity: invitationIdentity,
         attributes: attributes
     });
 });

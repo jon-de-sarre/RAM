@@ -19,7 +19,7 @@ import {
 import {
     IRelationship,
     RelationshipModel,
-    RelationshipStatus
+    RelationshipStatus, RelationshipInitiatedBy
 } from '../models/relationship.model';
 import {
     IRelationshipAttribute,
@@ -105,6 +105,7 @@ describe('RAM Relationship Attribute', () => {
                         delegateNickName: delegateNickName1,
                         startTimestamp: new Date(),
                         status: RelationshipStatus.Pending.code,
+                        initiatedBy: RelationshipInitiatedBy.Subject.code,
                         attributes: [relationshipAttribute1]
                     });
 

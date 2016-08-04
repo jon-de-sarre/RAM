@@ -179,5 +179,8 @@ While working on the travis configuration file you can validate it using the fol
 - `gem install travis`
 - `travis lint`
 
-## favicon.ico
-Credit for creation of icon to [Alexandr Cherkinsky](https://thenounproject.com/cherkinskiy/)
+## Credits
+
+Creation of favicon to [Alexandr Cherkinsky](https://thenounproject.com/cherkinskiy/).
+
+Cross browser testing using [BrowserStack](https://www.browserstack.com/).

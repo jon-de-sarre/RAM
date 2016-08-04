@@ -1,7 +1,7 @@
 // import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
-import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES, FormControl, FormArray} from '@angular/forms';
+import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES, Validators, FormControl, FormArray} from '@angular/forms';
 import {Calendar} from 'primeng/primeng';
 import {AccessPeriodComponent, AccessPeriodComponentData} from '../../components/access-period/access-period.component';
 
@@ -9,6 +9,7 @@ import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
 import {MarkdownComponent} from '../../components/ng2-markdown/ng2-markdown.component';
 import {RAMServices} from '../../services/ram-services';
+import {RAMNgValidators} from '../../commons/ram-ng-validators';
 
 import {
     IIdentity,
@@ -43,7 +44,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
     public delegateIdentityRef: IHrefValue<IIdentity>;
 
     public accessPeriod: AccessPeriodComponentData = {
-        startDate: null,
+        startDate: new Date(),
         noEndDate: true,
         endDate: null
     };
@@ -86,10 +87,10 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
         // forms
         this.form = this._fb.group({
-            abn: '',
+            abn: [null, Validators.compose([Validators.required, RAMNgValidators.validateABNFormat])],
             accepted: false,
             agencyServices: [[]],
-            ssids: this._fb.array([this._fb.control('')])
+            ssids: this._fb.array([this._fb.control(null, Validators.required)])
         });
 
     }
@@ -162,6 +163,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
                 this.accessPeriod.endDate,
                 null,
                 null,
+                this.services.constants.RelationshipInitiatedBy.DELEGATE,
                 attributes
             );
 
@@ -177,7 +179,6 @@ export class AddNotificationComponent extends AbstractPageComponent {
     }
 
     public resetDelegate() {
-        console.log('AM AT RESET');
         this.delegateParty = null;
         this.delegateIdentityRef = null;
         (this.form.controls['abn'] as FormControl).updateValue('');
@@ -186,7 +187,8 @@ export class AddNotificationComponent extends AbstractPageComponent {
     }
 
     public findByABN() {
-        const abn = this.form.controls['abn'].value;
+        const abn = this.form.controls['abn'].value.replace(/ /g, '');
+
         this.clearGlobalMessages();
 
         this.services.rest.findPartyByABN(abn).subscribe((party) => {
@@ -196,29 +198,38 @@ export class AddNotificationComponent extends AbstractPageComponent {
             // call model service getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, empty programs) ...
             // set the array of agency services ...
 
+            const searchRolesByIdentityAndPage = (idValue: string, identity:IHrefValue<IIdentity>, page: number) => {
+
+                this.services.rest.searchRolesByIdentity(idValue, page).subscribe((results) => {
+
+                    // check for OSP role
+                    for (let role of results.list) {
+                        // TODO is there a better way to match?
+                        if (role.value.roleType.href.endsWith(this.services.constants.RelationshipTypeCode.OSP)) {
+                            this.delegateParty = party;
+                            this.ospRoleRef = role;
+                            this.delegateIdentityRef = identity;
+                            this.ospServices = this.services.model.getAccessibleAgencyServiceRoleAttributeNames(role, []);
+                            return;
+                        }
+                    }
+
+                    const hasMore = (results.page * results.pageSize) < results.totalCount;
+                    if (hasMore) {
+                        searchRolesByIdentityAndPage(idValue, identity, page + 1);
+                    } else {
+                        // no OSP role found
+                        this.addGlobalMessages(['The business matching the ABN is not a registered Online Service Provider']);
+                    }
+
+                });
+            };
+
             for (let identity of party.identities) {
                 if (identity.value.rawIdValue === abn) {
 
                     // found business
-                    // TODO iterate over pages
-                    let page = 1;
-                    this.services.rest.searchRolesByIdentity(identity.value.idValue, page).subscribe((results) => {
-
-                        // check for OSP role
-                        for (let role of results.list) {
-                            // TODO is there a better way to match?
-                            if (role.value.roleType.href.endsWith(this.services.constants.RelationshipTypeCode.OSP)) {
-                                this.delegateParty = party;
-                                this.ospRoleRef = role;
-                                this.delegateIdentityRef = identity;
-                                this.ospServices = this.services.model.getAccessibleAgencyServiceRoleAttributeNames(role, []);
-                                return;
-                            }
-                        }
-
-                        // no OSP role found
-                        this.addGlobalMessages(['Cannot match ABN']);
-                    });
+                    searchRolesByIdentityAndPage(identity.value.idValue, identity, 1);
 
                 } else {
                     // no identity found
@@ -245,7 +256,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
     }
 
     public addAnotherSSID() {
-        this.getSSIDFormArray().push(this._fb.control(''));
+        this.getSSIDFormArray().push(this._fb.control(null, Validators.required));
     }
 
     public removeSSID() {

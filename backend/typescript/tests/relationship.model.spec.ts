@@ -20,7 +20,7 @@ import {
 import {
     IRelationship,
     RelationshipModel,
-    RelationshipStatus
+    RelationshipStatus, RelationshipInitiatedBy
 } from '../models/relationship.model';
 import {IRelationshipType} from '../models/relationshipType.model';
 
@@ -103,12 +103,15 @@ describe('RAM Relationship', () => {
                         party: delegateParty1
                     });
 
-                    relationship1 = await RelationshipModel.add(relationshipTypeCustom,
+                    relationship1 = await RelationshipModel.add2(relationshipTypeCustom,
                         subjectParty1,
                         subjectNickName1,
-                        delegateIdentity1,
+                        delegateIdentity1.party,
+                        delegateIdentity1.profile.name,
                         new Date(),
                         null,
+                        RelationshipInitiatedBy.Subject,
+                        delegateIdentity1,
                         []
                     );
 
@@ -186,7 +189,8 @@ describe('RAM Relationship', () => {
                 delegate: delegateParty1,
                 delegateNickName: delegateNickName1,
                 startTimestamp: new Date(),
-                status: RelationshipStatus.Active.code
+                status: RelationshipStatus.Active.code,
+                initiatedBy: RelationshipInitiatedBy.Subject.code
             });
 
             expect(instance).not.toBeNull();
@@ -217,7 +221,8 @@ describe('RAM Relationship', () => {
                 delegateNickName: delegateNickName1,
                 startTimestamp: new Date(),
                 endTimestamp: new Date(),
-                status: RelationshipStatus.Active.code
+                status: RelationshipStatus.Active.code,
+                initiatedBy: RelationshipInitiatedBy.Subject.code
             });
 
             expect(instance).not.toBeNull();
@@ -255,7 +260,8 @@ describe('RAM Relationship', () => {
                 delegateNickName: invitationCodeIdentity.profile.name,
                 startTimestamp: new Date(),
                 endTimestamp: new Date(2020, 12, 31),
-                status: RelationshipStatus.Pending.code
+                status: RelationshipStatus.Pending.code,
+                initiatedBy: RelationshipInitiatedBy.Subject.code
             });
 
             const claimingDelegateIdentity1 = await IdentityModel.create({
@@ -296,13 +302,16 @@ describe('RAM Relationship', () => {
 
             const invitationCodeIdentity = await IdentityModel.createInvitationCodeIdentity('John', 'Delegate 1', '01/01/1999');
 
-            const relationshipToAccept = await RelationshipModel.add(
+            const relationshipToAccept = await RelationshipModel.add2(
                 relationshipTypeCustom,
                 subjectParty1,
                 subjectNickName1,
-                invitationCodeIdentity,
+                invitationCodeIdentity.party,
+                invitationCodeIdentity.profile.name,
                 new Date(),
                 new Date(2020, 12, 31),
+                RelationshipInitiatedBy.Subject,
+                invitationCodeIdentity,
                 []
             );
 
@@ -382,7 +391,6 @@ describe('RAM Relationship', () => {
         try {
 
             const invitationCodeIdentity = await IdentityModel.createInvitationCodeIdentity('John', 'Delegate 1', '01/01/1999');
-
             const relationshipToReject = await RelationshipModel.create({
                 relationshipType: relationshipTypeCustom,
                 subject: subjectParty1,
@@ -391,7 +399,9 @@ describe('RAM Relationship', () => {
                 delegateNickName: invitationCodeIdentity.profile.name,
                 startTimestamp: new Date(),
                 endTimestamp: new Date(2020, 12, 31),
-                status: RelationshipStatus.Pending.code
+                status: RelationshipStatus.Pending.code,
+                initiatedBy: RelationshipInitiatedBy.Subject.code,
+                invitationIdentity: invitationCodeIdentity
             });
 
             const acceptingDelegateIdentity1 = await IdentityModel.create({
@@ -576,7 +586,8 @@ describe('RAM Relationship', () => {
                 delegate: delegateParty1,
                 delegateNickName: delegateNickName1,
                 startTimestamp: new Date(),
-                status: RelationshipStatus.Pending.code
+                status: RelationshipStatus.Pending.code,
+                initiatedBy: RelationshipInitiatedBy.Subject.code
             });
 
             // create another relationship to the same parties (inverted)
@@ -587,7 +598,8 @@ describe('RAM Relationship', () => {
                 delegate: subjectParty1,
                 delegateNickName: subjectNickName1,
                 startTimestamp: new Date(),
-                status: RelationshipStatus.Pending.code
+                status: RelationshipStatus.Pending.code,
+                initiatedBy: RelationshipInitiatedBy.Subject.code
             });
 
             const parties = await RelationshipModel.searchDistinctSubjectsForMe(delegateParty1, null, 'false', null, 'asc', 1, 10);
