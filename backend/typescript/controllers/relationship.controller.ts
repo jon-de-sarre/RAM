@@ -265,7 +265,7 @@ export class RelationshipController {
             .then(sendNotFoundError(res));
     };
 
-    private create = async(req:Request, res:Response) => {
+    private createUsingInvitation = async(req:Request, res:Response) => {
         // TODO support other party types - currently only INDIVIDUAL is supported here
         // TODO how much of this validation should be in the data layer?
         // TODO decide how to handle dates - should they include time? or should server just use 12am AEST
@@ -373,7 +373,7 @@ export class RelationshipController {
             .catch(sendError(res));
     };
 
-    private create2 = async(req:Request, res:Response) => {
+    private create = async(req:Request, res:Response) => {
 
         // todo move into somewhere
         let substringAfter = (searchString: string, href: string) => {
@@ -480,11 +480,11 @@ export class RelationshipController {
 
         router.post('/v1/relationship',
             security.isAuthenticated,
-            this.create);
+            this.createUsingInvitation);
 
         router.post('/v1/relationship2',
             security.isAuthenticated,
-            this.create2);
+            this.create);
 
         router.get('/v1/relationshipStatus/:code',
             this.findStatusByName);
