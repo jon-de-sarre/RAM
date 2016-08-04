@@ -75,7 +75,6 @@ export class RelationshipController {
         validateReqSchema(req, schema)
             .then((req:Request) => this.relationshipModel.findByInvitationCode(req.params.invitationCode))
             .then((model) => {
-                console.log('model ', model);
                 return model;
             })
             .then((model) => model ? model.acceptPendingInvitation(security.getAuthenticatedIdentity(res)) : null)
@@ -249,18 +248,25 @@ export class RelationshipController {
         };
         const filterParams = FilterParams.decode(req.query.filter);
         validateReqSchema(req, schema)
-            .then((req:Request) => this.relationshipModel.searchDistinctSubjectsForMe(
-                res.locals[Headers.Identity].party,
-                filterParams.get('partyType'),
-                filterParams.get('authorisationManagement'),
-                filterParams.get('text'),
-                filterParams.get('sort'),
-                parseInt(req.query.page),
-                req.query.pageSize)
-            )
+            .then((req: Request) => {
+                const principal = security.getAuthenticatedPrincipal(res);
+                if (principal.agencyUserInd) {
+                    throw new Error('403');
+                } else {
+                    return this.relationshipModel.searchDistinctSubjectsForMe(
+                        res.locals[Headers.Identity].party,
+                        filterParams.get('partyType'),
+                        filterParams.get('authorisationManagement'),
+                        filterParams.get('text'),
+                        filterParams.get('sort'),
+                        parseInt(req.query.page),
+                        req.query.pageSize);
+                }
+            })
             .then((results) => (results.map((model) => model.toHrefValue(true))))
-            .then(sendSearchResult(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendSearchResult(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     private createUsingInvitation = async(req:Request, res:Response) => {

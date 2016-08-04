@@ -1,6 +1,6 @@
 import {conf} from '../bootstrap';
 import {Seeder} from './seed';
-import {RelationshipStatus} from '../models/relationship.model';
+import {RelationshipStatus, RelationshipInitiatedBy} from '../models/relationship.model';
 
 // seeder .............................................................................................................
 
@@ -27,6 +27,7 @@ export class TrevorTrainingRelationshipsSeeder {
                     delegateNickName: Seeder.edtechosp_name,
                     startTimestamp: new Date(),
                     status: RelationshipStatus.Active.code,
+                    initiatedBy: RelationshipInitiatedBy.Delegate.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: ['USI'],

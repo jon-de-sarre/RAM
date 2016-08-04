@@ -490,7 +490,12 @@ footer {
 }
 
 .table > tbody > tr.relationship-subject-heading > td {
+  border: none;
   padding: 3em 0 0 0;
+}
+
+.table.no-thead > tbody > tr.relationship-subject-heading:first-child > td {
+  padding: 0.7em 0 0 0;
 }
 
 .table > tbody > tr.relationship-subject-heading > td > div {

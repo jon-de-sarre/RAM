@@ -6,7 +6,7 @@
  * the ABN a link. The operator can choose the organisation of interest.
  * If only one record is returns (as in when the ABN is given), it is
  * automatically chosen.
- * 
+ *
  * This component sends a dataChange even when an organisation is chosen
  * and an error even on errors or when there are no results.
  *     <business-select
@@ -152,7 +152,7 @@ export class BusinessSelectComponent {
             } else if (this.searchIncludesName) {
                 this.display(this.rest.getABRfromName(this.abn_or_name));
             } else {
-                this.errorEvent.emit(['Valid ABR is 11 digits (plus spaces)']);
+                this.errorEvent.emit(['Valid ABN is 11 digits (plus spaces)']);
                 this.isLoading = false;
             }
         }

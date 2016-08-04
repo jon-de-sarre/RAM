@@ -3,7 +3,7 @@ import {Seeder} from './seed';
 import {ProfileProvider} from '../models/profile.model';
 import {PartyType} from '../models/party.model';
 import {IdentityType, IdentityLinkIdScheme, IdentityInvitationCodeStatus} from '../models/identity.model';
-import {RelationshipStatus} from '../models/relationship.model';
+import {RelationshipStatus, RelationshipInitiatedBy} from '../models/relationship.model';
 
 const lpad = (value: Object, size: number, char: string) => {
     let s = value + '';
@@ -38,6 +38,7 @@ export class JensCateringRelationshipsSeeder {
                     delegateNickName: Seeder.jennifermaxims_name,
                     startTimestamp: new Date(),
                     status: RelationshipStatus.Active.code,
+                    initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
@@ -87,6 +88,7 @@ export class JensCateringRelationshipsSeeder {
                     delegateNickName: Seeder.edtechosp_name,
                     startTimestamp: new Date(),
                     status: RelationshipStatus.Active.code,
+                    initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: ['USI'],
@@ -128,6 +130,7 @@ export class JensCateringRelationshipsSeeder {
                     delegateNickName: Seeder.johnmaxims_name,
                     startTimestamp: new Date(),
                     status: RelationshipStatus.Active.code,
+                    initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
@@ -210,6 +213,7 @@ export class JensCateringRelationshipsSeeder {
                     delegateNickName: Seeder.robertsmith_name,
                     startTimestamp: new Date(),
                     status: RelationshipStatus.Pending.code,
+                    initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
@@ -290,6 +294,7 @@ export class JensCateringRelationshipsSeeder {
                     delegateNickName: Seeder.fredjohnson_name,
                     startTimestamp: new Date(),
                     status: RelationshipStatus.Pending.code,
+                    initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
@@ -374,6 +379,7 @@ export class JensCateringRelationshipsSeeder {
                         delegateNickName: delegateName,
                         startTimestamp: new Date(),
                         status: RelationshipStatus.Active.code,
+                        initiatedBy: RelationshipInitiatedBy.Subject.code,
                         attributes: [
                             await Seeder.createRelationshipAttributeModel({
                                 value: true,

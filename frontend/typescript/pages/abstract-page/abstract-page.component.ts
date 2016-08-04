@@ -44,6 +44,7 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
     public onPreInit(params: {path: Params, query: Params}) {
         this.clearGlobalMessages();
         this.onInit(params);
+        $('html, body').animate({ scrollTop: 0 }, 'slow');
     }
 
     /* tslint:disable:no-empty */
@@ -103,6 +104,7 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
 
     protected addGlobalMessage(message: string) {
         this.globalMessages.push(message);
+        $('html, body').animate({ scrollTop: 0 }, 'slow');
     }
 
     protected addGlobalMessages(messages: string[]) {

@@ -11,6 +11,10 @@ export class RAMRouteService {
         this.router.navigate(['/home']);
     }
 
+    public goToAccessDeniedPage() {
+        this.router.navigate(['/403']);
+    }
+
     public goToAuthorisationsHomePage() {
         this.router.navigate(['/home/auth']);
     }
