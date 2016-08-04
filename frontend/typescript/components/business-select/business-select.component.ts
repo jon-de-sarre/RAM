@@ -14,7 +14,7 @@
  *       (error)="displayErrors($event)"
  *     ></business-select>
  */
-import {Output, EventEmitter, Component} from '@angular/core';
+import {Output, Input, EventEmitter, Component} from '@angular/core';
 import {REACTIVE_FORM_DIRECTIVES, FORM_DIRECTIVES } from '@angular/forms';
 import {ABRentry} from '../../../../commons/abr';
 import {RAMRestService} from '../../services/ram-rest.service';
@@ -26,6 +26,19 @@ import {Observable} from 'rxjs/Observable';
     directives: [REACTIVE_FORM_DIRECTIVES,FORM_DIRECTIVES]
 })
 export class BusinessSelectComponent {
+    /*
+     * Component can allow search by ABN or ABN and organisation name.
+     * Used in referencing parent: <business-select [searchIncludesName]="false"
+     */
+    @Input() public searchIncludesName:boolean = true;
+    /*
+     * If the search doesn't include names and the parent page moves on
+     * immediately after operator ABN entry, then you may not want to
+     * have a table of results. If, however, this component is part of
+     * a larger form, leave the table displayed so the user can see
+     * the company information.
+     */
+    @Input() public showSearchResults:boolean = true;
     /*
      * Containter for the user input field. They can enter an ABN
      * or a partial company name, trading name, sole trader name, etc.
@@ -58,7 +71,6 @@ export class BusinessSelectComponent {
      * displayed and the ABN is no longer a link.
      */
     public selectedBusiness:ABRentry = null;
-
     /*
      * Tell the parent component that the operator has selected a business.
      * Does not trigger on search, only when there is one business in focus.
@@ -97,8 +109,15 @@ export class BusinessSelectComponent {
                 }
             },
             (err) => {
-                this.errorEvent.emit(this.rest.extractErrorMessages(err));
-                    this.isLoading = false;
+                if (err.status === 404) {
+                // default server 404 error message is wrong
+                    this.errorEvent.emit(
+                        ['ABN '+this.abn_or_name+' not found in the ABR']
+                    );
+                } else {
+                    this.errorEvent.emit(this.rest.extractErrorMessages(err));
+                }
+                this.isLoading = false;
             }
         );
     }
@@ -130,8 +149,11 @@ export class BusinessSelectComponent {
             if (/^(\d *?){11}$/.test(this.abn_or_name)) {
                 const abn = this.abn_or_name.replace(/\s+/g, '');
                 this.display(this.rest.getABRfromABN(abn));
-            } else {
+            } else if (this.searchIncludesName) {
                 this.display(this.rest.getABRfromName(this.abn_or_name));
+            } else {
+                this.errorEvent.emit(['Valid ABR is 11 digits (plus spaces)']);
+                this.isLoading = false;
             }
         }
     }
