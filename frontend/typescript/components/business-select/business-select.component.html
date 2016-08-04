@@ -1,18 +1,9 @@
-<!--<div class="panel panel-default">-->
-    <!--<div class="panel-heading">-->
-        <!--<h4>Find and Select Business</h4>-->
-    <!--</div>-->
-    <!--<div class="panel-body">-->
-
 <form>
 
     <div class="panel panel-default container-fluid">
         <div class="panel-heading row">
-            <br/>
-            <div class="form-group col-md-2">
-                <h4>ABN or Name*</h4>
-            </div>
             <div class="form-group col-md-8">
+                <h4><b>Search by:</b></h4>
                 <input type="text"
                        class="form-control"
                        placeholder="Enter ABN or Name and press <Tab> for listing"
@@ -20,7 +11,10 @@
                        [(ngModel)]="abn_or_name"
                        (ngModelChange)="valueChange($event)"/>
             </div>
-            <button type="submit" class="btn btn-default col-md-2" (click)="findCompanies()" >Search ABR</button>
+            <div class="form-group col-md-4">
+                <h4><b>&nbsp;</b></h4>
+                <button type="submit" class="btn btn-default" (click)="findCompanies()" >Search ABR</button>
+            </div>
         </div>
     </div>
 
