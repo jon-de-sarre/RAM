@@ -90,7 +90,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
             abn: [null, Validators.compose([Validators.required, RAMNgValidators.validateABNFormat])],
             accepted: false,
             agencyServices: [[]],
-            ssids: this._fb.array([this._fb.control('')])
+            ssids: this._fb.array([this._fb.control(null, Validators.required)])
         });
 
     }
@@ -247,7 +247,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
     }
 
     public addAnotherSSID() {
-        this.getSSIDFormArray().push(this._fb.control(''));
+        this.getSSIDFormArray().push(this._fb.control(null, Validators.required));
     }
 
     public removeSSID() {
