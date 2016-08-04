@@ -62,8 +62,8 @@ export class AddRoleComponent extends AbstractPageComponent {
             this.me = me;
         }, (err) => {
             const status = err.status;
-            if (status === 401) {
-                this.services.route.goToHomePage();
+            if (status === 401 || status === 403) {
+                this.services.route.goToAccessDeniedPage();
             }
         });
 
