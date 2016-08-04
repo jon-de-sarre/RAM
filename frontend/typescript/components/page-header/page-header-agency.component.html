@@ -5,11 +5,11 @@
         <br/>
     </div>
 
-    <div *ngIf="showContent">
+    <div>
         <h1>{{title()}}</h1>
         <div>
             <ul class="nav nav-tabs">
-                <li [class.active]="tab == 'MANAGE_NOTIFICATIONS'"><a href="" (click)="goToNotificationsPage()">Manage Notifications</a></li>
+                <li [class.active]="tab == 'SEARCH_ABR'"><a href="" (click)="goToNotificationsPage()">Search ABR</a></li>
             </ul>
         </div>
     </div>

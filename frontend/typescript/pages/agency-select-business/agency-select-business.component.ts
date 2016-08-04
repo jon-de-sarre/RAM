@@ -8,7 +8,7 @@ import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
-import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
+import {PageHeaderAgencyComponent} from '../../components/page-header/page-header-agency.component';
 import {RAMServices} from '../../services/ram-services';
 import { BusinessSelectComponent } from '../../components/business-select/business-select.component';
 import {ABRentry} from '../../../../commons/abr';
@@ -19,7 +19,7 @@ import {RAMRestService} from '../../services/ram-rest.service';
     templateUrl: 'agency-select-business.component.html',
     directives: [
         ROUTER_DIRECTIVES,
-        PageHeaderSPSComponent,
+        PageHeaderAgencyComponent,
         BusinessSelectComponent
     ]
 })
