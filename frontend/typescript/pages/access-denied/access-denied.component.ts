@@ -18,7 +18,7 @@ export class AccessDeniedComponent extends AbstractPageComponent {
                 router: Router,
                 services: RAMServices) {
         super(route, router, services);
-        this.setBannerTitle('Access Denied');
+        this.setBannerTitle('Relationship Authorisation Manager');
     }
 
 }
