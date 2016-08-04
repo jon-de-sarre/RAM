@@ -12,6 +12,11 @@ export class RAMConstantsService {
         NOTIFICATION: 'NOTIFICATION'
     };
 
+    public RelationshipInitiatedBy = {
+        SUBJECT: 'SUBJECT',
+        DELEGATE: 'DELEGATE'
+    };
+
     public RelationshipTypeCode = {
         OSP: 'OSP'
     };

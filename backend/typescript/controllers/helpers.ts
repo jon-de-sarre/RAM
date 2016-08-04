@@ -108,6 +108,7 @@ export function sendError<T>(res: Response) {
                 res.json(new ErrorResponse(error.toString()));
                 break;
         }
+        console.error(new Error().stack);
     };
 }
 

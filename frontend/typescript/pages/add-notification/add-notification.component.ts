@@ -162,6 +162,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
                 this.accessPeriod.endDate,
                 null,
                 null,
+                this.services.constants.RelationshipInitiatedBy.SUBJECT,
                 attributes
             );
 
@@ -177,7 +178,6 @@ export class AddNotificationComponent extends AbstractPageComponent {
     }
 
     public resetDelegate() {
-        console.log('AM AT RESET');
         this.delegateParty = null;
         this.delegateIdentityRef = null;
         (this.form.controls['abn'] as FormControl).updateValue('');

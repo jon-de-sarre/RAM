@@ -75,7 +75,6 @@ export class RelationshipController {
         validateReqSchema(req, schema)
             .then((req:Request) => this.relationshipModel.findByInvitationCode(req.params.invitationCode))
             .then((model) => {
-                console.log('model ', model);
                 return model;
             })
             .then((model) => model ? model.acceptPendingInvitation(security.getAuthenticatedIdentity(res)) : null)

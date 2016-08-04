@@ -1,7 +1,7 @@
 import * as mongoose from 'mongoose';
 import {RAMEnum, IRAMObject, RAMSchema, Assert} from './base';
 import {IIdentity, IdentityModel} from './identity.model';
-import {RelationshipModel, IRelationship} from './relationship.model';
+import {RelationshipModel, IRelationship, RelationshipInitiatedBy} from './relationship.model';
 import {RelationshipTypeModel} from './relationshipType.model';
 import {RelationshipAttributeModel, IRelationshipAttribute} from './relationshipAttribute.model';
 import {RelationshipAttributeNameModel} from './relationshipAttributeName.model';
@@ -115,8 +115,10 @@ PartySchema.method('toDTO', async function () {
 /**
  * Creates a relationship to a temporary identity (InvitationCode) until the invitation has been accepted, whereby
  * the relationship will be transferred to the authorised identity.
+ *
  */
 /* tslint:disable:max-func-body-length */
+// TODO delete this method and use a more generic addRelationship2 which will either create an invitation code OR use provided subject and delegate
 PartySchema.method('addRelationship', async (dto: IInvitationCodeRelationshipAddDTO) => {
 
     // TODO improve handling of lookups that return null outside of the date range
@@ -145,13 +147,16 @@ PartySchema.method('addRelationship', async (dto: IInvitationCodeRelationshipAdd
     }
 
     // create the relationship
-    const relationship = await RelationshipModel.add(
+    const relationship = await RelationshipModel.add2(
         relationshipType,
         subjectIdentity.party,
         subjectIdentity.profile.name,
-        temporaryDelegateIdentity,
+        temporaryDelegateIdentity.party,
+        temporaryDelegateIdentity.profile.name,
         dto.startTimestamp,
         dto.endTimestamp,
+        RelationshipInitiatedBy.Subject,
+        temporaryDelegateIdentity,
         attributes
     );
 
@@ -161,7 +166,6 @@ PartySchema.method('addRelationship', async (dto: IInvitationCodeRelationshipAdd
 
 /* tslint:disable:max-func-body-length */
 PartySchema.method('addRelationship2', async function (dto: IRelationshipDTO) {
-
     /* tslint:disable:max-func-body-length */
     let findAfterSearchString = (href: string, searchString: string) => {
         let idValue:string = null;
@@ -199,6 +203,8 @@ PartySchema.method('addRelationship2', async function (dto: IRelationshipDTO) {
         delegateIdentity.profile.name,
         dto.startTimestamp,
         dto.endTimestamp,
+        RelationshipInitiatedBy.valueOf(dto.initiatedBy),
+        null,
         attributes
     );
 
