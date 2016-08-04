@@ -233,6 +233,7 @@ export interface IRelationship {
     endTimestamp?: Date;
     endEventTimestamp?: Date,
     status: string;
+    initiatedBy: string;
     attributes: IRelationshipAttribute[];
 }
 
@@ -247,6 +248,7 @@ export class Relationship implements IRelationship {
                 public endTimestamp:Date,
                 public endEventTimestamp:Date,
                 public status:string,
+                public initiatedBy:string,
                 public attributes:IRelationshipAttribute[]) {
     }
 }
