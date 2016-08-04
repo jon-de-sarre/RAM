@@ -198,29 +198,38 @@ export class AddNotificationComponent extends AbstractPageComponent {
             // call model service getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, empty programs) ...
             // set the array of agency services ...
 
+            const searchRolesByIdentityAndPage = (idValue: string, identity:IHrefValue<IIdentity>, page: number) => {
+
+                this.services.rest.searchRolesByIdentity(idValue, page).subscribe((results) => {
+
+                    // check for OSP role
+                    for (let role of results.list) {
+                        // TODO is there a better way to match?
+                        if (role.value.roleType.href.endsWith(this.services.constants.RelationshipTypeCode.OSP)) {
+                            this.delegateParty = party;
+                            this.ospRoleRef = role;
+                            this.delegateIdentityRef = identity;
+                            this.ospServices = this.services.model.getAccessibleAgencyServiceRoleAttributeNames(role, []);
+                            return;
+                        }
+                    }
+
+                    const hasMore = (results.page * results.pageSize) < results.totalCount;
+                    if (hasMore) {
+                        searchRolesByIdentityAndPage(idValue, identity, page + 1);
+                    } else {
+                        // no OSP role found
+                        this.addGlobalMessages(['The business matching the ABN is not a registered Online Service Provider']);
+                    }
+
+                });
+            };
+
             for (let identity of party.identities) {
                 if (identity.value.rawIdValue === abn) {
 
                     // found business
-                    // TODO iterate over pages
-                    let page = 1;
-                    this.services.rest.searchRolesByIdentity(identity.value.idValue, page).subscribe((results) => {
-
-                        // check for OSP role
-                        for (let role of results.list) {
-                            // TODO is there a better way to match?
-                            if (role.value.roleType.href.endsWith(this.services.constants.RelationshipTypeCode.OSP)) {
-                                this.delegateParty = party;
-                                this.ospRoleRef = role;
-                                this.delegateIdentityRef = identity;
-                                this.ospServices = this.services.model.getAccessibleAgencyServiceRoleAttributeNames(role, []);
-                                return;
-                            }
-                        }
-
-                        // no OSP role found
-                        this.addGlobalMessages(['Cannot match ABN']);
-                    });
+                    searchRolesByIdentityAndPage(identity.value.idValue, identity, 1);
 
                 } else {
                     // no identity found
