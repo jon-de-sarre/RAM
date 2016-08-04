@@ -44,7 +44,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
     public delegateIdentityRef: IHrefValue<IIdentity>;
 
     public accessPeriod: AccessPeriodComponentData = {
-        startDate: null,
+        startDate: new Date(),
         noEndDate: true,
         endDate: null
     };

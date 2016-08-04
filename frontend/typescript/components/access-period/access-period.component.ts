@@ -23,8 +23,10 @@ export class AccessPeriodComponent implements OnInit {
     }
 
     public ngOnInit() {
+        const startDate = this.data.startDate;
+        const formattedStartDate:string = startDate === null ? null : startDate.toISOString().slice(0, 10);
         this.form = this._fb.group({
-            'startDate': [this.data.startDate,
+            'startDate': [formattedStartDate,
                 Validators.compose([Validators.required, RAMNgValidators.dateFormatValidator])],
             'endDate': [this.data.endDate,
                 Validators.compose([RAMNgValidators.dateFormatValidator])],
