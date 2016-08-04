@@ -186,7 +186,8 @@ export class AddNotificationComponent extends AbstractPageComponent {
     }
 
     public findByABN() {
-        const abn = this.form.controls['abn'].value;
+        const abn = this.form.controls['abn'].value.replace(/ /g, '');
+
         this.clearGlobalMessages();
 
         this.services.rest.findPartyByABN(abn).subscribe((party) => {
