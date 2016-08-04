@@ -384,9 +384,6 @@ export class RelationshipController {
             return idValue;
         };
 
-        const subjectIdValue = substringAfter('/api/v1/party/identity/', req.body.subject.href);
-        Assert.assertTrue(subjectIdValue !== '', 'Subject identity id value in href not found');
-
         const schema = {
             'relationshipType.href': {
                 in: 'body',
@@ -422,6 +419,7 @@ export class RelationshipController {
             }
         };
 
+        const subjectIdValue = substringAfter('/api/v1/party/identity/', req.body.subject.href);
         validateReqSchema(req, schema)
             .then(async (req:Request) => {
                 const myPrincipal = security.getAuthenticatedPrincipal(res);
