@@ -2,14 +2,41 @@
              tab="MANAGE_NOTIFICATIONS"
              [messages]="globalMessages"></page-header>
 
-<div class="centered">
-    <p class="todo">List OSP notification relationships for business in focus</p>
-</div>
+<table class="table">
+    <thead>
+        <tr>
+            <th><h4>My software service subscriptions</h4></th>
+            <th class="col-md-2"><h4>Status</h4></th>
+            <th class="col-md-2"></th>
+            <th class="col-md-2"><a class="btn btn-primary align-center" [class.disabled]="!isAddNotificationEnabled()" (click)="goToAddNotificationPage()">Add Notification</a></th>
+        </tr>
+    </thead>
+    <tbody *ngIf="!isLoading">
+        <template ngFor let-item="$implicit" [ngForOf]="subjectGroupsWithRelationships">
+            <tr *ngFor="let relationshipRef of item.relationshipRefs">
+                <td>{{services.model.displayName(relationshipRef.value.delegateNickName)}}</td>
+                <td>{{services.model.relationshipStatusLabel(relationshipStatusRefs, relationshipRef.value.status)}}</td>
+                <td></td>
+                <td><a class="btn btn-sm btn-secondary align-center" (click)="goToNotificationPage(relationshipRef)">Manage <span class="caret"></span></a></td>
+            </tr>
+        </template>
+    </tbody>
+    <tbody *ngIf="isLoading">
+        <tr>
+            <td colspan="5" class="text-center"><h3>Loading ...</h3></td>
+        </tr>
+    </tbody>
+</table>
+
+<search-result-pagination
+        [searchResult]="relationships$|async"
+        [delegate]="paginationDelegate">
+</search-result-pagination>
 
 <div *ngIf="canReturnToDashboard">
     <div id="action-button-bar">
         <div class="pull-left">
-            <a class="btn btn-default align-center" (click)="goToBusinessesPage()">← Go to dashboard</a>
+            <a class="btn btn-default align-center" (click)="goToBusinessesPage()">← Back</a>
         </div>
     </div>
 </div>

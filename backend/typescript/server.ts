@@ -9,7 +9,7 @@ import {conf} from './bootstrap';
 import {logStream, logger} from './logger';
 // import {continueOnlyIfJWTisValid} from './security'
 import expressValidator = require('express-validator');
-import {ErrorResponse} from '../../commons/RamAPI';
+import {sendNotFoundError} from './controllers/helpers';
 
 import {forgeRockSimulator} from './controllers/forgeRock.simulator.middleware';
 import {security} from './controllers/security.middleware';
@@ -138,8 +138,7 @@ server.use('/api/',
 
 // catch 404 and forward to error handler
 server.use((req: express.Request, res: express.Response) => {
-    const err = new ErrorResponse('Request Not Found');
-    res.send(err);
+    sendNotFoundError(res)(null);
 });
 
 // start server .......................................................................................................

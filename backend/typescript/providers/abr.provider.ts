@@ -3,30 +3,30 @@
  * Retrieve company information from the ABR API - by providing
  * either an ABN or a name for the company. The name does not have
  * to match exactly.
- * 
+ *
  * ## Usage
  * Returns a promise that, when fulfilled, will
  * provide an array of RAM/commons/abr/ABRentry items. Call
  * functions as follows:
- * 
+ *
  * import ABR from '../providers/abr.provider';
  * import { ABRentry } from '../../../commons/abr';
  * const list:ABRentry = ABR.searchABN(abn);
  * const list:ABRentry = ABR.searchNames(name);
- * 
+ *
  * ## What's in a Name?
  * The name can be sole trader name, company name, trading name
  * or a number of industry specific name types.
- * 
+ *
  * If no results are found the result is returned as undefined.
  * At the controller level this is used to send a 404.
- * 
+ *
  * ## Configuration
- * 
+ *
  * conf.abrAuthenticationGuid // supplied by Industry to use ABR
- * 
+ *
  * ## Mocking
- * 
+ *
  * If the configuration item is empty, mock data is returned. The
  * provider does not access the Internet. The mock return is the
  * same data independent of name or abn provided.
@@ -118,7 +118,7 @@ class RealABR {
                                 resolve([buildOrganisationEntry(
                                 businessEntity[0])]);
                             } else {
-                                resolve(undefined)
+                                resolve(undefined);
                             }
                     } catch (err3) { reject(err3); }
                 });

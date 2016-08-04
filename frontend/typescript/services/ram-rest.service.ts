@@ -9,6 +9,7 @@ import {
     ISearchResult,
     IHrefValue,
     IPrincipal,
+    IAgencyUser,
     IIdentity,
     IParty,
     IPartyType,
@@ -22,20 +23,13 @@ import {
     IRoleStatus,
     INotifyDelegateDTO
 } from '../../../commons/RamAPI';
+import {ABRentry} from '../../../commons/abr';
 
 @Injectable()
 export class RAMRestService {
 
     constructor(private http: Http,
                 private modelService: RAMModelService) {
-    }
-
-    // TODO remove temporary api
-    // A call external to RAM to get organisation name from ABN
-    public getOrganisationNameFromABN(abn: string) {
-        // This is temporary until we can talk to the server
-        // How about mocking framework?
-        return Promise.resolve('The End of Time Pty Limited');
     }
 
     private extractData(res: Response) {
@@ -46,9 +40,63 @@ export class RAMRestService {
         return body || {};
     }
 
+    /*
+     * Old interface used when adding a business relationship. Now
+     * delegates to the ABR for the real work.
+     */
+    public getOrganisationNameFromABN(abn: string) {
+        return this.getABRfromABN(abn).map((abr:ABRentry) => abr.name);
+    }
+
+    /*
+     * This goes out to the ABR (external source) and returns with
+     * limited company data for a single organisation - or an 404
+     * if the abn doesn't exist.
+     */
+    public getABRfromABN(abn:string) {
+        return this.http
+            .get(`/api/v1/business/abn/`+abn)
+            .map(this.extractData);
+    }
+
+    /*
+     * This goes out to the ABR (external source) and returns with
+     * limited company data for a many organisations. Not sure if the
+     * name doesn't match anything because I could not find one :)
+     */
+    public getABRfromName(name:string) {
+        return this.http
+            .get(`/api/v1/business/name/`+name)
+            .map(this.extractData);
+    }
+
+    /*
+     * This is RAM internal to create identity and party records
+     * (if needed) for an organisation of interest retrieved
+     * from the ABR.
+     */
+    public registerABRCompany(abr:ABRentry) {
+        return this.http
+            .get(`/api/v1/business/register/`+abr.abn+'/'+abr.name)
+            .map(this.extractData);
+    }
+
     public findMyPrincipal(): Observable<IPrincipal> {
         return this.http
             .get(`/api/v1/me`)
+            .map(this.extractData);
+    }
+
+    public findMyAgencyUser(): Observable<IAgencyUser> {
+        return this.http
+            .get(`/api/v1/agencyUser/me`)
+            .map(this.extractData);
+    }
+
+    public findPartyByABN(abn: string): Observable<IParty> {
+        const idValue = `PUBLIC_IDENTIFIER:ABN:${abn}`;
+        return this.http
+            .get(`/api/v1/party/identity/${idValue}`)
             .map(this.extractData);
     }
 
@@ -168,6 +216,14 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
+    public createRelationship2(relationship: IRelationship): Observable<IRelationship> {
+        return this.http
+            .post(`/api/v1/relationship2`, JSON.stringify(relationship), {
+                headers: this.headersForJson()
+            })
+            .map(this.extractData);
+    }
+
     public searchRolesByIdentity(idValue: string,
                                  page: number): Observable<ISearchResult<IHrefValue<IRole>>> {
         return this.http
@@ -184,6 +240,14 @@ export class RAMRestService {
     public listRoleStatuses(): Observable<IHrefValue<IRoleStatus>[]> {
         return this.http
             .get('/api/v1/roleStatuses')
+            .map(this.extractData);
+    }
+
+    public createRole(role: IRole): Observable<IRole> {
+        return this.http
+            .post(`/api/v1/role`, JSON.stringify(role), {
+                headers: this.headersForJson()
+            })
             .map(this.extractData);
     }
 

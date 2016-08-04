@@ -1,0 +1,52 @@
+<form>
+
+    <div class="panel panel-default container-fluid">
+        <div class="panel-heading row">
+            <div class="form-group col-md-8">
+                <h4><b>Search by:</b></h4>
+                <input type="text"
+                       class="form-control"
+                       placeholder="Enter ABN"
+                       name="name"
+                       [(ngModel)]="abn_or_name"
+                       (ngModelChange)="valueChange($event)"/>
+            </div>
+            <div class="form-group col-md-4">
+                <h4><b>&nbsp;</b></h4>
+                <button type="submit" class="btn btn-default" (click)="findCompanies()" >Search ABR</button>
+            </div>
+        </div>
+    </div>
+
+    <br/>
+
+    <table class="table" *ngIf="showSearchResults">
+        <thead>
+            <tr>
+                <th><h4>ABN</h4></th>
+                <th><h4>Name</h4></th>
+                <th><h4>State</h4></th>
+                <th><h4>Postcode</h4></th>
+            </tr>
+        </thead>
+        <tbody>
+            <tr *ngFor="let business of businesses">
+                <td class="text-left">
+                    <span *ngIf="!selectedBusiness"><a (click)="selectBusiness(business)">{{business.abn}}</a></span>
+                    <span *ngIf="!!selectedBusiness">{{business.abn}}</span>
+                </td>
+                <td class="text-left">{{business.name}}</td>
+                <td class="text-left">{{business.state}}</td>
+                <td class="text-left">{{business.postcode}}</td>
+            </tr>
+        </tbody>
+        <tbody *ngIf="isLoading">
+            <tr>
+                <td colspan="5" class="text-center">
+                    <h3>Loading ...</h3>
+                </td>
+            </tr>
+        </tbody>
+    </table>
+
+</form>

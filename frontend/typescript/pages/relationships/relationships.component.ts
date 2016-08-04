@@ -74,6 +74,9 @@ export class RelationshipsComponent extends AbstractPageComponent {
         this.filter = FilterParams.decode(params.query['filter']);
         this.page = params.query['page'] ? +params.query['page'] : 1;
 
+        // restrict to authorisations
+        this.filter.add('relationshipTypeCategory', this.services.constants.RelationshipTypeCategory.AUTHORISATION);
+
         // message
         const msg = params.query['msg'];
         if (msg === 'DELEGATE_NOTIFIED') {
@@ -108,7 +111,9 @@ export class RelationshipsComponent extends AbstractPageComponent {
 
         // relationship types
         this.services.rest.listRelationshipTypes().subscribe((relationshipTypeRefs) => {
-            this.relationshipTypeRefs = relationshipTypeRefs;
+            this.relationshipTypeRefs = relationshipTypeRefs.filter((relationshipType) => {
+                return relationshipType.value.category === this.services.constants.RelationshipTypeCategory.AUTHORISATION;
+            });
         });
 
         // relationships

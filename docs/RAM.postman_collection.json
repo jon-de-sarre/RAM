@@ -1,1046 +1,1231 @@
 {
-	"id": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-	"name": "RAM",
-	"description": "",
-	"order": [],
-	"folders": [
+	"variables": [],
+	"info": {
+		"name": "RAM",
+		"_postman_id": "0b6442ab-608a-367c-3e98-6f49a593d0f6",
+		"description": "",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
+	},
+	"item": [
 		{
-			"id": "1f568b0d-4f98-6f10-8bd2-b1d3309879db",
+			"name": "Agency User",
+			"description": "",
+			"item": [
+				{
+					"name": "Get (me)",
+					"request": {
+						"url": "{{host}}/api/v1/agencyUser/me",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
 			"name": "Authentication",
 			"description": "",
-			"order": [
-				"d105ce7a-c992-4a93-b570-2d38714262af",
-				"c44376d5-d150-c853-2cdb-f8f43fd6accf",
-				"d533610e-bd0a-9f01-1862-67c1c5ea4baa",
-				"a95716e4-c266-174e-0159-aef3536b954e",
-				"be40e6a8-a7b9-33c2-5e33-476a4b9d17bd",
-				"9dffaa88-caad-53f0-1d80-c0fb7d4a98a6"
-			],
-			"owner": "700831"
+			"item": [
+				{
+					"name": "Show User Details",
+					"request": {
+						"url": "{{host}}/api/v1/simulators/authenticator/locals",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate (bad)",
+					"request": {
+						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": []
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate Identity (Jennifer Maxims)",
+					"request": {
+						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate Identity (Bob Smith)",
+					"request": {
+						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:bobsmith_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate New Identity (Fred Johnson)",
+					"request": {
+						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-Identity-IdValue",
+								"value": "LINK_ID:MY_GOV:fredjohnson_identity_xxx",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-Identity-RawIdValue",
+								"value": "fredjohnson_identity_xxx",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-PartyType",
+								"value": "INDIVIDUAL",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-GivenName",
+								"value": "Fred",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-FamilyName",
+								"value": "Johnson",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-DOB",
+								"value": "01/01/2000",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-IdentityType",
+								"value": "LINK_ID",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-ProfileProvider",
+								"value": "MY_GOV",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-LinkIdScheme",
+								"value": "MY_GOV",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-AgencyScheme",
+								"value": "",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-PublicIdentifierScheme",
+								"value": "",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:fredjohnson_identity_xxx",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate Agency User (Ted Agent)",
+					"request": {
+						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "ted_agent",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"id": "e16a666e-132d-bc7e-4048-eeb22604b560",
-			"name": "Business",
-			"description": "",
-			"order": [
-				"102f2e79-fed7-7aee-fda0-6206ff99e92b",
-				"dd5c61a7-4ae1-c90c-57c0-5ff392f3d09a",
-				"4f400a49-040e-7771-7083-1fc16ca749c9",
-				"57cec543-b7af-8c10-8fa2-d4798c66d5dd"
-			],
-			"owner": "700831"
-		},
-		{
-			"id": "6f02870d-5631-4068-a521-55ca8c943a3d",
 			"name": "Identity",
 			"description": "",
-			"order": [
-				"d669b621-3c42-0501-93cb-f748b4bb9087",
-				"381e64b5-237d-ce8c-3034-72b57e83732a",
-				"d28f4c87-936e-0b8a-5e12-d58049db9297",
-				"e2b8b5fb-d440-15b8-b764-d550561133d9",
-				"03f6e68b-0687-9fd2-df27-dbb4af63a315",
-				"a43b52d1-e159-6932-19eb-5aa08cd895eb",
-				"fe21dd4b-b059-08cf-db70-85fc6192b535",
-				"47cf99c6-9df9-6e23-b6b9-18223ed92d4e"
-			],
-			"owner": "700831"
+			"item": [
+				{
+					"name": "List",
+					"request": {
+						"url": "{{host}}/api/v1/identities?page=1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get (Bad)",
+					"request": {
+						"url": "{{host}}/api/v1/identity/bad",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get (me)",
+					"request": {
+						"url": "{{host}}/api/v1/identity/me",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get (Jen's Catering Pty Ltd)",
+					"request": {
+						"url": "{{host}}/api/v1/identity/PUBLIC_IDENTIFIER:ABN:jenscatering_identity_1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get (Jennifer Maxims)",
+					"request": {
+						"url": "{{host}}/api/v1/identity/LINK_ID:MY_GOV:jennifermaxims_identity_1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get (Bob Smith)",
+					"request": {
+						"url": "{{host}}/api/v1/identity/LINK_ID:MY_GOV:bobsmith_identity_1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Invitation Code (bad)",
+					"request": {
+						"url": "{{host}}/api/v1/identity/invitationCode/bad",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Invitation Code (jEVYNX)",
+					"request": {
+						"url": "{{host}}/api/v1/identity/invitationCode/jEVYNX",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"id": "1efe0b0f-3342-2b5a-bca5-bc629991e116",
 			"name": "Party",
 			"description": "",
-			"order": [
-				"44ec7800-912f-c883-93cb-77da038edf14",
-				"883aad88-544e-83be-9467-812f6afaca45",
-				"f45e4405-0ccc-6a61-43d1-a83910420ed9",
-				"c0440a5c-2a38-7f83-02ef-f0575642f66e",
-				"5189d675-e301-b415-a630-0e4d260cea4e",
-				"bdb83260-4e6d-75b0-7608-2412b719ab7a",
-				"a29bdeb7-6ecb-6083-d2c9-16c6de1e2c8a"
-			],
-			"owner": "700831"
+			"item": [
+				{
+					"name": "Get (Bad)",
+					"request": {
+						"url": "{{host}}/api/v1/party/identity/bad",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get (me)",
+					"request": {
+						"url": "{{host}}/api/v1/party/identity/me",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get (Jen's Catering Pty Ltd)",
+					"request": {
+						"url": "{{host}}/api/v1/party/identity/PUBLIC_IDENTIFIER:ABN:jenscatering_identity_1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get (Jennifer Maxims)",
+					"request": {
+						"url": "{{host}}/api/v1/party/identity/LINK_ID:MY_GOV:jennifermaxims_identity_1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get (Bob Smith)",
+					"request": {
+						"url": "{{host}}/api/v1/party/identity/LINK_ID:MY_GOV:bobsmith_identity_1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List types",
+					"request": {
+						"url": "{{host}}/api/v1/partyTypes",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get type (INDIVIDUAL)",
+					"request": {
+						"url": "{{host}}/api/v1/partyType/INDIVIDUAL",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"id": "c3c8e47d-548f-56ad-b821-f051b7977c5a",
 			"name": "Principal",
 			"description": "",
-			"order": [
-				"e0e0ca0a-12cf-5b54-5ccb-f46a44bbc020"
-			],
-			"owner": "700831"
+			"item": [
+				{
+					"name": "Get (me)",
+					"request": {
+						"url": "{{host}}/api/v1/me",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"id": "9d18c686-8f3f-68db-b008-a015db0d9648",
 			"name": "Profile",
 			"description": "",
-			"order": [
-				"5fdb3fa9-0270-766a-14fb-1ca3e356cb0e",
-				"6343aabc-cf7a-a2f8-3baf-da6a670cf588"
-			],
-			"owner": "700831"
+			"item": [
+				{
+					"name": "List profile providers",
+					"request": {
+						"url": "{{host}}/api/v1/profileProviders",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get profile provider (MY_GOV)",
+					"request": {
+						"url": "{{host}}/api/v1/profileProvider/MY_GOV",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"id": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06",
 			"name": "Relationship",
 			"description": "",
-			"order": [
-				"f70597f6-3de6-3502-57dc-ec62c3bea6a0",
-				"51e63204-a239-5f62-217d-4b10c82bca06",
-				"b171e517-2582-0b43-c71e-f0104bfc66a4",
-				"394cb998-92bc-788b-66fd-596b6bb7269d",
-				"602cc15a-bd0d-b0f5-abd9-47be6afc9bd2",
-				"c446bd65-de31-98f2-1aae-9cdbf3337262",
-				"82218258-96f6-035e-6641-86d2af52b0d5",
-				"373d448c-48f8-8656-d356-641ff827a3a5",
-				"753bb190-d4d1-a1cf-8504-8557d46f0e48",
-				"1ca71164-2a67-e41f-650b-dc1a3658136d",
-				"6320b38f-cd2b-3408-e51c-2f0b68eb21a6",
-				"b91da757-e56a-f662-1471-f9257f22346e",
-				"a0a18c67-487c-c76f-0dbb-2a0eab1e45c3",
-				"a452b083-57b0-357c-650a-cb185a41c4e5"
-			],
-			"owner": "700831"
+			"item": [
+				{
+					"name": "List by subject",
+					"request": {
+						"url": "{{host}}/api/v1/relationships/subject/identity/PUBLIC_IDENTIFIER:ABN:jenscatering_identity_1?page=1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List by delegate",
+					"request": {
+						"url": "{{host}}/api/v1/relationships/delegate/identity/LINK_ID:MY_GOV:jennifermaxims_identity_1?page=1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List distinct subjects",
+					"request": {
+						"url": "{{host}}/api/v1/relationships/identity/subjects?filter=text%3Djen%26sort%3Dasc%26partyType%3DABN%26authorisationManagement%3Dtrue&page=1",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get",
+					"request": {
+						"url": "{{host}}/api/v1/relationship/575fe8a6cb1427cc82a924cf",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Invitation Code (bad)",
+					"request": {
+						"url": "{{host}}/api/v1/relationship/invitationCode/bad",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get By Invitation Code (jEVYNX)",
+					"request": {
+						"url": "{{host}}/api/v1/relationship/invitationCode/jEVYNX",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Accept By Invitation Code (jEVYNX)",
+					"request": {
+						"url": "{{host}}/api/v1/relationship/invitationCode/jEVYNX/accept",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Notify Delegate By Invitation Code (jEVYNX)",
+					"request": {
+						"url": "{{host}}/api/v1/relationship/invitationCode/jEVYNX/notifyDelegate",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"email\": \"test@example.com\"\n}"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Reject By Invitation Code (jEVYNX)",
+					"request": {
+						"url": "{{host}}/api/v1/relationship/invitationCode/jEVYNX/reject",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "List statuses",
+					"request": {
+						"url": "{{host}}/api/v1/relationshipStatuses",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Get status (ACTIVE)",
+					"request": {
+						"url": "{{host}}/api/v1/relationshipStatus/ACTIVE",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Create",
+					"request": {
+						"url": "{{host}}/api/v1/relationship",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"relationshipType\": \"UNIVERSAL_REPRESENTATIVE\",\n  \"subjectIdValue\": \"LINK_ID:MY_GOV:jennifermaxims_identity_1\",\n  \"delegate\": {\n    \"partyType\": \"INDIVIDUAL\",\n    \"givenName\": \"Bob\",\n    \"familyName\": \"Smith\",\n    \"sharedSecretTypeCode\": \"DATE_OF_BIRTH\",\n    \"sharedSecretValue\": \" \",\n    \"identityType\": \"INVITATION_CODE\"\n  },\n  \"startTimestamp\": \"2016-07-11\",\n  \"endTimestamp\": null,\n  \"attributes\": [\n    {\n      \"code\": \"DELEGATE_MANAGE_AUTHORISATION_ALLOWED_IND\",\n      \"value\": \"\"\n    }\n  ]\n}"
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Claim By Invitation Code",
+					"request": {
+						"url": "{{host}}/api/v1/relationship/invitationCode/{{invitationCode}}/claim",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Accept By Invitation Code",
+					"request": {
+						"url": "{{host}}/api/v1/relationship/invitationCode/{{invitationCode}}/accept",
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"id": "e3f6b953-7e84-2fe1-edd2-32a0c97e54ab",
 			"name": "Relationship Attribute Names",
 			"description": "",
-			"order": [
-				"47770f5e-32e0-6cc2-455e-4e63a1eb1040",
-				"8da98c75-baed-ce84-9131-ec1aec11d098",
-				"1a566c0d-f9e1-1857-71a5-3a04b848826e"
-			],
-			"owner": "700831"
+			"item": [
+				{
+					"name": "List",
+					"request": {
+						"url": "{{host}}/api/v1/relationshipAttributeNames",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get (Bad)",
+					"request": {
+						"url": "{{host}}/api/v1/relationshipAttributeName/bad",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get (Delegate Declaration)",
+					"request": {
+						"url": "{{host}}/api/v1/relationshipAttributeName/DELEGATE_RELATIONSHIP_TYPE_DECLARATION",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						}
+					},
+					"response": []
+				}
+			]
 		},
 		{
-			"id": "6b7c996c-32c9-4f84-f515-c73f8e218587",
 			"name": "Relationship Type",
 			"description": "",
-			"order": [
-				"4bb19af0-b336-05ae-052b-8f38e4a4357b",
-				"82201e0b-26b6-3075-a452-15ce58e8d70c",
-				"f1f1027a-e52f-d669-c19e-c404c9c54b88",
-				"cccc44d2-a6b7-94fc-5967-b71c297aff3d"
-			],
-			"owner": "700831"
-		}
-	],
-	"timestamp": 0,
-	"owner": "700831",
-	"public": false,
-	"published": false,
-	"requests": [
-		{
-			"id": "03f6e68b-0687-9fd2-df27-dbb4af63a315",
-			"name": "Get (Jennifer Maxims)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
+			"item": [
 				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
+					"name": "List",
+					"request": {
+						"url": "{{host}}/api/v1/relationshipTypes",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get (Bad)",
+					"request": {
+						"url": "{{host}}/api/v1/relationshipType/bad",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get (Universal)",
+					"request": {
+						"url": "{{host}}/api/v1/relationshipType/UNIVERSAL_REPRESENTATIVE",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Get (Custom)",
+					"request": {
+						"url": "{{host}}/api/v1/relationshipType/CUSTOM_REPRESENTATIVE",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						}
+					},
+					"response": []
 				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/identity/LINK_ID:MY_GOV:jennifermaxims_identity_1",
-			"responses": [],
-			"folder": "6f02870d-5631-4068-a521-55ca8c943a3d"
+			]
 		},
 		{
-			"id": "102f2e79-fed7-7aee-fda0-6206ff99e92b",
-			"headers": "Accept: application/json\n",
-			"url": "{{host}}/api/v1/business/abn/11111111111",
-			"pathVariables": {},
-			"preRequestScript": null,
-			"method": "GET",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"dataMode": "urlencoded",
-			"name": "Find by ABN (bad)",
+			"name": "Role",
 			"description": "",
-			"descriptionFormat": "html",
-			"time": 1469682672693,
-			"version": 2,
-			"responses": [],
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"folder": "e16a666e-132d-bc7e-4048-eeb22604b560"
-		},
-		{
-			"id": "1a566c0d-f9e1-1857-71a5-3a04b848826e",
-			"name": "Get (Delegate Declaration)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "",
-			"dataMode": "params",
-			"data": [],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationshipAttributeName/DELEGATE_RELATIONSHIP_TYPE_DECLARATION",
-			"responses": [],
-			"folder": "e3f6b953-7e84-2fe1-edd2-32a0c97e54ab"
-		},
-		{
-			"id": "1ca71164-2a67-e41f-650b-dc1a3658136d",
-			"name": "List statuses",
-			"description": "",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
+			"item": [
 				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationshipStatuses",
-			"responses": [],
-			"folder": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06"
-		},
-		{
-			"id": "373d448c-48f8-8656-d356-641ff827a3a5",
-			"name": "Notify Delegate By Invitation Code (jEVYNX)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "POST",
-			"headers": "Content-Type: application/json",
-			"dataMode": "raw",
-			"data": [],
-			"rawModeData": "{\n    \"email\": \"test@example.com\"\n}",
-			"url": "{{host}}/api/v1/relationship/invitationCode/jEVYNX/notifyDelegate",
-			"responses": [],
-			"folder": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06"
-		},
-		{
-			"id": "381e64b5-237d-ce8c-3034-72b57e83732a",
-			"name": "Get (Bad)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
+					"name": "List roles (Jen's Catering)",
+					"request": {
+						"url": "{{host}}/api/v1/roles/identity/PUBLIC_IDENTIFIER:ABN:jenscatering_identity_1?page=1",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "List roles"
+					},
+					"response": []
+				},
 				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/identity/bad",
-			"responses": [],
-			"folder": "6f02870d-5631-4068-a521-55ca8c943a3d"
-		},
-		{
-			"id": "394cb998-92bc-788b-66fd-596b6bb7269d",
-			"name": "Get",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "",
-			"dataMode": "params",
-			"data": [],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationship/575fe8a6cb1427cc82a924cf",
-			"responses": [],
-			"folder": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06"
-		},
-		{
-			"id": "44ec7800-912f-c883-93cb-77da038edf14",
-			"name": "Get (Bad)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
+					"name": "List roles (EdTech)",
+					"request": {
+						"url": "{{host}}/api/v1/roles/identity/PUBLIC_IDENTIFIER:ABN:edtech_identity_1?page=1",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "List roles"
+					},
+					"response": []
+				},
 				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/party/identity/bad",
-			"responses": [],
-			"folder": "1efe0b0f-3342-2b5a-bca5-bc629991e116"
-		},
-		{
-			"id": "47770f5e-32e0-6cc2-455e-4e63a1eb1040",
-			"name": "List",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
+					"name": "List role types",
+					"request": {
+						"url": "{{host}}/api/v1/roleTypes",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				},
 				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationshipAttributeNames",
-			"responses": [],
-			"folder": "e3f6b953-7e84-2fe1-edd2-32a0c97e54ab"
-		},
-		{
-			"id": "47cf99c6-9df9-6e23-b6b9-18223ed92d4e",
-			"name": "Get By Invitation Code (jEVYNX)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
+					"name": "Get a role type",
+					"request": {
+						"url": "{{host}}/api/v1/roleType/OSP",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				},
 				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
+					"name": "List role statuses",
+					"request": {
+						"url": "{{host}}/api/v1/roleStatuses",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
 				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/identity/invitationCode/jEVYNX",
-			"responses": [],
-			"folder": "6f02870d-5631-4068-a521-55ca8c943a3d"
-		},
-		{
-			"id": "4bb19af0-b336-05ae-052b-8f38e4a4357b",
-			"name": "List",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationshipTypes",
-			"responses": [],
-			"folder": "6b7c996c-32c9-4f84-f515-c73f8e218587"
-		},
-		{
-			"id": "4f400a49-040e-7771-7083-1fc16ca749c9",
-			"headers": "Accept: application/json\n",
-			"url": "{{host}}/api/v1/business/name/asdfasdfasdfasdfasdfasdfasdf",
-			"preRequestScript": null,
-			"pathVariables": {},
-			"method": "GET",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"dataMode": "urlencoded",
-			"version": 2,
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1469684980021,
-			"name": "Find by Name (bad)",
-			"description": "",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"responses": []
-		},
-		{
-			"id": "5189d675-e301-b415-a630-0e4d260cea4e",
-			"name": "Get (Bob Smith)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/party/identity/LINK_ID:MY_GOV:bobsmith_identity_1",
-			"responses": [],
-			"folder": "1efe0b0f-3342-2b5a-bca5-bc629991e116"
-		},
-		{
-			"id": "51e63204-a239-5f62-217d-4b10c82bca06",
-			"name": "List by delegate",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationships/delegate/identity/LINK_ID:MY_GOV:jennifermaxims_identity_1?page=1",
-			"responses": [],
-			"folder": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06"
-		},
-		{
-			"id": "57cec543-b7af-8c10-8fa2-d4798c66d5dd",
-			"headers": "Accept: application/json\n",
-			"url": "{{host}}/api/v1/business/name/ATO",
-			"preRequestScript": null,
-			"pathVariables": {},
-			"method": "GET",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"dataMode": "urlencoded",
-			"version": 2,
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1469684950918,
-			"name": "Find by Name (ATO)",
-			"description": "",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"responses": [],
-			"folder": "e16a666e-132d-bc7e-4048-eeb22604b560"
-		},
-		{
-			"id": "5fdb3fa9-0270-766a-14fb-1ca3e356cb0e",
-			"name": "List profile providers",
-			"description": "",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/profileProviders",
-			"responses": [],
-			"folder": "9d18c686-8f3f-68db-b008-a015db0d9648"
-		},
-		{
-			"id": "602cc15a-bd0d-b0f5-abd9-47be6afc9bd2",
-			"name": "Get By Invitation Code (bad)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "",
-			"dataMode": "params",
-			"data": [],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationship/invitationCode/bad",
-			"responses": [],
-			"folder": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06"
-		},
-		{
-			"id": "6320b38f-cd2b-3408-e51c-2f0b68eb21a6",
-			"name": "Get status (ACTIVE)",
-			"description": "",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "",
-			"dataMode": "params",
-			"data": [],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationshipStatus/ACTIVE",
-			"responses": [],
-			"folder": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06"
-		},
-		{
-			"id": "6343aabc-cf7a-a2f8-3baf-da6a670cf588",
-			"name": "Get profile provider (MY_GOV)",
-			"description": "",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/profileProvider/MY_GOV",
-			"responses": [],
-			"folder": "9d18c686-8f3f-68db-b008-a015db0d9648"
-		},
-		{
-			"id": "753bb190-d4d1-a1cf-8504-8557d46f0e48",
-			"name": "Reject By Invitation Code (jEVYNX)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "POST",
-			"headers": "",
-			"dataMode": "params",
-			"data": [],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationship/invitationCode/jEVYNX/reject",
-			"responses": [],
-			"folder": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06"
-		},
-		{
-			"id": "82201e0b-26b6-3075-a452-15ce58e8d70c",
-			"name": "Get (Bad)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationshipType/bad",
-			"responses": [],
-			"folder": "6b7c996c-32c9-4f84-f515-c73f8e218587"
-		},
-		{
-			"id": "82218258-96f6-035e-6641-86d2af52b0d5",
-			"name": "Accept By Invitation Code (jEVYNX)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "POST",
-			"headers": "",
-			"dataMode": "params",
-			"data": [],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationship/invitationCode/jEVYNX/accept",
-			"responses": [],
-			"folder": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06"
-		},
-		{
-			"id": "883aad88-544e-83be-9467-812f6afaca45",
-			"name": "Get (me)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/party/identity/me",
-			"responses": [],
-			"folder": "1efe0b0f-3342-2b5a-bca5-bc629991e116"
-		},
-		{
-			"id": "8da98c75-baed-ce84-9131-ec1aec11d098",
-			"name": "Get (Bad)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "",
-			"dataMode": "params",
-			"data": [],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationshipAttributeName/bad",
-			"responses": [],
-			"folder": "e3f6b953-7e84-2fe1-edd2-32a0c97e54ab"
-		},
-		{
-			"id": "9dffaa88-caad-53f0-1d80-c0fb7d4a98a6",
-			"name": "Authenticate Agency User (Ted Agency User)",
-			"description": "",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "POST",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "ted_agency_user",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
-			"responses": [],
-			"folder": "1f568b0d-4f98-6f10-8bd2-b1d3309879db"
-		},
-		{
-			"id": "a0a18c67-487c-c76f-0dbb-2a0eab1e45c3",
-			"name": "Claim By Invitation Code",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "POST",
-			"headers": "",
-			"dataMode": "params",
-			"data": [],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationship/invitationCode/{{invitationCode}}/claim",
-			"responses": [],
-			"folder": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06"
-		},
-		{
-			"id": "a29bdeb7-6ecb-6083-d2c9-16c6de1e2c8a",
-			"name": "Get type (INDIVIDUAL)",
-			"description": "",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "",
-			"dataMode": "params",
-			"data": [],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/partyType/INDIVIDUAL",
-			"responses": [],
-			"folder": "1efe0b0f-3342-2b5a-bca5-bc629991e116"
-		},
-		{
-			"id": "a43b52d1-e159-6932-19eb-5aa08cd895eb",
-			"name": "Get (Bob Smith)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/identity/LINK_ID:MY_GOV:bobsmith_identity_1",
-			"responses": [],
-			"folder": "6f02870d-5631-4068-a521-55ca8c943a3d"
-		},
-		{
-			"id": "a452b083-57b0-357c-650a-cb185a41c4e5",
-			"name": "Accept By Invitation Code",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "POST",
-			"headers": "",
-			"dataMode": "params",
-			"data": [],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationship/invitationCode/{{invitationCode}}/accept",
-			"responses": [],
-			"folder": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06"
-		},
-		{
-			"id": "a95716e4-c266-174e-0159-aef3536b954e",
-			"name": "Authenticate Identity (Bob Smith)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "POST",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:bobsmith_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
-			"responses": [],
-			"folder": "1f568b0d-4f98-6f10-8bd2-b1d3309879db"
-		},
-		{
-			"id": "b171e517-2582-0b43-c71e-f0104bfc66a4",
-			"name": "List distinct subjects",
-			"description": "",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationships/identity/subjects?filter=text%3Djen%26sort%3Dasc%26partyType%3DABN%26authorisationManagement%3Dtrue&page=1",
-			"responses": [],
-			"folder": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06"
-		},
-		{
-			"id": "b91da757-e56a-f662-1471-f9257f22346e",
-			"name": "Create",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "POST",
-			"headers": "Content-Type: application/json",
-			"dataMode": "raw",
-			"data": [],
-			"rawModeData": "{\n  \"relationshipType\": \"UNIVERSAL_REPRESENTATIVE\",\n  \"subjectIdValue\": \"LINK_ID:MY_GOV:jennifermaxims_identity_1\",\n  \"delegate\": {\n    \"partyType\": \"INDIVIDUAL\",\n    \"givenName\": \"Bob\",\n    \"familyName\": \"Smith\",\n    \"sharedSecretTypeCode\": \"DATE_OF_BIRTH\",\n    \"sharedSecretValue\": \" \",\n    \"identityType\": \"INVITATION_CODE\"\n  },\n  \"startTimestamp\": \"2016-07-11\",\n  \"endTimestamp\": null,\n  \"attributes\": [\n    {\n      \"code\": \"DELEGATE_MANAGE_AUTHORISATION_ALLOWED_IND\",\n      \"value\": \"\"\n    }\n  ]\n}",
-			"url": "{{host}}/api/v1/relationship",
-			"responses": [],
-			"folder": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06"
-		},
-		{
-			"id": "bdb83260-4e6d-75b0-7608-2412b719ab7a",
-			"name": "List types",
-			"description": "",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/partyTypes",
-			"responses": [],
-			"folder": "1efe0b0f-3342-2b5a-bca5-bc629991e116"
-		},
-		{
-			"id": "be40e6a8-a7b9-33c2-5e33-476a4b9d17bd",
-			"name": "Authenticate New Identity (Fred Johnson)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "POST",
-			"headers": "Accept: application/json\nX-RAM-Identity-IdValue: LINK_ID:MY_GOV:fredjohnson_identity_xxx\nX-RAM-Identity-RawIdValue: fredjohnson_identity_xxx\nX-RAM-PartyType: INDIVIDUAL\nX-RAM-GivenName: Fred\nX-RAM-FamilyName: Johnson\nX-RAM-DOB: 01/01/2000\nX-RAM-IdentityType: LINK_ID\nX-RAM-ProfileProvider: MY_GOV\nX-RAM-LinkIdScheme: MY_GOV\nX-RAM-AgencyScheme: \nX-RAM-PublicIdentifierScheme: ",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:fredjohnson_identity_xxx",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
-			"responses": [],
-			"folder": "1f568b0d-4f98-6f10-8bd2-b1d3309879db"
-		},
-		{
-			"id": "c0440a5c-2a38-7f83-02ef-f0575642f66e",
-			"name": "Get (Jennifer Maxims)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/party/identity/LINK_ID:MY_GOV:jennifermaxims_identity_1",
-			"responses": [],
-			"folder": "1efe0b0f-3342-2b5a-bca5-bc629991e116"
-		},
-		{
-			"id": "c44376d5-d150-c853-2cdb-f8f43fd6accf",
-			"name": "Authenticate (bad)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "POST",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
-			"responses": [],
-			"folder": "1f568b0d-4f98-6f10-8bd2-b1d3309879db"
-		},
-		{
-			"id": "c446bd65-de31-98f2-1aae-9cdbf3337262",
-			"name": "Get By Invitation Code (jEVYNX)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "",
-			"dataMode": "params",
-			"data": [],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationship/invitationCode/jEVYNX",
-			"responses": [],
-			"folder": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06"
-		},
-		{
-			"id": "cccc44d2-a6b7-94fc-5967-b71c297aff3d",
-			"name": "Get (Custom)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationshipType/CUSTOM_REPRESENTATIVE",
-			"responses": [],
-			"folder": "6b7c996c-32c9-4f84-f515-c73f8e218587"
-		},
-		{
-			"id": "d105ce7a-c992-4a93-b570-2d38714262af",
-			"name": "Show User Details",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/simulators/authenticator/locals",
-			"responses": [],
-			"folder": "1f568b0d-4f98-6f10-8bd2-b1d3309879db"
-		},
-		{
-			"id": "d28f4c87-936e-0b8a-5e12-d58049db9297",
-			"name": "Get (me)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/identity/me",
-			"responses": [],
-			"folder": "6f02870d-5631-4068-a521-55ca8c943a3d"
-		},
-		{
-			"id": "d533610e-bd0a-9f01-1862-67c1c5ea4baa",
-			"name": "Authenticate Identity (Jennifer Maxims)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "POST",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
-			"responses": [],
-			"folder": "1f568b0d-4f98-6f10-8bd2-b1d3309879db"
-		},
-		{
-			"id": "d669b621-3c42-0501-93cb-f748b4bb9087",
-			"name": "List",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/identities?page=1",
-			"responses": [],
-			"folder": "6f02870d-5631-4068-a521-55ca8c943a3d"
-		},
-		{
-			"id": "dd5c61a7-4ae1-c90c-57c0-5ff392f3d09a",
-			"headers": "Accept: application/json\n",
-			"url": "{{host}}/api/v1/business/abn/51824753556",
-			"preRequestScript": null,
-			"pathVariables": {},
-			"method": "GET",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"dataMode": "urlencoded",
-			"version": 2,
-			"tests": null,
-			"currentHelper": "normal",
-			"helperAttributes": {},
-			"time": 1469684863499,
-			"name": "Find by ABN (ATO)",
-			"description": "",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"responses": []
-		},
-		{
-			"id": "e0e0ca0a-12cf-5b54-5ccb-f46a44bbc020",
-			"name": "Get (me)",
-			"description": "",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/me",
-			"responses": [],
-			"folder": "c3c8e47d-548f-56ad-b821-f051b7977c5a"
-		},
-		{
-			"id": "e2b8b5fb-d440-15b8-b764-d550561133d9",
-			"name": "Get (Jen's Catering Pty Ltd)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/identity/PUBLIC_IDENTIFIER:ABN:jenscatering_identity_1",
-			"responses": [],
-			"folder": "6f02870d-5631-4068-a521-55ca8c943a3d"
-		},
-		{
-			"id": "f1f1027a-e52f-d669-c19e-c404c9c54b88",
-			"name": "Get (Universal)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationshipType/UNIVERSAL_REPRESENTATIVE",
-			"responses": [],
-			"folder": "6b7c996c-32c9-4f84-f515-c73f8e218587"
-		},
-		{
-			"id": "f45e4405-0ccc-6a61-43d1-a83910420ed9",
-			"name": "Get (Jen's Catering Pty Ltd)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/party/identity/PUBLIC_IDENTIFIER:ABN:jenscatering_identity_1",
-			"responses": [],
-			"folder": "1efe0b0f-3342-2b5a-bca5-bc629991e116"
-		},
-		{
-			"id": "f70597f6-3de6-3502-57dc-ec62c3bea6a0",
-			"name": "List by subject",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/relationships/subject/identity/PUBLIC_IDENTIFIER:ABN:jenscatering_identity_1?page=1",
-			"responses": [],
-			"folder": "93735c4b-5aa5-227f-0fe6-6d5a0eb15b06"
-		},
-		{
-			"id": "fe21dd4b-b059-08cf-db70-85fc6192b535",
-			"name": "Get By Invitation Code (bad)",
-			"collectionId": "9543801d-d27b-b74b-cdb6-f47dfe76ba88",
-			"method": "GET",
-			"headers": "Accept: application/json",
-			"dataMode": "urlencoded",
-			"data": [
-				{
-					"key": "credentials",
-					"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
-					"type": "text",
-					"enabled": true
-				}
-			],
-			"rawModeData": "",
-			"url": "{{host}}/api/v1/identity/invitationCode/bad",
-			"responses": [],
-			"folder": "6f02870d-5631-4068-a521-55ca8c943a3d"
+			]
 		}
 	]
 }

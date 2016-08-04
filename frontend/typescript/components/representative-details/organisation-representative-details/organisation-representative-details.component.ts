@@ -2,6 +2,7 @@ import {OnInit, Input, Output, EventEmitter, Component} from '@angular/core';
 import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FormControl, FORM_DIRECTIVES } from '@angular/forms';
 import {RAMRestService} from '../../../services/ram-rest.service';
 import {RAMNgValidators} from '../../../commons/ram-ng-validators';
+import {Observable} from 'rxjs/Observable';
 
 @Component({
     selector: 'organisation-representative-details',
@@ -39,12 +40,13 @@ export class OrganisationRepresentativeDetailsComponent implements OnInit {
     public validateOrganisationName(abn: string) {
         // Rip of to a server to get company name
         this.rest.getOrganisationNameFromABN(abn)
-            .then((name: string) => {
-                this.organisationName = name;
-                this.isValid.emit(true);
-            }).catch((err: string) => {
+            .catch((err: any, caught: Observable<string>) => {
                 this.isValid.emit(false);
                 this.organisationName = this.ABNNotValidMsg;
+                return caught;
+            }).subscribe((name: string) => {
+                this.organisationName = name;
+                this.isValid.emit(true);
             });
     }
 

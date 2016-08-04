@@ -1,5 +1,5 @@
 import {connectDisconnectMongo, resetDataInMongo} from './helpers';
-import {IRelationshipType, RelationshipTypeModel} from '../models/relationshipType.model';
+import {IRelationshipType, RelationshipTypeModel, RelationshipTypeCategory} from '../models/relationshipType.model';
 
 /* tslint:disable:max-func-body-length */
 describe('RAM Relationship Type', () => {
@@ -20,7 +20,9 @@ describe('RAM Relationship Type', () => {
                 shortDecodeText: 'Relationship Type 1',
                 longDecodeText: 'Relationship Type 1',
                 startDate: new Date(),
-                attributeNameUsages: []
+                attributeNameUsages: [],
+                managedExternallyInd: false,
+                category: RelationshipTypeCategory.Authorisation.code
             });
 
             relationshipTypeFutureEndDate = await RelationshipTypeModel.create({
@@ -29,7 +31,9 @@ describe('RAM Relationship Type', () => {
                 longDecodeText: 'Relationship Type 2',
                 startDate: new Date(),
                 endDate: new Date(2099, 1, 1),
-                attributeNameUsages: []
+                attributeNameUsages: [],
+                managedExternallyInd: false,
+                category: RelationshipTypeCategory.Authorisation.code
             });
 
             relationshipTypeExpiredEndDate = await RelationshipTypeModel.create({
@@ -38,7 +42,9 @@ describe('RAM Relationship Type', () => {
                 longDecodeText: 'Relationship Type 3',
                 startDate: new Date(2016, 1, 1),
                 endDate: new Date(2016, 1, 2),
-                attributeNameUsages: []
+                attributeNameUsages: [],
+                managedExternallyInd: false,
+                category: RelationshipTypeCategory.Authorisation.code
             });
 
             done();
@@ -148,7 +154,9 @@ describe('RAM Relationship Type', () => {
                 longDecodeText: 'Some long decode text',
                 startDate: new Date(),
                 minCredentialStrength: minCredentialStrength,
-                minIdentityStrength: minIdentityStrength
+                minIdentityStrength: minIdentityStrength,
+                managedExternallyInd: false,
+                category: RelationshipTypeCategory.Authorisation.code
             });
 
             expect(instance).not.toBeNull();
@@ -174,7 +182,9 @@ describe('RAM Relationship Type', () => {
             await RelationshipTypeModel.create({
                 shortDecodeText: 'Some short decode text',
                 longDecodeText: 'Some long decode text',
-                startDate: new Date()
+                startDate: new Date(),
+                managedExternallyInd: false,
+                category: RelationshipTypeCategory.Authorisation.code
             });
             fail('should not have inserted with null code');
             done();
@@ -191,7 +201,9 @@ describe('RAM Relationship Type', () => {
                 code: '',
                 shortDecodeText: 'Some short decode text',
                 longDecodeText: 'Some long decode text',
-                startDate: new Date()
+                startDate: new Date(),
+                managedExternallyInd: false,
+                category: RelationshipTypeCategory.Authorisation.code
             });
             fail('should not have inserted with empty code');
             done();
@@ -211,14 +223,18 @@ describe('RAM Relationship Type', () => {
                 code: code,
                 shortDecodeText: 'Some short decode text',
                 longDecodeText: 'Some long decode text',
-                startDate: new Date()
+                startDate: new Date(),
+                managedExternallyInd: false,
+                category: RelationshipTypeCategory.Authorisation.code
             });
 
             await RelationshipTypeModel.create({
                 code: code,
                 shortDecodeText: 'Some short decode text',
                 longDecodeText: 'Some long decode text',
-                startDate: new Date()
+                startDate: new Date(),
+                managedExternallyInd: false,
+                category: RelationshipTypeCategory.Authorisation.code
             });
 
             fail('should not have inserted with duplicate code');

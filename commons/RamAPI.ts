@@ -59,6 +59,10 @@ export class FilterParams {
         return value ? value: defaultValue;
     }
 
+    public isEmpty():boolean {
+        return Object.keys(this.data).length === 0;
+    }
+
     public add(key:string, value:Object):FilterParams {
         this.data[key] = value ? value.toString() : null;
         return this;
@@ -123,6 +127,7 @@ export class AgencyUser implements IAgencyUser {
                 public givenName:string,
                 public familyName:string,
                 public displayName:string,
+                public agency:string,
                 public programRoles:AgencyUserProgramRole[]) {
     }
 }
@@ -228,21 +233,23 @@ export interface IRelationship {
     endTimestamp?: Date;
     endEventTimestamp?: Date,
     status: string;
+    initiatedBy: string;
     attributes: IRelationshipAttribute[];
 }
 
 export class Relationship implements IRelationship {
-    constructor(public _links:Link[],
-                public relationshipType:HrefValue<RelationshipType>,
-                public subject:HrefValue<Party>,
+    constructor(public _links:ILink[],
+                public relationshipType:IHrefValue<IRelationshipType>,
+                public subject:IHrefValue<IParty>,
                 public subjectNickName:Name,
-                public delegate:HrefValue<Party>,
+                public delegate:IHrefValue<IParty>,
                 public delegateNickName:Name,
                 public startTimestamp:Date,
                 public endTimestamp:Date,
                 public endEventTimestamp:Date,
                 public status:string,
-                public attributes:RelationshipAttribute[]) {
+                public initiatedBy:string,
+                public attributes:IRelationshipAttribute[]) {
     }
 }
 
@@ -266,6 +273,8 @@ export interface RelationshipSearchDTO {
 export interface IRelationshipType extends ICodeDecode {
     voluntaryInd: boolean;
     relationshipAttributeNames: IRelationshipAttributeNameUsage[];
+    managedExternallyInd: boolean;
+    category: string;
 }
 
 export class RelationshipType extends CodeDecode implements RelationshipType {
@@ -433,13 +442,13 @@ export class Identity implements IIdentity {
 }
 
 export interface IRelationshipAttribute {
-    value: string;
+    value: string[];
     attributeName: IHrefValue<IRelationshipAttributeName>;
 }
 
 export class RelationshipAttribute implements IRelationshipAttribute {
-    constructor(public value:string,
-                public attributeName:HrefValue<RelationshipAttributeName>) {
+    constructor(public value:string[],
+                public attributeName:IHrefValue<IRelationshipAttributeName>) {
     }
 }
 
@@ -496,7 +505,7 @@ export interface IRole {
 }
 
 export class Role implements IRole {
-    constructor(public _links:Link[],
+    constructor(public _links:ILink[],
                 public roleType:IHrefValue<IRoleType>,
                 public party:IHrefValue<IParty>,
                 public startTimestamp:Date,
@@ -504,7 +513,7 @@ export class Role implements IRole {
                 public endEventTimestamp:Date,
                 public assignedTimestamp:Date,
                 public status:string,
-                public attributes:RoleAttribute[]) {
+                public attributes:IRoleAttribute[]) {
     }
 }
 
@@ -533,7 +542,6 @@ export class RoleSearchDTO implements IRoleSearchDTO {
 }
 
 export interface IRoleType extends ICodeDecode {
-    voluntaryInd: boolean;
     roleAttributeNames: IRoleAttributeNameUsage[];
 }
 
@@ -543,7 +551,6 @@ export class RoleType extends CodeDecode implements IRoleType {
                 longDecodeText: string,
                 startTimestamp: Date,
                 endTimestamp: Date,
-                public  voluntaryInd: boolean,
                 public roleAttributeNames: IRoleAttributeNameUsage[]) {
         super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
     }
@@ -556,7 +563,7 @@ export interface IRoleAttribute {
 
 export class RoleAttribute implements IRoleAttribute {
     constructor(public value:string,
-                public attributeName:HrefValue<RoleAttributeName>) {
+                public attributeName:IHrefValue<IRoleAttributeName>) {
     }
 }
 

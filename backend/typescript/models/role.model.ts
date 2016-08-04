@@ -3,6 +3,7 @@ import {RAMEnum, IRAMObject, RAMSchema, Query} from './base';
 import {IParty, PartyModel} from './party.model';
 import {IRoleType, RoleTypeModel} from './roleType.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
+import {RoleAttributeNameModel} from './roleAttributeName.model';
 import {
     Link,
     HrefValue,
@@ -119,8 +120,10 @@ export interface IRole extends IRAMObject {
     roleStatus:RoleStatus;
     attributes:IRoleAttribute[];
     _roleTypeCode:string;
+    updateOrCreateAttribute(roleAttributeNameCode: string, value: string):Promise<IRoleAttribute>;
+    saveAttributes():Promise<IRole>;
     toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
-    toDTO(invitationCode: string):Promise<DTO>;
+    toDTO():Promise<DTO>;
 }
 
 export interface IRoleModel extends mongoose.Model<IRole> {
@@ -130,6 +133,7 @@ export interface IRoleModel extends mongoose.Model<IRole> {
          endTimestamp: Date,
          roleStatus:RoleStatus,
          attributes: IRoleAttribute[]) => Promise<IRole>;
+    findByRoleTypeAndParty:(roleType: IRoleType, party: IParty) => Promise<IRole>;
     search:(page: number, pageSize: number)
         => Promise<SearchResult<IRole>>;
     searchByIdentity:(identityIdValue: string, page: number, pageSize: number)
@@ -137,6 +141,38 @@ export interface IRoleModel extends mongoose.Model<IRole> {
 }
 
 // instance methods ...................................................................................................
+
+RoleSchema.method('updateOrCreateAttribute', async function(roleAttributeNameCode: string, value: string) {
+
+    // todo if attributeName is not inflated and was an object id, should we inflate it?
+
+    console.log('role before =', JSON.stringify(this, null, 4));
+    console.log('roleAttributeNameCode=', roleAttributeNameCode);
+    console.log('value=', value);
+
+    for (let attribute of this.attributes) {
+        console.log('attribute=', JSON.stringify(attribute, null, 4));
+        if (attribute.attributeName.code === roleAttributeNameCode) {
+            attribute.value = value;
+            await attribute.save();
+            return Promise.resolve(attribute);
+        }
+    }
+
+    const roleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(roleAttributeNameCode);
+    const roleAttribute = await RoleAttributeModel.create({
+        value: value,
+        attributeName: roleAttributeName
+    });
+    this.attributes.push(roleAttribute);
+    console.log('role after attribute create=', JSON.stringify(this, null, 4));
+    return Promise.resolve(roleAttribute);
+
+});
+
+RoleSchema.method('saveAttributes', async function() {
+    return this.save();
+});
 
 // todo what is the href we use here?
 RoleSchema.method('toHrefValue', async function (includeValue: boolean) {
@@ -185,6 +221,20 @@ RoleSchema.static('add', async (roleType: IRoleType,
     });
 });
 
+RoleSchema.static('findByRoleTypeAndParty', (roleType: IRoleType, party: IParty) => {
+    return this.RoleModel
+        .findOne({
+            roleType: roleType,
+            party: party
+        })
+        .deepPopulate([
+            'roleType',
+            'party',
+            'attributes.attributeName'
+        ])
+        .exec();
+});
+
 RoleSchema.static('search', (page: number,
                              reqPageSize: number) => {
     return new Promise<SearchResult<IRole>>(async (resolve, reject) => {
@@ -219,9 +269,12 @@ RoleSchema.static('searchByIdentity', (identityIdValue: string, page: number, re
         const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
         try {
             const party = await PartyModel.findByIdentityIdValue(identityIdValue);
-            const where: Object = {};
-            // where['$and'] = [];
-            // where['$and'].push({'$or': [{subject: party}, {delegate: party}]});
+            let mainAnd: {[key: string]: Object}[] = [];
+            mainAnd.push({
+                party: party
+            });
+            const where: {[key: string]: Object} = {};
+            where['$and'] = mainAnd;
             const count = await this.RoleModel
                 .count(where)
                 .exec();

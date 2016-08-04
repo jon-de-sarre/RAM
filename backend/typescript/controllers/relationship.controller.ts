@@ -8,6 +8,7 @@ import {IRelationshipModel, RelationshipStatus} from '../models/relationship.mod
 import {FilterParams, IInvitationCodeRelationshipAddDTO, ICreateInvitationCodeDTO, IAttributeDTO} from '../../../commons/RamAPI';
 import {PartyModel} from '../models/party.model';
 import {Headers} from './headers';
+import {Assert} from '../models/base';
 
 // todo add data security
 export class RelationshipController {
@@ -74,7 +75,6 @@ export class RelationshipController {
         validateReqSchema(req, schema)
             .then((req:Request) => this.relationshipModel.findByInvitationCode(req.params.invitationCode))
             .then((model) => {
-                console.log('model ', model);
                 return model;
             })
             .then((model) => model ? model.acceptPendingInvitation(security.getAuthenticatedIdentity(res)) : null)
@@ -200,10 +200,11 @@ export class RelationshipController {
         const filterParams = FilterParams.decode(req.query.filter);
         validateReqSchema(req, schema)
             .then(async (req:Request) => {
-                const me = res.locals[Headers.Identity];
-                const hasAccess = await this.partyModel.hasAccess(me.party, req.params.identity_id);
-                if (!hasAccess) {
-                    throw new Error('You do not have access to this party.');
+                const myPrincipal = security.getAuthenticatedPrincipal(res);
+                if (!myPrincipal.agencyUserInd) {
+                    const myIdentity = security.getAuthenticatedIdentity(res);
+                    const hasAccess = await this.partyModel.hasAccess(myIdentity.party, req.params.identity_id);
+                    Assert.assertTrue(hasAccess, 'You do not have access to this party.');
                 }
                 return req;
             })
@@ -211,6 +212,7 @@ export class RelationshipController {
                 req.params.identity_id,
                 filterParams.get('partyType'),
                 filterParams.get('relationshipType'),
+                filterParams.get('relationshipTypeCategory'),
                 filterParams.get('profileProvider'),
                 filterParams.get('status'),
                 filterParams.get('text'),
@@ -246,21 +248,28 @@ export class RelationshipController {
         };
         const filterParams = FilterParams.decode(req.query.filter);
         validateReqSchema(req, schema)
-            .then((req:Request) => this.relationshipModel.searchDistinctSubjectsForMe(
-                res.locals[Headers.Identity].party,
-                filterParams.get('partyType'),
-                filterParams.get('authorisationManagement'),
-                filterParams.get('text'),
-                filterParams.get('sort'),
-                parseInt(req.query.page),
-                req.query.pageSize)
-            )
+            .then((req: Request) => {
+                const principal = security.getAuthenticatedPrincipal(res);
+                if (principal.agencyUserInd) {
+                    throw new Error('403');
+                } else {
+                    return this.relationshipModel.searchDistinctSubjectsForMe(
+                        res.locals[Headers.Identity].party,
+                        filterParams.get('partyType'),
+                        filterParams.get('authorisationManagement'),
+                        filterParams.get('text'),
+                        filterParams.get('sort'),
+                        parseInt(req.query.page),
+                        req.query.pageSize);
+                }
+            })
             .then((results) => (results.map((model) => model.toHrefValue(true))))
-            .then(sendSearchResult(res), sendError(res))
-            .then(sendNotFoundError(res));
+            .then(sendSearchResult(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
-    private create = async(req:Request, res:Response) => {
+    private createUsingInvitation = async(req:Request, res:Response) => {
         // TODO support other party types - currently only INDIVIDUAL is supported here
         // TODO how much of this validation should be in the data layer?
         // TODO decide how to handle dates - should they include time? or should server just use 12am AEST
@@ -368,6 +377,73 @@ export class RelationshipController {
             .catch(sendError(res));
     };
 
+    private create = async(req:Request, res:Response) => {
+
+        // todo move into somewhere
+        let substringAfter = (searchString: string, href: string) => {
+            let idValue:string = null;
+            if (href.startsWith(searchString)) {
+                idValue = decodeURIComponent(href.substr(searchString.length));
+            }
+            return idValue;
+        };
+
+        const schema = {
+            'relationshipType.href': {
+                in: 'body',
+                matches: {
+                    options: ['^/api/v1/relationshipType/'],
+                    errorMessage: 'Relationship type is not valid'
+                }
+            },
+            'subject.href': {
+                in: 'body',
+                matches: {
+                    options: ['^/api/v1/party/identity/'],
+                    errorMessage: 'Subject identity id value not valid'
+                }
+            },
+            'delegate.href': {
+                in: 'body',
+                matches: {
+                    options: ['^/api/v1/party/identity/'],
+                    errorMessage: 'Delegate identity id value not valid'
+                }
+            },
+            'startTimestamp': {
+                in: 'body',
+                notEmpty: true,
+                isDate: {
+                    errorMessage: 'Start timestamp is not valid'
+                },
+                errorMessage: 'Start timestamp is not valid'
+            },
+            'endTimestamp': {
+                in: 'body'
+            }
+        };
+        const subjectIdValue = substringAfter('/api/v1/party/identity/', req.body.subject.href); // todo may need to change as it could be initiated from a delegate
+        validateReqSchema(req, schema)
+            .then(async (req:Request) => {
+                const myPrincipal = security.getAuthenticatedPrincipal(res);
+                if (!myPrincipal.agencyUserInd) {
+                    const myIdentity = security.getAuthenticatedIdentity(res);
+                    const hasAccess = await this.partyModel.hasAccess(myIdentity.party, subjectIdValue);
+                    Assert.assertTrue(hasAccess, 'You do not have access to this party.');
+                }
+                return req;
+            })
+            .then(async (req: Request) => {
+                const subjectParty = await PartyModel.findByIdentityIdValue(subjectIdValue);
+                Assert.assertNotNull(subjectParty, 'Subject party not found');
+                return await subjectParty.addRelationship2(req.body);
+            })
+            .then((model) => model ? model.toDTO(null) : null)
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
+    };
+
     private findStatusByName = (req:Request, res:Response) => {
         const schema = {
             'name': {
@@ -433,6 +509,11 @@ export class RelationshipController {
             this.searchByIdentity);
 
         router.post('/v1/relationship',
+            security.isAuthenticated,
+            this.createUsingInvitation);
+
+        // todo need to add to swagger
+        router.post('/v1/relationship2',
             security.isAuthenticated,
             this.create);
 

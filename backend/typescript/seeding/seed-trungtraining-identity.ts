@@ -8,12 +8,12 @@ import {IdentityType, IdentityPublicIdentifierScheme} from '../models/identity.m
 
 /* tslint:disable:no-any */
 /* tslint:disable:max-func-body-length */
-export class JensCateringIdentitySeeder {
+export class TrungTrainingIdentitySeeder {
 
     public static async load() {
         try {
 
-            Seeder.log('\nInserting Sample Identity - Jen\'s Catering Pty Ltd:\n'.underline);
+            Seeder.log('\nInserting Sample Identity - Trung Training Pty Ltd:\n'.underline);
 
             if (!conf.devMode) {
 
@@ -21,29 +21,29 @@ export class JensCateringIdentitySeeder {
 
             } else {
 
-                Seeder.jenscatering_name = await Seeder.createNameModel({
-                    unstructuredName: 'Jen\'s Catering Pty Ltd'
+                Seeder.trungtraining_name = await Seeder.createNameModel({
+                    unstructuredName: 'Trung Training Pty Ltd'
                 } as any);
 
-                Seeder.jenscatering_profile = await Seeder.createProfileModel({
+                Seeder.trungtraining_profile = await Seeder.createProfileModel({
                     provider: ProfileProvider.ABR.code,
-                    name: Seeder.jenscatering_name,
+                    name: Seeder.trungtraining_name,
                     sharedSecrets: []
                 } as any);
 
-                Seeder.jenscatering_party = await Seeder.createPartyModel({
+                Seeder.trungtraining_party = await Seeder.createPartyModel({
                     partyType: PartyType.ABN.code
                 } as any);
 
                 Seeder.log('');
 
-                Seeder.jenscatering_identity_1 = await Seeder.createIdentityModel({
-                    rawIdValue: 'jenscateringABN',
+                Seeder.trungtraining_identity_1 = await Seeder.createIdentityModel({
+                    rawIdValue: 'ABNTrungTr123',
                     identityType: IdentityType.PublicIdentifier.code,
                     defaultInd: true,
                     publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.code,
-                    profile: Seeder.jenscatering_profile,
-                    party: Seeder.jenscatering_party
+                    profile: Seeder.trungtraining_profile,
+                    party: Seeder.trungtraining_party
                 } as any);
 
             }

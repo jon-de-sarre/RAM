@@ -54,10 +54,13 @@ export class AddRelationshipComponent extends AbstractPageComponent {
     public idValue: string;
 
     public relationshipTypes$: Observable<IHrefValue<IRelationshipType>[]>;
+    public relationshipTypeRefs: IHrefValue<IRelationshipType>[];
 
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
     public identity: IIdentity;
     public manageAuthAttribute: IRelationshipAttributeNameUsage;
+
+    public authType: string = 'choose';
 
     public newRelationship: AddRelationshipComponentData = {
         accessPeriod: {
@@ -81,8 +84,9 @@ export class AddRelationshipComponent extends AbstractPageComponent {
         authorisationManagement: {
             value: ''
         },
-        decalaration: {
-            accepted: false
+        declaration: {
+            accepted: false,
+            markdown: 'TODO'
         }
     };
 
@@ -104,6 +108,12 @@ export class AddRelationshipComponent extends AbstractPageComponent {
 
         // relationship types
         this.relationshipTypes$ = this.services.rest.listRelationshipTypes();
+        this.relationshipTypes$.subscribe((relationshipTypeRefs) => {
+            this.relationshipTypeRefs = relationshipTypeRefs.filter((relationshipType) => {
+                return relationshipType.value.managedExternallyInd === false
+                    && relationshipType.value.category === this.services.constants.RelationshipTypeCategory.AUTHORISATION;
+            });
+        });
 
         // delegate managed attribute
         this.resolveManageAuthAttribute('UNIVERSAL_REPRESENTATIVE', 'DELEGATE_MANAGE_AUTHORISATION_ALLOWED_IND');
@@ -205,6 +215,11 @@ export class AddRelationshipComponent extends AbstractPageComponent {
         }
     }
 
+    public authTypeChange = (data:AuthorisationTypeComponentData) => {
+        // TODO calculate declaration markdown based on relationship type and services selected
+        // TODO update declaration component to show new text
+        this.newRelationship.declaration.markdown = 'TODO '+data.authType;
+    }
 }
 
 export interface AddRelationshipComponentData {
@@ -212,5 +227,5 @@ export interface AddRelationshipComponentData {
     authType: AuthorisationTypeComponentData;
     representativeDetails: RepresentativeDetailsComponentData;
     authorisationManagement: AuthorisationManagementComponentData;
-    decalaration: DeclarationComponentData;
+    declaration: DeclarationComponentData;
 }

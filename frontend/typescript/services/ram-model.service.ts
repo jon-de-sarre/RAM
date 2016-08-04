@@ -13,7 +13,11 @@ import {
     IRelationshipType,
     IRole,
     IRoleStatus,
-    IRoleType
+    IRoleType,
+    IRoleAttributeNameUsage,
+    IRoleAttributeName,
+    IRelationshipAttributeName,
+    IRelationshipAttributeNameUsage
 } from '../../../commons/RamAPI';
 
 @Injectable()
@@ -21,7 +25,7 @@ export class RAMModelService {
 
     // helpers ........................................................................................................
 
-    public displayDate(dateString: string) {
+    public displayDate(dateString: string): string {
         if (dateString) {
             const date = new Date(dateString);
             const datePipe = new DatePipe();
@@ -74,12 +78,12 @@ export class RAMModelService {
         return identity && identity.identityType === 'LINK_ID';
     }
 
-    public profileProviderLabel(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string) {
+    public profileProviderLabel(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string): string {
         const profileProvider = this.getProfileProvider(profileProviderRefs, code);
         return profileProvider ? profileProvider.shortDecodeText : '';
     }
 
-    public relationshipTypeLabel(relationshipTypeRefs: IHrefValue<IRelationshipType>[], relationship: IRelationship) {
+    public relationshipTypeLabel(relationshipTypeRefs: IHrefValue<IRelationshipType>[], relationship: IRelationship): string {
         if (relationshipTypeRefs && relationship) {
             let relationshipType = this.getRelationshipType(relationshipTypeRefs, relationship);
             if (relationshipType) {
@@ -89,7 +93,7 @@ export class RAMModelService {
         return '';
     }
 
-    public roleTypeLabel(roleTypeRefs: IHrefValue<IRoleType>[], role: IRole) {
+    public roleTypeLabel(roleTypeRefs: IHrefValue<IRoleType>[], role: IRole): string {
         if (roleTypeRefs && role) {
             let roleType = this.getRoleType(roleTypeRefs, role);
             if (roleType) {
@@ -99,14 +103,23 @@ export class RAMModelService {
         return '';
     }
 
-    public relationshipStatusLabel(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], code: string) {
+    public relationshipStatusLabel(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], code: string): string {
         const status = this.getRelationshipStatus(relationshipStatusRefs, code);
         return status ? status.shortDecodeText : '';
     }
 
-    public roleStatusLabel(roleStatusRefs: IHrefValue<IRoleStatus>[], code: string) {
+    public roleStatusLabel(roleStatusRefs: IHrefValue<IRoleStatus>[], code: string): string {
         const status = this.getRoleStatus(roleStatusRefs, code);
         return status ? status.shortDecodeText : '';
+    }
+
+    public roleAttributeLabel(role: IRole, code: string): string {
+        for (let attribute of role.attributes) {
+            if (attribute.attributeName.value.code === code) {
+                return attribute.value;
+            }
+        }
+        return '';
     }
 
     // model lookups ..................................................................................................
@@ -134,7 +147,7 @@ export class RAMModelService {
         return null;
     }
 
-    public getProfileProvider(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string) {
+    public getProfileProvider(profileProviderRefs: IHrefValue<IProfileProvider>[], code: string): IProfileProvider {
         if (profileProviderRefs && code) {
             for (let ref of profileProviderRefs) {
                 if (ref.value.code === code) {
@@ -145,7 +158,7 @@ export class RAMModelService {
         return null;
     }
 
-    public getRelationshipType(relationshipTypeRefs: IHrefValue<IRelationshipType>[], relationship: IRelationship) {
+    public getRelationshipType(relationshipTypeRefs: IHrefValue<IRelationshipType>[], relationship: IRelationship): IRelationshipType {
         if (relationshipTypeRefs && relationship) {
             let href = relationship.relationshipType.href;
             for (let ref of relationshipTypeRefs) {
@@ -157,7 +170,7 @@ export class RAMModelService {
         return null;
     }
 
-    public getRoleType(roleTypeRefs: IHrefValue<IRoleType>[], role: IRole) {
+    public getRoleType(roleTypeRefs: IHrefValue<IRoleType>[], role: IRole): IRoleType {
         if (roleTypeRefs && role) {
             let href = role.roleType.href;
             for (let ref of roleTypeRefs) {
@@ -169,7 +182,7 @@ export class RAMModelService {
         return null;
     }
 
-    public getRelationshipStatus(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], code: string) {
+    public getRelationshipStatus(relationshipStatusRefs: IHrefValue<IRelationshipStatus>[], code: string): IRelationshipStatus {
         if (relationshipStatusRefs) {
             for (let ref of relationshipStatusRefs) {
                 if (ref.value.code === code) {
@@ -180,12 +193,83 @@ export class RAMModelService {
         return null;
     }
 
-    public getRoleStatus(roleStatusRefs: IHrefValue<IRoleStatus>[], code: string) {
+    public getRoleStatus(roleStatusRefs: IHrefValue<IRoleStatus>[], code: string): IRoleStatus {
         if (roleStatusRefs) {
             for (let ref of roleStatusRefs) {
                 if (ref.value.code === code) {
                     return ref.value;
                 }
+            }
+        }
+        return null;
+    }
+
+    public getRelationshipTypeAttributeNameRef(relationshipTypeRef: IHrefValue<IRelationshipType>, code: string): IHrefValue<IRelationshipAttributeName> {
+        for (let usage of relationshipTypeRef.value.relationshipAttributeNames) {
+            const attributeNameRef = usage.attributeNameDef;
+            if (attributeNameRef.value.code === code) {
+                return attributeNameRef;
+            }
+        }
+        return null;
+    }
+
+    public getRelationshipTypeAttributeNameUsage(relationshipTypeRef: IHrefValue<IRelationshipType>, code: string): IRelationshipAttributeNameUsage {
+        for (let usage of relationshipTypeRef.value.relationshipAttributeNames) {
+            const attributeNameRef = usage.attributeNameDef;
+            if (attributeNameRef.value.code === code) {
+                return usage;
+            }
+        }
+        return null;
+    }
+
+    public getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef: IHrefValue<IRoleType>, programs: string[]): IRoleAttributeNameUsage[] {
+        let agencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[] = [];
+        if (roleTypeRef) {
+            for (let roleAttributeNameUsage of roleTypeRef.value.roleAttributeNames) {
+                let classifier = roleAttributeNameUsage.attributeNameDef.value.classifier;
+                if (classifier === 'AGENCY_SERVICE') {
+                    let category = roleAttributeNameUsage.attributeNameDef.value.category;
+                    if (category && (!programs || programs.length === 0 || programs.indexOf(category) !== -1)) {
+                        agencyServiceRoleAttributeNameUsages.push(roleAttributeNameUsage);
+                    }
+                }
+            }
+        }
+        return agencyServiceRoleAttributeNameUsages;
+    }
+
+    public getAccessibleAgencyServiceRoleAttributeNames(roleRef: IHrefValue<IRole>, programs: string[]): IRoleAttributeName[] {
+        let agencyServiceRoleAttributeNames: IRoleAttributeName[] = [];
+        if (roleRef) {
+            for (let roleAttribute of roleRef.value.attributes) {
+                let classifier = roleAttribute.attributeName.value.classifier;
+                if (classifier === 'AGENCY_SERVICE') {
+                    let category = roleAttribute.attributeName.value.category;
+                    if (category && (!programs || programs.length === 0 || programs.indexOf(category) !== -1)) {
+                        agencyServiceRoleAttributeNames.push(roleAttribute.attributeName.value);
+                    }
+                }
+            }
+        }
+        return agencyServiceRoleAttributeNames;
+    }
+
+    public getRoleTypeRef(roleTypeRefs: IHrefValue<IRoleType>[], code: string): IHrefValue<IRoleType> {
+        for (let ref of roleTypeRefs) {
+            if (ref.value.code === code) {
+                return ref;
+            }
+        }
+        return null;
+    }
+
+    public getRoleTypeAttributeNameRef(roleTypeRef: IHrefValue<IRoleType>, code: string): IHrefValue<IRoleAttributeName> {
+        for (let usage of roleTypeRef.value.roleAttributeNames) {
+            const attributeNameRef = usage.attributeNameDef;
+            if (attributeNameRef.value.code === code) {
+                return attributeNameRef;
             }
         }
         return null;

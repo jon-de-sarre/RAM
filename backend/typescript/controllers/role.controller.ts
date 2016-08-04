@@ -1,11 +1,11 @@
 import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
 import {
-    sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema
+    sendResource, sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema
 } from './helpers';
-import {IPartyModel} from '../models/party.model';
+import {Assert} from '../models/base';
+import {IPartyModel, PartyModel, IParty} from '../models/party.model';
 import {IRoleModel, RoleStatus} from '../models/role.model';
-import {Headers} from './headers';
 
 // todo add data security
 export class RoleController {
@@ -39,14 +39,6 @@ export class RoleController {
             }
         };
         validateReqSchema(req, schema)
-            .then(async (req:Request) => {
-                const me = res.locals[Headers.Identity];
-                const hasAccess = await this.partyModel.hasAccess(me.party, req.params.identity_id);
-                if (!hasAccess) {
-                    throw new Error('You do not have access to this party.');
-                }
-                return req;
-            })
             .then((req:Request) => this.roleModel.searchByIdentity(
                 req.params.identity_id,
                 parseInt(req.query.page),
@@ -54,6 +46,43 @@ export class RoleController {
             )
             .then((results) => (results.map((model) => model.toHrefValue(true))))
             .then(sendSearchResult(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
+    };
+
+    private createByIdentity = async(req:Request, res:Response) => {
+        const schema = {
+            'roleType.value.code': {
+                in: 'body',
+                notEmpty: true,
+                errorMessage: 'Code is not valid'
+            },
+            'party.href': {
+                in: 'body',
+                notEmpty: true,
+                errorMessage: 'Party is missing'
+            }
+        };
+        validateReqSchema(req, schema)
+            .then((req: Request) => {
+                const partyHref = req.body.party.href;
+
+                // todo move to util
+                const searchString = '/api/v1/party/identity/';
+                let idValue:string = null;
+                if (partyHref.startsWith(searchString, partyHref)) {
+                    idValue = decodeURIComponent(partyHref.substr(searchString.length));
+                }
+
+                return idValue !== null ? PartyModel.findByIdentityIdValue(idValue) : null;
+            })
+            .then((party:IParty) => {
+                Assert.assertTrue(party !== null, 'Party not found');
+                const agencyUser = security.getAuthenticatedAgencyUser(res);
+                return party.addRole(req.body, agencyUser);
+            })
+            .then((model) => model ? model.toDTO() : null)
+            .then(sendResource(res))
             .then(sendNotFoundError(res))
             .catch(sendError(res));
     };
@@ -73,6 +102,10 @@ export class RoleController {
         router.get('/v1/roles/identity/:identity_id',
             security.isAuthenticated,
             this.searchByIdentity);
+
+        router.post('/v1/role',
+            security.isAuthenticatedAsAgencyUser,
+            this.createByIdentity);
 
         router.get('/v1/roleStatuses',
             this.listStatuses);

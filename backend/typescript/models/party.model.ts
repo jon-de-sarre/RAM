@@ -1,17 +1,30 @@
 import * as mongoose from 'mongoose';
-import {RAMEnum, IRAMObject, RAMSchema} from './base';
+import {RAMEnum, IRAMObject, RAMSchema, Assert} from './base';
 import {IIdentity, IdentityModel} from './identity.model';
+import {RelationshipModel, IRelationship, RelationshipInitiatedBy} from './relationship.model';
+import {RelationshipTypeModel} from './relationshipType.model';
+import {RelationshipAttributeModel, IRelationshipAttribute} from './relationshipAttribute.model';
+import {RelationshipAttributeNameModel} from './relationshipAttributeName.model';
+import {RoleTypeModel} from './roleType.model';
+import {IRole, RoleModel, RoleStatus} from './role.model';
+import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
+import {IAgencyUser} from './agencyUser.model';
+import {RoleAttributeNameModel} from './roleAttributeName.model';
 import {
     HrefValue,
     Party as DTO,
     PartyType as PartyTypeDTO,
     Identity as IdentityDTO,
-    IInvitationCodeRelationshipAddDTO
+    IInvitationCodeRelationshipAddDTO,
+    Role as RoleDTO,
+    IRelationship as IRelationshipDTO
 } from '../../../commons/RamAPI';
-import {RelationshipModel, IRelationship} from './relationship.model';
-import {RelationshipTypeModel} from './relationshipType.model';
-import {RelationshipAttributeModel, IRelationshipAttribute} from './relationshipAttribute.model';
-import {RelationshipAttributeNameModel} from './relationshipAttributeName.model';
+
+/* tslint:disable:no-unused-variable */
+const _RoleAttributeModel = RoleAttributeModel;
+
+/* tslint:disable:no-unused-variable */
+const _RelationshipTypeModel = RelationshipTypeModel;
 
 // enums, utilities, helpers ..........................................................................................
 
@@ -60,6 +73,8 @@ export interface IParty extends IRAMObject {
     toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
     toDTO():Promise<DTO>;
     addRelationship(dto: IInvitationCodeRelationshipAddDTO):Promise<IRelationship>;
+    addRelationship2(relationshipDTO: IRelationshipDTO):Promise<IRelationship>;
+    addRole(role: IRole, agencyUser: IAgencyUser):Promise<IRole>;
 }
 
 /* tslint:disable:no-empty-interfaces */
@@ -98,10 +113,12 @@ PartySchema.method('toDTO', async function () {
 });
 
 /**
- * Creates a relationship to a temporary identity (InvitationCode) until the invitiation has been accepted, whereby
+ * Creates a relationship to a temporary identity (InvitationCode) until the invitation has been accepted, whereby
  * the relationship will be transferred to the authorised identity.
+ *
  */
 /* tslint:disable:max-func-body-length */
+// TODO delete this method and use a more generic addRelationship2 which will either create an invitation code OR use provided subject and delegate
 PartySchema.method('addRelationship', async (dto: IInvitationCodeRelationshipAddDTO) => {
 
     // TODO improve handling of lookups that return null outside of the date range
@@ -130,17 +147,140 @@ PartySchema.method('addRelationship', async (dto: IInvitationCodeRelationshipAdd
     }
 
     // create the relationship
-    const relationship = await RelationshipModel.add(
+    const relationship = await RelationshipModel.add2(
         relationshipType,
         subjectIdentity.party,
         subjectIdentity.profile.name,
-        temporaryDelegateIdentity,
+        temporaryDelegateIdentity.party,
+        temporaryDelegateIdentity.profile.name,
         dto.startTimestamp,
         dto.endTimestamp,
+        RelationshipInitiatedBy.Subject,
+        temporaryDelegateIdentity,
         attributes
     );
 
     return relationship;
+
+});
+
+/* tslint:disable:max-func-body-length */
+PartySchema.method('addRelationship2', async function (dto: IRelationshipDTO) {
+    /* tslint:disable:max-func-body-length */
+    let findAfterSearchString = (href: string, searchString: string) => {
+        let idValue:string = null;
+        if (href.startsWith(searchString)) {
+            idValue = decodeURIComponent(href.substr(searchString.length));
+        }
+        return idValue;
+    };
+
+    // lookups
+    const relationshipTypeCode = findAfterSearchString(dto.relationshipType.href, '/api/v1/relationshipType/');
+    const relationshipType = await RelationshipTypeModel.findByCodeInDateRange(relationshipTypeCode, new Date()); // todo what if find after search string returns null?
+    const delegateIdValue = findAfterSearchString(dto.delegate.href, '/api/v1/party/identity/');
+    const delegateIdentity = await IdentityModel.findByIdValue(delegateIdValue);
+    const subjectIdentity = await IdentityModel.findDefaultByPartyId(this.id);
+
+    const attributes: IRelationshipAttribute[] = [];
+
+    for (let attr of dto.attributes) {
+        const attributeName = await RelationshipAttributeNameModel.findByCodeInDateRange(attr.attributeName.value.code, new Date());
+        if (attributeName) {
+            attributes.push(await RelationshipAttributeModel.create({
+                value: attr.value,
+                attributeName: attributeName
+            }));
+        }
+    }
+
+    // create the relationship
+    return RelationshipModel.add2(
+        relationshipType,
+        this,
+        subjectIdentity.profile.name,
+        delegateIdentity.party,
+        delegateIdentity.profile.name,
+        dto.startTimestamp,
+        dto.endTimestamp,
+        RelationshipInitiatedBy.valueOf(dto.initiatedBy),
+        null,
+        attributes
+    );
+
+});
+
+PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAgencyUser) {
+
+    const now = new Date();
+    const roleTypeCode = roleDTO.roleType.value.code;
+    const roleType = await RoleTypeModel.findByCodeInDateRange(roleTypeCode, now);
+    Assert.assertTrue(roleType !== null, 'Role type invalid');
+
+    let role:IRole = await RoleModel.findByRoleTypeAndParty(roleType, this);
+    if (role === null) {
+        role = await RoleModel.create({
+            roleType: roleType,
+            party: this,
+            startTimestamp: now,
+            status: RoleStatus.Active.code,
+            attributes: []
+        });
+    }
+
+    const roleAttributes: IRoleAttribute[] = [];
+
+    let processAttribute = async (code: string, value: string, roleAttributes: IRoleAttribute[], role: IRole) => {
+        const roleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(code);
+        if (roleAttributeName) {
+            const filteredRoleAttributes = role.attributes.filter((item) => {
+                return item.attributeName.code === code;
+            });
+            if (filteredRoleAttributes.length === 0) {
+                roleAttributes.push(await RoleAttributeModel.create({
+                    value: value,
+                    attributeName: roleAttributeName
+                }));
+            } else {
+                const filteredRoleAttribute = filteredRoleAttributes[0];
+                filteredRoleAttribute.value = value;
+                await filteredRoleAttribute.save();
+                roleAttributes.push(filteredRoleAttribute);
+            }
+        }
+    };
+
+    await processAttribute('CREATOR_ID', agencyUser.id, roleAttributes, role);
+    await processAttribute('CREATOR_NAME', agencyUser.displayName, roleAttributes, role);
+    await processAttribute('CREATOR_AGENCY', agencyUser.agency, roleAttributes, role);
+
+    for (let roleAttribute of roleDTO.attributes) {
+        const roleAttributeValue = roleAttribute.value;
+        const roleAttributeNameCode = roleAttribute.attributeName.value.code;
+        const roleAttributeNameCategory = roleAttribute.attributeName.value.category;
+
+        let shouldSave = false;
+        if (roleAttribute.attributeName.value.classifier === 'AGENCY_SERVICE') {
+            for (let programRole of agencyUser.programRoles) {
+                if (programRole.role === 'ROLE_ADMIN' && programRole.program === roleAttributeNameCategory) {
+                    shouldSave = true;
+                    break;
+                }
+            }
+        } else {
+            shouldSave = true;
+        }
+
+        if (shouldSave) {
+            await processAttribute(roleAttributeNameCode, roleAttributeValue, roleAttributes, role);
+        }
+    }
+
+    role.attributes = roleAttributes;
+
+    role.saveAttributes();
+
+    return Promise.resolve(role);
 
 });
 

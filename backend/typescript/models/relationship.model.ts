@@ -64,6 +64,21 @@ export class RelationshipStatus extends RAMEnum {
     }
 }
 
+export class RelationshipInitiatedBy extends RAMEnum {
+
+    public static Subject = new RelationshipInitiatedBy('SUBJECT', 'Subject');
+    public static Delegate = new RelationshipInitiatedBy('DELEGATE', 'Delegate');
+
+    protected static AllValues = [
+        RelationshipInitiatedBy.Subject,
+        RelationshipInitiatedBy.Delegate
+    ];
+
+    constructor(code: string, shortDecodeText: string) {
+        super(code, shortDecodeText);
+    }
+}
+
 // schema .............................................................................................................
 
 const RelationshipSchema = RAMSchema({
@@ -121,6 +136,12 @@ const RelationshipSchema = RAMSchema({
         trim: true,
         enum: RelationshipStatus.valueStrings()
     },
+    initiatedBy: {
+        type: String,
+        required: [true, 'Initiated by is required'],
+        trim: true,
+        enum: RelationshipInitiatedBy.valueStrings()
+    },
     attributes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'RelationshipAttribute'
@@ -130,6 +151,11 @@ const RelationshipSchema = RAMSchema({
         required: [true, 'Relationship Type Code is required'],
         trim: true
     },
+    _relationshipTypeCategory: {
+         type: String,
+         required: [true, 'Relationship Type Category is required'],
+         trim: true
+     },
     _subjectNickNameString: {
         type: String,
         required: [true, 'Subject Nick Name String is required'],
@@ -169,6 +195,9 @@ const RelationshipSchema = RAMSchema({
 RelationshipSchema.pre('validate', function (next: () => void) {
     if (this.relationshipType) {
         this._relationshipTypeCode = this.relationshipType.code;
+    }
+    if (this.relationshipType) {
+        this._relationshipTypeCategory = this.relationshipType.category;
     }
     if (this.subjectNickName) {
         this._subjectNickNameString = this.subjectNickName._displayName;
@@ -219,6 +248,7 @@ export interface IRelationship extends IRAMObject {
     endTimestamp?:Date;
     endEventTimestamp?:Date;
     status:string;
+    initiatedBy:string;
     attributes:IRelationshipAttribute[];
     _subjectNickNameString:string;
     _delegateNickNameString:string;
@@ -239,13 +269,16 @@ export interface IRelationship extends IRAMObject {
 }
 
 export interface IRelationshipModel extends mongoose.Model<IRelationship> {
-    add:(relationshipType: IRelationshipType,
-         subject: IParty,
-         subjectNickName: IName,
-         invitationCodeIdentity: IIdentity,
-         startTimestamp: Date,
-         endTimestamp: Date,
-         attributes: IRelationshipAttribute[]) => Promise<IRelationship>;
+    add2:(relationshipType: IRelationshipType,
+          subject: IParty,
+          subjectNickName: IName,
+          delegate: IParty,
+          delegateNickName: IName,
+          startTimestamp: Date,
+          endTimestamp: Date,
+          initiatedBy: RelationshipInitiatedBy,
+          invitationIdentity: IIdentity,
+          attributes: IRelationshipAttribute[]) => Promise<IRelationship>;
     findByIdentifier:(id: string) => Promise<IRelationship>;
     findByInvitationCode:(invitationCode: string) => Promise<IRelationship>;
     findPendingByInvitationCodeInDateRange:(invitationCode: string, date: Date) => Promise<IRelationship>;
@@ -255,6 +288,7 @@ export interface IRelationshipModel extends mongoose.Model<IRelationship> {
     searchByIdentity:(identityIdValue: string,
                       partyType: string,
                       relationshipType: string,
+                      relationshipTypeCategory: string,
                       profileProvider: string,
                       status: string,
                       text: string,
@@ -301,6 +335,7 @@ RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
         this.endTimestamp,
         this.endEventTimestamp,
         this.status,
+        this.initiatedBy,
         await Promise.all<RelationshipAttributeDTO>(this.attributes.map(
             async (attribute: IRelationshipAttribute) => {
                 return await attribute.toDTO();
@@ -450,23 +485,40 @@ RelationshipSchema.method('notifyDelegate', async function (email: string, notif
 
 // static methods .....................................................................................................
 
-RelationshipSchema.static('add', async (relationshipType: IRelationshipType,
+RelationshipSchema.static('add2', async (relationshipType: IRelationshipType,
                                         subject: IParty,
                                         subjectNickName: IName,
-                                        invitationCodeIdentity: IIdentity,
+                                        delegate: IParty,
+                                        delegateNickName: IName,
                                         startTimestamp: Date,
                                         endTimestamp: Date,
+                                        initiatedBy: RelationshipInitiatedBy,
+                                        invitationIdentity: IIdentity,
                                         attributes: IRelationshipAttribute[]) => {
+
+    let status = RelationshipStatus.Pending;
+
+    // check subject
+    if(initiatedBy === RelationshipInitiatedBy.Subject && relationshipType.autoAcceptIfInitiatedFromSubject) {
+        status = RelationshipStatus.Active;
+    }
+
+    // check delegate
+    if(initiatedBy === RelationshipInitiatedBy.Delegate && relationshipType.autoAcceptIfInitiatedFromDelegate) {
+        status = RelationshipStatus.Active;
+    }
+
     return await this.RelationshipModel.create({
         relationshipType: relationshipType,
         subject: subject,
         subjectNickName: subjectNickName,
-        delegate: invitationCodeIdentity.party,
-        delegateNickName: invitationCodeIdentity.profile.name,
-        invitationIdentity: invitationCodeIdentity,
+        delegate: delegate,
+        delegateNickName: delegateNickName,
         startTimestamp: startTimestamp,
         endTimestamp: endTimestamp,
-        status: RelationshipStatus.Pending.code,
+        status: status.code,
+        initiatedBy: initiatedBy.code,
+        invitationIdentity: invitationIdentity,
         attributes: attributes
     });
 });
@@ -650,6 +702,7 @@ RelationshipSchema.static('search', (subjectIdentityIdValue: string,
 RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                                                partyType: string,
                                                relationshipType: string,
+                                               relationshipTypeCategory: string,
                                                profileProvider: string,
                                                status: string,
                                                text: string,
@@ -672,6 +725,9 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
             }
             if (relationshipType) {
                 mainAnd.push({'_relationshipTypeCode': relationshipType});
+            }
+            if (relationshipTypeCategory) {
+                mainAnd.push({'_relationshipTypeCategory': relationshipTypeCategory});
             }
             if (profileProvider) {
                 mainAnd.push({

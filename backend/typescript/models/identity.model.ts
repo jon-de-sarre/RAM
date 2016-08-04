@@ -7,7 +7,6 @@ import {
     HrefValue,
     Identity as DTO,
     SearchResult,
-    ICreateInvitationCodeDTO,
     ICreateIdentityDTO
 } from '../../../commons/RamAPI';
 import {NameModel} from './name.model';
@@ -26,6 +25,16 @@ const _PartyModel = PartyModel;
 
 const MAX_PAGE_SIZE = 100;
 const NEW_INVITATION_CODE_EXPIRY_DAYS = 7;
+
+/*
+ * It is always possible that the name returned by the ABR is different to the
+ * company name already recorded in RAM. Add an additional identity to overcome
+ * this limitation.
+ */
+const addCompanyNameIfNeeded = async (identity:IIdentity, name:string):Promise<IIdentity> => {
+    // TODO: implement if we want a total merge - not urgent
+    return identity;
+};
 
 // enums, utilities, helpers ..........................................................................................
 
@@ -279,8 +288,9 @@ export interface IIdentity extends IRAMObject {
 }
 
 export interface IIdentityModel extends mongoose.Model<IIdentity> {
-    createFromDTO:(dto:ICreateInvitationCodeDTO) => Promise<IIdentity>;
+    createFromDTO:(dto:ICreateIdentityDTO) => Promise<IIdentity>;
     createInvitationCodeIdentity:(givenName:string, familyName:string, dateOfBirth:string) => Promise<IIdentity>;
+    addCompany:(abn:string,name:string) => Promise<IIdentity>;
     findByIdValue:(idValue:string) => Promise<IIdentity>;
     findByInvitationCode:(invitationCode:string) => Promise<IIdentity>;
     findPendingByInvitationCodeInDateRange:(invitationCode:string, date:Date) => Promise<IIdentity>;
@@ -348,7 +358,8 @@ IdentitySchema.static('findByIdValue', (idValue:string) => {
         .deepPopulate([
             'profile.name',
             'profile.sharedSecrets.sharedSecretType',
-            'party'
+            'party',
+            'partyType'
         ])
         .exec();
 });
@@ -437,6 +448,36 @@ IdentitySchema.static('searchLinkIds', (page:number, reqPageSize:number) => {
             reject(e);
         }
     });
+});
+
+/*
+ * Used when looking for a company in the ABR. If the ABN already exists in RAM
+ * then only the name needs be checked and/or added (TBD). Otherwise a new identity and associated party are created. In either case the party idValue is returned (PUBLIC_IDENTIFIER:ABN:nnnnnnnnnnn).
+ */
+IdentitySchema.static('addCompany', async (abn: string, name: string):Promise<IIdentity> => {
+    const identity = await this.IdentityModel.findByIdValue(abn);
+    if (identity) {
+        return addCompanyNameIfNeeded(identity, name);
+    } else {
+        const identity = (await this.IdentityModel.createFromDTO({
+            rawIdValue: abn,
+            partyType: PartyType.ABN.code,
+            givenName: undefined,
+            familyName: undefined,
+            unstructuredName: name,
+            // fun - company has to have a date of birth!!!
+            sharedSecretTypeCode: DOB_SHARED_SECRET_TYPE_CODE,
+            sharedSecretValue: '01/07/1984',
+            identityType: IdentityType.PublicIdentifier.code,
+            agencyScheme: undefined,
+            agencyToken: undefined,
+            linkIdScheme: undefined,
+            linkIdConsumer: undefined,
+            publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.code,
+            profileProvider: ProfileProvider.ABR.code
+        }));
+        return identity;
+    }
 });
 
 IdentitySchema.static('createInvitationCodeIdentity',

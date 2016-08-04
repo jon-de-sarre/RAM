@@ -1,6 +1,11 @@
 import {OnInit, Input, Output, EventEmitter, Component} from '@angular/core';
 import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FormControl, FORM_DIRECTIVES } from '@angular/forms';
 
+import {
+    IRelationshipType,
+    IHrefValue
+} from '../../../../commons/RamAPI';
+
 @Component({
     selector: 'authorisation-type',
     templateUrl: 'authorisation-type.component.html',
@@ -10,8 +15,10 @@ import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FormContro
 export class AuthorisationTypeComponent implements OnInit {
 
     public form: FormGroup;
+    public selectedAuthType: IHrefValue<IRelationshipType>;
 
     @Input('data') public data: AuthorisationTypeComponentData;
+    @Input('options') public options: IHrefValue<IRelationshipType>[];
 
     @Output('dataChange') public dataChanges = new EventEmitter<AuthorisationTypeComponentData>();
 
@@ -29,6 +36,15 @@ export class AuthorisationTypeComponent implements OnInit {
             this.dataChanges.emit(v);
             this.isValid.emit(this.form.valid);
         });
+    }
+
+    public onAuthTypeChange(value: string) {
+        for (let type of this.options) {
+            if (type.value.code === value) {
+                this.selectedAuthType = type;
+                this.data.authType = value;
+            }
+        }
     }
 
     private isAuthTypeSelected = (authType: FormControl) => {

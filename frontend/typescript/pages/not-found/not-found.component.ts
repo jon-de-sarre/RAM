@@ -18,7 +18,7 @@ export class NotFoundComponent extends AbstractPageComponent {
                 router: Router,
                 services: RAMServices) {
         super(route, router, services);
-        this.setBannerTitle('Not Found');
+        this.setBannerTitle('Relationship Authorisation Manager');
     }
 
 }

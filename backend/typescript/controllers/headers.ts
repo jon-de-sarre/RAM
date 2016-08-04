@@ -17,6 +17,7 @@ export class Headers {
     public static AgencyUser = `${Headers.Prefix}-agencyuser`;
     public static AgencyUserLoginId = `${Headers.Prefix}-agencyuser-loginid`;
     public static AgencyUserProgramRoles = `${Headers.Prefix}-agencyuser-programroles`;
+    public static AgencyUserAgency = `${Headers.Prefix}-agencyuser-agency`;
 
     public static CredentialType = `${Headers.Prefix}-credentialtype`;
     public static CredentialStrength = `${Headers.Prefix}-credentialstrength`;

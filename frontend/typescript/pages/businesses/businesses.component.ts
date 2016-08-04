@@ -40,6 +40,8 @@ export class BusinessesComponent extends AbstractPageComponent {
     public paginationDelegate: SearchResultPaginationDelegate;
     public form: FormGroup;
 
+    public hasAccess:boolean = false;
+
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
     constructor(route: ActivatedRoute,
@@ -68,15 +70,25 @@ export class BusinessesComponent extends AbstractPageComponent {
             this._isLoading = false;
             this.partyRefs = partyRefs.list;
 
-            // automatically focus business if there is only one
-            if (partyRefs.totalCount === 1) {
-                this.goToNotificationsContext(this.partyRefs[0]);
-            } else if (partyRefs.totalCount === 0) {
-                this.addGlobalMessage('You do not have authorisation administrator access to any businesses - see your administrator');
+            // if results are not being filtered
+            if(!this.filter.get('text')) {
+                // automatically focus business if there is only one
+                if (partyRefs.totalCount === 1) {
+                    this.goToNotificationsContext(this.partyRefs[0]);
+                } else if (partyRefs.totalCount === 0) {
+                    this.addGlobalMessage('You do not have authorisation administrator access to any businesses - see your administrator');
+                    this.hasAccess = false;
+                } else {
+                    this.hasAccess = true;
+                }
             }
         }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
-            this._isLoading = false;
+            if (err.status === 403) {
+                this.services.route.goToAccessDeniedPage();
+            } else {
+                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this._isLoading = false;
+            }
         });
 
         // pagination delegate
@@ -98,7 +110,6 @@ export class BusinessesComponent extends AbstractPageComponent {
             .add('text', this.form.controls['text'].value)
             .add('sort', this.form.controls['sort'].value)
             .encode();
-        console.log('here');
         this.services.route.goToBusinessesPage(filterString);
     }
 
@@ -107,7 +118,7 @@ export class BusinessesComponent extends AbstractPageComponent {
     }
 
     public hasParties() {
-        return this.partyRefs && this.partyRefs.length > 0;
+        return (this.partyRefs && this.partyRefs.length > 0) || !this.filter.get('text');
     }
 
     public goToNotificationsContext(partyResource: IHrefValue<IParty>) {

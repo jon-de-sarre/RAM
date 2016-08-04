@@ -3,7 +3,7 @@ import {Seeder} from './seed';
 import {ProfileProvider} from '../models/profile.model';
 import {PartyType} from '../models/party.model';
 import {IdentityType, IdentityLinkIdScheme, IdentityInvitationCodeStatus} from '../models/identity.model';
-import {RelationshipStatus} from '../models/relationship.model';
+import {RelationshipStatus, RelationshipInitiatedBy} from '../models/relationship.model';
 
 const lpad = (value: Object, size: number, char: string) => {
     let s = value + '';
@@ -38,22 +38,65 @@ export class JensCateringRelationshipsSeeder {
                     delegateNickName: Seeder.jennifermaxims_name,
                     startTimestamp: new Date(),
                     status: RelationshipStatus.Active.code,
+                    initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.permissionCustomisationAllowedInd_attributeName
+                            attributeName: Seeder.permissionCustomisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_attributeName
+                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.delegateRelationshipTypeDeclaration_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.subjectRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.subjectRelationshipTypeDeclaration_relAttributeName
+                        } as any)
+                    ]
+                } as any);
+
+                Seeder.log('');
+
+            }
+
+        } catch (e) {
+            Seeder.log('Seeding failed!');
+            Seeder.log(e);
+        }
+    }
+
+    private static async load_jenscatering_edtech_relationship() {
+        try {
+
+            Seeder.log('\nInserting Sample Relationship - Jen\'s Catering Pty Ltd / Ed Tech OSP:\n'.underline);
+
+            if (!conf.devMode) {
+
+                Seeder.log('Skipped in prod mode'.gray);
+
+            } else {
+
+                Seeder.jenscatering_and_edtech_relationship = await Seeder.createRelationshipModel({
+                    relationshipType: Seeder.osp_delegate_relationshipType,
+                    subject: Seeder.jenscatering_party,
+                    subjectNickName: Seeder.jenscatering_name,
+                    delegate: Seeder.edtechosp_party,
+                    delegateNickName: Seeder.edtechosp_name,
+                    startTimestamp: new Date(),
+                    status: RelationshipStatus.Active.code,
+                    initiatedBy: RelationshipInitiatedBy.Subject.code,
+                    attributes: [
+                        await Seeder.createRelationshipAttributeModel({
+                            value: ['USI'],
+                            attributeName: Seeder.selectedGovernmentServicesList_relAttributeName
+                        } as any),
+                        await Seeder.createRelationshipAttributeModel({
+                            value: 'mySSID-1234',
+                            attributeName: Seeder.ssid_relAttributeName
                         } as any)
                     ]
                 } as any);
@@ -87,22 +130,23 @@ export class JensCateringRelationshipsSeeder {
                     delegateNickName: Seeder.johnmaxims_name,
                     startTimestamp: new Date(),
                     status: RelationshipStatus.Active.code,
+                    initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.permissionCustomisationAllowedInd_attributeName
+                            attributeName: Seeder.permissionCustomisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: false,
-                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_attributeName
+                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.delegateRelationshipTypeDeclaration_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.subjectRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.subjectRelationshipTypeDeclaration_relAttributeName
                         } as any)
                     ]
                 } as any);
@@ -169,22 +213,23 @@ export class JensCateringRelationshipsSeeder {
                     delegateNickName: Seeder.robertsmith_name,
                     startTimestamp: new Date(),
                     status: RelationshipStatus.Pending.code,
+                    initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.permissionCustomisationAllowedInd_attributeName
+                            attributeName: Seeder.permissionCustomisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_attributeName
+                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.delegateRelationshipTypeDeclaration_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.subjectRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.subjectRelationshipTypeDeclaration_relAttributeName
                         } as any)
                     ]
                 } as any);
@@ -249,22 +294,23 @@ export class JensCateringRelationshipsSeeder {
                     delegateNickName: Seeder.fredjohnson_name,
                     startTimestamp: new Date(),
                     status: RelationshipStatus.Pending.code,
+                    initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.permissionCustomisationAllowedInd_attributeName
+                            attributeName: Seeder.permissionCustomisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_attributeName
+                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.delegateRelationshipTypeDeclaration_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.subjectRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.subjectRelationshipTypeDeclaration_relAttributeName
                         } as any)
                     ]
                 } as any);
@@ -333,22 +379,23 @@ export class JensCateringRelationshipsSeeder {
                         delegateNickName: delegateName,
                         startTimestamp: new Date(),
                         status: RelationshipStatus.Active.code,
+                        initiatedBy: RelationshipInitiatedBy.Subject.code,
                         attributes: [
                             await Seeder.createRelationshipAttributeModel({
                                 value: true,
-                                attributeName: Seeder.permissionCustomisationAllowedInd_attributeName
+                                attributeName: Seeder.permissionCustomisationAllowedInd_relAttributeName
                             } as any),
                             await Seeder.createRelationshipAttributeModel({
                                 value: true,
-                                attributeName: Seeder.delegateManageAuthorisationAllowedInd_attributeName
+                                attributeName: Seeder.delegateManageAuthorisationAllowedInd_relAttributeName
                             } as any),
                             await Seeder.createRelationshipAttributeModel({
                                 value: true,
-                                attributeName: Seeder.delegateRelationshipTypeDeclaration_attributeName
+                                attributeName: Seeder.delegateRelationshipTypeDeclaration_relAttributeName
                             } as any),
                             await Seeder.createRelationshipAttributeModel({
                                 value: true,
-                                attributeName: Seeder.subjectRelationshipTypeDeclaration_attributeName
+                                attributeName: Seeder.subjectRelationshipTypeDeclaration_relAttributeName
                             } as any)
                         ]
                     } as any);
@@ -365,6 +412,7 @@ export class JensCateringRelationshipsSeeder {
 
     public static async load() {
         await JensCateringRelationshipsSeeder.load_jennifermaxims_associate();
+        await JensCateringRelationshipsSeeder.load_jenscatering_edtech_relationship();
         await JensCateringRelationshipsSeeder.load_johnmaxims_custom();
         await JensCateringRelationshipsSeeder.load_robertsmith_invitationCode();
         await JensCateringRelationshipsSeeder.load_fredjohnson_invitationCode();
