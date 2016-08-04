@@ -1,7 +1,7 @@
 // import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
-import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES, FormControl, FormArray} from '@angular/forms';
+import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES, Validators, FormControl, FormArray} from '@angular/forms';
 import {Calendar} from 'primeng/primeng';
 import {AccessPeriodComponent, AccessPeriodComponentData} from '../../components/access-period/access-period.component';
 
@@ -9,6 +9,7 @@ import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
 import {MarkdownComponent} from '../../components/ng2-markdown/ng2-markdown.component';
 import {RAMServices} from '../../services/ram-services';
+import {RAMNgValidators} from '../../commons/ram-ng-validators';
 
 import {
     IIdentity,
@@ -86,10 +87,10 @@ export class AddNotificationComponent extends AbstractPageComponent {
 
         // forms
         this.form = this._fb.group({
-            abn: '',
+            abn: [null, Validators.compose([Validators.required, RAMNgValidators.validateABNFormat])],
             accepted: false,
             agencyServices: [[]],
-            ssids: this._fb.array([this._fb.control('')])
+            ssids: this._fb.array([this._fb.control(null, Validators.required)])
         });
 
     }
@@ -246,7 +247,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
     }
 
     public addAnotherSSID() {
-        this.getSSIDFormArray().push(this._fb.control(''));
+        this.getSSIDFormArray().push(this._fb.control(null, Validators.required));
     }
 
     public removeSSID() {

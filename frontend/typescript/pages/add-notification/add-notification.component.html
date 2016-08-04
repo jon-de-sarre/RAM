@@ -17,7 +17,10 @@
                     <h4>ABN*</h4>
                     <div class="row">
                         <div class="col-md-4">
-                            <input type="text" class="form-control col-md-4" [formControl]="form.controls['abn']"/>
+                            <input type="text"
+                                   class="form-control col-md-4"
+                                   [class.has-error]="!form.controls['abn'].valid"
+                                   [formControl]="form.controls['abn']"/>
                         </div>
                         <div class="col-md-4">
                             <button class="btn btn-secondary align-center" (click)="findByABN()">Check</button>
@@ -57,7 +60,10 @@
                     <h4>Software Serial Number*</h4>
                     <div class="row" *ngFor="let ssid of form.controls['ssids'].controls; let i = index">
                         <div class="col-md-4 padding-btn-10">
-                            <input type="text" class="form-control" [formControl]="form.controls['ssids'].controls[i]"/>
+                            <input type="text"
+                                   class="form-control"
+                                   [class.has-error]="!ssid.valid"
+                                   [formControl]="ssid"/>
                         </div>
                     </div>
                     <button class="btn btn-link align-center" (click)="addAnotherSSID()">+ Add another</button>
