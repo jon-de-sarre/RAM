@@ -95,9 +95,8 @@
             <div class="panel-body">
                 <div class="col-md-12">
                     <ng2-markdown [markdown]="declarationText"></ng2-markdown>
-                    <div class="form-group">
-                        <label><h4><input type="checkbox" [formControl]='form.controls["accepted"]'> I agree to this
-                            declaration</h4></label>
+                    <div class="checkbox ">
+                        <label><input type="checkbox" [formControl]='form.controls["accepted"]'> <strong>I agree to this declaration</strong></label>
                     </div>
                 </div>
             </div>
