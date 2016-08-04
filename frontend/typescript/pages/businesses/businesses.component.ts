@@ -83,8 +83,12 @@ export class BusinessesComponent extends AbstractPageComponent {
                 }
             }
         }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
-            this._isLoading = false;
+            if (err.status === 403) {
+                this.services.route.goToAccessDeniedPage();
+            } else {
+                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this._isLoading = false;
+            }
         });
 
         // pagination delegate
