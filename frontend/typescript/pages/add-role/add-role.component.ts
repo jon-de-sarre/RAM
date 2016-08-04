@@ -119,15 +119,12 @@ export class AddRoleComponent extends AbstractPageComponent {
     }
 
     public save() {
-        (this.form.controls['agencyServices'] as FormControl).updateValue([]);
-    }
-
-    public save__s() {
         this.clearGlobalMessages();
         const roleTypeCode = this.form.controls['roleType'].value;
         const agencyServiceCodes = this.form.controls['agencyServices'].value;
         const additionalNotes = this.form.controls['additionalNotes'].value;
         if (!roleTypeCode || roleTypeCode === '-') {
+            console.log('no role seelce');
             this.addGlobalMessage('Please select a role type.');
         } else if (!this.agencyServiceRoleAttributeNameUsages || this.agencyServiceRoleAttributeNameUsages.length === 0) {
             this.addGlobalMessage('You do not have access to any government services.');
