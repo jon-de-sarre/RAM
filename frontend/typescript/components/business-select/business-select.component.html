@@ -6,7 +6,7 @@
                 <h4><b>Search by:</b></h4>
                 <input type="text"
                        class="form-control"
-                       placeholder="Enter ABN or Name and press <Tab> for listing"
+                       placeholder="Enter ABN"
                        name="name"
                        [(ngModel)]="abn_or_name"
                        (ngModelChange)="valueChange($event)"/>
@@ -18,7 +18,7 @@
         </div>
     </div>
 
-    <table class="table">
+    <table class="table" *ngIf="showSearchResults">
         <thead>
             <tr>
                 <th><h4>ABN</h4></th>

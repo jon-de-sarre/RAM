@@ -27,6 +27,7 @@ import {RAMRestService} from '../../services/ram-rest.service';
 export class AgencySelectBusinessComponent extends AbstractPageComponent {
 
     private dashboard: string;
+    public falsy:boolean = false;
 
     /*
      * Capture the business entry returned by the business-select component.

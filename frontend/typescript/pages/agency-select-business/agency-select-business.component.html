@@ -6,6 +6,8 @@
         (dataChange)="selectBusiness($event)"
         (error)="displayErrors($event)"
         (editing) ="clearGlobalMessages()"
+        [searchIncludesName]="false"
+        [showSearchResults]="false"
     ></business-select>
     <!-- button class=" col-xs-6 col-sm-3 col-sm-offset-6 btn btn-primary"
     [disabled]='!business' (click)="acceptBusiness()">
