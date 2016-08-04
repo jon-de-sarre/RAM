@@ -63,6 +63,13 @@ type ValidationError = {
     message: string;
 }
 
+// todo move this to message bundle
+const errorMessages: {[key: string]: string} = {
+    '401': 'Not logged in.',
+    '403': 'Can\'t access the requested resource.',
+    '404': 'Can\'t find the requested resource.'
+};
+
 /* tslint:disable:max-func-body-length */
 export function sendError<T>(res: Response) {
     'use strict';
@@ -84,9 +91,17 @@ export function sendError<T>(res: Response) {
                 ));
                 break;
             case 'Error':
-                res.status(500);
-                res.json(new ErrorResponse((error as Error).message));
-                logger.error((error as Error).stack);
+                let message = (error as Error).message;
+                let status = parseInt(message);
+                if (isNaN(status)) {
+                    res.status(500);
+                    res.json(new ErrorResponse(message));
+                    logger.error((error as Error).stack);
+                } else {
+                    res.status(status);
+                    res.json(new ErrorResponse(errorMessages[message]));
+                    logger.error((error as Error).stack);
+                }
                 break;
             default:
                 res.status(500);
@@ -101,7 +116,7 @@ export function sendNotFoundError<T>(res: Response) {
     return (doc: T): T => {
         if (!doc) {
             res.status(404);
-            res.json(new ErrorResponse('Can\'t find the requested resource.'));
+            res.json(new ErrorResponse(errorMessages['404']));
         }
         return doc;
     };
