@@ -20,7 +20,7 @@ import {
 import {
     IRelationship,
     RelationshipModel,
-    RelationshipStatus
+    RelationshipStatus, RelationshipInitiatedBy
 } from '../models/relationship.model';
 import {IRelationshipType} from '../models/relationshipType.model';
 
@@ -103,11 +103,14 @@ describe('RAM Relationship', () => {
                         party: delegateParty1
                     });
 
-                    relationship1 = await RelationshipModel.add(relationshipTypeCustom,
+                    relationship1 = await RelationshipModel.add2(relationshipTypeCustom,
                         subjectParty1,
                         subjectNickName1,
-                        delegateIdentity1,
+                        delegateIdentity1.party,
+                        delegateIdentity1.profile.name,
                         new Date(),
+                        null,
+                        RelationshipInitiatedBy.Subject,
                         null,
                         []
                     );
@@ -296,13 +299,16 @@ describe('RAM Relationship', () => {
 
             const invitationCodeIdentity = await IdentityModel.createInvitationCodeIdentity('John', 'Delegate 1', '01/01/1999');
 
-            const relationshipToAccept = await RelationshipModel.add(
+            const relationshipToAccept = await RelationshipModel.add2(
                 relationshipTypeCustom,
                 subjectParty1,
                 subjectNickName1,
-                invitationCodeIdentity,
+                invitationCodeIdentity.party,
+                invitationCodeIdentity.profile.name,
                 new Date(),
                 new Date(2020, 12, 31),
+                RelationshipInitiatedBy.Subject,
+                invitationCodeIdentity,
                 []
             );
 

@@ -162,7 +162,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
                 this.accessPeriod.endDate,
                 null,
                 null,
-                this.services.constants.RelationshipInitiatedBy.SUBJECT,
+                this.services.constants.RelationshipInitiatedBy.DELEGATE,
                 attributes
             );
 
@@ -186,7 +186,8 @@ export class AddNotificationComponent extends AbstractPageComponent {
     }
 
     public findByABN() {
-        const abn = this.form.controls['abn'].value;
+        const abn = this.form.controls['abn'].value.replace(/ /g, '');
+
         this.clearGlobalMessages();
 
         this.services.rest.findPartyByABN(abn).subscribe((party) => {
