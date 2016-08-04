@@ -416,7 +416,7 @@ export class RelationshipController {
                 in: 'body'
             }
         };
-        const subjectIdValue = substringAfter('/api/v1/party/identity/', req.body.subject.href);
+        const subjectIdValue = substringAfter('/api/v1/party/identity/', req.body.subject.href); // todo may need to change as it could be initiated from a delegate
         validateReqSchema(req, schema)
             .then(async (req:Request) => {
                 const myPrincipal = security.getAuthenticatedPrincipal(res);
@@ -506,6 +506,7 @@ export class RelationshipController {
             security.isAuthenticated,
             this.createUsingInvitation);
 
+        // todo need to add to swagger
         router.post('/v1/relationship2',
             security.isAuthenticated,
             this.create);
