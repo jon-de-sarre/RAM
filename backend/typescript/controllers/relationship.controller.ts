@@ -8,6 +8,7 @@ import {IRelationshipModel, RelationshipStatus} from '../models/relationship.mod
 import {FilterParams, IInvitationCodeRelationshipAddDTO, ICreateInvitationCodeDTO, IAttributeDTO} from '../../../commons/RamAPI';
 import {PartyModel} from '../models/party.model';
 import {Headers} from './headers';
+import {Assert} from '../models/base';
 
 // todo add data security
 export class RelationshipController {
@@ -373,29 +374,39 @@ export class RelationshipController {
     };
 
     private create2 = async(req:Request, res:Response) => {
+
+        // todo move into somewhere
+        let substringAfter = (searchString: string, href: string) => {
+            let idValue:string = null;
+            if (href.startsWith(searchString)) {
+                idValue = decodeURIComponent(href.substr(searchString.length));
+            }
+            return idValue;
+        };
+
+        const subjectIdValue = substringAfter('/api/v1/party/identity/', req.body.subject.href);
+        Assert.assertTrue(subjectIdValue !== '', 'Subject identity id value in href not found');
+
         const schema = {
             // todo
         };
 
         validateReqSchema(req, schema)
-            .then((req: Request) => {
-                // todo security
-
-                /* tslint:disable:max-func-body-length */
-                // todo move into somewhere
-                let findAfterSearchString = (href: string, searchString: string) => {
-                    let idValue:string = null;
-                    if (href.startsWith(searchString)) {
-                        idValue = decodeURIComponent(href.substr(searchString.length));
+            .then(async (req:Request) => {
+                const myPrincipal = security.getAuthenticatedPrincipal(res);
+                if (!myPrincipal.agencyUserInd) {
+                    const myIdentity = security.getAuthenticatedIdentity(res);
+                    const hasAccess = await this.partyModel.hasAccess(myIdentity.party, subjectIdValue);
+                    if (!hasAccess) {
+                        throw new Error('You do not have access to this party.');
                     }
-                    return idValue;
-                };
-
-                let idValue = findAfterSearchString(req.body.subject.href, '/api/v1/party/identity/');
-                return PartyModel.findByIdentityIdValue(idValue);
+                }
+                return req;
             })
-            .then((subjectParty) => {
-                return subjectParty.addRelationship2(req.body);
+            .then(async (req: Request) => {
+                const subjectParty = await PartyModel.findByIdentityIdValue(subjectIdValue);
+                Assert.assertNotNull(subjectParty, 'Subject party not found');
+                return await subjectParty.addRelationship2(req.body);
             })
             .then((model) => model ? model.toDTO(null) : null)
             .then(sendResource(res))

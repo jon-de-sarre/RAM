@@ -158,6 +158,15 @@ export const CodeDecodeSchema = (schema: Object) => {
 
 export class Assert {
 
+    public static assertNotNull(object: Object, failMessage: string, detail?: string) {
+        if (!object) {
+            if (detail) {
+                logger.debug(`Assertion Failed: ${detail}`);
+            }
+            throw new Error(failMessage);
+        }
+    }
+
     public static assertTrue(condition: boolean, failMessage: string, detail?: string) {
         if (!condition) {
             if (detail) {
