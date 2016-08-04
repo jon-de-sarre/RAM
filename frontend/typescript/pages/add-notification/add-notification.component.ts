@@ -162,7 +162,7 @@ export class AddNotificationComponent extends AbstractPageComponent {
                 this.accessPeriod.endDate,
                 null,
                 null,
-                this.services.constants.RelationshipInitiatedBy.SUBJECT,
+                this.services.constants.RelationshipInitiatedBy.DELEGATE,
                 attributes
             );
 
