@@ -355,7 +355,6 @@ RelationshipSchema.method('claimPendingInvitation', async function (claimingDele
             return this;
         }
 
-        console.log("here = ");
         // find identity to match user against
         const invitationIdentities = await IdentityModel.listByPartyId(this.delegate.id);
         Assert.assertTrue(
