@@ -80,7 +80,7 @@ export class AddRoleComponent extends AbstractPageComponent {
         // forms
         this.form = this._fb.group({
             roleType: '-',
-            additionalNotes: '',
+            preferredName: '',
             agencyServices: [[]]
         });
 
@@ -122,7 +122,7 @@ export class AddRoleComponent extends AbstractPageComponent {
         this.clearGlobalMessages();
         const roleTypeCode = this.form.controls['roleType'].value;
         const agencyServiceCodes = this.form.controls['agencyServices'].value;
-        const additionalNotes = this.form.controls['additionalNotes'].value;
+        const preferredName = this.form.controls['preferredName'].value;
         if (!roleTypeCode || roleTypeCode === '-') {
             this.addGlobalMessage('Please select a role type.');
         } else if (!this.agencyServiceRoleAttributeNameUsages || this.agencyServiceRoleAttributeNameUsages.length === 0) {
@@ -132,7 +132,7 @@ export class AddRoleComponent extends AbstractPageComponent {
         } else {
             let roleTypeRef: IHrefValue<IRoleType> = this.services.model.getRoleTypeRef(this.roleTypeRefs, roleTypeCode);
             let attributes: RoleAttribute[] = [];
-            attributes.push(new RoleAttribute(additionalNotes, this.services.model.getRoleTypeAttributeNameRef(roleTypeRef, 'ADDITIONAL_NOTES')));
+            attributes.push(new RoleAttribute(preferredName, this.services.model.getRoleTypeAttributeNameRef(roleTypeRef, 'PREFERRED_NAME')));
             for (let agencyServiceCode of agencyServiceCodes) {
                 attributes.push(new RoleAttribute('true', this.services.model.getRoleTypeAttributeNameRef(roleTypeRef, agencyServiceCode)));
             }

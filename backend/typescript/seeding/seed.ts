@@ -153,7 +153,7 @@ export class Seeder {
 
     // role attribute names (other)
     public static ssid_roleAttributeName:IRoleAttributeName;
-    public static notes_roleAttributeName:IRoleAttributeName;
+    public static preferredName_roleAttributeName:IRoleAttributeName;
     public static creatorId_roleAttributeName:IRoleAttributeName;
     public static creatorName_roleAttributeName:IRoleAttributeName;
     public static creatorAgency_roleAttributeName:IRoleAttributeName;
@@ -792,15 +792,15 @@ export class Seeder {
                 purposeText: 'Standard Business Reporting (SBR) - ATO'
             } as any);
 
-            Seeder.notes_roleAttributeName = await Seeder.createRoleAttributeNameModel({
-                code: 'ADDITIONAL_NOTES',
-                shortDecodeText: 'Additional Notes',
-                longDecodeText: 'Additional Notes',
+            Seeder.preferredName_roleAttributeName = await Seeder.createRoleAttributeNameModel({
+                code: 'PREFERRED_NAME',
+                shortDecodeText: 'Preferred Name',
+                longDecodeText: 'Preferred Name',
                 startDate: now,
-                domain: RoleAttributeNameDomain.Markdown.code,
+                domain: RoleAttributeNameDomain.String.code,
                 classifier: RoleAttributeNameClassifier.Other.code,
                 category: null,
-                purposeText: 'Additional Notes (in markdown format)'
+                purposeText: 'Preferred Name'
             } as any);
 
             Seeder.creatorId_roleAttributeName = await Seeder.createRoleAttributeNameModel({
@@ -980,7 +980,7 @@ export class Seeder {
                 {attribute: Seeder.ssid_roleAttributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.usi_roleAttributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.sbr_roleAttributeName, optionalInd: false, defaultValue: null},
-                {attribute: Seeder.notes_roleAttributeName, optionalInd: false, defaultValue: null},
+                {attribute: Seeder.preferredName_roleAttributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.creatorId_roleAttributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.creatorName_roleAttributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.creatorAgency_roleAttributeName, optionalInd: false, defaultValue: null}

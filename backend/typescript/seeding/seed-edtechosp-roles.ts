@@ -34,8 +34,8 @@ export class EdTechOspRolesSeeder {
                             attributeName: Seeder.usi_roleAttributeName
                         } as any),
                         await Seeder.createRoleAttributeModel({
-                            value: 'Here are some notes',
-                            attributeName: Seeder.notes_roleAttributeName
+                            value: 'Education Tech',
+                            attributeName: Seeder.preferredName_roleAttributeName
                         } as any),
                         await Seeder.createRoleAttributeModel({
                             value: 'ted_agent',
