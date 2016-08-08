@@ -21,7 +21,6 @@ import {ResetController} from './controllers/reset.server.controller';
 
 // PRODUCTION RESOURCES
 import {PrincipalController} from './controllers/principal.controller';
-import {BusinessController} from './controllers/business.controller';
 import {PartyController} from './controllers/party.controller';
 import {ProfileController} from './controllers/profile.controller';
 import {IdentityController} from './controllers/identity.controller';
@@ -30,6 +29,8 @@ import {RelationshipTypeController} from './controllers/relationshipType.control
 import {RelationshipAttributeNameController} from './controllers/relationshipAttributeName.controller';
 import {RoleController} from './controllers/role.controller';
 import {RoleTypeController} from './controllers/roleType.controller';
+import {BusinessController} from './controllers/business.controller';
+import {AusKeyController} from './controllers/ausKey.controller';
 
 import {IdentityModel} from './models/identity.model';
 import {PartyModel} from './models/party.model';
@@ -39,6 +40,7 @@ import {RelationshipTypeModel} from './models/relationshipType.model';
 import {RelationshipAttributeNameModel} from './models/relationshipAttributeName.model';
 import {RoleModel} from './models/role.model';
 import {RoleTypeModel} from './models/roleType.model';
+import {AUSkeyProvider} from './providers/auskey.provider';
 
 // connect to the database ............................................................................................
 
@@ -115,10 +117,6 @@ server.use('/api/',
         .assignRoutes(express.Router()));
 
 server.use('/api/',
-    new BusinessController()
-        .assignRoutes(express.Router()));
-
-server.use('/api/',
     new ProfileController(ProfileModel)
         .assignRoutes(express.Router()));
 
@@ -132,6 +130,14 @@ server.use('/api/',
 
 server.use('/api/',
     new RoleTypeController(RoleTypeModel, PartyModel)
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new BusinessController()
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new AusKeyController(IdentityModel, AUSkeyProvider)
         .assignRoutes(express.Router()));
 
 // setup error handlers ...............................................................................................

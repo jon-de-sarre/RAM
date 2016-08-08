@@ -9,10 +9,22 @@ const repository: {[key: string]: number} = {
 };
 
 export interface IAUSkeyProvider {
+    findById(id: string): Promise<IAUSkey>;
     listDevicesByABN(abn: string): Promise<IAUSkey[]>;
 }
 
 export class MockAUSkeyProvider implements IAUSkeyProvider {
+
+    public async findById(id: string): Promise<IAUSkey> {
+        const abn = id.split('-')[0];
+        const ausKeys = await this.listDevicesByABN(abn);
+        for (let ausKey of ausKeys) {
+            if (ausKey.id === id) {
+                return Promise.resolve(ausKey);
+            }
+        }
+        return undefined;
+    }
 
     public listDevicesByABN(abn: string): Promise<IAUSkey[]> {
         let abnScrubbed = abn.replace(/ /g, '');
@@ -31,6 +43,10 @@ export class MockAUSkeyProvider implements IAUSkeyProvider {
 }
 
 export class RealAUSkeyProvider implements IAUSkeyProvider {
+
+    public findById(id: string): Promise<IAUSkey> {
+        throw new Error('Not yet implemented');
+    }
 
     public listDevicesByABN(abn: string): Promise<IAUSkey[]> {
         throw new Error('Not yet implemented');

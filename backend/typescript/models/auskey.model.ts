@@ -1,4 +1,4 @@
-import {AUSkey as AUSkeyDTO} from '../../../commons/RamAPI';
+import {AUSkey as AUSkeyDTO, HrefValue} from '../../../commons/RamAPI';
 import {RAMEnum} from './base';
 
 // enums, utilities, helpers ..........................................................................................
@@ -25,6 +25,7 @@ export class AUSkeyType extends RAMEnum {
 export interface IAUSkey {
     id: string;
     auskeyType: AUSkeyType;
+    toHrefValue(includeValue:boolean): Promise<HrefValue<AUSkeyDTO>>;
     toDTO(): Promise<AUSkeyDTO>;
 }
 
@@ -34,6 +35,13 @@ export class AUSkey implements IAUSkey {
 
     constructor(public id: string,
                 public auskeyType: AUSkeyType) {
+    }
+
+    public async toHrefValue(includeValue: boolean): Promise<HrefValue<AUSkeyDTO>> {
+        return new HrefValue(
+            '/api/v1/ausKey/' + encodeURIComponent(this.id),
+            includeValue ? await this.toDTO() : undefined
+        );
     }
 
     public toDTO(): Promise<AUSkeyDTO> {
