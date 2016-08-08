@@ -34,6 +34,7 @@ import {
 export class EditRoleComponent extends AbstractPageComponent {
 
     public idValue: string;
+    public key: string;
 
     public roles$: Observable<ISearchResult<IHrefValue<IRole>>>;
 
@@ -58,6 +59,7 @@ export class EditRoleComponent extends AbstractPageComponent {
 
         // extract path and query parameters
         this.idValue = decodeURIComponent(params.path['idValue']);
+        this.key = decodeURIComponent(params.path['key']);
 
         // forms
         this.form = this._fb.group({
