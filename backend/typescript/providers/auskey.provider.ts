@@ -9,12 +9,12 @@ const repository: {[key: string]: number} = {
 };
 
 export interface IAUSkeyProvider {
-    listDevicesByABN(abn: string): IAUSkey[];
+    listDevicesByABN(abn: string): Promise<IAUSkey[]>;
 }
 
 export class MockAUSkeyProvider implements IAUSkeyProvider {
 
-    public listDevicesByABN(abn: string): IAUSkey[] {
+    public listDevicesByABN(abn: string): Promise<IAUSkey[]> {
         let abnScrubbed = abn.replace(/ /g, '');
         let numberOfKeys = repository[abnScrubbed];
         if (!numberOfKeys) {
@@ -25,14 +25,14 @@ export class MockAUSkeyProvider implements IAUSkeyProvider {
             let id = abn + '-device-' + (i + 1);
             auskeys.push(new AUSkey(id, AUSkeyType.Device));
         }
-        return auskeys;
+        return Promise.resolve(auskeys);
     }
 
 }
 
 export class RealAUSkeyProvider implements IAUSkeyProvider {
 
-    public listDevicesByABN(abn: string): IAUSkey[] {
+    public listDevicesByABN(abn: string): Promise<IAUSkey[]> {
         throw new Error('Not yet implemented');
     }
 

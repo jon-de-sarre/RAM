@@ -19,7 +19,7 @@ describe('RAM AUSkey Provider', () => {
 
     it('lists devices by ABN', async (done) => {
         try {
-            const auskeys = AUSkeyProvider.listDevicesByABN('10000000001');
+            const auskeys = await AUSkeyProvider.listDevicesByABN('10000000001');
             expect(auskeys).not.toBeNull();
             expect(auskeys.length).toBe(3);
             done();
