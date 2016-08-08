@@ -25,7 +25,7 @@ import {
 
 @Component({
     selector: 'ram-osp-notification-add',
-    templateUrl: 'add-notification.component.html',
+    templateUrl: 'edit-notification.component.html',
     directives: [
         REACTIVE_FORM_DIRECTIVES,
         FORM_DIRECTIVES,
@@ -37,7 +37,7 @@ import {
     ]
 })
 
-export class AddNotificationComponent extends AbstractPageComponent {
+export class EditNotificationComponent extends AbstractPageComponent {
 
     public idValue: string;
     public delegateParty: IParty;
