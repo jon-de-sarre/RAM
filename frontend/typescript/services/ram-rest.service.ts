@@ -21,7 +21,8 @@ import {
     IRole,
     IRoleType,
     IRoleStatus,
-    INotifyDelegateDTO
+    INotifyDelegateDTO,
+    IAUSkey
 } from '../../../commons/RamAPI';
 import {ABRentry} from '../../../commons/abr';
 
@@ -45,7 +46,7 @@ export class RAMRestService {
      * delegates to the ABR for the real work.
      */
     public getOrganisationNameFromABN(abn: string) {
-        return this.getABRfromABN(abn).map((abr:ABRentry) => abr.name);
+        return this.getABRfromABN(abn).map((abr: ABRentry) => abr.name);
     }
 
     /*
@@ -53,9 +54,9 @@ export class RAMRestService {
      * limited company data for a single organisation - or an 404
      * if the abn doesn't exist.
      */
-    public getABRfromABN(abn:string) {
+    public getABRfromABN(abn: string) {
         return this.http
-            .get(`/api/v1/business/abn/`+abn)
+            .get(`/api/v1/business/abn/` + abn)
             .map(this.extractData);
     }
 
@@ -64,9 +65,9 @@ export class RAMRestService {
      * limited company data for a many organisations. Not sure if the
      * name doesn't match anything because I could not find one :)
      */
-    public getABRfromName(name:string) {
+    public getABRfromName(name: string) {
         return this.http
-            .get(`/api/v1/business/name/`+name)
+            .get(`/api/v1/business/name/` + name)
             .map(this.extractData);
     }
 
@@ -75,9 +76,9 @@ export class RAMRestService {
      * (if needed) for an organisation of interest retrieved
      * from the ABR.
      */
-    public registerABRCompany(abr:ABRentry) {
+    public registerABRCompany(abr: ABRentry) {
         return this.http
-            .get(`/api/v1/business/register/`+abr.abn+'/'+abr.name)
+            .get(`/api/v1/business/register/` + abr.abn + '/' + abr.name)
             .map(this.extractData);
     }
 
@@ -249,6 +250,23 @@ export class RAMRestService {
                 headers: this.headersForJson()
             })
             .map(this.extractData);
+    }
+
+    public listAusKeys(idValue: string): Observable<IAUSkey> {
+        // TODO enable real API call
+        // return this.http
+        //     .get(`/api/v1/auskeys/identity/${idValue}`)
+        //     .map(this.extractData);
+
+        // MOCK out network call until ready
+        const auskey1: IAUSkey = {
+            id: '111'
+        };
+        const auskey2: IAUSkey = {
+            id: '222'
+        };
+
+        return Observable.from([auskey1, auskey2]);
     }
 
     public extractErrorMessages(response: Response): string[] {

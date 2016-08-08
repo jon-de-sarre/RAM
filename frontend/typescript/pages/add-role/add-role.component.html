@@ -65,7 +65,13 @@
                         </thead>
                         <tbody>
                             <tr>
-                                <td><div class="todo">TODO: Display list of device AUSkeys here</div></td>
+                                <td>
+                                  <div class="checkbox" *ngFor="let auskey of deviceAusKeys">
+                                    <label>
+                                      <input type="checkbox" (change)="onAusKeyChange(auskey.id)"> {{auskey.id}}
+                                    </label>
+                                  </div>
+                                </td>
                                 <td></td>
                             </tr>
                         </tbody>

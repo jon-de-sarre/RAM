@@ -16,7 +16,8 @@ import {
     RoleAttribute,
     IRole,
     IRoleType,
-    IRoleAttributeNameUsage
+    IRoleAttributeNameUsage,
+    IAUSkey
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -41,6 +42,7 @@ export class AddRoleComponent extends AbstractPageComponent {
     public identity: IIdentity;
     public roleTypeRefs: IHrefValue<IRoleType>[];
     public agencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[];
+    public deviceAusKeys: IAUSkey[];
 
     public form: FormGroup;
 
@@ -77,11 +79,18 @@ export class AddRoleComponent extends AbstractPageComponent {
             this.roleTypeRefs = roleTypeRefs;
         });
 
+        // device AUSkeys
+        this.deviceAusKeys = [];
+        this.services.rest.listAusKeys(this.idValue).subscribe((deviceAusKeys) => {
+            this.deviceAusKeys.push(deviceAusKeys);
+        });
+
         // forms
         this.form = this._fb.group({
             roleType: '-',
             preferredName: '',
-            agencyServices: [[]]
+            agencyServices: [[]],
+            ausKeys: [[]]
         });
 
     }
@@ -105,12 +114,19 @@ export class AddRoleComponent extends AbstractPageComponent {
     }
 
     public onAgencyServiceChange(attributeCode: string) {
-        let agencyServices = this.form.controls['agencyServices'].value;
-        let index = agencyServices.indexOf(attributeCode);
+        this.toggleArrayValue(this.form.controls['agencyServices'].value, attributeCode);
+    }
+
+    public onAusKeyChange(auskey: string) {
+        this.toggleArrayValue(this.form.controls['ausKeys'].value, auskey);
+    }
+
+    private toggleArrayValue(arr: string[], val: string) {
+        let index = arr.indexOf(val);
         if (index === -1) {
-            agencyServices.push(attributeCode);
+            arr.push(val);
         } else {
-            agencyServices.splice(index, 1);
+            arr.splice(index, 1);
         }
     }
 
@@ -123,6 +139,7 @@ export class AddRoleComponent extends AbstractPageComponent {
         const roleTypeCode = this.form.controls['roleType'].value;
         const agencyServiceCodes = this.form.controls['agencyServices'].value;
         const preferredName = this.form.controls['preferredName'].value;
+        const deviceAusKeys = this.form.controls['ausKeys'].value;
         if (!roleTypeCode || roleTypeCode === '-') {
             this.addGlobalMessage('Please select a role type.');
         } else if (!this.agencyServiceRoleAttributeNameUsages || this.agencyServiceRoleAttributeNameUsages.length === 0) {
@@ -133,6 +150,7 @@ export class AddRoleComponent extends AbstractPageComponent {
             let roleTypeRef: IHrefValue<IRoleType> = this.services.model.getRoleTypeRef(this.roleTypeRefs, roleTypeCode);
             let attributes: RoleAttribute[] = [];
             attributes.push(new RoleAttribute(preferredName, this.services.model.getRoleTypeAttributeNameRef(roleTypeRef, 'PREFERRED_NAME')));
+            attributes.push(new RoleAttribute(deviceAusKeys, this.services.model.getRoleTypeAttributeNameRef(roleTypeRef, 'DEVICE_AUSKEYS')));
             for (let agencyServiceCode of agencyServiceCodes) {
                 attributes.push(new RoleAttribute('true', this.services.model.getRoleTypeAttributeNameRef(roleTypeRef, agencyServiceCode)));
             }
