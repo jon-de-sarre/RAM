@@ -39,7 +39,7 @@ export class PageHeaderAuthComponent {
     public goToGiveAuthorisationPage() {
         if (this.isGiveAuthorisationsPageEnabled()) {
             if (this.identity) {
-                this.services.route.goToRelationshipAddPage(this.identity.idValue);
+                this.services.route.goToAddRelationshipPage(this.identity.idValue);
             }
         }
     };

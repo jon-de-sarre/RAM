@@ -52,6 +52,7 @@ import {
 export class EditRelationshipComponent extends AbstractPageComponent {
 
     public idValue: string;
+    public key: string;
 
     public relationshipTypes$: Observable<IHrefValue<IRelationshipType>[]>;
     public relationshipTypeRefs: IHrefValue<IRelationshipType>[];
@@ -100,6 +101,7 @@ export class EditRelationshipComponent extends AbstractPageComponent {
     public onInit(params: {path: Params, query: Params}) {
 
         this.idValue = decodeURIComponent(params.path['idValue']);
+        this.key = decodeURIComponent(params.path['key']);
 
         // identity in focus
         this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {

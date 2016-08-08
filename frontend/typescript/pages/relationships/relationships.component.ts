@@ -195,7 +195,7 @@ export class RelationshipsComponent extends AbstractPageComponent {
     }
 
     public goToRelationshipAddPage() {
-        this.services.route.goToRelationshipAddPage(this.idValue);
+        this.services.route.goToAddRelationshipPage(this.idValue);
     };
 
     public goToRelationshipEnterCodePage() {
