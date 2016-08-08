@@ -19,7 +19,7 @@ export class EdTechOspRolesSeeder {
 
             } else {
 
-                Seeder.edTech_osp_relationship = await Seeder.createRoleModel({
+                Seeder.edTech_osp_role = await Seeder.createRoleModel({
                     roleType: Seeder.osp_roleType,
                     party: Seeder.edtechosp_party,
                     startTimestamp: new Date(),
@@ -50,7 +50,7 @@ export class EdTechOspRolesSeeder {
                             attributeName: Seeder.creatorAgency_roleAttributeName
                         } as any),
                         await Seeder.createRoleAttributeModel({
-                            value: [],
+                            value: ['10000000001-device-0','10000000001-device-2'],
                             attributeName: Seeder.deviceAuskeys_roleAttributeName
                         } as any)
                     ]

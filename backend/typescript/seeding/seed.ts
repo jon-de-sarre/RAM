@@ -263,7 +263,7 @@ export class Seeder {
     public static trungtraining_and_edtech_relationship:IRelationship;
 
     // roles
-    public static edTech_osp_relationship:IRole;
+    public static edTech_osp_role:IRole;
 
     public static log(msg:String) {
         if(Seeder.verboseMode) {
