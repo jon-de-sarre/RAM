@@ -157,6 +157,7 @@ export class Seeder {
     public static creatorId_roleAttributeName:IRoleAttributeName;
     public static creatorName_roleAttributeName:IRoleAttributeName;
     public static creatorAgency_roleAttributeName:IRoleAttributeName;
+    public static deviceAuskeys_roleAttributeName:IRoleAttributeName;
 
     // role attribute names (agency service)
     public static usi_roleAttributeName:IRoleAttributeName;
@@ -836,6 +837,17 @@ export class Seeder {
                 purposeText: 'Creator Agency'
             } as any);
 
+            Seeder.deviceAuskeys_roleAttributeName = await Seeder.createRoleAttributeNameModel({
+                code: 'DEVICE_AUSKEYS',
+                shortDecodeText: 'Device Auskeys',
+                longDecodeText: 'Device Auskeys',
+                startDate: now,
+                domain: RoleAttributeNameDomain.SelectMulti.code,
+                classifier: RoleAttributeNameClassifier.Other.code,
+                category: null,
+                purposeText: 'Device Auskeys'
+            } as any);
+
         } catch (e) {
             Seeder.log('Seeding failed!');
             Seeder.log(e);
@@ -983,7 +995,8 @@ export class Seeder {
                 {attribute: Seeder.preferredName_roleAttributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.creatorId_roleAttributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.creatorName_roleAttributeName, optionalInd: false, defaultValue: null},
-                {attribute: Seeder.creatorAgency_roleAttributeName, optionalInd: false, defaultValue: null}
+                {attribute: Seeder.creatorAgency_roleAttributeName, optionalInd: false, defaultValue: null},
+                {attribute: Seeder.deviceAuskeys_roleAttributeName, optionalInd: false, defaultValue: null}
             ]);
 
         } catch (e) {
