@@ -45,6 +45,10 @@ export const routes: RouterConfig = [
         component: EditRelationshipComponent
     },
     {
+        path: 'relationships/edit/:idValue/:key',
+        component: EditRelationshipComponent
+    },
+    {
         path: 'relationships/add/complete/:idValue/:invitationCode/:displayName',
         component: AddRelationshipCompleteComponent
     },
@@ -74,6 +78,10 @@ export const routes: RouterConfig = [
     },
     {
         path: 'notifications/add/:idValue',
+        component: EditNotificationComponent
+    },
+    {
+        path: 'notifications/edit/:idValue/:key',
         component: EditNotificationComponent
     },
     {

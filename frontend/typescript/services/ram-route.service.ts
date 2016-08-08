@@ -40,9 +40,16 @@ export class RAMRouteService {
         );
     }
 
-    public goToRelationshipAddPage(idValue: string) {
+    public goToAddRelationshipPage(idValue: string) {
         this.router.navigate(['/relationships/add',
             encodeURIComponent(idValue)
+        ]);
+    }
+
+    public goToEditRelationshipPage(idValue: string, key: string) {
+        this.router.navigate(['/relationships/edit',
+            encodeURIComponent(idValue),
+            encodeURIComponent(key)
         ]);
     }
 
@@ -90,6 +97,14 @@ export class RAMRouteService {
         );
     }
 
+    public goToEditRolePage(idValue: string, key: string) {
+        this.router.navigate(['/roles/edit',
+                encodeURIComponent(idValue),
+                encodeURIComponent(key)
+            ], {queryParams: {}}
+        );
+    }
+
     public goToBusinessesPage(filter?: string, page?: number) {
         const queryParams = {};
         if (filter) {
@@ -113,6 +128,13 @@ export class RAMRouteService {
     public goToAddNotificationPage(idValue: string) {
         this.router.navigate(['/notifications/add/',
             encodeURIComponent(idValue)
+        ]);
+    }
+
+    public goToEditNotificationPage(idValue: string, key: string) {
+        this.router.navigate(['/notifications/edit/',
+            encodeURIComponent(idValue),
+            encodeURIComponent(key)
         ]);
     }
 
