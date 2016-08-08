@@ -9,8 +9,7 @@ describe('RAM AUSkey Provider', () => {
 
     it('gets mock implementation', async (done) => {
         try {
-            const provider = AUSkeyProvider;
-            expect(provider).not.toBeNull();
+            expect(AUSkeyProvider).not.toBeNull();
             done();
         } catch (e) {
             fail('Because ' + e);
