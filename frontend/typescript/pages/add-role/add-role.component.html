@@ -68,7 +68,7 @@
                                 <td>
                                   <div class="checkbox" *ngFor="let auskey of deviceAusKeys">
                                     <label>
-                                      <input type="checkbox" (change)="onAusKeyChange(auskey.id)"> {{auskey.id}}
+                                      <input type="checkbox" [checked]="isAusKeySelected(auskey.id)" (change)="onAusKeyChange(auskey.id)"> {{auskey.id}}
                                     </label>
                                   </div>
                                 </td>

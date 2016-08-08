@@ -59,6 +59,14 @@ export class AddRoleComponent extends AbstractPageComponent {
         // extract path and query parameters
         this.idValue = decodeURIComponent(params.path['idValue']);
 
+        // forms
+        this.form = this._fb.group({
+            roleType: '-',
+            preferredName: '',
+            agencyServices: [[]],
+            deviceAusKeys: [['111']]
+        });
+
         // me (agency user)
         this.services.rest.findMyAgencyUser().subscribe((me) => {
             this.me = me;
@@ -85,14 +93,8 @@ export class AddRoleComponent extends AbstractPageComponent {
             this.deviceAusKeys.push(deviceAusKeys);
         });
 
-        // forms
-        this.form = this._fb.group({
-            roleType: '-',
-            preferredName: '',
-            agencyServices: [[]],
-            ausKeys: [[]]
-        });
-
+        // TODO load existing role if we are editing one
+        // TODO populate current form values if we are editing an existing role
     }
 
     public onRoleTypeChange(newRoleTypeCode: string) {
@@ -118,7 +120,11 @@ export class AddRoleComponent extends AbstractPageComponent {
     }
 
     public onAusKeyChange(auskey: string) {
-        this.toggleArrayValue(this.form.controls['ausKeys'].value, auskey);
+        this.toggleArrayValue(this.form.controls['deviceAusKeys'].value, auskey);
+    }
+
+    public isAusKeySelected(auskey: string) {
+        return this.form.controls['deviceAusKeys'].value.indexOf(auskey) > -1;
     }
 
     private toggleArrayValue(arr: string[], val: string) {
@@ -139,7 +145,7 @@ export class AddRoleComponent extends AbstractPageComponent {
         const roleTypeCode = this.form.controls['roleType'].value;
         const agencyServiceCodes = this.form.controls['agencyServices'].value;
         const preferredName = this.form.controls['preferredName'].value;
-        const deviceAusKeys = this.form.controls['ausKeys'].value;
+        const deviceAusKeys = this.form.controls['deviceAusKeys'].value;
         if (!roleTypeCode || roleTypeCode === '-') {
             this.addGlobalMessage('Please select a role type.');
         } else if (!this.agencyServiceRoleAttributeNameUsages || this.agencyServiceRoleAttributeNameUsages.length === 0) {
