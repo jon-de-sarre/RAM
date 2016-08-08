@@ -3,7 +3,7 @@ import {IAUSkey, AUSkey, AUSkeyType} from '../models/auskey.model';
 
 const useMock = conf.auskeyProviderMock;
 
-const repository = {
+const repository: {[key: string]: number} = {
     '10000000001': 3,
     '14126318518': 5
 };
