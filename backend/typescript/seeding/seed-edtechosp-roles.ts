@@ -48,6 +48,10 @@ export class EdTechOspRolesSeeder {
                         await Seeder.createRoleAttributeModel({
                             value: 'Department of Education',
                             attributeName: Seeder.creatorAgency_roleAttributeName
+                        } as any),
+                        await Seeder.createRoleAttributeModel({
+                            value: [],
+                            attributeName: Seeder.deviceAuskeys_roleAttributeName
                         } as any)
                     ]
                 } as any);
