@@ -10,6 +10,7 @@ import {IRole, RoleModel, RoleStatus} from './role.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
 import {IAgencyUser} from './agencyUser.model';
 import {RoleAttributeNameModel} from './roleAttributeName.model';
+import {IPrincipal} from './principal.model';
 import {
     HrefValue,
     Party as DTO,
@@ -80,7 +81,7 @@ export interface IParty extends IRAMObject {
 /* tslint:disable:no-empty-interfaces */
 export interface IPartyModel extends mongoose.Model<IParty> {
     findByIdentityIdValue:(idValue: string) => Promise<IParty>;
-    hasAccess:(requestingParty: IParty, requestedIdValue: string) => Promise<boolean>;
+    hasAccess:(requestedIdValue: string, requestingPrincipal: IPrincipal, requestingIdentity: IIdentity) => Promise<boolean>;
 }
 
 // instance methods ...................................................................................................
@@ -291,18 +292,28 @@ PartySchema.static('findByIdentityIdValue', async (idValue: string) => {
     return identity ? identity.party : null;
 });
 
-PartySchema.static('hasAccess', async (requestingParty: IParty, requestedIdValue: string) => {
+PartySchema.static('hasAccess', async (requestedIdValue: string, requestingPrincipal: IPrincipal, requestingIdentity: IIdentity) => {
     const requestedIdentity = await IdentityModel.findByIdValue(requestedIdValue);
     if (requestedIdentity) {
-        const requestedParty = requestedIdentity.party;
-        if (requestingParty.id === requestedParty.id) {
+        // requested party exists
+        if (requestingPrincipal && requestingPrincipal.agencyUserInd) {
+            // agency users have implicit global access
             return true;
-        } else {
-            return await RelationshipModel.hasActiveInDateRange1stOr2ndLevelConnection(
-                requestingParty,
-                requestedIdValue,
-                new Date()
-            );
+        } else if (requestingIdentity) {
+            // regular users have explicit access
+            let requestingParty = requestingIdentity.party;
+            const requestedParty = requestedIdentity.party;
+            if (requestingParty.id === requestedParty.id) {
+                // requested and requester are the same
+                return true;
+            } else {
+                // check 1st and 2nd level relationships
+                return await RelationshipModel.hasActiveInDateRange1stOr2ndLevelConnection(
+                    requestingParty,
+                    requestedIdValue,
+                    new Date()
+                );
+            }
         }
     }
     return false;

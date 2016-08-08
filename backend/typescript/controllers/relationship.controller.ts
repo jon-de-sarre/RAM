@@ -201,11 +201,9 @@ export class RelationshipController {
         validateReqSchema(req, schema)
             .then(async (req:Request) => {
                 const myPrincipal = security.getAuthenticatedPrincipal(res);
-                if (!myPrincipal.agencyUserInd) {
-                    const myIdentity = security.getAuthenticatedIdentity(res);
-                    const hasAccess = await this.partyModel.hasAccess(myIdentity.party, req.params.identity_id);
-                    Assert.assertTrue(hasAccess, 'You do not have access to this party.');
-                }
+                const myIdentity = security.getAuthenticatedIdentity(res);
+                const hasAccess = await this.partyModel.hasAccess(req.params.identity_id, myPrincipal, myIdentity);
+                Assert.assertTrue(hasAccess, 'You do not have access to this party.');
                 return req;
             })
             .then((req:Request) => this.relationshipModel.searchByIdentity(
@@ -426,11 +424,9 @@ export class RelationshipController {
         validateReqSchema(req, schema)
             .then(async (req:Request) => {
                 const myPrincipal = security.getAuthenticatedPrincipal(res);
-                if (!myPrincipal.agencyUserInd) {
-                    const myIdentity = security.getAuthenticatedIdentity(res);
-                    const hasAccess = await this.partyModel.hasAccess(myIdentity.party, subjectIdValue);
-                    Assert.assertTrue(hasAccess, 'You do not have access to this party.');
-                }
+                const myIdentity = security.getAuthenticatedIdentity(res);
+                const hasAccess = await this.partyModel.hasAccess(req.params.identity_id, myPrincipal, myIdentity);
+                Assert.assertTrue(hasAccess, 'You do not have access to this party.');
                 return req;
             })
             .then(async (req: Request) => {
