@@ -11,7 +11,6 @@ describe('RAM AUSkey Provider', () => {
         try {
             const provider = AUSkeyProvider;
             expect(provider).not.toBeNull();
-            //expect(provider).toBe(MockAUSkeyProvider);
             done();
         } catch (e) {
             fail('Because ' + e);
