@@ -29,4 +29,3 @@ export default class RelationshipTypeHelper {
         // TODO assert that there is no ID property
     };
 }
-
