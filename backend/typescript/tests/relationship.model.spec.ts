@@ -419,7 +419,7 @@ describe('RAM Relationship', () => {
 
             const retrievedInstance = await RelationshipModel.findByIdentifier(relationshipToReject.id);
 
-            expect(relationshipToReject.statusEnum()).toBe(RelationshipStatus.Invalid);
+            expect(relationshipToReject.statusEnum()).toBe(RelationshipStatus.Declined);
             expect(retrievedInstance.statusEnum()).toBe(relationshipToReject.statusEnum());
 
             done();
@@ -434,7 +434,7 @@ describe('RAM Relationship', () => {
         try {
 
             await relationship1.rejectPendingInvitation(delegateIdentity1);
-            expect(relationship1.statusEnum()).toBe(RelationshipStatus.Invalid);
+            expect(relationship1.statusEnum()).toBe(RelationshipStatus.Declined);
 
             await relationship1.rejectPendingInvitation(delegateIdentity1);
             fail('should not have been able to reject a non-pending relationship');

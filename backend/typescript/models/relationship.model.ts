@@ -37,14 +37,14 @@ export class RelationshipStatus extends RAMEnum {
     public static Active = new RelationshipStatus('ACTIVE', 'Active');
     public static Cancelled = new RelationshipStatus('CANCELLED', 'Cancelled');
     public static Deleted = new RelationshipStatus('DELETED', 'Deleted');
-    public static Invalid = new RelationshipStatus('INVALID', 'Invalid');
+    public static Declined = new RelationshipStatus('DECLINED', 'Declined');
     public static Pending = new RelationshipStatus('PENDING', 'Pending');
 
     protected static AllValues = [
         RelationshipStatus.Active,
         RelationshipStatus.Cancelled,
         RelationshipStatus.Deleted,
-        RelationshipStatus.Invalid,
+        RelationshipStatus.Declined,
         RelationshipStatus.Pending
     ];
 
@@ -447,7 +447,7 @@ RelationshipSchema.method('rejectPendingInvitation', async function (rejectingDe
     Assert.assertTrue(rejectingDelegateIdentity.party.id === this.delegate.id, 'Not allowed');
 
     // mark relationship as invalid
-    this.status = RelationshipStatus.Invalid.code;
+    this.status = RelationshipStatus.Declined.code;
     await this.save();
 
     // TODO notify relevant parties
