@@ -36,4 +36,3 @@ export default class RelationshipHelper {
         expect(relationship.delegate).toBeDefined();
     };
 }
-

@@ -81,4 +81,3 @@ describe('RelationshipType API', () => {
     // TODO update
 
 });
-
