@@ -2,6 +2,7 @@ import {Observable} from 'rxjs/Observable';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
 import {DatePipe} from '@angular/common';
+import {Dialog} from 'primeng/primeng';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
@@ -19,7 +20,7 @@ import {
 @Component({
     selector: 'accept-authorisation',
     templateUrl: 'accept-authorisation.component.html',
-    directives: [ROUTER_DIRECTIVES, PageHeaderAuthComponent, MarkdownComponent]
+    directives: [ROUTER_DIRECTIVES, PageHeaderAuthComponent, MarkdownComponent, Dialog]
 })
 
 export class AcceptAuthorisationComponent extends AbstractPageComponent {
@@ -35,6 +36,8 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
     public relationship: IRelationship;
     public delegateManageAuthorisationAllowedIndAttribute: IRelationshipAttribute;
     public delegateRelationshipTypeDeclarationAttributeUsage: IRelationshipAttributeNameUsage;
+
+    public declineDisplay: boolean = false;
 
     constructor(route: ActivatedRoute,
                 router: Router,
@@ -82,10 +85,20 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
 
     }
 
-    public declineAuthorisation = () => {
+    public showDeclineConfirmation = () => {
+        this.declineDisplay = true;
+    };
+
+    public cancelDeclineConfirmation = () => {
+        this.declineDisplay = false;
+    };
+
+    public confirmDeclineAuthorisation = () => {
         this.services.rest.rejectPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
+            this.declineDisplay = false;
             this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'DECLINED_RELATIONSHIP');
         }, (err) => {
+            this.declineDisplay = false;
             this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
         });
     };
