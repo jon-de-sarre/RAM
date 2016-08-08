@@ -189,6 +189,7 @@ RoleSchema.method('toDTO', async function () {
 
     return new DTO(
         links,
+        this._id.toString() /*todo what code should we use?*/,
         await this.roleType.toHrefValue(false),
         await this.party.toHrefValue(true),
         this.startTimestamp,

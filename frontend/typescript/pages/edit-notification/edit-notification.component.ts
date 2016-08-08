@@ -157,6 +157,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
             // build relationship
             let relationship = new Relationship(
                 [],
+                null,
                 this.ospRelationshipTypeRef,
                 new HrefValue(this.identity.party.href, null),
                 null,

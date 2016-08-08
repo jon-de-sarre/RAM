@@ -1089,6 +1089,9 @@ definitions:
     type: object
     required: ["status"]
     properties:
+      code:
+        type: string
+        description: Unique code
       # this has not yet been standardised to a role reference
       subjectPartyRoleURI:
         type: string
@@ -1354,6 +1357,9 @@ definitions:
     type: object
     description: Role
     properties:
+      code:
+        type: string
+        description: Unique code
       roleType:
         $ref: '#/definitions/RoleTypesResourceReference'
       party:

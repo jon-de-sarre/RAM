@@ -326,6 +326,7 @@ RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
 
     return new DTO(
         links,
+        this._id.toString() /*todo what code should we use?*/,
         await this.relationshipType.toHrefValue(false),
         await this.subject.toHrefValue(true),
         await this.subjectNickName.toDTO(),

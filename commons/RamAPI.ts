@@ -234,6 +234,7 @@ export class Name implements IName {
 
 export interface IRelationship {
     _links: ILink[];
+    code?: string;
     relationshipType: IHrefValue<IRelationshipType>;
     subject: IHrefValue<IParty>;
     subjectNickName?: IName;
@@ -248,18 +249,19 @@ export interface IRelationship {
 }
 
 export class Relationship implements IRelationship {
-    constructor(public _links:ILink[],
-                public relationshipType:IHrefValue<IRelationshipType>,
-                public subject:IHrefValue<IParty>,
-                public subjectNickName:Name,
-                public delegate:IHrefValue<IParty>,
-                public delegateNickName:Name,
-                public startTimestamp:Date,
-                public endTimestamp:Date,
-                public endEventTimestamp:Date,
-                public status:string,
-                public initiatedBy:string,
-                public attributes:IRelationshipAttribute[]) {
+    constructor(public _links: ILink[],
+                public code: string,
+                public relationshipType: IHrefValue<IRelationshipType>,
+                public subject: IHrefValue<IParty>,
+                public subjectNickName: Name,
+                public delegate: IHrefValue<IParty>,
+                public delegateNickName: Name,
+                public startTimestamp: Date,
+                public endTimestamp: Date,
+                public endEventTimestamp: Date,
+                public status: string,
+                public initiatedBy: string,
+                public attributes: IRelationshipAttribute[]) {
     }
 }
 
@@ -505,6 +507,7 @@ export interface INotifyDelegateDTO {
 
 export interface IRole {
     _links: ILink[];
+    code: string;
     roleType: IHrefValue<IRoleType>;
     party: IHrefValue<IParty>;
     startTimestamp: Date;
@@ -516,6 +519,7 @@ export interface IRole {
 
 export class Role implements IRole {
     constructor(public _links:ILink[],
+                public code: string,
                 public roleType:IHrefValue<IRoleType>,
                 public party:IHrefValue<IParty>,
                 public startTimestamp:Date,

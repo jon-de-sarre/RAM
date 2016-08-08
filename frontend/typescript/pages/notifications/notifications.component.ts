@@ -132,8 +132,8 @@ export class NotificationsComponent extends AbstractPageComponent {
     }
 
     // todo not yet implemented
-    public goToNotificationPage(relationshipRef: IHrefValue<IRelationship>) {
-        alert('TODO: Not yet implemented');
+    public goToEditNotificationPage(relationshipRef: IHrefValue<IRelationship>) {
+        this.services.route.goToEditNotificationPage(this.idValue, relationshipRef.value.code);
     }
 
     // todo what is the logic here?

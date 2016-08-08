@@ -164,6 +164,7 @@ export class EditRoleComponent extends AbstractPageComponent {
             }
             const role = new Role(
                 [],
+                null,
                 roleTypeRef,
                 this.identity.party,
                 new Date(),
