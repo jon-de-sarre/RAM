@@ -21,8 +21,8 @@ import {
 } from '../../../../commons/RamAPI';
 
 @Component({
-    selector: 'ram-add-role',
-    templateUrl: 'add-role.component.html',
+    selector: 'ram-edit-role',
+    templateUrl: 'edit-role.component.html',
     directives: [
         REACTIVE_FORM_DIRECTIVES,
         FORM_DIRECTIVES,
@@ -31,7 +31,7 @@ import {
     ]
 })
 
-export class AddRoleComponent extends AbstractPageComponent {
+export class EditRoleComponent extends AbstractPageComponent {
 
     public idValue: string;
 
@@ -64,7 +64,7 @@ export class AddRoleComponent extends AbstractPageComponent {
             roleType: '-',
             preferredName: '',
             agencyServices: [[]],
-            deviceAusKeys: [['111']]
+            deviceAusKeys: [[]]
         });
 
         // me (agency user)

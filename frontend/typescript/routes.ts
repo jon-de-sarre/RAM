@@ -11,7 +11,7 @@ import {AddRelationshipCompleteComponent} from './pages/add-relationship-complet
 import {EnterInvitationCodeComponent} from './pages/enter-invitation-code/enter-invitation-code.component';
 import {AcceptAuthorisationComponent} from './pages/accept-authorisation/accept-authorisation.component';
 import {RolesComponent} from './pages/roles/roles.component';
-import {AddRoleComponent} from './pages/add-role/add-role.component';
+import {EditRoleComponent} from './pages/edit-role/edit-role.component';
 
 import {BusinessesComponent} from './pages/businesses/businesses.component';
 import {NotificationsComponent} from './pages/notifications/notifications.component';
@@ -66,7 +66,11 @@ export const routes: RouterConfig = [
     },
     {
         path: 'roles/add/:idValue',
-        component: AddRoleComponent
+        component: EditRoleComponent
+    },
+    {
+        path: 'roles/edit/:idValue/:key',
+        component: EditRoleComponent
     },
     {
         path: 'businesses',
