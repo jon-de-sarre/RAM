@@ -217,6 +217,18 @@ class Security {
         }
     }
 
+    public getAuthenticatedABN(res: Response): string {
+        return res.locals[Headers.ABN];
+    }
+
+    public getAuthenticatedAUSkey(res: Response): string {
+        return res.locals[Headers.AUSkey];
+    }
+
+    public getAuthenticatedClientAuth(res: Response): string {
+        return res.locals[Headers.ClientAuth];
+    }
+
     // private logHeaders(req:Request) {
     //     for (let header of Object.keys(req.headers)) {
     //         if(Headers.isXRAMHeader(header)) {
