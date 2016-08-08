@@ -54,4 +54,3 @@ describe('Relationship API', () => {
             done();
         });
 });
-
