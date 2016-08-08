@@ -16,6 +16,7 @@ export interface IRamConf {
     hashIdsSalt: string;
     exportLDIFFileName: string;
     abrAuthenticationGuid: string;
+    auskeyProviderMock: string;
 }
 
 export interface SecurityToken {
