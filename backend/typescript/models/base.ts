@@ -77,6 +77,7 @@ export class RAMEnum {
  * model will contain.
  * Most objects in RAM extend off the RAMObject
  */
+//noinspection ReservedWordAsName
 export interface IRAMObject extends mongoose.Document {
     createdAt: Date;
     updatedAt: Date;
@@ -89,6 +90,7 @@ export interface IRAMObject extends mongoose.Document {
 
 export const RAMSchema = (schema: Object) => {
 
+    //noinspection ReservedWordAsName
     const result = new mongoose.Schema({
         deleteInd: {type: Boolean, default: false},
         resourceVersion: {type: String, default: '1'}
@@ -99,7 +101,7 @@ export const RAMSchema = (schema: Object) => {
     result.plugin(mongooseIdValidator);
     result.plugin(mongooseDeepPopulate);
 
-    result.method('delete', function () {
+    result.method('delete', () => {
         this.deleteInd = true;
         this.save();
     });
