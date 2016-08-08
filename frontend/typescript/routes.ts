@@ -6,7 +6,7 @@ import {NotFoundComponent} from './pages/not-found/not-found.component';
 import {WelcomeHomeComponent} from './pages/welcome-home/welcome-home.component';
 
 import {RelationshipsComponent} from './pages/relationships/relationships.component';
-import {AddRelationshipComponent} from './pages/add-relationship/add-relationship.component';
+import {EditRelationshipComponent} from './pages/edit-relationship/edit-relationship.component';
 import {AddRelationshipCompleteComponent} from './pages/add-relationship-complete/add-relationship-complete.component';
 import {EnterInvitationCodeComponent} from './pages/enter-invitation-code/enter-invitation-code.component';
 import {AcceptAuthorisationComponent} from './pages/accept-authorisation/accept-authorisation.component';
@@ -42,7 +42,7 @@ export const routes: RouterConfig = [
     },
     {
         path: 'relationships/add/:idValue',
-        component: AddRelationshipComponent
+        component: EditRelationshipComponent
     },
     {
         path: 'relationships/add/complete/:idValue/:invitationCode/:displayName',

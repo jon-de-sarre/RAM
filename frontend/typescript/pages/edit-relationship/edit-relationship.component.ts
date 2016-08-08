@@ -35,8 +35,8 @@ import {
 } from '../../../../commons/RamAPI';
 
 @Component({
-    selector: 'add-relationship',
-    templateUrl: 'add-relationship.component.html',
+    selector: 'edit-relationship',
+    templateUrl: 'edit-relationship.component.html',
     directives: [
         ROUTER_DIRECTIVES,
         AccessPeriodComponent,
@@ -49,7 +49,7 @@ import {
     ]
 })
 
-export class AddRelationshipComponent extends AbstractPageComponent {
+export class EditRelationshipComponent extends AbstractPageComponent {
 
     public idValue: string;
 
