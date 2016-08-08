@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "RAM",
-		"_postman_id": "0b6442ab-608a-367c-3e98-6f49a593d0f6",
+		"_postman_id": "197e983b-81e4-cb2b-ddd6-0bce980cb3b5",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -329,7 +329,7 @@
 				{
 					"name": "Get (Jen's Catering Pty Ltd)",
 					"request": {
-						"url": "{{host}}/api/v1/identity/PUBLIC_IDENTIFIER:ABN:jenscatering_identity_1",
+						"url": "{{host}}/api/v1/identity/PUBLIC_IDENTIFIER:ABN:00000000001",
 						"method": "GET",
 						"header": [
 							{
@@ -517,7 +517,7 @@
 				{
 					"name": "Get (Jen's Catering Pty Ltd)",
 					"request": {
-						"url": "{{host}}/api/v1/party/identity/PUBLIC_IDENTIFIER:ABN:jenscatering_identity_1",
+						"url": "{{host}}/api/v1/party/identity/PUBLIC_IDENTIFIER:ABN:00000000001",
 						"method": "GET",
 						"header": [
 							{
@@ -735,7 +735,7 @@
 				{
 					"name": "List by subject",
 					"request": {
-						"url": "{{host}}/api/v1/relationships/subject/identity/PUBLIC_IDENTIFIER:ABN:jenscatering_identity_1?page=1",
+						"url": "{{host}}/api/v1/relationships/subject/identity/PUBLIC_IDENTIFIER:ABN:00000000001?page=1",
 						"method": "GET",
 						"header": [
 							{
@@ -1158,7 +1158,7 @@
 				{
 					"name": "List roles (Jen's Catering)",
 					"request": {
-						"url": "{{host}}/api/v1/roles/identity/PUBLIC_IDENTIFIER:ABN:jenscatering_identity_1?page=1",
+						"url": "{{host}}/api/v1/roles/identity/PUBLIC_IDENTIFIER:ABN:00000000001?page=1",
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -1172,7 +1172,7 @@
 				{
 					"name": "List roles (EdTech)",
 					"request": {
-						"url": "{{host}}/api/v1/roles/identity/PUBLIC_IDENTIFIER:ABN:edtech_identity_1?page=1",
+						"url": "{{host}}/api/v1/roles/identity/PUBLIC_IDENTIFIER:ABN:10000000001?page=1",
 						"method": "GET",
 						"header": [],
 						"body": {
