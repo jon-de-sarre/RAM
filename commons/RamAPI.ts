@@ -143,6 +143,15 @@ export class AgencyUserProgramRole implements IAgencyUserProgramRole {
     }
 }
 
+export interface IAUSkey {
+    id: string;
+}
+
+export class AUSkey implements IAUSkey {
+    constructor(public id:string) {
+    }
+}
+
 export interface ICodeDecode {
     code: string;
     shortDecodeText: string;
