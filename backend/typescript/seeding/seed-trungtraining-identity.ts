@@ -38,7 +38,7 @@ export class TrungTrainingIdentitySeeder {
                 Seeder.log('');
 
                 Seeder.trungtraining_identity_1 = await Seeder.createIdentityModel({
-                    rawIdValue: 'ABNTrungTr123',
+                    rawIdValue: '10000000003',
                     identityType: IdentityType.PublicIdentifier.code,
                     defaultInd: true,
                     publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.code,

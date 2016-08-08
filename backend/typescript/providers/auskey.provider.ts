@@ -1,15 +1,41 @@
 import {conf} from '../bootstrap';
+import {IAUSkey, AUSkey, AUSkeyType} from '../models/auskey.model';
 
-// Mock data is used if the GUID is empty.
 const useMock = conf.auskeyProviderMock;
 
+const repository = {
+    '10000000001': 3,
+    '14126318518': 5
+};
+
 export interface IAUSkeyProvider {
+    listDevicesByABN(abn: string): IAUSkey[];
 }
 
 export class MockAUSkeyProvider implements IAUSkeyProvider {
+
+    public listDevicesByABN(abn: string): IAUSkey[] {
+        let abnScrubbed = abn.replace(/ /g, '');
+        let numberOfKeys = repository[abnScrubbed];
+        if (!numberOfKeys) {
+            numberOfKeys = 0;
+        }
+        let auskeys: IAUSkey[] = [];
+        for (let i = 0; i < numberOfKeys; i = i + 1) {
+            let id = abn + '-device-' + (i + 1);
+            auskeys.push(new AUSkey(id, AUSkeyType.Device));
+        }
+        return auskeys;
+    }
+
 }
 
 export class RealAUSkeyProvider implements IAUSkeyProvider {
+
+    public listDevicesByABN(abn: string): IAUSkey[] {
+        throw new Error('Not yet implemented');
+    }
+
 }
 
-export const AUSkeyProvider = (useMock ? MockAUSkeyProvider : RealAUSkeyProvider) as IAUSkeyProvider;
+export const AUSkeyProvider = (useMock ? new MockAUSkeyProvider() : new RealAUSkeyProvider()) as IAUSkeyProvider;

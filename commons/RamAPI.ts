@@ -148,7 +148,8 @@ export interface IAUSkey {
 }
 
 export class AUSkey implements IAUSkey {
-    constructor(public id:string) {
+    constructor(public id: string,
+                public auskeyType: string) {
     }
 }
 
