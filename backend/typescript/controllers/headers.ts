@@ -26,6 +26,8 @@ export class Headers {
     public static CredentialType = `${Headers.Prefix}-credentialtype`;
     public static CredentialStrength = `${Headers.Prefix}-credentialstrength`;
 
+    public static ABN = `${Headers.Prefix}-abn`;
+
     public static PartyType = `${Headers.Prefix}-partytype`;
 
     public static GivenName = `${Headers.Prefix}-givenname`;
