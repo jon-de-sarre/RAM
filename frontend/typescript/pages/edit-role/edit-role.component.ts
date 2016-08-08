@@ -43,7 +43,7 @@ export class EditRoleComponent extends AbstractPageComponent {
     public identity: IIdentity;
     public roleTypeRefs: IHrefValue<IRoleType>[];
     public agencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[];
-    public deviceAusKeys: IAUSkey[];
+    public deviceAusKeyRefs: IHrefValue<IAUSkey>[];
 
     public form: FormGroup;
 
@@ -90,9 +90,8 @@ export class EditRoleComponent extends AbstractPageComponent {
         });
 
         // device AUSkeys
-        this.deviceAusKeys = [];
-        this.services.rest.listAusKeys(this.idValue).subscribe((deviceAusKeys) => {
-            this.deviceAusKeys.push(deviceAusKeys);
+        this.services.rest.listAusKeys(this.idValue).subscribe((deviceAusKeyRefs) => {
+            this.deviceAusKeyRefs = deviceAusKeyRefs;
         });
 
         // TODO load existing role if we are editing one
