@@ -23,7 +23,7 @@ export class RoleController {
         };
         validateReqSchema(req, schema)
             .then((req:Request) => this.roleModel.findByIdentifier(req.params.identifier))
-            .then((model) => model ? model.toDTO(null) : null)
+            .then((model) => model ? model.toDTO() : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
             .catch(sendError(res));
