@@ -14,12 +14,13 @@ import {sendNotFoundError} from './controllers/helpers';
 import {forgeRockSimulator} from './controllers/forgeRock.simulator.middleware';
 import {security} from './controllers/security.middleware';
 
-// DEVELOPMENT RESOURCES
+// DEVELOPMENT CONTROLLERS
 import {AuthenticatorSimulatorController} from './controllers/authenticator.simulator.controller';
 import {AgencyUserController} from './controllers/agencyUser.controller';
 import {ResetController} from './controllers/reset.server.controller';
 
-// PRODUCTION RESOURCES
+// PRODUCTION CONTROLLERS
+import {SystemController} from './controllers/system.controller';
 import {PrincipalController} from './controllers/principal.controller';
 import {PartyController} from './controllers/party.controller';
 import {ProfileController} from './controllers/profile.controller';
@@ -95,6 +96,10 @@ server.use('/api/reset',
     new ResetController().assignRoutes(express.Router()));
 
 // setup route handlers (production) ..................................................................................
+
+server.use('/system',
+    new SystemController()
+        .assignRoutes(express.Router()));
 
 server.use('/api/',
     new PrincipalController()
