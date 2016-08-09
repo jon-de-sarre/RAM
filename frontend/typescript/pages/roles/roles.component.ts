@@ -110,8 +110,8 @@ export class RolesComponent extends AbstractPageComponent {
     }
 
     public goToAddRolePage() {
-        if (this.agencyUser) {
-            this.services.route.goToAddRolePage(this.idValue);
+        if (this.agencyUser && this.identity) {
+            this.services.route.goToAddRolePage(this.services.model.getLinkByType('self', this.identity._links).href);
         }
     }
 

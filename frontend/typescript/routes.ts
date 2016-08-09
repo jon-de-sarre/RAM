@@ -65,7 +65,7 @@ export const routes: RouterConfig = [
         component: RolesComponent
     },
     {
-        path: 'roles/add/:idValue',
+        path: 'roles/add/:href',
         component: EditRoleComponent
     },
     {

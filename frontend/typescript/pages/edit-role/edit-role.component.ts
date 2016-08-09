@@ -5,6 +5,8 @@ import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES} from 
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
+import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
+    from '../../components/search-result-pagination/search-result-pagination.component';
 import {RAMServices} from '../../services/ram-services';
 
 import {
@@ -20,7 +22,6 @@ import {
     IRoleAttributeNameUsage,
     IAUSkey
 } from '../../../../commons/RamAPI';
-import {SearchResultPaginationDelegate, SearchResultPaginationComponent} from "../../components/search-result-pagination/search-result-pagination.component";
 
 @Component({
     selector: 'ram-edit-role',
@@ -36,6 +37,7 @@ import {SearchResultPaginationDelegate, SearchResultPaginationComponent} from ".
 
 export class EditRoleComponent extends AbstractPageComponent {
 
+    public identityHref: string;
     public idValue: string;
     public key: string;
 
@@ -65,9 +67,11 @@ export class EditRoleComponent extends AbstractPageComponent {
     }
 
     public onInit(params: {path: Params, query: Params}) {
+
         this._isLoading = true;
 
         // extract path and query parameters
+        this.identityHref = decodeURIComponent(params.path['href']);
         this.idValue = decodeURIComponent(params.path['idValue']);
         this.key = decodeURIComponent(params.path['key']);
 
@@ -96,8 +100,19 @@ export class EditRoleComponent extends AbstractPageComponent {
         });
 
         // identity in focus
-        this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
+        this.services.rest.findIdentityByHref(this.identityHref).subscribe((identity) => {
+
             this.identity = identity;
+
+            // pagination delegate
+            // todo code below doesn't look right
+            this.auskeyPaginationDelegate = {
+                goToPage: (page: number) => {
+                    this.deviceAusKeyRefs$ = this.services.rest.listAusKeys(this.identity.idValue, this.auskeyFilter.encode(), page);
+                }
+            } as SearchResultPaginationDelegate;
+            this.auskeyPaginationDelegate.goToPage(1);
+
         });
 
         // role types
@@ -105,17 +120,9 @@ export class EditRoleComponent extends AbstractPageComponent {
             this.roleTypeRefs = roleTypeRefs;
         });
 
-        // pagination delegate
-        this.auskeyPaginationDelegate = {
-            goToPage: (page: number) => {
-                this.deviceAusKeyRefs$ = this.services.rest.listAusKeys(this.idValue, this.auskeyFilter.encode(), page);
-            }
-        } as SearchResultPaginationDelegate;
-
-        this.auskeyPaginationDelegate.goToPage(1);
-
         // TODO load existing role if we are editing one
         // TODO populate current form values if we are editing an existing role
+
     }
 
     public onRoleTypeChange(newRoleTypeCode: string) {
@@ -158,7 +165,10 @@ export class EditRoleComponent extends AbstractPageComponent {
     }
 
     public back() {
-        this.services.route.goToRolesPage(this.idValue);
+        if (this.identity) {
+            // todo replace with href
+            this.services.route.goToRolesPage(this.identity.idValue);
+        }
     }
 
     public save() {
@@ -193,8 +203,10 @@ export class EditRoleComponent extends AbstractPageComponent {
                 'ACTIVE',
                 attributes
             );
+            // todo replace with href
             this.services.rest.createRole(role).subscribe((role) => {
-                this.services.route.goToRolesPage(this.idValue);
+                // todo replace with href
+                this.services.route.goToRolesPage(this.identity.idValue);
             }, (err) => {
                 this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
             });

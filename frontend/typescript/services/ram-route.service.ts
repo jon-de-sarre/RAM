@@ -90,9 +90,9 @@ export class RAMRouteService {
         );
     }
 
-    public goToAddRolePage(idValue: string) {
+    public goToAddRolePage(href: string) {
         this.router.navigate(['/roles/add',
-                encodeURIComponent(idValue)
+                encodeURIComponent(href)
             ], {queryParams: {}}
         );
     }

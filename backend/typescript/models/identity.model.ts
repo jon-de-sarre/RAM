@@ -332,6 +332,7 @@ IdentitySchema.method('toHrefValue', async function (includeValue:boolean) {
 IdentitySchema.method('toDTO', async function () {
     return new DTO(
         Url.links()
+            .push('self', Url.GET, await Url.forIdentity(this))
             .push('relationship-list', Url.GET, await Url.forIdentityRelationshipList(this))
             .push('relationship-create', Url.POST, await Url.forIdentityRelationshipCreate(this))
             .push('role-list', Url.GET, await Url.forIdentityRoleList(this))
