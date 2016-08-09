@@ -41,6 +41,18 @@ export class Url {
         return '/api/v1/relationship/' + encodeURIComponent(model._id.toString());
     }
 
+    public static async forRelationshipAccept(invitationCode: string): Promise<string> {
+        return '/api/v1/relationship/invitationCode/' + encodeURIComponent(invitationCode) + '/accept';
+    }
+
+    public static async forRelationshipReject(invitationCode: string): Promise<string> {
+        return '/api/v1/relationship/invitationCode/' + encodeURIComponent(invitationCode) + '/reject';
+    }
+
+    public static async forRelationshipNotifyDelegate(invitationCode: string): Promise<string> {
+        return '/api/v1/relationship/invitationCode/' + encodeURIComponent(invitationCode) + '/notifyDelegate';
+    }
+
     // relationship attribute name ....................................................................................
 
     public static async forRelationshipAttributeName(model: relationshipAttributeName.IRelationshipAttributeName): Promise<string> {

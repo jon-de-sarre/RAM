@@ -184,11 +184,10 @@ RoleSchema.method('toHrefValue', async function (includeValue: boolean) {
 });
 
 RoleSchema.method('toDTO', async function () {
-    const links: Link[] = [];
-    // links.push(new Link('self', `/api/v1/role/${this.id}`));
-
     return new DTO(
-        links,
+        [
+            new Link('self', await Url.forRole(this))
+        ],
         this._id.toString() /*todo what code should we use?*/,
         await this.roleType.toHrefValue(false),
         await this.party.toHrefValue(true),

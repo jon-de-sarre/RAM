@@ -315,15 +315,13 @@ RelationshipSchema.method('toHrefValue', async function (includeValue: boolean) 
 
 RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
     const links: Link[] = [];
-    // links.push(new Link('self', `/api/v1/relationship/${this.id}`));
-
+    links.push(new Link('self', await Url.forRelationship(this)));
     // TODO what other logic around when to add links?
     if (invitationCode && this.statusEnum() === RelationshipStatus.Pending) {
-        links.push(new Link('accept', `/api/v1/relationship/invitationCode/${invitationCode}/accept`));
-        links.push(new Link('reject', `/api/v1/relationship/invitationCode/${invitationCode}/reject`));
-        links.push(new Link('notifyDelegate', `/api/v1/relationship/invitationCode/${invitationCode}/notifyDelegate`));
+        links.push(new Link('accept', await Url.forRelationshipAccept(invitationCode)));
+        links.push(new Link('reject', await Url.forRelationshipReject(invitationCode)));
+        links.push(new Link('notifyDelegate', await Url.forRelationshipNotifyDelegate(invitationCode)));
     }
-
     return new DTO(
         links,
         this._id.toString() /*todo what code should we use?*/,
