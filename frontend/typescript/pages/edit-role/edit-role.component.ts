@@ -75,7 +75,7 @@ export class EditRoleComponent extends AbstractPageComponent {
         this.auskeyFilter = FilterParams.decode(params.query['auskeyFilter']);
         this.auskeyPage = params.query['auskeyPage'] ? +params.query['auskeyPage'] : 1;
 
-        // restrict to notifications
+        // restrict to device auskeys
         this.auskeyFilter.add('auskeyType', this.services.constants.AUSkey.DEVICE_TYPE);
 
         // me (agency user)
