@@ -231,15 +231,15 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
-    public listRelationshipTypes(): Observable<IHrefValue<IRelationshipType>[]> {
-        return this.http
-            .get('/api/v1/relationshipTypes')
-            .map(this.extractData);
-    }
-
     public findRelationshipTypeByHref(href: string): Observable<IRelationshipType> {
         return this.http
             .get(href)
+            .map(this.extractData);
+    }
+
+    public listRelationshipTypes(): Observable<IHrefValue<IRelationshipType>[]> {
+        return this.http
+            .get('/api/v1/relationshipTypes')
             .map(this.extractData);
     }
 
@@ -259,18 +259,6 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
-    public listRoleTypes(): Observable<IHrefValue<IRoleType>[]> {
-        return this.http
-            .get('/api/v1/roleTypes')
-            .map(this.extractData);
-    }
-
-    public listRoleStatuses(): Observable<IHrefValue<IRoleStatus>[]> {
-        return this.http
-            .get('/api/v1/roleStatuses')
-            .map(this.extractData);
-    }
-
     public findRoleByHref(href: string): Observable<IRole> {
         return this.http
             .get(href)
@@ -282,6 +270,22 @@ export class RAMRestService {
             .post(`/api/v1/role`, JSON.stringify(role), {
                 headers: this.headersForJson()
             })
+            .map(this.extractData);
+    }
+
+    // role status ....................................................................................................
+
+    public listRoleStatuses(): Observable<IHrefValue<IRoleStatus>[]> {
+        return this.http
+            .get('/api/v1/roleStatuses')
+            .map(this.extractData);
+    }
+
+    // role type ......................................................................................................
+
+    public listRoleTypes(): Observable<IHrefValue<IRoleType>[]> {
+        return this.http
+            .get('/api/v1/roleTypes')
             .map(this.extractData);
     }
 
