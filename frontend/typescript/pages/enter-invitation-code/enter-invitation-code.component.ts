@@ -34,7 +34,7 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
     public onInit(params: {path:Params, query:Params}) {
 
         // extract path and query parameters
-        this.idValue = decodeURIComponent(params.path['idValue']);
+        this.idValue = params.path['idValue'];
 
         // message
         const msg = params.query['msg'];

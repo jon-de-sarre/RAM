@@ -40,9 +40,9 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
     public onInit(params: {path: Params, query: Params}) {
 
         // extract path and query parameters
-        this.idValue = decodeURIComponent(params.path['idValue']);
-        this.code = decodeURIComponent(params.path['invitationCode']);
-        this.displayName = decodeURIComponent(params.path['displayName']);
+        this.idValue = params.path['idValue'];
+        this.code = params.path['invitationCode'];
+        this.displayName = params.path['displayName'];
 
         // identity in focus
         this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {

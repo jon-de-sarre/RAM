@@ -72,7 +72,7 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
                 } else if (!queryParams) {
                     this.log('[i] QUERY = ' + JSON.stringify(params));
                     queryParams = params;
-                    this.onPreInit({path: pathParams, query: queryParams});
+                    this.onPreInit(this.decodeURIComponentForParams(pathParams, queryParams));
                 } else if (this.mergedParamSub) {
                     this.log('-----------');
                     this.log('Unsubscribing from merged observable ...');
@@ -84,7 +84,7 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
                             this.log('[p] PARAMS = ' + JSON.stringify(params));
                             this.log('[p] PATH   = ' + JSON.stringify(pathParams));
                             this.log('[p] QUERY  = ' + JSON.stringify(queryParams));
-                            this.onPreInit({path: pathParams, query: queryParams});
+                            this.onPreInit(this.decodeURIComponentForParams(pathParams, queryParams));
                         }
                     });
                     this.queryParamSub = queryParams$.subscribe((params) => {
@@ -94,12 +94,31 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
                             this.log('[p] PARAMS = ' + JSON.stringify(params));
                             this.log('[p] PATH   = ' + JSON.stringify(pathParams));
                             this.log('[p] QUERY  = ' + JSON.stringify(queryParams));
-                            this.onPreInit({path: pathParams, query: queryParams});
+                            this.onPreInit(this.decodeURIComponentForParams(pathParams, queryParams));
                         }
                     });
                 }
             });
 
+    }
+
+    protected decodeURIComponentForParams(pathParams: Params, queryParams: Params): {path: Params, query: Params} {
+        let decodedPathParams = {} as Params;
+        if (pathParams) {
+            for (let key of Object.keys(pathParams)) {
+                decodedPathParams[key] = decodeURIComponent(pathParams[key]);
+            }
+        }
+        let decodedQueryParams = {} as Params;
+        if (queryParams) {
+            for (let key of Object.keys(queryParams)) {
+                decodedQueryParams[key] = decodeURIComponent(queryParams[key]);
+            }
+        }
+        return {
+            path: decodedPathParams,
+            query: decodedQueryParams
+        };
     }
 
     protected addGlobalMessage(message: string) {

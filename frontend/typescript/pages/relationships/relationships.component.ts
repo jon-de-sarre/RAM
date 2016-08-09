@@ -70,7 +70,7 @@ export class RelationshipsComponent extends AbstractPageComponent {
         this._isLoading = true;
 
         // extract path and query parameters
-        this.idValue = decodeURIComponent(params.path['idValue']);
+        this.idValue = params.path['idValue'];
         this.filter = FilterParams.decode(params.query['filter']);
         this.page = params.query['page'] ? +params.query['page'] : 1;
 

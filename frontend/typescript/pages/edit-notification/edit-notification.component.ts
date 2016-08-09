@@ -69,8 +69,8 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
     public onInit(params: {path: Params, query: Params}) {
 
-        this.idValue = decodeURIComponent(params.path['idValue']);
-        this.key = decodeURIComponent(params.path['key']);
+        this.idValue = params.path['idValue'];
+        this.key = params.path['key'];
 
         // identity in focus
         this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {

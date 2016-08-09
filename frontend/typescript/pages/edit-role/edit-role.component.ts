@@ -69,8 +69,8 @@ export class EditRoleComponent extends AbstractPageComponent {
         this._isLoading = true;
 
         // extract path and query parameters
-        this.identityHref = decodeURIComponent(params.path['identityHref']);
-        this.roleHref = decodeURIComponent(params.path['roleHref']);
+        this.identityHref = params.path['identityHref'];
+        this.roleHref = params.path['roleHref'];
 
         this.auskeyFilter = FilterParams.decode(params.query['auskeyFilter']);
         this.auskeyPage = params.query['auskeyPage'] ? +params.query['auskeyPage'] : 1;
@@ -115,7 +115,10 @@ export class EditRoleComponent extends AbstractPageComponent {
         });
 
         // role in focus
+        console.log('rolehref=', params.path['roleHref'], typeof params.path['roleHref']);
+        console.log('rolehref=', this.roleHref, typeof this.roleHref);
         if (this.roleHref) {
+            console.log('invoking!');
             this.services.rest.findRoleByHref(this.roleHref).subscribe((role) => {
                 this.role = role;
             }, (err) => {
