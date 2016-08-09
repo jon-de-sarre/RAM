@@ -10,6 +10,12 @@ import * as roleType from './roleType.model';
 
 export class Url {
 
+    // identity .......................................................................................................
+
+    public static async forIdentity(model: identity.IIdentity): Promise<string> {
+        return '/api/v1/identity/' + encodeURIComponent(model.idValue);
+    }
+
     // party ..........................................................................................................
 
     public static async forPartyType(model: party.PartyType): Promise<string> {

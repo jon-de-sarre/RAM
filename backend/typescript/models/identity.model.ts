@@ -3,6 +3,7 @@ import * as mongooseAutoIncrement from 'mongoose-auto-increment';
 import {conf} from '../bootstrap';
 import * as Hashids from 'hashids';
 import {RAMEnum, IRAMObject, RAMSchema} from './base';
+import {Url} from './url';
 import {
     HrefValue,
     Identity as DTO,
@@ -323,7 +324,7 @@ IdentitySchema.method('linkIdSchemeEnum', function () {
 
 IdentitySchema.method('toHrefValue', async function (includeValue:boolean) {
     return new HrefValue(
-        '/api/v1/identity/' + encodeURIComponent(this.idValue),
+        await Url.forIdentity(this),
         includeValue ? await this.toDTO() : undefined
     );
 });
