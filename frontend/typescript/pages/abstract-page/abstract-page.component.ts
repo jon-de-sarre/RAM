@@ -106,13 +106,13 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
         let decodedPathParams = {} as Params;
         if (pathParams) {
             for (let key of Object.keys(pathParams)) {
-                decodedPathParams[key] = decodeURIComponent(pathParams[key]);
+                decodedPathParams[key] = this.services.route.decodeURIComponent(key, pathParams[key]);
             }
         }
         let decodedQueryParams = {} as Params;
         if (queryParams) {
             for (let key of Object.keys(queryParams)) {
-                decodedQueryParams[key] = decodeURIComponent(queryParams[key]);
+                decodedQueryParams[key] = this.services.route.decodeURIComponent(key, queryParams[key]);
             }
         }
         return {
