@@ -61,15 +61,15 @@ export const routes: RouterConfig = [
         component: AcceptAuthorisationComponent
     },
     {
-        path: 'roles/:href',
+        path: 'roles/:identityHref',
         component: RolesComponent
     },
     {
-        path: 'roles/add/:href',
+        path: 'roles/add/:identityHref',
         component: EditRoleComponent
     },
     {
-        path: 'roles/edit/:idValue/:key',
+        path: 'roles/edit/:identityHref/:roleHref',
         component: EditRoleComponent
     },
     {
