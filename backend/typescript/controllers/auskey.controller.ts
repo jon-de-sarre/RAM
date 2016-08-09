@@ -6,7 +6,7 @@ import {IAUSkeyProvider} from '../providers/auskey.provider';
 
 export class AuskeyController {
 
-    constructor(private identityModel: IIdentityModel, private ausKeyProvider: IAUSkeyProvider) {
+    constructor(private identityModel: IIdentityModel, private auskeyProvider: IAUSkeyProvider) {
     }
 
     private findAusKey = (req: Request, res: Response) => {
@@ -18,7 +18,7 @@ export class AuskeyController {
             }
         };
         validateReqSchema(req, schema)
-            .then((req: Request) => this.ausKeyProvider.findById(req.params.id))
+            .then((req: Request) => this.auskeyProvider.findById(req.params.id))
             .then((model) => model ? model.toHrefValue(true) : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
@@ -36,7 +36,7 @@ export class AuskeyController {
         validateReqSchema(req, schema)
             .then(async(req: Request) => {
                 const identity = await this.identityModel.findByIdValue(req.params.idValue);
-                return await this.ausKeyProvider.listDevicesByABN(identity.rawIdValue);
+                return await this.auskeyProvider.listDevicesByABN(identity.rawIdValue);
             })
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
             .then(sendList(res))
