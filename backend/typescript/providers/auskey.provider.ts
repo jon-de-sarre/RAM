@@ -13,7 +13,7 @@ const repository: {[key: string]: number} = {
 export interface IAUSkeyProvider {
     findById(id: string): Promise<IAUSkey>;
     searchDevicesByABN(abn: string, page: number, reqPageSize: number): Promise<SearchResult<IAUSkey>>;
-    listDevicesByABN(abn: string): Promise<IAUSkey[]>; /* to be removed */
+    listDevicesByABN(abn: string): Promise<IAUSkey[]>; /* todo to be removed */
 }
 
 export class MockAUSkeyProvider implements IAUSkeyProvider {
