@@ -2,6 +2,7 @@ import * as identity from './identity.model';
 import * as party from './party.model';
 import * as profile from './profile.model';
 import * as relationship from './relationship.model';
+import * as relationshipAttributeName from './relationshipAttributeName.model';
 
 export class Url {
 
@@ -34,6 +35,12 @@ export class Url {
 
     public static async forRelationship(model: relationship.IRelationship): Promise<string> {
         return '/api/v1/relationship/' + encodeURIComponent(model._id.toString());
+    }
+
+    // relationship attribute name ....................................................................................
+
+    public static async forRelationshipAttributeName(model: relationshipAttributeName.IRelationshipAttributeName): Promise<string> {
+        return '/api/v1/relationshipAttributeName/' + encodeURIComponent(model.code);
     }
 
 }

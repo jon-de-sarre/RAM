@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import {RAMEnum, ICodeDecode, CodeDecodeSchema} from './base';
+import {Url} from './url';
 import {HrefValue, RelationshipAttributeName as DTO} from '../../../commons/RamAPI';
 
 // enums, utilities, helpers ..........................................................................................
@@ -104,7 +105,7 @@ RelationshipAttributeNameSchema.method('domainEnum', function () {
 
 RelationshipAttributeNameSchema.method('toHrefValue', async function (includeValue:boolean) {
     return new HrefValue(
-        '/api/v1/relationshipAttributeName/' + encodeURIComponent(this.code),
+        await Url.forRelationshipAttributeName(this),
         includeValue ? await this.toDTO() : undefined
     );
 });
