@@ -418,6 +418,7 @@ export class ProfileProvider implements IProfileProvider {
 }
 
 export interface IIdentity {
+    _links: ILink[];
     idValue: string;
     rawIdValue: string;
     identityType: string;
@@ -436,7 +437,8 @@ export interface IIdentity {
 }
 
 export class Identity implements IIdentity {
-    constructor(public idValue:string,
+    constructor(public _links: ILink[],
+                public idValue:string,
                 public rawIdValue:string,
                 public identityType:string,
                 public defaultInd:boolean,
@@ -519,16 +521,16 @@ export interface IRole {
 }
 
 export class Role implements IRole {
-    constructor(public _links:ILink[],
+    constructor(public _links: ILink[],
                 public code: string,
-                public roleType:IHrefValue<IRoleType>,
-                public party:IHrefValue<IParty>,
-                public startTimestamp:Date,
-                public endTimestamp:Date,
-                public endEventTimestamp:Date,
-                public assignedTimestamp:Date,
-                public status:string,
-                public attributes:IRoleAttribute[]) {
+                public roleType: IHrefValue<IRoleType>,
+                public party: IHrefValue<IParty>,
+                public startTimestamp: Date,
+                public endTimestamp: Date,
+                public endEventTimestamp: Date,
+                public assignedTimestamp: Date,
+                public status: string,
+                public attributes: IRoleAttribute[]) {
     }
 }
 
