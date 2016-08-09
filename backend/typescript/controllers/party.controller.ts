@@ -36,12 +36,12 @@ export class PartyController {
             .catch(sendError(res));
     };
 
-    private findTypeByName = (req:Request, res:Response) => {
+    private findTypeByCode = (req:Request, res:Response) => {
         const schema = {
-            'name': {
+            'code': {
                 in: 'params',
                 notEmpty: true,
-                errorMessage: 'Name is not valid'
+                errorMessage: 'Code is not valid'
             }
         };
         validateReqSchema(req, schema)
@@ -74,7 +74,7 @@ export class PartyController {
             this.findByIdentityIdValue);
 
         router.get('/v1/partyType/:code',
-            this.findTypeByName);
+            this.findTypeByCode);
 
         router.get('/v1/partyTypes',
             this.listTypes);
