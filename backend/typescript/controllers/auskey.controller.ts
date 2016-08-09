@@ -49,7 +49,6 @@ export class AuskeyController {
             }
         };
 
-        console.log('server page', req.params.page, req.params.pageSize);
         validateReqSchema(req, schema)
             .then(async(req: Request) => {
                 const identity = await this.identityModel.findByIdValue(req.params.idValue);

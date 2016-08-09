@@ -54,9 +54,6 @@ export class MockAUSkeyProvider implements IAUSkeyProvider {
         const first = (page - 1) * pageSize;
         const last = Math.min(first + pageSize, auskeys.length);
 
-        console.log('page', page, pageSize);
-        console.log('intersect', first, last);
-
         return Promise.resolve(new SearchResult(page, auskeys.length, pageSize, auskeys.slice(first, last)));
     }
 
