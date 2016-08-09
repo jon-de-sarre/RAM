@@ -333,7 +333,9 @@ IdentitySchema.method('toDTO', async function () {
     return new DTO(
         Url.links()
             .push('relationship-list', await Url.forIdentityRelationshipList(this))
+            .push('relationship-create', await Url.forIdentityRelationshipCreate(this))
             .push('role-list', await Url.forIdentityRoleList(this))
+            .push('role-create', await Url.forIdentityRoleCreate(this))
             .toArray(),
         this.idValue,
         this.rawIdValue,

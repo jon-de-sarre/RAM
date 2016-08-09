@@ -51,8 +51,16 @@ export class Url {
         return '/api/v1/relationships/identity/' + encodeURIComponent(model.idValue) + '?page=1';
     }
 
+    public static async forIdentityRelationshipCreate(model: identity.IIdentity): Promise<string> {
+        return '/api/v1/relationship';
+    }
+
     public static async forIdentityRoleList(model: identity.IIdentity): Promise<string> {
         return '/api/v1/roles/identity/' + encodeURIComponent(model.idValue) + '?page=1';
+    }
+
+    public static async forIdentityRoleCreate(model: identity.IIdentity): Promise<string> {
+        return '/api/v1/role';
     }
 
     // party ..........................................................................................................
