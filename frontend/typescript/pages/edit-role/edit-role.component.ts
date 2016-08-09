@@ -1,11 +1,13 @@
 import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
-import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES} from '@angular/forms';
+import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES, FormControl} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
-import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
+import {
+    SearchResultPaginationComponent, SearchResultPaginationDelegate
+}
     from '../../components/search-result-pagination/search-result-pagination.component';
 import {RAMServices} from '../../services/ram-services';
 
@@ -68,6 +70,14 @@ export class EditRoleComponent extends AbstractPageComponent {
 
         this._isLoading = true;
 
+        // forms
+        this.form = this._fb.group({
+            roleType: '-',
+            preferredName: '',
+            agencyServices: [[]],
+            deviceAusKeys: [[]]
+        });
+
         // extract path and query parameters
         this.identityHref = params.path['identityHref'];
         this.roleHref = params.path['roleHref'];
@@ -102,31 +112,42 @@ export class EditRoleComponent extends AbstractPageComponent {
             } as SearchResultPaginationDelegate;
             this.auskeyPaginationDelegate.goToPage(1);
 
+            // role in focus
+            if (this.roleHref) {
+                this.services.rest.findRoleByHref(this.roleHref).subscribe((role) => {
+                    this.role = role;
+
+                    // load relationship type
+                    this.services.rest.findRelationshipTypeByHref(role.roleType.href).subscribe((roleType) => {
+                        (this.form.controls['roleType'] as FormControl).updateValue(roleType.code);
+                        this.onRoleTypeChange(roleType.code);
+                    }, (err) => {
+                        this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                    });
+
+                    const preferredName = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(role, 'PREFERRED_NAME', 'OTHER'));
+                    const deviceAusKeys = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(role, 'DEVICE_AUSKEYS', 'OTHER'));
+
+                    (this.form.controls['preferredName'] as FormControl).updateValue(preferredName);
+                    (this.form.controls['deviceAusKeys'] as FormControl).updateValue(deviceAusKeys);
+
+                    const agencyAttributes = this.services.model.getRoleAttributesByClassifier(role, 'AGENCY_SERVICE');
+                    for (let attr of agencyAttributes) {
+                        if (attr.value[0] === 'true') {
+                            this.onAgencyServiceChange(attr.attributeName.value.code);
+                        }
+                    }
+                }, (err) => {
+                    this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                });
+            }
         }, (err) => {
             this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
         });
 
-        // role in focus
-        if (this.roleHref) {
-            this.services.rest.findRoleByHref(this.roleHref).subscribe((role) => {
-                this.role = role;
-            }, (err) => {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
-            });
-        }
-
         // role types
         this.services.rest.listRoleTypes().subscribe((roleTypeRefs) => {
             this.roleTypeRefs = roleTypeRefs;
-        });
-
-        // TODO populate current form values if we are editing an existing role
-        // forms
-        this.form = this._fb.group({
-            roleType: '-',
-            preferredName: '',
-            agencyServices: [[]],
-            deviceAusKeys: [[]]
         });
 
     }
@@ -159,6 +180,10 @@ export class EditRoleComponent extends AbstractPageComponent {
 
     public isAusKeySelected(auskey: string) {
         return this.form.controls['deviceAusKeys'].value.indexOf(auskey) > -1;
+    }
+
+    public isAgencyServiceSelected(code: string) {
+        return this.form.controls['agencyServices'].value.indexOf(code) > -1;
     }
 
     private toggleArrayValue(arr: string[], val: string) {

@@ -17,7 +17,8 @@ import {
     IRoleAttributeNameUsage,
     IRoleAttributeName,
     IRelationshipAttributeName,
-    IRelationshipAttributeNameUsage
+    IRelationshipAttributeNameUsage,
+    IRoleAttribute
 } from '../../../commons/RamAPI';
 
 @Injectable()
@@ -275,4 +276,39 @@ export class RAMModelService {
         return null;
     }
 
+    public getRoleAttribute(roleRef: IRole, code: string, classifier: string): IRoleAttribute {
+        for (let attr of roleRef.attributes) {
+            const attributeNameRef = attr.attributeName;
+            if (attributeNameRef.value.code === code) {
+                if(!classifier || classifier === attributeNameRef.value.classifier) {
+                    return attr;
+                }
+            }
+        }
+        return null;
+    }
+
+    public getRoleAttributesByClassifier(roleRef: IRole, classifier: string): IRoleAttribute[] {
+        const values: IRoleAttribute[] = [];
+
+        for (let attr of roleRef.attributes) {
+            const attributeNameRef = attr.attributeName;
+            if (attributeNameRef.value.classifier === classifier) {
+                values.push(attr);
+            }
+        }
+        return values;
+    }
+
+    public getRoleAttributeValue(attribute: IRoleAttribute) {
+        if(attribute) {
+            if(attribute.attributeName.value.domain === 'SELECT_MULTI') {
+                return attribute.value;
+            }
+            if(attribute.value) {
+                return attribute.value[0];
+            }
+        }
+        return null;
+    }
 }
