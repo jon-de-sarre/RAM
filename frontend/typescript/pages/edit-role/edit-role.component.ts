@@ -117,17 +117,23 @@ export class EditRoleComponent extends AbstractPageComponent {
                 this.services.rest.findRoleByHref(this.roleHref).subscribe((role) => {
                     this.role = role;
 
+                    // load relationship type
                     this.services.rest.findRelationshipTypeByHref(role.roleType.href).subscribe((roleType) => {
                         (this.form.controls['roleType'] as FormControl).updateValue(roleType.code);
                         this.onRoleTypeChange(roleType.code);
+                    }, (err) => {
+                        this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
                     });
 
-                    (this.form.controls['preferredName'] as FormControl).updateValue(this.services.model.getRoleAttribute(role, 'PREFERRED_NAME', 'OTHER').value[0]);
-                    (this.form.controls['deviceAusKeys'] as FormControl).updateValue(this.services.model.getRoleAttribute(role, 'DEVICE_AUSKEYS', 'OTHER').value);
+                    const preferredName = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(role, 'PREFERRED_NAME', 'OTHER'));
+                    const deviceAusKeys = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(role, 'DEVICE_AUSKEYS', 'OTHER'));
+
+                    (this.form.controls['preferredName'] as FormControl).updateValue(preferredName);
+                    (this.form.controls['deviceAusKeys'] as FormControl).updateValue(deviceAusKeys);
 
                     const agencyAttributes = this.services.model.getRoleAttributesByClassifier(role, 'AGENCY_SERVICE');
-                    for(let attr of agencyAttributes) {
-                        if(attr.value[0] === 'true') {
+                    for (let attr of agencyAttributes) {
+                        if (attr.value[0] === 'true') {
                             this.onAgencyServiceChange(attr.attributeName.value.code);
                         }
                     }

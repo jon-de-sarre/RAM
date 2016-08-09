@@ -300,4 +300,15 @@ export class RAMModelService {
         return values;
     }
 
+    public getRoleAttributeValue(attribute: IRoleAttribute) {
+        if(attribute) {
+            if(attribute.attributeName.value.domain === 'SELECT_MULTI') {
+                return attribute.value;
+            }
+            if(attribute.value) {
+                return attribute.value[0];
+            }
+        }
+        return null;
+    }
 }
