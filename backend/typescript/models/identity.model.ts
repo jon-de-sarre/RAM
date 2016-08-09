@@ -335,7 +335,7 @@ IdentitySchema.method('toDTO', async function () {
             .push('relationship-list', Url.GET, await Url.forIdentityRelationshipList(this))
             .push('relationship-create', Url.POST, await Url.forIdentityRelationshipCreate(this))
             .push('role-list', Url.GET, await Url.forIdentityRoleList(this))
-            .push('role-create', Url.GET, await Url.forIdentityRoleCreate(this))
+            .push('role-create', Url.POST, await Url.forIdentityRoleCreate(this))
             .toArray(),
         this.idValue,
         this.rawIdValue,
