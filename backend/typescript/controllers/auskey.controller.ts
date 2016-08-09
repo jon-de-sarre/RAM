@@ -48,11 +48,13 @@ export class AuskeyController {
                 }
             }
         };
+
+        console.log('server page', req.params.page, req.params.pageSize);
         validateReqSchema(req, schema)
             .then(async(req: Request) => {
                 const identity = await this.identityModel.findByIdValue(req.params.idValue);
                 // todo hard coded DEVICE type (For now)
-                return await this.auskeyProvider.searchByABN(identity.rawIdValue, AUSkeyType.Device, req.params.page, req.params.pageSize);
+                return await this.auskeyProvider.searchByABN(identity.rawIdValue, AUSkeyType.Device, req.query.page, req.query.pageSize);
             })
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
             .then(sendSearchResult(res))
