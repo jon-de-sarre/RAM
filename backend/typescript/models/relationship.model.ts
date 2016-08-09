@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import {RAMEnum, IRAMObject, RAMSchema, Query, Assert} from './base';
+import {Url} from './url';
 import {DOB_SHARED_SECRET_TYPE_CODE} from './sharedSecretType.model';
 import {IParty, PartyModel} from './party.model';
 import {IName, NameModel} from './name.model';
@@ -54,7 +55,7 @@ export class RelationshipStatus extends RAMEnum {
 
     public toHrefValue(includeValue: boolean): Promise<HrefValue<RelationshipStatusDTO>> {
         return Promise.resolve(new HrefValue(
-            '/api/v1/relationshipStatus/' + this.code,
+            Url.forRelationshipStatus(this),
             includeValue ? this.toDTO() : undefined
         ));
     }
@@ -306,9 +307,8 @@ RelationshipSchema.method('statusEnum', function () {
 
 // todo what is the href we use here?
 RelationshipSchema.method('toHrefValue', async function (includeValue: boolean) {
-    const relationshipId: string = this._id.toString();
     return new HrefValue(
-        '/api/v1/relationship/' + encodeURIComponent(relationshipId),
+        Url.forRelationship(this),
         includeValue ? await this.toDTO(null) : undefined
     );
 });
