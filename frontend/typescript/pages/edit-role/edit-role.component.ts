@@ -44,11 +44,10 @@ export class EditRoleComponent extends AbstractPageComponent {
     public auskeyPage: number;
     public auskeyPaginationDelegate: SearchResultPaginationDelegate;
 
-    public roles$: Observable<ISearchResult<IHrefValue<IRole>>>;
-
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
     public me: IAgencyUser;
     public identity: IIdentity;
+    public role: IRole;
     public roleTypeRefs: IHrefValue<IRoleType>[];
     public agencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[];
     public deviceAusKeyRefs$: Observable<ISearchResult<IHrefValue<IAUSkey>>>;
@@ -111,7 +110,18 @@ export class EditRoleComponent extends AbstractPageComponent {
             } as SearchResultPaginationDelegate;
             this.auskeyPaginationDelegate.goToPage(1);
 
+        }, (err) => {
+            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
         });
+
+        // role in focus
+        if (this.roleHref) {
+            this.services.rest.findRoleByHref(this.roleHref).subscribe((role) => {
+                this.role = role;
+            }, (err) => {
+                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+            });
+        }
 
         // role types
         this.services.rest.listRoleTypes().subscribe((roleTypeRefs) => {
