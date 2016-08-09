@@ -5,7 +5,7 @@
 
 <form [formGroup]="form">
 
-    <div class="panel panel-default">
+    <div class="panel panel-default" >
         <div class="panel-heading">
             <h4>Select a role</h4>
         </div>
@@ -23,6 +23,7 @@
         </div>
     </div>
 
+
     <div class="panel panel-default" *ngIf="form.controls['roleType'].value !== '-'">
         <div class="panel-heading">
             <h4>Online software provider agencies services</h4>
@@ -33,7 +34,7 @@
                     <h4>Access to government agencies services</h4>
                     <div class="checkbox" *ngFor="let attributeUsage of agencyServiceRoleAttributeNameUsages">
                         <label>
-                            <input type="checkbox" (change)="onAgencyServiceChange(attributeUsage.attributeNameDef.value.code)"> {{attributeUsage.attributeNameDef.value.shortDecodeText}}
+                            <input type="checkbox" [checked]="isAgencyServiceSelected(attributeUsage.attributeNameDef.value.code)" (change)="onAgencyServiceChange(attributeUsage.attributeNameDef.value.code)"> {{attributeUsage.attributeNameDef.value.shortDecodeText}}
                         </label>
                     </div>
                 </div>
