@@ -78,14 +78,6 @@ export class EditRoleComponent extends AbstractPageComponent {
         // restrict to notifications
         this.auskeyFilter.add('auskeyType', this.services.constants.AUSkey.DEVICE_TYPE);
 
-        // forms
-        this.form = this._fb.group({
-            roleType: '-',
-            preferredName: '',
-            agencyServices: [[]],
-            deviceAusKeys: [[]]
-        });
-
         // me (agency user)
         this.services.rest.findMyAgencyUser().subscribe((me) => {
             this.me = me;
@@ -128,8 +120,14 @@ export class EditRoleComponent extends AbstractPageComponent {
             this.roleTypeRefs = roleTypeRefs;
         });
 
-        // TODO load existing role if we are editing one
         // TODO populate current form values if we are editing an existing role
+        // forms
+        this.form = this._fb.group({
+            roleType: '-',
+            preferredName: '',
+            agencyServices: [[]],
+            deviceAusKeys: [[]]
+        });
 
     }
 
