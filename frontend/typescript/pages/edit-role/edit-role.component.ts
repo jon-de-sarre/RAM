@@ -22,7 +22,6 @@ import {
     IRole,
     IRoleType,
     IRoleAttributeNameUsage,
-    IRoleAttribute,
     IAUSkey
 } from '../../../../commons/RamAPI';
 
@@ -119,7 +118,7 @@ export class EditRoleComponent extends AbstractPageComponent {
                     this.role = role;
 
                     this.services.rest.findRelationshipTypeByHref(role.roleType.href).subscribe((roleType) => {
-                        (<FormControl>this.form.controls['roleType']).updateValue(roleType.code);
+                        (this.form.controls['roleType'] as FormControl).updateValue(roleType.code);
                         this.onRoleTypeChange(roleType.code);
                     });
 
