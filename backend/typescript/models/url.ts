@@ -4,6 +4,7 @@ import * as profile from './profile.model';
 import * as relationship from './relationship.model';
 import * as relationshipAttributeName from './relationshipAttributeName.model';
 import * as relationshipType from './relationshipType.model';
+import * as role from './role.model';
 
 export class Url {
 
@@ -48,6 +49,16 @@ export class Url {
 
     public static async forRelationshipType(model: relationshipType.IRelationshipType): Promise<string> {
         return '/api/v1/relationshipType/' + encodeURIComponent(model.code);
+    }
+
+    // role ...........................................................................................................
+
+    public static async forRoleStatus(model: role.RoleStatus): Promise<string> {
+        return '/api/v1/roleStatus/' + encodeURIComponent(model.code);
+    }
+
+    public static async forRole(model: role.IRole): Promise<string> {
+        return '/api/v1/role/' + encodeURIComponent(model._id.toString());
     }
 
 }

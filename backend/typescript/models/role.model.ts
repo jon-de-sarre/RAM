@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import {RAMEnum, IRAMObject, RAMSchema, Query} from './base';
+import {Url} from './url';
 import {IParty, PartyModel} from './party.model';
 import {IRoleType, RoleTypeModel} from './roleType.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
@@ -41,9 +42,9 @@ export class RoleStatus extends RAMEnum {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue: boolean): Promise<HrefValue<RoleStatusDTO>> {
+    public async toHrefValue(includeValue: boolean): Promise<HrefValue<RoleStatusDTO>> {
         return Promise.resolve(new HrefValue(
-            '/api/v1/roleStatus/' + this.code,
+            await Url.forRoleStatus(this),
             includeValue ? this.toDTO() : undefined
         ));
     }
@@ -176,9 +177,8 @@ RoleSchema.method('saveAttributes', async function() {
 
 // todo what is the href we use here?
 RoleSchema.method('toHrefValue', async function (includeValue: boolean) {
-    const roleId: string = this._id.toString();
     return new HrefValue(
-        '/api/v1/role/' + encodeURIComponent(roleId),
+        await Url.forRole(this),
         includeValue ? await this.toDTO() : undefined
     );
 });
