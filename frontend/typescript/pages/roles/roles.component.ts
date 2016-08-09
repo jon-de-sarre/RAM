@@ -62,7 +62,7 @@ export class RolesComponent extends AbstractPageComponent {
         // extract path and query parameters
         this.identityHref = params.path['identityHref'];
         this.page = params.query['page'] ? +params.query['page'] : 1;
-        console.log('href=', this.identityHref);
+
         // agency user
         this.services.rest.findMyAgencyUser().subscribe((me) => {
             this.agencyUser = me;
