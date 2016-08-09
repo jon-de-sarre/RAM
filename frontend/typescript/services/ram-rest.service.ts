@@ -252,21 +252,10 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
-    public listAusKeys(idValue: string): Observable<IHrefValue<IAUSkey>[]> {
-        // TODO enable real API call
+    public listAusKeys(idValue: string, filter: string, page: number): Observable<ISearchResult<IHrefValue<IAUSkey>>> {
         return this.http
-            .get(`/api/v1/ausKeys/identity/${idValue}`)
+            .get(`/api/v1/auskeys/identity/${idValue}?filter=${filter}&page=${page}`)
             .map(this.extractData);
-
-        // MOCK out network call until ready
-        // const auskey1: IAUSkey = {
-        //     id: '111'
-        // };
-        // const auskey2: IAUSkey = {
-        //     id: '222'
-        // };
-        //
-        // return Observable.from([auskey1, auskey2]);
     }
 
     public extractErrorMessages(response: Response): string[] {

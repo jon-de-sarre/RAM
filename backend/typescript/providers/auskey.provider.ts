@@ -14,7 +14,7 @@ class RepositoryValue {
 
 const repository: {[key: string]: RepositoryValue} = {
     '10000000001': new RepositoryValue(3, 3, 3),
-    '14126318518': new RepositoryValue(3, 3, 3)
+    '14126318518': new RepositoryValue(3, 3, 13)
 };
 
 export interface IAUSkeyProvider {
@@ -37,7 +37,8 @@ export class MockAUSkeyProvider implements IAUSkeyProvider {
         return undefined;
     }
 
-    public searchByABN(abn: string, type: AUSkeyType, page: number, reqPageSize: number): Promise<SearchResult<IAUSkey>> {
+    public searchByABN(abn: string, type: AUSkeyType, reqPage: number, reqPageSize: number): Promise<SearchResult<IAUSkey>> {
+        const page: number = reqPage ? reqPage : 1;
         const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
         let abnScrubbed = abn.replace(/ /g, '');
         let values: any = repository[abnScrubbed];
@@ -49,7 +50,11 @@ export class MockAUSkeyProvider implements IAUSkeyProvider {
             let id = abn + '-' + type.code + '-' + (i + 1);
             auskeys.push(new AUSkey(id, type));
         }
-        return Promise.resolve(new SearchResult(page, auskeys.length, pageSize, auskeys));
+
+        const first = (page - 1) * pageSize;
+        const last = Math.min(first + pageSize, auskeys.length);
+
+        return Promise.resolve(new SearchResult(page, auskeys.length, pageSize, auskeys.slice(first, last)));
     }
 
     public listByABN(abn: string, type: AUSkeyType): Promise<IAUSkey[]> {

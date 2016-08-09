@@ -7,6 +7,10 @@ export class RAMConstantsService {
     public DefaultPageSize = 5;
     public PartyId = '5719bc5d65cae16c197e1ecd';
 
+    public AUSkey = {
+        DEVICE_TYPE: 'DEVICE'
+    };
+
     public RelationshipTypeCategory = {
         AUTHORISATION: 'AUTHORISATION',
         NOTIFICATION: 'NOTIFICATION'

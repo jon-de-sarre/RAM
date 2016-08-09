@@ -9,6 +9,7 @@ import {RAMServices} from '../../services/ram-services';
 
 import {
     IHrefValue,
+    FilterParams,
     ISearchResult,
     IAgencyUser,
     IIdentity,
@@ -19,6 +20,7 @@ import {
     IRoleAttributeNameUsage,
     IAUSkey
 } from '../../../../commons/RamAPI';
+import {SearchResultPaginationDelegate, SearchResultPaginationComponent} from "../../components/search-result-pagination/search-result-pagination.component";
 
 @Component({
     selector: 'ram-edit-role',
@@ -27,7 +29,8 @@ import {
         REACTIVE_FORM_DIRECTIVES,
         FORM_DIRECTIVES,
         ROUTER_DIRECTIVES,
-        PageHeaderAuthComponent
+        PageHeaderAuthComponent,
+        SearchResultPaginationComponent
     ]
 })
 
@@ -36,6 +39,10 @@ export class EditRoleComponent extends AbstractPageComponent {
     public idValue: string;
     public key: string;
 
+    public auskeyFilter: FilterParams;
+    public auskeyPage: number;
+    public auskeyPaginationDelegate: SearchResultPaginationDelegate;
+
     public roles$: Observable<ISearchResult<IHrefValue<IRole>>>;
 
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
@@ -43,9 +50,11 @@ export class EditRoleComponent extends AbstractPageComponent {
     public identity: IIdentity;
     public roleTypeRefs: IHrefValue<IRoleType>[];
     public agencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[];
-    public deviceAusKeyRefs: IHrefValue<IAUSkey>[];
+    public deviceAusKeyRefs$: Observable<ISearchResult<IHrefValue<IAUSkey>>>;
 
     public form: FormGroup;
+
+    private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
     constructor(route: ActivatedRoute,
                 router: Router,
@@ -56,10 +65,17 @@ export class EditRoleComponent extends AbstractPageComponent {
     }
 
     public onInit(params: {path: Params, query: Params}) {
+        this._isLoading = true;
 
         // extract path and query parameters
         this.idValue = decodeURIComponent(params.path['idValue']);
         this.key = decodeURIComponent(params.path['key']);
+
+        this.auskeyFilter = FilterParams.decode(params.query['auskeyFilter']);
+        this.auskeyPage = params.query['auskeyPage'] ? +params.query['auskeyPage'] : 1;
+
+        // restrict to notifications
+        this.auskeyFilter.add('auskeyType', this.services.constants.AUSkey.DEVICE_TYPE);
 
         // forms
         this.form = this._fb.group({
@@ -89,15 +105,14 @@ export class EditRoleComponent extends AbstractPageComponent {
             this.roleTypeRefs = roleTypeRefs;
         });
 
-        // device AUSkeys
-        this.services.rest.listAusKeys(this.idValue).subscribe((deviceAusKeyRefs) => {
-            this.deviceAusKeyRefs = [];
-            for(let auskeyRef of deviceAusKeyRefs) {
-                if(auskeyRef.value.auskeyType === 'DEVICE') {
-                    this.deviceAusKeyRefs.push(auskeyRef);
-                }
+        // pagination delegate
+        this.auskeyPaginationDelegate = {
+            goToPage: (page: number) => {
+                this.deviceAusKeyRefs$ = this.services.rest.listAusKeys(this.idValue, this.auskeyFilter.encode(), page);
             }
-        });
+        } as SearchResultPaginationDelegate;
+
+        this.auskeyPaginationDelegate.goToPage(1);
 
         // TODO load existing role if we are editing one
         // TODO populate current form values if we are editing an existing role
