@@ -23,6 +23,19 @@
         </div>
     </div>
 
+    <div class="panel panel-default" *ngIf="role">
+            <div class="panel-heading">
+                <h4>Role Type</h4>
+            </div>
+            <div class="panel-body">
+                <div class="form-group">
+                    <div class="col-md-12">
+                        <h4>{{ role.roleType.value.shortDecodeText }}</h4>
+                        <br/>
+                    </div>
+                </div>
+            </div>
+        </div>
 
     <div class="panel panel-default" *ngIf="form.controls['roleType'].value !== '-'">
         <div class="panel-heading">
