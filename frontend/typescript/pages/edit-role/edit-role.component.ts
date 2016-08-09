@@ -163,10 +163,7 @@ export class EditRoleComponent extends AbstractPageComponent {
     }
 
     public back() {
-        if (this.identity) {
-            // todo replace with href
-            this.services.route.goToRolesPage(this.identity.idValue);
-        }
+        this.services.route.goToRolesPage(this.identityHref);
     }
 
     public save() {
@@ -204,7 +201,7 @@ export class EditRoleComponent extends AbstractPageComponent {
             // todo replace with href
             this.services.rest.createRole(role).subscribe((role) => {
                 // todo replace with href
-                this.services.route.goToRolesPage(this.identity.idValue);
+                this.services.route.goToRolesPage(this.identityHref);
             }, (err) => {
                 this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
             });
