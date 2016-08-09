@@ -440,12 +440,12 @@ export class RelationshipController {
             .catch(sendError(res));
     };
 
-    private findStatusByName = (req:Request, res:Response) => {
+    private findStatusByCode = (req:Request, res:Response) => {
         const schema = {
-            'name': {
+            'code': {
                 in: 'params',
                 notEmpty: true,
-                errorMessage: 'Name is not valid'
+                errorMessage: 'Code is not valid'
             }
         };
         validateReqSchema(req, schema)
@@ -514,7 +514,7 @@ export class RelationshipController {
             this.create);
 
         router.get('/v1/relationshipStatus/:code',
-            this.findStatusByName);
+            this.findStatusByCode);
 
         router.get('/v1/relationshipStatuses',
             this.listStatuses);

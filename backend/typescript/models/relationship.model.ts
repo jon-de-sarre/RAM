@@ -53,9 +53,9 @@ export class RelationshipStatus extends RAMEnum {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue: boolean): Promise<HrefValue<RelationshipStatusDTO>> {
+    public async toHrefValue(includeValue: boolean): Promise<HrefValue<RelationshipStatusDTO>> {
         return Promise.resolve(new HrefValue(
-            Url.forRelationshipStatus(this),
+            await Url.forRelationshipStatus(this),
             includeValue ? this.toDTO() : undefined
         ));
     }
@@ -308,22 +308,20 @@ RelationshipSchema.method('statusEnum', function () {
 // todo what is the href we use here?
 RelationshipSchema.method('toHrefValue', async function (includeValue: boolean) {
     return new HrefValue(
-        Url.forRelationship(this),
+        await Url.forRelationship(this),
         includeValue ? await this.toDTO(null) : undefined
     );
 });
 
 RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
     const links: Link[] = [];
-    // links.push(new Link('self', `/api/v1/relationship/${this.id}`));
-
+    links.push(new Link('self', await Url.forRelationship(this)));
     // TODO what other logic around when to add links?
     if (invitationCode && this.statusEnum() === RelationshipStatus.Pending) {
-        links.push(new Link('accept', `/api/v1/relationship/invitationCode/${invitationCode}/accept`));
-        links.push(new Link('reject', `/api/v1/relationship/invitationCode/${invitationCode}/reject`));
-        links.push(new Link('notifyDelegate', `/api/v1/relationship/invitationCode/${invitationCode}/notifyDelegate`));
+        links.push(new Link('accept', await Url.forRelationshipAccept(invitationCode)));
+        links.push(new Link('reject', await Url.forRelationshipReject(invitationCode)));
+        links.push(new Link('notifyDelegate', await Url.forRelationshipNotifyDelegate(invitationCode)));
     }
-
     return new DTO(
         links,
         this._id.toString() /*todo what code should we use?*/,
