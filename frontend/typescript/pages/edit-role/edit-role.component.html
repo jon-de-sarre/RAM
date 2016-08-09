@@ -66,7 +66,7 @@
                         <tbody>
                             <tr>
                                 <td>
-                                  <div class="checkbox" *ngFor="let auskeyRef of deviceAusKeyRefs">
+                                  <div class="checkbox" *ngFor="let auskeyRef of (deviceAusKeyRefs$|async)?.list">
                                     <label>
                                       <input type="checkbox" [checked]="isAusKeySelected(auskeyRef.value.id)" (change)="onAusKeyChange(auskeyRef.value.id)"> {{auskeyRef.value.id}}
                                     </label>
@@ -76,6 +76,10 @@
                             </tr>
                         </tbody>
                     </table>
+                    <search-result-pagination
+                            [searchResult]="deviceAusKeyRefs$|async"
+                            [delegate]="auskeyPaginationDelegate">
+                    </search-result-pagination>
                 </div>
             </div>
         </div>
