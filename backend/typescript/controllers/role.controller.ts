@@ -13,6 +13,22 @@ export class RoleController {
     constructor(private roleModel:IRoleModel, private partyModel:IPartyModel) {
     }
 
+    private findByIdentifier = async(req:Request, res:Response) => {
+        const schema = {
+            'identifier': {
+                in: 'params',
+                notEmpty: true,
+                errorMessage: 'Identifier is not valid'
+            }
+        };
+        validateReqSchema(req, schema)
+            .then((req:Request) => this.roleModel.findByIdentifier(req.params.identifier))
+            .then((model) => model ? model.toDTO(null) : null)
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
+    };
+
     private searchByIdentity = async(req:Request, res:Response) => {
         const schema = {
             'identity_id': {
@@ -98,6 +114,10 @@ export class RoleController {
     };
 
     public assignRoutes = (router:Router) => {
+
+        router.get('/v1/role/:identifier',
+            security.isAuthenticated,
+            this.findByIdentifier);
 
         router.get('/v1/roles/identity/:identity_id',
             security.isAuthenticated,

@@ -133,6 +133,7 @@ export interface IRoleModel extends mongoose.Model<IRole> {
          endTimestamp: Date,
          roleStatus:RoleStatus,
          attributes: IRoleAttribute[]) => Promise<IRole>;
+    findByIdentifier:(id: string) => Promise<IRole>;
     findByRoleTypeAndParty:(roleType: IRoleType, party: IParty) => Promise<IRole>;
     search:(page: number, pageSize: number)
         => Promise<SearchResult<IRole>>;
@@ -218,6 +219,20 @@ RoleSchema.static('add', async (roleType: IRoleType,
         status: roleStatus.code,
         attributes: attributes
     });
+});
+
+RoleSchema.static('findByIdentifier', (id: string) => {
+    // TODO migrate from _id to another id
+    return this.RoleModel
+        .findOne({
+            _id: id
+        })
+        .deepPopulate([
+            'roleType',
+            'party',
+            'attributes.attributeName'
+        ])
+        .exec();
 });
 
 RoleSchema.static('findByRoleTypeAndParty', (roleType: IRoleType, party: IParty) => {
