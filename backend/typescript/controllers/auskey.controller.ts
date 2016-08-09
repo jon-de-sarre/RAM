@@ -1,6 +1,6 @@
 import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
-import {sendResource, sendList, sendError, sendNotFoundError, validateReqSchema} from './helpers';
+import {sendResource, sendError, sendNotFoundError, validateReqSchema, sendSearchResult} from './helpers';
 import {IIdentityModel} from '../models/identity.model';
 import {IAUSkeyProvider} from '../providers/auskey.provider';
 
@@ -25,21 +25,35 @@ export class AuskeyController {
             .catch(sendError(res));
     };
 
-    private listAusKeys = (req: Request,  res: Response) => {
+    private searchAusKeys = (req: Request,  res: Response) => {
         const schema = {
             'idValue': {
                 in: 'params',
                 notEmpty: true,
                 errorMessage: 'Identity Id is not valid'
+            },
+            'page': {
+                in: 'query',
+                notEmpty: true,
+                isNumeric: {
+                    errorMessage: 'Page is not valid'
+                }
+            },
+            'pageSize': {
+                in: 'query',
+                optional: true,
+                isNumeric: {
+                    errorMessage: 'Page Size is not valid'
+                }
             }
         };
         validateReqSchema(req, schema)
             .then(async(req: Request) => {
                 const identity = await this.identityModel.findByIdValue(req.params.idValue);
-                return await this.auskeyProvider.listDevicesByABN(identity.rawIdValue);
+                return await this.auskeyProvider.searchDevicesByABN(identity.rawIdValue, req.params.page, req.params.pageSize);
             })
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
-            .then(sendList(res))
+            .then(sendSearchResult(res))
             .then(sendNotFoundError(res))
             .catch(sendError(res));
     };
@@ -52,7 +66,7 @@ export class AuskeyController {
 
         router.get('/v1/auskeys/identity/:idValue',
             security.isAuthenticatedAsAgencyUser,
-            this.listAusKeys);
+            this.searchAusKeys);
 
         return router;
 
