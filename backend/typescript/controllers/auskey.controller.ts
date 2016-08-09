@@ -4,7 +4,7 @@ import {sendResource, sendList, sendError, sendNotFoundError, validateReqSchema}
 import {IIdentityModel} from '../models/identity.model';
 import {IAUSkeyProvider} from '../providers/auskey.provider';
 
-export class AusKeyController {
+export class AuskeyController {
 
     constructor(private identityModel: IIdentityModel, private ausKeyProvider: IAUSkeyProvider) {
     }
