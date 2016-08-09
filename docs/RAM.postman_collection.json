@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "RAM",
-		"_postman_id": "197e983b-81e4-cb2b-ddd6-0bce980cb3b5",
+		"_postman_id": "55697973-47c9-e813-9a64-2fa1312a2bb0",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -33,6 +33,54 @@
 									"enabled": true
 								}
 							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Aus Key",
+			"description": "",
+			"item": [
+				{
+					"name": "List AUSkeys (Jen's Catering)",
+					"request": {
+						"url": "{{host}}/api/v1/ausKeys/identity/PUBLIC_IDENTIFIER:ABN:00000000001",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "List AUSkeys (EdTech)",
+					"request": {
+						"url": "{{host}}/api/v1/ausKeys/identity/PUBLIC_IDENTIFIER:ABN:10000000001",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Find AUSkey (EdTech)",
+					"request": {
+						"url": "{{host}}/api/v1/ausKey/10000000001-device-1",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
 						},
 						"description": ""
 					},

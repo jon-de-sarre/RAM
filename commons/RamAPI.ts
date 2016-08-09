@@ -145,6 +145,7 @@ export class AgencyUserProgramRole implements IAgencyUserProgramRole {
 
 export interface IAUSkey {
     id: string;
+    auskeyType: string;
 }
 
 export class AUSkey implements IAUSkey {
