@@ -31,7 +31,7 @@ import {RelationshipAttributeNameController} from './controllers/relationshipAtt
 import {RoleController} from './controllers/role.controller';
 import {RoleTypeController} from './controllers/roleType.controller';
 import {BusinessController} from './controllers/business.controller';
-import {AusKeyController} from './controllers/ausKey.controller';
+import {AusKeyController} from './controllers/auskey.controller.SAFERENAME';
 
 import {IdentityModel} from './models/identity.model';
 import {PartyModel} from './models/party.model';
