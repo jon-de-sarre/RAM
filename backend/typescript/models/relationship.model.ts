@@ -8,7 +8,6 @@ import {IRelationshipType} from './relationshipType.model';
 import {IRelationshipAttribute, RelationshipAttributeModel} from './relationshipAttribute.model';
 import {IdentityModel, IIdentity, IdentityType, IdentityInvitationCodeStatus} from './identity.model';
 import {
-    Link,
     HrefValue,
     Relationship as DTO,
     RelationshipStatus as RelationshipStatusDTO,
@@ -314,16 +313,13 @@ RelationshipSchema.method('toHrefValue', async function (includeValue: boolean) 
 });
 
 RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
-    const links: Link[] = [];
-    links.push(new Link('self', await Url.forRelationship(this)));
-    // TODO what other logic around when to add links?
-    if (invitationCode && this.statusEnum() === RelationshipStatus.Pending) {
-        links.push(new Link('accept', await Url.forRelationshipAccept(invitationCode)));
-        links.push(new Link('reject', await Url.forRelationshipReject(invitationCode)));
-        links.push(new Link('notifyDelegate', await Url.forRelationshipNotifyDelegate(invitationCode)));
-    }
+    const pendingWithInvitationCode = invitationCode && this.statusEnum() === RelationshipStatus.Pending;
     return new DTO(
-        links,
+        Url.links()
+            .push('accept', await Url.forRelationshipAccept(invitationCode), pendingWithInvitationCode)
+            .push('reject', await Url.forRelationshipReject(invitationCode), pendingWithInvitationCode)
+            .push('notifyDelegate', await Url.forRelationshipNotifyDelegate(invitationCode), pendingWithInvitationCode)
+            .toArray(),
         this._id.toString() /*todo what code should we use?*/,
         await this.relationshipType.toHrefValue(false),
         await this.subject.toHrefValue(true),

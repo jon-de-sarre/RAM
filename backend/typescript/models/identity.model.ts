@@ -5,7 +5,6 @@ import * as Hashids from 'hashids';
 import {RAMEnum, IRAMObject, RAMSchema} from './base';
 import {Url} from './url';
 import {
-    Link,
     HrefValue,
     Identity as DTO,
     SearchResult,
@@ -332,10 +331,10 @@ IdentitySchema.method('toHrefValue', async function (includeValue:boolean) {
 
 IdentitySchema.method('toDTO', async function () {
     return new DTO(
-        [
-            new Link('relationship-list', await Url.forIdentityRelationshipList(this)),
-            new Link('role-list', await Url.forIdentityRoleList(this))
-        ],
+        Url.links()
+            .push('relationship-list', await Url.forIdentityRelationshipList(this))
+            .push('role-list', await Url.forIdentityRoleList(this))
+            .toArray(),
         this.idValue,
         this.rawIdValue,
         this.identityType,

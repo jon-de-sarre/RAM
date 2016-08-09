@@ -7,8 +7,39 @@ import * as relationshipType from './relationshipType.model';
 import * as role from './role.model';
 import * as roleAttributeName from './roleAttributeName.model';
 import * as roleType from './roleType.model';
+import {Link} from '../../../commons/RamAPI';
+
+export class UrlLinks {
+
+    private array: Link[] = [];
+
+    public push(type: string, href: string, condition?: boolean = true): UrlLinks {
+        if (condition) {
+            this.array.push(new Link(type, href));
+        }
+        return this;
+    }
+
+    public pushLink(link: Link, condition?: boolean = true): UrlLinks {
+        if (condition) {
+            this.array.push(link);
+        }
+        return this;
+    }
+
+    public toArray() {
+        return this.array;
+    }
+
+}
 
 export class Url {
+
+    // misc
+
+    public static links(): UrlLinks {
+        return new UrlLinks();
+    }
 
     // identity .......................................................................................................
 
@@ -99,6 +130,12 @@ export class Url {
 
     public static async forRoleType(model: roleType.IRoleType): Promise<string> {
         return '/api/v1/roleType/' + encodeURIComponent(model.code);
+    }
+
+    // misc ...........................................................................................................
+
+    public static collection() {
+
     }
 
 }
