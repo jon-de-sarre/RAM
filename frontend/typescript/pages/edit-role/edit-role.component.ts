@@ -115,8 +115,6 @@ export class EditRoleComponent extends AbstractPageComponent {
         });
 
         // role in focus
-        console.log('rolehref=', params.path['roleHref'], typeof params.path['roleHref']);
-        console.log('rolehref=', this.roleHref, typeof this.roleHref);
         if (this.roleHref) {
             console.log('invoking!');
             this.services.rest.findRoleByHref(this.roleHref).subscribe((role) => {
