@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import {RAMEnum, IRAMObject, RAMSchema, Assert} from './base';
+import {Url} from './url';
 import {IIdentity, IdentityModel} from './identity.model';
 import {RelationshipModel, IRelationship, RelationshipInitiatedBy} from './relationship.model';
 import {RelationshipTypeModel} from './relationshipType.model';
@@ -43,9 +44,9 @@ export class PartyType extends RAMEnum {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue: boolean): Promise<HrefValue<PartyTypeDTO>> {
+    public async toHrefValue(includeValue: boolean): Promise<HrefValue<PartyTypeDTO>> {
         return Promise.resolve(new HrefValue(
-            '/api/v1/partyType/' + this.code,
+            await Url.forPartyType(this),
             includeValue ? this.toDTO() : undefined
         ));
     }
@@ -91,15 +92,10 @@ PartySchema.method('partyTypeEnum', function () {
 });
 
 PartySchema.method('toHrefValue', async function (includeValue: boolean) {
-    const defaultIdentity = await IdentityModel.findDefaultByPartyId(this.id);
-    if (defaultIdentity) {
         return new HrefValue(
-            '/api/v1/party/identity/' + encodeURIComponent(defaultIdentity.idValue),
+            await Url.forParty(this),
             includeValue ? await this.toDTO() : undefined
         );
-    } else {
-        throw new Error('Default Identity not found');
-    }
 });
 
 PartySchema.method('toDTO', async function () {

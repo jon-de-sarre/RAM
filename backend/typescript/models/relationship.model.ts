@@ -53,9 +53,9 @@ export class RelationshipStatus extends RAMEnum {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue: boolean): Promise<HrefValue<RelationshipStatusDTO>> {
+    public async toHrefValue(includeValue: boolean): Promise<HrefValue<RelationshipStatusDTO>> {
         return Promise.resolve(new HrefValue(
-            Url.forRelationshipStatus(this),
+            await Url.forRelationshipStatus(this),
             includeValue ? this.toDTO() : undefined
         ));
     }
@@ -308,7 +308,7 @@ RelationshipSchema.method('statusEnum', function () {
 // todo what is the href we use here?
 RelationshipSchema.method('toHrefValue', async function (includeValue: boolean) {
     return new HrefValue(
-        Url.forRelationship(this),
+        await Url.forRelationship(this),
         includeValue ? await this.toDTO(null) : undefined
     );
 });
