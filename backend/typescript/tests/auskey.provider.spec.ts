@@ -1,3 +1,4 @@
+import {AUSkeyType} from '../models/auskey.model';
 import {AUSkeyProvider} from '../providers/auskey.provider';
 
 /* tslint:disable:max-func-body-length */
@@ -19,9 +20,9 @@ describe('RAM AUSkey Provider', () => {
 
     it('lists devices by ABN', async (done) => {
         try {
-            const auskeys = await AUSkeyProvider.listDevicesByABN('10000000001');
+            const auskeys = await AUSkeyProvider.searchByABN('10000000001', AUSkeyType.Device, 1, 50);
             expect(auskeys).not.toBeNull();
-            expect(auskeys.length).toBe(3);
+            expect(auskeys.list.length).toBe(3);
             done();
         } catch (e) {
             fail('Because ' + e);

@@ -2,6 +2,7 @@ import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
 import {sendResource, sendError, sendNotFoundError, validateReqSchema, sendSearchResult} from './helpers';
 import {IIdentityModel} from '../models/identity.model';
+import {AUSkeyType} from '../models/auskey.model';
 import {IAUSkeyProvider} from '../providers/auskey.provider';
 
 export class AuskeyController {
@@ -50,7 +51,8 @@ export class AuskeyController {
         validateReqSchema(req, schema)
             .then(async(req: Request) => {
                 const identity = await this.identityModel.findByIdValue(req.params.idValue);
-                return await this.auskeyProvider.searchDevicesByABN(identity.rawIdValue, req.params.page, req.params.pageSize);
+                // todo hard coded DEVICE type (For now)
+                return await this.auskeyProvider.searchByABN(identity.rawIdValue, AUSkeyType.Device, req.params.page, req.params.pageSize);
             })
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
             .then(sendSearchResult(res))
