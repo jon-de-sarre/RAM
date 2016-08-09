@@ -91,7 +91,12 @@ export class EditRoleComponent extends AbstractPageComponent {
 
         // device AUSkeys
         this.services.rest.listAusKeys(this.idValue).subscribe((deviceAusKeyRefs) => {
-            this.deviceAusKeyRefs = deviceAusKeyRefs;
+            this.deviceAusKeyRefs = [];
+            for(let auskeyRef of deviceAusKeyRefs) {
+                if(auskeyRef.value.auskeyType === 'DEVICE') {
+                    this.deviceAusKeyRefs.push(auskeyRef);
+                }
+            }
         });
 
         // TODO load existing role if we are editing one
