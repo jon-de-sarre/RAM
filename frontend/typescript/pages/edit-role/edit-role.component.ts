@@ -38,7 +38,6 @@ import {
 export class EditRoleComponent extends AbstractPageComponent {
 
     public identityHref: string;
-    public idValue: string;
     public key: string;
 
     public auskeyFilter: FilterParams;
@@ -72,7 +71,6 @@ export class EditRoleComponent extends AbstractPageComponent {
 
         // extract path and query parameters
         this.identityHref = decodeURIComponent(params.path['href']);
-        this.idValue = decodeURIComponent(params.path['idValue']);
         this.key = decodeURIComponent(params.path['key']);
 
         this.auskeyFilter = FilterParams.decode(params.query['auskeyFilter']);
