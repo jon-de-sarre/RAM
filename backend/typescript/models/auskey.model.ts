@@ -39,7 +39,7 @@ export class AUSkey implements IAUSkey {
 
     public async toHrefValue(includeValue: boolean): Promise<HrefValue<AUSkeyDTO>> {
         return new HrefValue(
-            '/api/v1/ausKey/' + encodeURIComponent(this.id),
+            '/api/v1/auskey/' + encodeURIComponent(this.id),
             includeValue ? await this.toDTO() : undefined
         );
     }

@@ -46,11 +46,11 @@ export class AusKeyController {
 
     public assignRoutes = (router: Router) => {
 
-        router.get('/v1/ausKey/:id',
+        router.get('/v1/auskey/:id',
             security.isAuthenticatedAsAgencyUser,
             this.findAusKey);
 
-        router.get('/v1/ausKeys/identity/:idValue',
+        router.get('/v1/auskeys/identity/:idValue',
             security.isAuthenticatedAsAgencyUser,
             this.listAusKeys);
 
