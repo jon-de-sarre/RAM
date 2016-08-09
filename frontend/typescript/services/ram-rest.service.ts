@@ -33,13 +33,15 @@ export class RAMRestService {
                 private modelService: RAMModelService) {
     }
 
-    private extractData(res: Response) {
-        if (res.status < 200 || res.status >= 300) {
-            throw new Error('Status code is:' + res.status);
-        }
-        const body = res.json();
-        return body || {};
+    // auskey ...........................................................................................................
+
+    public listAusKeys(idValue: string, filter: string, page: number): Observable<ISearchResult<IHrefValue<IAUSkey>>> {
+        return this.http
+            .get(`/api/v1/auskeys/identity/${idValue}?filter=${filter}&page=${page}`)
+            .map(this.extractData);
     }
+
+    // misc ...........................................................................................................
 
     /*
      * Old interface used when adding a business relationship. Now
@@ -82,11 +84,15 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
+    // principal ......................................................................................................
+
     public findMyPrincipal(): Observable<IPrincipal> {
         return this.http
             .get(`/api/v1/me`)
             .map(this.extractData);
     }
+
+    // agency user ....................................................................................................
 
     public findMyAgencyUser(): Observable<IAgencyUser> {
         return this.http
@@ -94,12 +100,16 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
+    // party ..........................................................................................................
+
     public findPartyByABN(abn: string): Observable<IParty> {
         const idValue = `PUBLIC_IDENTIFIER:ABN:${abn}`;
         return this.http
             .get(`/api/v1/party/identity/${idValue}`)
             .map(this.extractData);
     }
+
+    // identity .......................................................................................................
 
     public findMyIdentity(): Observable<IIdentity> {
         return this.http
@@ -118,6 +128,24 @@ export class RAMRestService {
             .get(href)
             .map(this.extractData);
     }
+
+    // party type .....................................................................................................
+
+    public listPartyTypes(): Observable<IHrefValue<IPartyType>[]> {
+        return this.http
+            .get('/api/v1/partyTypes')
+            .map(this.extractData);
+    }
+
+    // profile provider ...............................................................................................
+
+    public listProfileProviders(): Observable<IHrefValue<IProfileProvider>[]> {
+        return this.http
+            .get('/api/v1/profileProviders')
+            .map(this.extractData);
+    }
+
+    // relationship ...................................................................................................
 
     public listRelationshipStatuses(): Observable<IHrefValue<IRelationshipStatus>[]> {
         return this.http
@@ -144,36 +172,6 @@ export class RAMRestService {
                                                              page: number): Observable<ISearchResult<IHrefValue<IParty>>> {
         return this.http
             .get(`/api/v1/relationships/identity/${idValue}/subjects?page=${page}`)
-            .map(this.extractData);
-    }
-
-    public listPartyTypes(): Observable<IHrefValue<IPartyType>[]> {
-        return this.http
-            .get('/api/v1/partyTypes')
-            .map(this.extractData);
-    }
-
-    public listProfileProviders(): Observable<IHrefValue<IProfileProvider>[]> {
-        return this.http
-            .get('/api/v1/profileProviders')
-            .map(this.extractData);
-    }
-
-    public findRelationshipTypeByCode(code: string): Observable<IRelationshipType> {
-        return this.http
-            .get(`/api/v1/relationshipType/${code}`)
-            .map(this.extractData);
-    }
-
-    public listRelationshipTypes(): Observable<IHrefValue<IRelationshipType>[]> {
-        return this.http
-            .get('/api/v1/relationshipTypes')
-            .map(this.extractData);
-    }
-
-    public findRelationshipTypeByHref(href: string): Observable<IRelationshipType> {
-        return this.http
-            .get(href)
             .map(this.extractData);
     }
 
@@ -225,6 +223,28 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
+    // relationship type ..............................................................................................
+
+    public findRelationshipTypeByCode(code: string): Observable<IRelationshipType> {
+        return this.http
+            .get(`/api/v1/relationshipType/${code}`)
+            .map(this.extractData);
+    }
+
+    public listRelationshipTypes(): Observable<IHrefValue<IRelationshipType>[]> {
+        return this.http
+            .get('/api/v1/relationshipTypes')
+            .map(this.extractData);
+    }
+
+    public findRelationshipTypeByHref(href: string): Observable<IRelationshipType> {
+        return this.http
+            .get(href)
+            .map(this.extractData);
+    }
+
+    // role ...........................................................................................................
+
     public searchRolesByIdentity(idValue: string,
                                  page: number): Observable<ISearchResult<IHrefValue<IRole>>> {
         return this.http
@@ -265,11 +285,7 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
-    public listAusKeys(idValue: string, filter: string, page: number): Observable<ISearchResult<IHrefValue<IAUSkey>>> {
-        return this.http
-            .get(`/api/v1/auskeys/identity/${idValue}?filter=${filter}&page=${page}`)
-            .map(this.extractData);
-    }
+    // misc ...........................................................................................................
 
     public extractErrorMessages(response: Response): string[] {
         const json = response.json();
@@ -283,6 +299,14 @@ export class RAMRestService {
         let headers = new Headers();
         headers.append('Content-Type', 'application/json');
         return headers;
+    }
+
+    private extractData(res: Response) {
+        if (res.status < 200 || res.status >= 300) {
+            throw new Error('Status code is:' + res.status);
+        }
+        const body = res.json();
+        return body || {};
     }
 
 }
