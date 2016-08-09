@@ -78,7 +78,7 @@ export class Url {
     public static async forParty(model: party.IParty): Promise<string> {
         const defaultIdentity = await identity.IdentityModel.findDefaultByPartyId(model.id);
         if (defaultIdentity) {
-            return '/api/v1/party/identity/' + encodeURIComponent(encodeURIComponent(defaultIdentity.idValue));
+            return '/api/v1/party/identity/' + encodeURIComponent(defaultIdentity.idValue);
         } else {
             throw new Error('Default Identity not found');
         }
