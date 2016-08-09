@@ -1,6 +1,7 @@
-import * as party from './party.model';
-import * as relationship from './relationship.model';
 import * as identity from './identity.model';
+import * as party from './party.model';
+import * as profile from './profile.model';
+import * as relationship from './relationship.model';
 
 export class Url {
 
@@ -17,6 +18,12 @@ export class Url {
         } else {
             throw new Error('Default Identity not found');
         }
+    }
+
+    // profile ........................................................................................................
+
+    public static async forProfileProvider(model: profile.ProfileProvider): Promise<string> {
+        return '/api/v1/profileProvider/' + encodeURIComponent(model.code);
     }
 
     // relationship ...................................................................................................
