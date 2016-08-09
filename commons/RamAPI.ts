@@ -173,11 +173,14 @@ export class CodeDecode implements ICodeDecode {
 
 export interface ILink {
     type: string;
+    method: string;
     href: string;
 }
 
 export class Link implements ILink {
-    constructor(public type: string, public href:string) {
+    constructor(public type: string,
+                public method: string,
+                public href:string) {
     }
 }
 

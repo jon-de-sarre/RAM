@@ -13,14 +13,14 @@ export class UrlLinks {
 
     private array: Link[] = [];
 
-    public push(type: string, href: string, condition?: boolean = true): UrlLinks {
+    public push(type: string, method: string, href: string, condition: boolean = true): UrlLinks {
         if (condition) {
-            this.array.push(new Link(type, href));
+            this.array.push(new Link(type, method, href));
         }
         return this;
     }
 
-    public pushLink(link: Link, condition?: boolean = true): UrlLinks {
+    public pushLink(link: Link, condition: boolean = true): UrlLinks {
         if (condition) {
             this.array.push(link);
         }
@@ -36,6 +36,12 @@ export class UrlLinks {
 export class Url {
 
     // misc
+
+    public static DELETE = 'DELETE';
+    public static GET = 'GET';
+    public static PATCH = 'PATCH';
+    public static POST = 'POST';
+    public static PUT = 'PUT';
 
     public static links(): UrlLinks {
         return new UrlLinks();

@@ -6,7 +6,6 @@ import {IRoleType, RoleTypeModel} from './roleType.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
 import {RoleAttributeNameModel} from './roleAttributeName.model';
 import {
-    Link,
     HrefValue,
     Role as DTO,
     RoleStatus as RoleStatusDTO,
@@ -185,9 +184,9 @@ RoleSchema.method('toHrefValue', async function (includeValue: boolean) {
 
 RoleSchema.method('toDTO', async function () {
     return new DTO(
-        [
-            new Link('self', await Url.forRole(this))
-        ],
+        Url.links()
+            .push('self', Url.GET, await Url.forRole(this))
+            .toArray(),
         this._id.toString() /*todo what code should we use?*/,
         await this.roleType.toHrefValue(false),
         await this.party.toHrefValue(true),
