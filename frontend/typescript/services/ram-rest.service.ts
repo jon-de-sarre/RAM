@@ -232,6 +232,13 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
+    public searchRolesByHref(href: string,
+                             page: number): Observable<ISearchResult<IHrefValue<IRole>>> {
+        return this.http
+            .get(`${href}?page=${page}`)
+            .map(this.extractData);
+    }
+
     public listRoleTypes(): Observable<IHrefValue<IRoleType>[]> {
         return this.http
             .get('/api/v1/roleTypes')

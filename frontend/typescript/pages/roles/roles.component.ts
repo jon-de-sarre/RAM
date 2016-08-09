@@ -33,7 +33,7 @@ import {
 
 export class RolesComponent extends AbstractPageComponent {
 
-    public idValue: string;
+    public identityHref: string;
     public page: number;
 
     public roles$: Observable<ISearchResult<IHrefValue<IRole>>>;
@@ -60,17 +60,29 @@ export class RolesComponent extends AbstractPageComponent {
     public onInit(params: {path:Params, query:Params}) {
 
         // extract path and query parameters
-        this.idValue = decodeURIComponent(params.path['idValue']);
+        this.identityHref = decodeURIComponent(params.path['href']);
         this.page = params.query['page'] ? +params.query['page'] : 1;
-
+        console.log('href=', this.identityHref);
         // agency user
         this.services.rest.findMyAgencyUser().subscribe((me) => {
             this.agencyUser = me;
         });
 
         // identity in focus
-        this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
+        this.services.rest.findIdentityByHref(this.identityHref).subscribe((identity) => {
+
             this.identity = identity;
+
+            // roles
+            const rolesHref = this.services.model.getLinkByType('role-list', this.identity._links).href;
+            this.roles$ = this.services.rest.searchRolesByHref(rolesHref, this.page);
+            this.roles$.subscribe((searchResult) => {
+                this._isLoading = false;
+            }, (err) => {
+                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this._isLoading = false;
+            });
+
         });
 
         // role types
@@ -83,19 +95,10 @@ export class RolesComponent extends AbstractPageComponent {
             this.roleStatusRefs = roleStatusRefs;
         });
 
-        // roles
-        this.roles$ = this.services.rest.searchRolesByIdentity(this.idValue, this.page);
-        this.roles$.subscribe((searchResult) => {
-            this._isLoading = false;
-        }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
-            this._isLoading = false;
-        });
-
         // pagination delegate
         this.paginationDelegate = {
             goToPage: (page: number) => {
-                this.services.route.goToRolesPage(this.idValue, page);
+                this.services.route.goToRolesPage(this.identityHref, page);
             }
         } as SearchResultPaginationDelegate;
 

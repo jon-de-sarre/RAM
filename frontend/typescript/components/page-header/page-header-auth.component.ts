@@ -11,6 +11,7 @@ import {IIdentity} from '../../../../commons/RamAPI';
     directives: []
 })
 
+// todo refactor this to use hrefs
 export class PageHeaderAuthComponent {
 
     @Input() public identity: IIdentity;
@@ -28,6 +29,13 @@ export class PageHeaderAuthComponent {
 
     public title(): string {
         return this.identity ? this.services.model.displayNameForIdentity(this.identity) : 'Loading ...';
+    }
+
+    public getIdentityHref(): string {
+        if (this.identity) {
+            return this.services.model.getLinkByType('self', this.identity._links).href;
+        }
+        return undefined;
     }
 
     public goToRelationshipsPage() {
@@ -62,7 +70,7 @@ export class PageHeaderAuthComponent {
     public goToRolesPage() {
         if (this.identity) {
             if (this.isRolesPageEnabled()) {
-                this.services.route.goToRolesPage(this.identity.idValue);
+                this.services.route.goToRolesPage(this.getIdentityHref());
             }
         }
     };
