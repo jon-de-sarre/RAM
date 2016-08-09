@@ -97,10 +97,10 @@ export class RAMRouteService {
         );
     }
 
-    public goToEditRolePage(idValue: string, key: string) {
+    public goToEditRolePage(identityHref: string, roleHref: string) {
         this.router.navigate(['/roles/edit',
-                encodeURIComponent(idValue),
-                encodeURIComponent(key)
+                encodeURIComponent(identityHref),
+                encodeURIComponent(roleHref)
             ], {queryParams: {}}
         );
     }

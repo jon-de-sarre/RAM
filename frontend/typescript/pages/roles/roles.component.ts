@@ -118,9 +118,11 @@ export class RolesComponent extends AbstractPageComponent {
         }
     }
 
-    // todo not yet implemented
-    public goToRolePage(rolRef: IHrefValue<IRole>) {
-        alert('TODO: Not yet implemented');
+    public goToRolePage(roleRef: IHrefValue<IRole>) {
+        this.services.route.goToEditRolePage(
+            this.identityHref,
+            this.services.model.getLinkByType('self', roleRef.value._links).href
+        );
     }
 
     public isAddRoleEnabled() {
