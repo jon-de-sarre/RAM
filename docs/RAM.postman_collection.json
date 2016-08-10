@@ -47,7 +47,7 @@
 				{
 					"name": "List AUSkeys (Jen's Catering)",
 					"request": {
-						"url": "{{host}}/api/v1/auskeys/identity/PUBLIC_IDENTIFIER:ABN:00000000001?page=1",
+						"url": "{{host}}/api/v1/auskeys/identity/PUBLIC_IDENTIFIER:ABN:00000000001?page=1&filter=auskeyType%3DDEVICE",
 						"method": "GET",
 						"header": [],
 						"body": {
@@ -61,7 +61,7 @@
 				{
 					"name": "List AUSkeys (EdTech)",
 					"request": {
-						"url": "{{host}}/api/v1/auskeys/identity/PUBLIC_IDENTIFIER:ABN:10000000001?page=1",
+						"url": "{{host}}/api/v1/auskeys/identity/PUBLIC_IDENTIFIER:ABN:10000000001?page=1&filter=auskeyType%3DDEVICE",
 						"method": "GET",
 						"header": [],
 						"body": {
