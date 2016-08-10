@@ -30,7 +30,7 @@ import {
 
 export class NotificationsComponent extends AbstractPageComponent {
 
-    public idValue: string;
+    public identityHref: string;
     public filter: FilterParams;
     public page: number;
 
@@ -58,7 +58,7 @@ export class NotificationsComponent extends AbstractPageComponent {
         this._isLoading = true;
 
         // extract path and query parameters
-        this.idValue = params.path['idValue'];
+        this.identityHref = params.path['identityHref'];
         this.filter = FilterParams.decode(params.query['filter']);
         this.page = params.query['page'] ? +params.query['page'] : 1;
 
@@ -72,8 +72,35 @@ export class NotificationsComponent extends AbstractPageComponent {
         }
 
         // identity in focus
-        this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
+        this.services.rest.findIdentityByHref(this.identityHref).subscribe((identity) => {
+
             this.identity = identity;
+
+            // relationships
+            this.subjectGroupsWithRelationships = [];
+            this.relationships$ = this.services.rest.searchRelationshipsByIdentity(this.identity.idValue, this.filter.encode(), this.page);
+            this.relationships$.subscribe((relationshipRefs) => {
+                this._isLoading = false;
+                for (const relationshipRef of relationshipRefs.list) {
+                    let subjectGroupWithRelationshipsToAddTo: SubjectGroupWithRelationships;
+                    const subjectRef = relationshipRef.value.subject;
+                    for (const subjectGroupWithRelationships of this.subjectGroupsWithRelationships) {
+                        if (subjectGroupWithRelationships.hasSameSubject(subjectRef)) {
+                            subjectGroupWithRelationshipsToAddTo = subjectGroupWithRelationships;
+                        }
+                    }
+                    if (!subjectGroupWithRelationshipsToAddTo) {
+                        subjectGroupWithRelationshipsToAddTo = new SubjectGroupWithRelationships();
+                        subjectGroupWithRelationshipsToAddTo.subjectRef = subjectRef;
+                        this.subjectGroupsWithRelationships.push(subjectGroupWithRelationshipsToAddTo);
+                    }
+                    subjectGroupWithRelationshipsToAddTo.relationshipRefs.push(relationshipRef);
+                }
+            }, (err) => {
+                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this._isLoading = false;
+            });
+
         });
 
         // if the user can see more than one business, they can see the dashboard
@@ -85,31 +112,6 @@ export class NotificationsComponent extends AbstractPageComponent {
         // relationship statuses
         this.services.rest.listRelationshipStatuses().subscribe((relationshipStatusRefs) => {
             this.relationshipStatusRefs = relationshipStatusRefs;
-        });
-
-        // relationships
-        this.subjectGroupsWithRelationships = [];
-        this.relationships$ = this.services.rest.searchRelationshipsByIdentity(this.idValue, this.filter.encode(), this.page);
-        this.relationships$.subscribe((relationshipRefs) => {
-            this._isLoading = false;
-            for (const relationshipRef of relationshipRefs.list) {
-                let subjectGroupWithRelationshipsToAddTo: SubjectGroupWithRelationships;
-                const subjectRef = relationshipRef.value.subject;
-                for (const subjectGroupWithRelationships of this.subjectGroupsWithRelationships) {
-                    if (subjectGroupWithRelationships.hasSameSubject(subjectRef)) {
-                        subjectGroupWithRelationshipsToAddTo = subjectGroupWithRelationships;
-                    }
-                }
-                if (!subjectGroupWithRelationshipsToAddTo) {
-                    subjectGroupWithRelationshipsToAddTo = new SubjectGroupWithRelationships();
-                    subjectGroupWithRelationshipsToAddTo.subjectRef = subjectRef;
-                    this.subjectGroupsWithRelationships.push(subjectGroupWithRelationshipsToAddTo);
-                }
-                subjectGroupWithRelationshipsToAddTo.relationshipRefs.push(relationshipRef);
-            }
-        }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
-            this._isLoading = false;
         });
 
         // pagination delegate
@@ -128,12 +130,11 @@ export class NotificationsComponent extends AbstractPageComponent {
     }
 
     public goToAddNotificationPage() {
-        this.services.route.goToAddNotificationPage(this.idValue);
+        this.services.route.goToAddNotificationPage(this.identityHref);
     }
 
-    // todo not yet implemented
     public goToEditNotificationPage(relationshipRef: IHrefValue<IRelationship>) {
-        this.services.route.goToEditNotificationPage(this.idValue, relationshipRef.value.code);
+        this.services.route.goToEditNotificationPage(this.identityHref, relationshipRef.href);
     }
 
     // todo what is the logic here?

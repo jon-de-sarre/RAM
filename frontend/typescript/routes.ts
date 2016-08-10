@@ -77,15 +77,15 @@ export const routes: RouterConfig = [
         component: BusinessesComponent
     },
     {
-        path: 'notifications/:idValue',
+        path: 'notifications/:identityHref',
         component: NotificationsComponent
     },
     {
-        path: 'notifications/add/:idValue',
+        path: 'notifications/add/:identityHref',
         component: EditNotificationComponent
     },
     {
-        path: 'notifications/edit/:idValue/:key',
+        path: 'notifications/edit/:identityHref/:relationshipHref',
         component: EditNotificationComponent
     },
     {

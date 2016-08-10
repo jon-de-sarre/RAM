@@ -121,16 +121,15 @@ export class BusinessesComponent extends AbstractPageComponent {
         return (this.partyRefs && this.partyRefs.length > 0) || !this.filter.get('text');
     }
 
-    public goToNotificationsContext(partyResource: IHrefValue<IParty>) {
-        const defaultIdentityResource = this.services.model.getDefaultIdentityResource(partyResource.value);
-        if (defaultIdentityResource) {
-            const identityIdValue = defaultIdentityResource.value.idValue;
-            this.goToNotificationsPage(identityIdValue);
+    public goToNotificationsContext(partyRef: IHrefValue<IParty>) {
+        const defaultIdentityRef = this.services.model.getDefaultIdentityResource(partyRef.value);
+        if (defaultIdentityRef) {
+            this.goToNotificationsPage(defaultIdentityRef.href);
         }
     }
 
-    public goToNotificationsPage(idValue: string) {
-        this.services.route.goToNotificationsPage(idValue);
+    public goToNotificationsPage(identityHref: string) {
+        this.services.route.goToNotificationsPage(identityHref);
     };
 
     public goToHomePage() {

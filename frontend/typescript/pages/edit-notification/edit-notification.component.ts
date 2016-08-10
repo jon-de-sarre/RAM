@@ -39,8 +39,8 @@ import {
 
 export class EditNotificationComponent extends AbstractPageComponent {
 
-    public idValue: string;
-    public key: string;
+    public identityHref: string;
+    public relationshipHref: string;
 
     public delegateParty: IParty;
     public delegateIdentityRef: IHrefValue<IIdentity>;
@@ -69,11 +69,12 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
     public onInit(params: {path: Params, query: Params}) {
 
-        this.idValue = params.path['idValue'];
-        this.key = params.path['key'];
+        // extract path and query parameters
+        this.identityHref = params.path['identityHref'];
+        this.relationshipHref = params.path['relationshipHref'];
 
         // identity in focus
-        this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
+        this.services.rest.findIdentityByHref(this.identityHref).subscribe((identity) => {
             this.identity = identity;
         });
 
@@ -96,10 +97,15 @@ export class EditNotificationComponent extends AbstractPageComponent {
             ssids: this._fb.array([this._fb.control(null, Validators.required)])
         });
 
+        // relationship in focus
+        if (this.relationshipHref) {
+            // todo, not yet implemented
+        }
+
     }
 
     public back() {
-        this.services.route.goToNotificationsPage(this.idValue);
+        this.services.route.goToNotificationsPage(this.identityHref);
     }
 
     public save() {
@@ -231,15 +237,14 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
             for (let identity of party.identities) {
                 if (identity.value.rawIdValue === abn) {
-
                     // found business
                     searchRolesByIdentityAndPage(identity.value.idValue, identity, 1);
-
                 } else {
                     // no identity found
                     this.addGlobalMessages(['Cannot match ABN']);
                 }
             }
+
         }, (err) => {
             this.addGlobalMessages(['Cannot match ABN']);
         });
