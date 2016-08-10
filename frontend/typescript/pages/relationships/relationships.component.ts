@@ -8,7 +8,6 @@ import {PageHeaderAuthComponent} from '../../components/page-header/page-header-
 import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
     from '../../components/search-result-pagination/search-result-pagination.component';
 import {RAMServices} from '../../services/ram-services';
-import {TranslatePipe} from 'ng2-translate/ng2-translate';
 
 import {
     ISearchResult,
@@ -32,8 +31,7 @@ import {
         REACTIVE_FORM_DIRECTIVES,
         PageHeaderAuthComponent,
         SearchResultPaginationComponent
-    ],
-    pipes : [TranslatePipe]
+    ]
 })
 
 export class RelationshipsComponent extends AbstractPageComponent {

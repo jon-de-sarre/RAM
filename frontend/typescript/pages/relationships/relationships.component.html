@@ -20,7 +20,7 @@
                     &nbsp;
                     <div class="form-group">
                         <select class="form-control" [formControl]="form.controls['relationshipType']">
-                            <option value="-">Authorisation Type</option>
+                            <option value="-">{{ 'Authorisation Type' | translate }}</option>
                             <template ngFor let-item="$implicit" [ngForOf]="relationshipTypeRefs">
                                 <option value="{{item.value.code}}">{{item.value.shortDecodeText}}</option>
                             </template>
