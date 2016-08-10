@@ -43,6 +43,8 @@ import {RoleModel} from './models/role.model';
 import {RoleTypeModel} from './models/roleType.model';
 import {AUSkeyProvider} from './providers/auskey.provider';
 
+import {TranslateUniversalLoader} from './translateUniversalLoader';
+
 // connect to the database ............................................................................................
 
 mongoose.connect(conf.mongoURL, {}, () => {
@@ -66,11 +68,18 @@ switch (conf.devMode) {
 
 server.use(cookieParser());
 server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({ extended: true }));
+server.use(bodyParser.urlencoded({extended: true}));
 server.use(expressValidator());
 server.use(methodOverride());
 server.use(express.static(path.join(__dirname, conf.frontendDir)));
 server.use(express.static('swagger'));
+
+let translate = new TranslateUniversalLoader();
+let translation2 = translate.getTranslation('en');
+translation2.subscribe(data => {
+    let trans = data['HELLO'];
+    logger.info(`${trans}`);
+});
 
 // server.use(continueOnlyIfJWTisValid(conf.jwtSecretKey,true));
 
