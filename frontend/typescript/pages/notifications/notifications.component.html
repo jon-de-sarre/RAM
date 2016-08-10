@@ -12,7 +12,7 @@
         </tr>
     </thead>
     <tbody *ngIf="!isLoading">
-        <tr *ngFor="let relationshipRef of (relationships$|async)?.list">
+        <tr *ngFor="let relationshipRef of relationshipSearchResult?.list">
             <td>{{services.model.displayName(relationshipRef.value.delegateNickName)}}</td>
             <td>{{services.model.relationshipStatusLabel(relationshipStatusRefs, relationshipRef.value.status)}}</td>
             <td></td>
@@ -27,7 +27,7 @@
 </table>
 
 <search-result-pagination
-        [searchResult]="relationships$|async"
+        [searchResult]="relationshipSearchResult"
         [delegate]="paginationDelegate">
 </search-result-pagination>
 

@@ -1,4 +1,3 @@
-import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
 
@@ -33,7 +32,7 @@ export class NotificationsComponent extends AbstractPageComponent {
     public filter: FilterParams;
     public page: number;
 
-    public relationships$: Observable<ISearchResult<IHrefValue<IRelationship>>>;
+    public relationshipSearchResult: ISearchResult<IHrefValue<IRelationship>>;
     public relationshipStatusRefs: IHrefValue<IRelationshipStatus>[];
 
     public canReturnToDashboard: boolean = false;
@@ -75,13 +74,14 @@ export class NotificationsComponent extends AbstractPageComponent {
             this.identity = identity;
 
             // relationships
-            this.relationships$ = this.services.rest.searchRelationshipsByIdentity(this.identity.idValue, this.filter.encode(), this.page);
-            this.relationships$.subscribe((searchResult) => {
-                this._isLoading = false;
-            }, (err) => {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
-                this._isLoading = false;
-            });
+            this.services.rest.searchRelationshipsByIdentity(this.identity.idValue, this.filter.encode(), this.page)
+                .subscribe((searchResult) => {
+                    this.relationshipSearchResult = searchResult;
+                    this._isLoading = false;
+                }, (err) => {
+                    this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                    this._isLoading = false;
+                });
 
         });
 
