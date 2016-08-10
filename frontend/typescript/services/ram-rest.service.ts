@@ -54,7 +54,7 @@ export class RAMRestService {
 
     // auskey ...........................................................................................................
 
-    public listAusKeys(idValue: string, filter: string, page: number): Observable<ISearchResult<IHrefValue<IAUSkey>>> {
+    public searchAusKeys(idValue: string, filter: string, page: number): Observable<ISearchResult<IHrefValue<IAUSkey>>> {
         return this.http
             .get(`/api/v1/auskeys/identity/${idValue}?filter=${filter}&page=${page}`)
             .map(this.extractData);
@@ -269,13 +269,6 @@ export class RAMRestService {
     }
 
     // role ...........................................................................................................
-
-    public searchRolesByIdentity(idValue: string,
-                                 page: number): Observable<ISearchResult<IHrefValue<IRole>>> {
-        return this.http
-            .get(`/api/v1/roles/identity/${idValue}?page=${page}`)
-            .map(this.extractData);
-    }
 
     public searchRolesByHref(href: string,
                              page: number): Observable<ISearchResult<IHrefValue<IRole>>> {

@@ -111,7 +111,7 @@ export class EditRoleComponent extends AbstractPageComponent {
             this.auskeyPaginationDelegate = {
                 goToPage: (page: number) => {
                     // this.deviceAusKeyRefs$ = this.services.rest.listAusKeys(this.identity.idValue, this.auskeyFilter.encode(), page);
-                    this.services.rest.listAusKeys(this.identity.idValue, this.auskeyFilter.encode(), page).subscribe((auskeys) => {
+                    this.services.rest.searchAusKeys(this.identity.idValue, this.auskeyFilter.encode(), page).subscribe((auskeys) => {
                         this.deviceAusKeyRefs = auskeys;
                     });
                 }
