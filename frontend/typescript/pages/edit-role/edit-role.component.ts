@@ -264,7 +264,7 @@ export class EditRoleComponent extends AbstractPageComponent {
             this.services.rest.createRole(role).subscribe((role) => {
                 this.services.route.goToRolesPage(this.identityHref);
             }, (err) => {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this.addGlobalErrorMessages(err);
             });
         }
     }

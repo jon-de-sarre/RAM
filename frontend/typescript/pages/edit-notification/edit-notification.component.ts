@@ -198,7 +198,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
             this.services.rest.createRelationship2(relationship).subscribe((role) => {
                 this.back();
             }, (err) => {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this.addGlobalErrorMessages(err);
             });
 
         }
