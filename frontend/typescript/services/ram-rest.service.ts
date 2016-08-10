@@ -181,6 +181,12 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
+    public findRelationshipByHref(href: string): Observable<IRelationship> {
+        return this.http
+            .get(href)
+            .map(this.extractData);
+    }
+
     public findPendingRelationshipByInvitationCode(invitationCode: string): Observable<IRelationship> {
         return this.http
             .get(`/api/v1/relationship/invitationCode/${invitationCode}`)
