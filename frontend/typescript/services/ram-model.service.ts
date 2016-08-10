@@ -54,11 +54,16 @@ export class RAMModelService {
     }
 
     public abnLabelForParty(party: IParty): string {
+        let abn = this.abnForParty(party);
+        return abn ? 'ABN ' + abn : null;
+    }
+
+    public abnForParty(party: IParty): string {
         if (party && party.identities && party.identities.length > 0) {
             for (const resource of party.identities) {
                 const identity = resource.value;
                 if (identity.identityType === 'PUBLIC_IDENTIFIER' && identity.publicIdentifierScheme === 'ABN') {
-                    return 'ABN ' + identity.rawIdValue;
+                    return identity.rawIdValue;
                 }
             }
             return null;
