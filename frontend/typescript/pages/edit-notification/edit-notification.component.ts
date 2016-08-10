@@ -226,7 +226,6 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
                 if (identity.value.rawIdValue === abn) {
 
-                    // found business
                     let href = this.services.model.getLinkHrefByType('role-list', identity.value._links);
                     const filterString = new FilterParams()
                         .add('roleType', this.services.constants.RelationshipTypeCode.OSP)
