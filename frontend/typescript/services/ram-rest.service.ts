@@ -265,6 +265,12 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
+    public findRoleTypeByHref(href: string): Observable<IRoleType> {
+        return this.http
+            .get(href)
+            .map(this.extractData);
+    }
+
     public createRole(role: IRole): Observable<IRole> {
         return this.http
             .post(`/api/v1/role`, JSON.stringify(role), {

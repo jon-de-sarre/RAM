@@ -118,8 +118,9 @@ export class EditRoleComponent extends AbstractPageComponent {
                     this.role = role;
 
                     // load relationship type
-                    this.services.rest.findRelationshipTypeByHref(role.roleType.href).subscribe((roleType) => {
+                    this.services.rest.findRoleTypeByHref(role.roleType.href).subscribe((roleType) => {
                         (this.form.controls['roleType'] as FormControl).updateValue(roleType.code);
+                        this.role.roleType.value = roleType;
                         this.onRoleTypeChange(roleType.code);
                     }, (err) => {
                         this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
