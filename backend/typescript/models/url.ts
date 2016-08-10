@@ -69,6 +69,10 @@ export class Url {
         return '/api/v1/role';
     }
 
+    public static async forIdentityAUSkeyList(model: identity.IIdentity): Promise<string> {
+        return '/api/v1/auskeys/identity/' + encodeURIComponent(model.idValue);
+    }
+
     // party ..........................................................................................................
 
     public static async forPartyType(model: party.PartyType): Promise<string> {

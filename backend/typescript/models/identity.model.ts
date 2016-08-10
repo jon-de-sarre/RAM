@@ -337,6 +337,7 @@ IdentitySchema.method('toDTO', async function () {
             .push('relationship-create', Url.POST, await Url.forIdentityRelationshipCreate(this))
             .push('role-list', Url.GET, await Url.forIdentityRoleList(this))
             .push('role-create', Url.POST, await Url.forIdentityRoleCreate(this))
+            .push('auskey-list', Url.GET, await Url.forIdentityAUSkeyList(this), this.publicIdentifierScheme === 'ABN')
             .toArray(),
         this.idValue,
         this.rawIdValue,

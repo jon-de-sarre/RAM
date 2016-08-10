@@ -110,8 +110,8 @@ export class EditRoleComponent extends AbstractPageComponent {
             // todo code below doesn't look right
             this.auskeyPaginationDelegate = {
                 goToPage: (page: number) => {
-                    // this.deviceAusKeyRefs$ = this.services.rest.listAusKeys(this.identity.idValue, this.auskeyFilter.encode(), page);
-                    this.services.rest.searchAusKeys(this.identity.idValue, this.auskeyFilter.encode(), page).subscribe((auskeys) => {
+                    let href = this.services.model.getLinkHrefByType('auskey-list', this.identity._links);
+                    this.services.rest.searchAusKeysByHref(href, this.auskeyFilter.encode(), page).subscribe((auskeys) => {
                         this.deviceAusKeyRefs = auskeys;
                     });
                 }

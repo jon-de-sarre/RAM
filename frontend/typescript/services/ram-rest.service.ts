@@ -54,9 +54,9 @@ export class RAMRestService {
 
     // auskey ...........................................................................................................
 
-    public searchAusKeys(idValue: string, filter: string, page: number): Observable<ISearchResult<IHrefValue<IAUSkey>>> {
+    public searchAusKeysByHref(href: string, filter: string, page: number): Observable<ISearchResult<IHrefValue<IAUSkey>>> {
         return this.http
-            .get(`/api/v1/auskeys/identity/${idValue}?filter=${filter}&page=${page}`)
+            .get(new Href(href).param('filter', filter).param('page', page).toString())
             .map(this.extractData);
     }
 
