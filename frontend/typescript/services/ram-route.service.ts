@@ -118,10 +118,14 @@ export class RAMRouteService {
         );
     }
 
-    public goToNotificationsPage(identityHref: string) {
+    public goToNotificationsPage(identityHref: string, page?: number) {
+        const queryParams = {};
+        if (page) {
+            queryParams['page'] = page;
+        }
         this.router.navigate(['/notifications/',
                 this.encodeURIComponent(identityHref, true)
-            ], {queryParams: {}}
+            ], {queryParams: queryParams}
         );
     }
 
