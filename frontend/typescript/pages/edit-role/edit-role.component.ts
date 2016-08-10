@@ -262,7 +262,6 @@ export class EditRoleComponent extends AbstractPageComponent {
             );
             // todo replace with href
             this.services.rest.createRole(role).subscribe((role) => {
-                // todo replace with href
                 this.services.route.goToRolesPage(this.identityHref);
             }, (err) => {
                 this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
