@@ -71,23 +71,16 @@ export class AgencySelectBusinessComponent extends AbstractPageComponent {
      * move to the next screen.
      */
     public acceptBusiness() {
-        this.rest.registerABRCompany(this.business).subscribe((data) => {
-            this.whereToNext(data.idValue);
+        this.rest.registerABRCompany(this.business).subscribe((identity) => {
+            if (this.dashboard === 'auth') {
+                this.services.route.goToRelationshipsPage(identity.idValue);
+            } else {
+                let href = this.services.model.getLinkHrefByType('self', identity._links);
+                this.services.route.goToNotificationsPage(href);
+            }
         },(err:any) => {
             this.addGlobalErrorMessages(err);
         });
-    }
-
-    /*
-     * This is called when all is well and we are ready to move in. The next
-     * page is dependent on the operator permissions.
-     */
-    public whereToNext(id:string) {
-        if (this.dashboard === 'auth') {
-            this.services.route.goToRelationshipsPage(id);
-        } else {
-            this.services.route.goToNotificationsPage(id);
-        }
     }
 
     /*

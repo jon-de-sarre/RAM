@@ -97,7 +97,7 @@ export class RAMRestService {
      * (if needed) for an organisation of interest retrieved
      * from the ABR.
      */
-    public registerABRCompany(abr: ABRentry) {
+    public registerABRCompany(abr: ABRentry): Observable<IIdentity> {
         return this.http
             .get(`/api/v1/business/register/` + abr.abn + '/' + abr.name)
             .map(this.extractData);

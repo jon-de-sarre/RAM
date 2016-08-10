@@ -10,6 +10,7 @@ import {sendResource, sendError, sendNotFoundError} from './helpers';
 import { ABR } from '../providers/abr.provider';
 import {IdentityModel} from '../models/identity.model';
 
+// todo this needs to return DTOs!
 export class BusinessController {
     /*
      * Pop off the the ABR and retrieve an entry for the ABN provided.
@@ -44,9 +45,10 @@ export class BusinessController {
      */
     private registerABRRetrievedCompany = (req:Request, res:Response) => {
         IdentityModel.addCompany(req.params.abn, req.params.name)
-        .then(sendResource(res))
-        .then(sendNotFoundError(res))
-        .catch(sendError(res));
+            .then((model) => model ? model.toDTO() : null)
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     public assignRoutes = (router:Router) => {
