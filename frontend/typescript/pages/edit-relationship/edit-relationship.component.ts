@@ -184,10 +184,10 @@ export class EditRelationshipComponent extends AbstractPageComponent {
                     identity.rawIdValue,
                     this.displayName(this.newRelationship.representativeDetails));
             }, (err) => {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this.addGlobalErrorMessages(err);
             });
         }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+            this.addGlobalErrorMessages(err);
         });
 
     };

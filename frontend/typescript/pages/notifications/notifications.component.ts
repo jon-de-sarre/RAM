@@ -79,7 +79,7 @@ export class NotificationsComponent extends AbstractPageComponent {
                     this.relationshipSearchResult = searchResult;
                     this._isLoading = false;
                 }, (err) => {
-                    this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                    this.addGlobalErrorMessages(err);
                     this._isLoading = false;
                 });
 

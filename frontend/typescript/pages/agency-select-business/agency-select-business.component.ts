@@ -74,7 +74,7 @@ export class AgencySelectBusinessComponent extends AbstractPageComponent {
         this.rest.registerABRCompany(this.business).subscribe((data) => {
             this.whereToNext(data.idValue);
         },(err:any) => {
-            this.displayErrors(this.rest.extractErrorMessages(err));
+            this.addGlobalErrorMessages(err);
         });
     }
 

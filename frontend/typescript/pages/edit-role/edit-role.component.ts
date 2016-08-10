@@ -129,7 +129,7 @@ export class EditRoleComponent extends AbstractPageComponent {
                         this.role.roleType.value = roleType;
                         this.onRoleTypeChange(roleType.code);
                     }, (err) => {
-                        this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                        this.addGlobalErrorMessages(err);
                     });
 
                     const preferredName = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(role, 'PREFERRED_NAME', 'OTHER'));
@@ -145,11 +145,12 @@ export class EditRoleComponent extends AbstractPageComponent {
                         }
                     }
                 }, (err) => {
-                    this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                    this.addGlobalErrorMessages(err);
                 });
             }
+
         }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+            this.addGlobalErrorMessages(err);
         });
 
         // role types

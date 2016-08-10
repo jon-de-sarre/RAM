@@ -78,7 +78,7 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
             if (status === 404) {
                 this.addGlobalMessage('The code you have entered does not exist or is invalid.');
             } else {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this.addGlobalErrorMessages(err);
             }
         });
         return false;

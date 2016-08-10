@@ -79,7 +79,7 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
             if (err.status === 404) {
                 this.goToEnterAuthorisationPage();
             } else {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this.addGlobalErrorMessages(err);
             }
         });
 
@@ -99,7 +99,7 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
             this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'DECLINED_RELATIONSHIP');
         }, (err) => {
             this.declineDisplay = false;
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+            this.addGlobalErrorMessages(err);
         });
     };
 
@@ -107,7 +107,7 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
         this.services.rest.acceptPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
             this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'ACCEPTED_RELATIONSHIP');
         }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+            this.addGlobalErrorMessages(err);
         });
     };
 

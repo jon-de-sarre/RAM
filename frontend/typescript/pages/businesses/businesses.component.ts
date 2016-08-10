@@ -86,7 +86,7 @@ export class BusinessesComponent extends AbstractPageComponent {
             if (err.status === 403) {
                 this.services.route.goToAccessDeniedPage();
             } else {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this.addGlobalErrorMessages(err);
                 this._isLoading = false;
             }
         });
