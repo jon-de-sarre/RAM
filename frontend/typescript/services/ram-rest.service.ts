@@ -214,13 +214,13 @@ export class RAMRestService {
 
     public acceptPendingRelationshipByInvitationCode(relationship: IRelationship): Observable<IRelationship> {
         return this.http
-            .post(this.modelService.getLinkByType('accept', relationship._links).href, '')
+            .post(this.modelService.getLinkHrefByType('accept', relationship._links), '')
             .map(this.extractData);
     }
 
     public rejectPendingRelationshipByInvitationCode(relationship: IRelationship): Observable<IRelationship> {
         return this.http
-            .post(this.modelService.getLinkByType('reject', relationship._links).href, '')
+            .post(this.modelService.getLinkHrefByType('reject', relationship._links), '')
             .map(this.extractData);
     }
 

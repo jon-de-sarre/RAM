@@ -255,7 +255,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
             for (let identity of party.identities) {
                 if (identity.value.rawIdValue === abn) {
                     // found business
-                    let href = this.services.model.getLinkByType('role-list', identity.value._links).href;
+                    let href = this.services.model.getLinkHrefByType('role-list', identity.value._links);
                     searchRolesByIdentityAndPage(href, identity, 1);
                 } else {
                     // no identity found
