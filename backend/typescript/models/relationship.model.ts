@@ -323,6 +323,7 @@ RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
             .push('accept', Url.POST, await Url.forRelationshipAccept(invitationCode), pendingWithInvitationCode)
             .push('reject', Url.POST, await Url.forRelationshipReject(invitationCode), pendingWithInvitationCode)
             .push('notifyDelegate', Url.POST, await Url.forRelationshipNotifyDelegate(invitationCode), pendingWithInvitationCode)
+            .push('modify', Url.PUT, await Url.forRelationship(this))
             .toArray(),
         this._id.toString() /*todo what code should we use?*/,
         await this.relationshipType.toHrefValue(false),
