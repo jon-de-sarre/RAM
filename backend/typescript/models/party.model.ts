@@ -233,7 +233,8 @@ PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAge
             const filteredRoleAttributes = role.attributes.filter((item) => {
                 return item.attributeName.code === code;
             });
-            if (filteredRoleAttributes.length === 0) {
+            const roleAttributeDoesNotExist = filteredRoleAttributes.length === 0;
+            if (roleAttributeDoesNotExist) {
                 roleAttributes.push(await RoleAttributeModel.create({
                     value: value,
                     attributeName: roleAttributeName
