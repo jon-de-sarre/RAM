@@ -1,7 +1,15 @@
 // import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
-import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES, Validators, FormControl, FormArray} from '@angular/forms';
+import {
+    REACTIVE_FORM_DIRECTIVES,
+    FormBuilder,
+    FormGroup,
+    FORM_DIRECTIVES,
+    Validators,
+    FormControl,
+    FormArray
+} from '@angular/forms';
 import {Calendar} from 'primeng/primeng';
 import {AccessPeriodComponent, AccessPeriodComponentData} from '../../components/access-period/access-period.component';
 
@@ -23,7 +31,8 @@ import {
     IRelationship,
     IRelationshipAttribute,
     RelationshipAttribute,
-    FilterParams
+    FilterParams,
+    ISearchResult
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -86,47 +95,75 @@ export class EditNotificationComponent extends AbstractPageComponent {
         });
 
         // identity in focus
-        this.services.rest.findIdentityByHref(this.identityHref).subscribe((identity) => {
-
-            this.identity = identity;
-
-            // osp relationship type
-            this.services.rest.listRelationshipTypes().subscribe((relationshipTypeRefs) => {
-                for (let ref of relationshipTypeRefs) {
-                    if (ref.value.code === this.services.constants.RelationshipTypeCode.OSP) {
-                        this.ospRelationshipTypeRef = ref;
-                        this.declarationText = this.services.model.getRelationshipTypeAttributeNameUsage(ref, 'SUBJECT_RELATIONSHIP_TYPE_DECLARATION').defaultValue;
-                        break;
-                    }
+        this.services.rest.findIdentityByHref(this.identityHref).subscribe({
+            next: this.onFindIdentity.bind(this),
+            error: (err) => {
+                const status = err.status;
+                if (status === 401 || status === 403) {
+                    this.services.route.goToAccessDeniedPage();
+                } else {
+                    this.addGlobalErrorMessages(err);
                 }
-            });
-
-            // relationship in focus
-            if (this.relationshipHref) {
-                this.services.rest.findRelationshipByHref(this.relationshipHref).subscribe((relationship) => {
-                    this.relationship = relationship;
-                    let delegate = relationship.delegate.value;
-                    let abn = this.services.model.abnForParty(delegate);
-                    (this.form.controls['abn'] as FormControl).updateValue(abn);
-                    this.findByABN();
-                    let ssidsAttribute = this.services.model.getRelationshipAttribute(relationship, this.services.constants.RelationshipTypeAttributeCode.SSID, null);
-                    if (ssidsAttribute && ssidsAttribute.value) {
-                        let ssids = ssidsAttribute.value;
-                        this.getSSIDFormArray().removeAt(0);
-                        for (let i = 0; i < ssids.length; i = i + 1) {
-                            this.getSSIDFormArray().push(this._fb.control(ssids[i], Validators.required));
-                        }
-                    }
-                    // todo, not yet implemented
-                });
-            }
-
-        }, (err) => {
-            const status = err.status;
-            if (status === 401 || status === 403) {
-                this.services.route.goToAccessDeniedPage();
             }
         });
+
+    }
+
+    public onFindIdentity(identity: IIdentity) {
+
+        this.identity = identity;
+
+        // osp relationship type
+        this.services.rest.listRelationshipTypes().subscribe({
+            next: this.onListRelationshipTypes.bind(this)
+        });
+
+        // relationship in focus
+        if (this.relationshipHref) {
+            this.services.rest.findRelationshipByHref(this.relationshipHref).subscribe({
+                next: this.onFindRelationship.bind(this)
+            });
+        }
+
+    }
+
+    public onListRelationshipTypes(relationshipTypeRefs: IHrefValue<IRelationshipType>[]) {
+        for (let ref of relationshipTypeRefs) {
+            if (ref.value.code === this.services.constants.RelationshipTypeCode.OSP) {
+                this.ospRelationshipTypeRef = ref;
+                this.declarationText = this.services.model.getRelationshipTypeAttributeNameUsage(ref, 'SUBJECT_RELATIONSHIP_TYPE_DECLARATION').defaultValue;
+                break;
+            }
+        }
+    }
+
+    public onFindRelationship(relationship: IRelationship) {
+
+        this.relationship = relationship;
+        let delegate = relationship.delegate.value;
+        let abn = this.services.model.abnForParty(delegate);
+
+        // abn
+        (this.form.controls['abn'] as FormControl).updateValue(abn);
+        this.findByABN();
+
+        // ssid
+        let ssidsAttribute = this.services.model.getRelationshipAttribute(relationship, this.services.constants.RelationshipTypeAttributeCode.SSID, null);
+        if (ssidsAttribute && ssidsAttribute.value) {
+            let ssids = ssidsAttribute.value;
+            this.getSSIDFormArray().removeAt(0);
+            for (let i = 0; i < ssids.length; i = i + 1) {
+                this.getSSIDFormArray().push(this._fb.control(ssids[i], Validators.required));
+            }
+        }
+
+        // todo date
+        // ...
+        // ...
+
+        // todo agency services
+        // ...
+        // ...
 
     }
 
@@ -204,10 +241,13 @@ export class EditNotificationComponent extends AbstractPageComponent {
             );
 
             // save relationship
-            this.services.rest.createRelationship2(relationship).subscribe((role) => {
-                this.back();
-            }, (err) => {
-                this.addGlobalErrorMessages(err);
+            this.services.rest.createRelationship2(relationship).subscribe({
+                next: (role) => {
+                    this.back();
+                },
+                error: (err) => {
+                    this.addGlobalErrorMessages(err);
+                }
             });
 
         }
@@ -228,43 +268,55 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
         const abn = this.form.controls['abn'].value.replace(/ /g, '');
 
-        this.services.rest.findPartyByABN(abn).subscribe((party) => {
-
-            for (let identity of party.identities) {
-
-                if (identity.value.rawIdValue === abn) {
-
-                    let href = this.services.model.getLinkHrefByType('role-list', identity.value._links);
-                    const filterString = new FilterParams()
-                        .add('roleType', this.services.constants.RelationshipTypeCode.OSP)
-                        .add('status', this.services.constants.RoleStatusCode.ACTIVE)
-                        .encode();
-
-                    this.services.rest.searchRolesByHref(href, filterString, 1).subscribe((results) => {
-                        for (let role of results.list) {
-                            if (role.value.roleType.href.endsWith(this.services.constants.RelationshipTypeCode.OSP)) {
-                                this.ospRoleRef = role;
-                                this.delegateParty = party;
-                                this.delegateIdentityRef = identity;
-                                this.ospServices = this.services.model.getAccessibleAgencyServiceRoleAttributeNames(role, []);
-                                return;
-                            }
-                        }
-                        // no OSP role found
-                        this.addGlobalMessages(['The business matching the ABN is not a registered Online Service Provider']);
-                    });
-
-                } else {
-                    // no identity found
-                    this.addGlobalMessages(['Cannot match ABN']);
-                }
-
+        this.services.rest.findPartyByABN(abn).subscribe({
+            next: (party) => {
+                this.onFindPartyByABN(party,  abn)
+            },
+            error: (err) => {
+                this.addGlobalMessages(['Cannot match ABN']);
             }
-
-        }, (err) => {
-            this.addGlobalMessages(['Cannot match ABN']);
         });
 
+    }
+
+    public onFindPartyByABN(party: IParty, abn: string) {
+
+        for (let identityRef of party.identities) {
+
+            if (identityRef.value.rawIdValue === abn) {
+
+                let href = this.services.model.getLinkHrefByType('role-list', identityRef.value._links);
+                const filterString = new FilterParams()
+                    .add('roleType', this.services.constants.RelationshipTypeCode.OSP)
+                    .add('status', this.services.constants.RoleStatusCode.ACTIVE)
+                    .encode();
+
+                this.services.rest.searchRolesByHref(href, filterString, 1).subscribe({
+                    next: (results) => {
+                        this.onSearchOSPActiveRoles(results, party, identityRef);
+                    }
+                });
+
+            } else {
+                // no identity found
+                this.addGlobalMessages(['Cannot match ABN']);
+            }
+
+        }
+
+    }
+
+    public onSearchOSPActiveRoles(results: ISearchResult<IHrefValue<IRole>>, party: IParty, identityRef: IHrefValue<IIdentity>) {
+        for (let role of results.list) {
+            if (role.value.roleType.href.endsWith(this.services.constants.RelationshipTypeCode.OSP)) {
+                this.ospRoleRef = role;
+                this.delegateParty = party;
+                this.delegateIdentityRef = identityRef;
+                this.ospServices = this.services.model.getAccessibleAgencyServiceRoleAttributeNames(role, []);
+                return;
+            }
+        }
+        this.addGlobalMessages(['The business matching the ABN is not a registered Online Service Provider']);
     }
 
     public onAgencyServiceChange(attributeCode: string) {
