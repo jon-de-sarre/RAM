@@ -14,6 +14,7 @@ import {BannerComponent} from '../components/banner/banner.component';
 import {BannerService} from '../components/banner/banner.service';
 import {ErrorComponent} from '../components/error/error.component';
 import {ErrorService} from '../components/error/error.service';
+import {TranslateService} from 'ng2-translate/ng2-translate';
 
 @Component({
     selector: 'ram-app',
@@ -33,4 +34,12 @@ import {ErrorService} from '../components/error/error.service';
 })
 
 export class AppComponent {
+    constructor(translate: TranslateService) {
+        let userLang = navigator.language.split('-')[0]; // use navigator lang if available
+        userLang = /(fr|en)/gi.test(userLang) ? userLang : 'en';
+        translate.setDefaultLang('en');
+        // the lang to use, if the lang isn't available, it will use the loader defined to get them
+        translate.use(userLang);
+    }
+
 }

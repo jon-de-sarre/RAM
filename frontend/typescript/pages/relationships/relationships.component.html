@@ -11,7 +11,7 @@
                 <div class="form-inline">
                     <div class="form-group">
                         <select class="form-control" [formControl]="form.controls['partyType']">
-                            <option value="-">Party Type</option>
+                            <option value="-">{{ 'Party Type' | translate }}</option>
                             <template ngFor let-item="$implicit" [ngForOf]="partyTypeRefs">
                                 <option value="{{item.value.name}}">{{item.value.shortDecodeText}}</option>
                             </template>
