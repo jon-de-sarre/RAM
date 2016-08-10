@@ -20,7 +20,9 @@ import {
     IRoleAttributeName,
     IRelationshipType,
     Relationship,
-    IRelationshipAttribute, RelationshipAttribute
+    IRelationship,
+    IRelationshipAttribute,
+    RelationshipAttribute
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -52,6 +54,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
     };
 
     public identity: IIdentity;
+    public relationship: IRelationship;
     public ospRelationshipTypeRef: IHrefValue<IRelationshipType>;
     public ospRoleRef: IHrefValue<IRole>;
     public ospServices: IRoleAttributeName[];
@@ -73,22 +76,6 @@ export class EditNotificationComponent extends AbstractPageComponent {
         this.identityHref = params.path['identityHref'];
         this.relationshipHref = params.path['relationshipHref'];
 
-        // identity in focus
-        this.services.rest.findIdentityByHref(this.identityHref).subscribe((identity) => {
-            this.identity = identity;
-        });
-
-        // osp relationship type
-        this.services.rest.listRelationshipTypes().subscribe((relationshipTypeRefs) => {
-            for (let ref of relationshipTypeRefs) {
-                if (ref.value.code === this.services.constants.RelationshipTypeCode.OSP) {
-                    this.ospRelationshipTypeRef = ref;
-                    this.declarationText = this.services.model.getRelationshipTypeAttributeNameUsage(ref, 'SUBJECT_RELATIONSHIP_TYPE_DECLARATION').defaultValue;
-                    break;
-                }
-            }
-        });
-
         // forms
         this.form = this._fb.group({
             abn: [null, Validators.compose([Validators.required, RAMNgValidators.validateABNFormat])],
@@ -97,10 +84,40 @@ export class EditNotificationComponent extends AbstractPageComponent {
             ssids: this._fb.array([this._fb.control(null, Validators.required)])
         });
 
-        // relationship in focus
-        if (this.relationshipHref) {
-            // todo, not yet implemented
-        }
+        // identity in focus
+        this.services.rest.findIdentityByHref(this.identityHref).subscribe((identity) => {
+
+            this.identity = identity;
+
+            // osp relationship type
+            this.services.rest.listRelationshipTypes().subscribe((relationshipTypeRefs) => {
+                for (let ref of relationshipTypeRefs) {
+                    if (ref.value.code === this.services.constants.RelationshipTypeCode.OSP) {
+                        this.ospRelationshipTypeRef = ref;
+                        this.declarationText = this.services.model.getRelationshipTypeAttributeNameUsage(ref, 'SUBJECT_RELATIONSHIP_TYPE_DECLARATION').defaultValue;
+                        break;
+                    }
+                }
+            });
+
+            // relationship in focus
+            if (this.relationshipHref) {
+                this.services.rest.findRelationshipByHref(this.relationshipHref).subscribe((relationship) => {
+                    this.relationship = relationship;
+                    let delegate = relationship.delegate.value;
+                    let abn = this.services.model.abnForParty(delegate);
+                    (this.form.controls['abn'] as FormControl).updateValue(abn);
+                    this.findByABN();
+                    // todo, not yet implemented
+                });
+            }
+
+        }, (err) => {
+            const status = err.status;
+            if (status === 401 || status === 403) {
+                this.services.route.goToAccessDeniedPage();
+            }
+        });
 
     }
 
