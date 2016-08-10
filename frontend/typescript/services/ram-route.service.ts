@@ -118,23 +118,23 @@ export class RAMRouteService {
         );
     }
 
-    public goToNotificationsPage(idValue: string) {
+    public goToNotificationsPage(identityHref: string) {
         this.router.navigate(['/notifications/',
-                this.encodeURIComponent(idValue, false)
+                this.encodeURIComponent(identityHref, true)
             ], {queryParams: {}}
         );
     }
 
-    public goToAddNotificationPage(idValue: string) {
+    public goToAddNotificationPage(identityHref: string) {
         this.router.navigate(['/notifications/add/',
-            this.encodeURIComponent(idValue, false)
+            this.encodeURIComponent(identityHref, true)
         ]);
     }
 
-    public goToEditNotificationPage(idValue: string, key: string) {
+    public goToEditNotificationPage(identityHref: string, relationshipHref: string) {
         this.router.navigate(['/notifications/edit/',
-            this.encodeURIComponent(idValue, false),
-            this.encodeURIComponent(key, false)
+            this.encodeURIComponent(identityHref, true),
+            this.encodeURIComponent(relationshipHref, true)
         ]);
     }
 
