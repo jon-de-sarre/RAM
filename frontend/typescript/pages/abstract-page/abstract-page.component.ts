@@ -122,6 +122,10 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
         };
     }
 
+    protected setBannerTitle(title: string) {
+        this.services.banner.setTitle(title);
+    }
+
     protected addGlobalMessage(message: string) {
         this.globalMessages.push(message);
         $('html, body').animate({ scrollTop: 0 }, 'slow');
@@ -144,10 +148,6 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
 
     protected clearGlobalMessages() {
         this.globalMessages = [];
-    }
-
-    protected setBannerTitle(title: string) {
-        this.services.banner.setTitle(title);
     }
 
     protected hasGlobalMessages(): boolean {
