@@ -64,7 +64,28 @@
  * npm install typescript tslint eslint gulp-cli jasmine jspm -g
  * cd backend; npm install
  * cd frontend; npm install; jspm install
- 
+
+## Some further notes - getting it running on Windows 10
+
+Rather than running the ram-dev-win.sh file above, I did things manually
+  * Installed git as per usual and cloned project
+  * Installed MongoDB
+    * from https://www.mongodb.com/download-center?jmp=nav#community
+    * downloaded `Windows Server 2008 R2 64-bit and later, with SSL support`
+    * created `c:\data\db`
+    * opened up a command line to `C:\Program Files\MongoDB\Server\3.2\bin` and ran `mongod`
+    * Installed RoboMongo to check it was working
+  * Installed NodeJs latest 6.x.x from https://nodejs.org/en/ (not the recommended 4.x.x)
+  * Installed Python 2.7 (not 3.x)
+  * Ran `npm install --global --production windows-build-tools`
+    * note bash shell has to be running as administrator
+  * Set `RAM_CONF` as a user environment variable
+    * `Win-Break > Change settings > Advanced > Environment variables > New`
+    * Variable name: `RAM_CONF`
+    * Variable value: `Q:\<path to code>\RAM\backend\conf\conf-localhost.js`
+    * (and make sure to restart your shell)
+  * Ran `./ram deps:backend`, `./ram deps:frontend`, `./ram db:seed` etc as per usual
+
 ## AWS Install
 
 * Each server requires its own configuration file. Template configuration file at _conf/conf.js_. You must set an environment variable called *RAM_CONF* pointing to the absolute path of your configuration file.
