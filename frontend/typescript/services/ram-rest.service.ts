@@ -26,9 +26,16 @@ import {
 } from '../../../commons/RamAPI';
 import {ABRentry} from '../../../commons/abr';
 
+const assertHref = (href: string) => {
+    if (!href) {
+        throw new Error('Unable to contact the server as no href was provided.');
+    }
+};
+
 class Href {
 
     constructor(private href: string) {
+        assertHref(href);
     }
 
     public param(paramKey: string, paramValue: string|number|boolean, condition: boolean = true): Href {
@@ -144,7 +151,7 @@ export class RAMRestService {
 
     public findIdentityByHref(href: string): Observable<IIdentity> {
         return this.http
-            .get(href)
+            .get(new Href(href).toString())
             .map(this.extractData);
     }
 
@@ -202,7 +209,7 @@ export class RAMRestService {
 
     public findRelationshipByHref(href: string): Observable<IRelationship> {
         return this.http
-            .get(href)
+            .get(new Href(href).toString())
             .map(this.extractData);
     }
 
@@ -258,7 +265,7 @@ export class RAMRestService {
 
     public findRelationshipTypeByHref(href: string): Observable<IRelationshipType> {
         return this.http
-            .get(href)
+            .get(new Href(href).toString())
             .map(this.extractData);
     }
 
@@ -280,13 +287,13 @@ export class RAMRestService {
 
     public findRoleByHref(href: string): Observable<IRole> {
         return this.http
-            .get(href)
+            .get(new Href(href).toString())
             .map(this.extractData);
     }
 
     public findRoleTypeByHref(href: string): Observable<IRoleType> {
         return this.http
-            .get(href)
+            .get(new Href(href).toString())
             .map(this.extractData);
     }
 
