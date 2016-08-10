@@ -187,6 +187,7 @@ RoleSchema.method('toDTO', async function () {
     return new DTO(
         Url.links()
             .push('self', Url.GET, await Url.forRole(this))
+            .push('modify', Url.PUT, await Url.forRole(this))
             .toArray(),
         this._id.toString() /*todo what code should we use?*/,
         await this.roleType.toHrefValue(false),
