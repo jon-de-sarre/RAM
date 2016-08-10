@@ -1,4 +1,3 @@
-import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
 import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES} from '@angular/forms';
@@ -36,7 +35,7 @@ export class RolesComponent extends AbstractPageComponent {
     public identityHref: string;
     public page: number;
 
-    public roles$: Observable<ISearchResult<IHrefValue<IRole>>>;
+    public roleSearchResult: ISearchResult<IHrefValue<IRole>>;
 
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
     public agencyUser: IAgencyUser;
@@ -75,13 +74,14 @@ export class RolesComponent extends AbstractPageComponent {
 
             // roles
             const rolesHref = this.services.model.getLinkByType('role-list', this.identity._links).href;
-            this.roles$ = this.services.rest.searchRolesByHref(rolesHref, this.page);
-            this.roles$.subscribe((searchResult) => {
-                this._isLoading = false;
-            }, (err) => {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
-                this._isLoading = false;
-            });
+            this.services.rest.searchRolesByHref(rolesHref, this.page)
+                .subscribe((searchResult) => {
+                    this.roleSearchResult = searchResult;
+                    this._isLoading = false;
+                }, (err) => {
+                    this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                    this._isLoading = false;
+                });
 
         });
 
