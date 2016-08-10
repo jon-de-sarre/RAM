@@ -130,6 +130,11 @@ export class RAMModelService {
 
     // model lookups ..................................................................................................
 
+    public getLinkHrefByType(type: string, links: ILink[]): string {
+        let link = this.getLinkByType(type, links);
+        return link ? link.href : null;
+    }
+
     public getLinkByType(type: string, links: ILink[]): ILink {
         if (type && links) {
             for (let link of links) {
