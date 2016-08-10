@@ -79,9 +79,9 @@ export class NotificationsComponent extends AbstractPageComponent {
             // relationships
             this.subjectGroupsWithRelationships = [];
             this.relationships$ = this.services.rest.searchRelationshipsByIdentity(this.identity.idValue, this.filter.encode(), this.page);
-            this.relationships$.subscribe((relationshipRefs) => {
+            this.relationships$.subscribe((searchResult) => {
                 this._isLoading = false;
-                for (const relationshipRef of relationshipRefs.list) {
+                for (const relationshipRef of searchResult.list) {
                     let subjectGroupWithRelationshipsToAddTo: SubjectGroupWithRelationships;
                     const subjectRef = relationshipRef.value.subject;
                     for (const subjectGroupWithRelationships of this.subjectGroupsWithRelationships) {
@@ -117,9 +117,7 @@ export class NotificationsComponent extends AbstractPageComponent {
         // pagination delegate
         this.paginationDelegate = {
             goToPage: (page: number) => {
-                // TODO
-                alert('NOT IMPLEMENTED');
-                // this.services.route.goToBusinessesPage(this.idValue, this.filter.encode(), page);
+                this.services.route.goToNotificationsPage(this.identityHref, page);
             }
         } as SearchResultPaginationDelegate;
 
