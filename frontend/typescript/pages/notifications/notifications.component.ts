@@ -40,7 +40,6 @@ export class NotificationsComponent extends AbstractPageComponent {
     public canReturnToDashboard: boolean = false;
 
     public identity: IIdentity;
-    public subjectGroupsWithRelationships: SubjectGroupWithRelationships[];
 
     public paginationDelegate: SearchResultPaginationDelegate;
 
@@ -77,25 +76,9 @@ export class NotificationsComponent extends AbstractPageComponent {
             this.identity = identity;
 
             // relationships
-            this.subjectGroupsWithRelationships = [];
             this.relationships$ = this.services.rest.searchRelationshipsByIdentity(this.identity.idValue, this.filter.encode(), this.page);
             this.relationships$.subscribe((searchResult) => {
                 this._isLoading = false;
-                for (const relationshipRef of searchResult.list) {
-                    let subjectGroupWithRelationshipsToAddTo: SubjectGroupWithRelationships;
-                    const subjectRef = relationshipRef.value.subject;
-                    for (const subjectGroupWithRelationships of this.subjectGroupsWithRelationships) {
-                        if (subjectGroupWithRelationships.hasSameSubject(subjectRef)) {
-                            subjectGroupWithRelationshipsToAddTo = subjectGroupWithRelationships;
-                        }
-                    }
-                    if (!subjectGroupWithRelationshipsToAddTo) {
-                        subjectGroupWithRelationshipsToAddTo = new SubjectGroupWithRelationships();
-                        subjectGroupWithRelationshipsToAddTo.subjectRef = subjectRef;
-                        this.subjectGroupsWithRelationships.push(subjectGroupWithRelationshipsToAddTo);
-                    }
-                    subjectGroupWithRelationshipsToAddTo.relationshipRefs.push(relationshipRef);
-                }
             }, (err) => {
                 this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
                 this._isLoading = false;
@@ -140,14 +123,4 @@ export class NotificationsComponent extends AbstractPageComponent {
         return true;
     }
 
-}
-
-class SubjectGroupWithRelationships {
-
-    public subjectRef: IHrefValue<IParty>;
-    public relationshipRefs: IHrefValue<IRelationship>[] = [];
-
-    public hasSameSubject(aSubjectRef: IHrefValue<IParty>) {
-        return this.subjectRef.href === aSubjectRef.href;
-    }
 }
