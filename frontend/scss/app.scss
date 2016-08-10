@@ -507,6 +507,16 @@ footer {
   font-weight: bold;
 }
 
+.table .radio, .table .checkbox {
+  margin: 0;
+  position: inherit;
+}
+
+.table .radio input[type="radio"], .table .radio-inline input[type="radio"], .table .checkbox input[type="checkbox"], .table .checkbox-inline input[type="checkbox"] {
+  margin-left: 0;
+  position: inherit;
+}
+
 .ui-calendar {
   display: inherit !important;
 }
