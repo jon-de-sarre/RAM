@@ -97,14 +97,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
         // identity in focus
         this.services.rest.findIdentityByHref(this.identityHref).subscribe({
             next: this.onFindIdentity.bind(this),
-            error: (err) => {
-                const status = err.status;
-                if (status === 401 || status === 403) {
-                    this.services.route.goToAccessDeniedPage();
-                } else {
-                    this.addGlobalErrorMessages(err);
-                }
-            }
+            error: this.onServerError.bind(this)
         });
 
     }
@@ -240,6 +233,8 @@ export class EditNotificationComponent extends AbstractPageComponent {
                 attributes
             );
 
+            // todo this needs to use the HATEOAS href
+            // todo this needs to handle the edit case
             // save relationship
             this.services.rest.createRelationship2(relationship).subscribe({
                 next: (role) => {

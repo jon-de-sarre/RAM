@@ -154,6 +154,15 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
         return this.globalMessages && this.globalMessages.length > 0;
     }
 
+    protected onServerError(err: Response) {
+        const status = err.status;
+        if (status === 401 || status === 403) {
+            this.services.route.goToAccessDeniedPage();
+        } else {
+            this.addGlobalErrorMessages(err);
+        }
+    }
+
     private isEqual(params1: Params, params2: Params): boolean {
         return params1 && params2 && JSON.stringify(params1) === JSON.stringify(params2);
     }
