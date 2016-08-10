@@ -271,9 +271,10 @@ export class RAMRestService {
     // role ...........................................................................................................
 
     public searchRolesByHref(href: string,
+                             filter: string,
                              page: number): Observable<ISearchResult<IHrefValue<IRole>>> {
         return this.http
-            .get(new Href(href).param('page', page).toString())
+            .get(new Href(href).param('filter', filter).param('page', page).toString())
             .map(this.extractData);
     }
 

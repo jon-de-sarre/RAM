@@ -74,7 +74,7 @@ export class RolesComponent extends AbstractPageComponent {
 
             // roles
             const rolesHref = this.services.model.getLinkHrefByType('role-list', this.identity._links);
-            this.services.rest.searchRolesByHref(rolesHref, this.page)
+            this.services.rest.searchRolesByHref(rolesHref, null, this.page)
                 .subscribe((searchResult) => {
                     this.roleSearchResult = searchResult;
                     this._isLoading = false;

@@ -227,7 +227,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
             const searchRolesByIdentityAndPage = (href: string, identity:IHrefValue<IIdentity>, page: number) => {
 
-                this.services.rest.searchRolesByHref(href, page).subscribe((results) => {
+                this.services.rest.searchRolesByHref(href, null, page).subscribe((results) => {
 
                     // check for OSP role
                     for (let role of results.list) {
