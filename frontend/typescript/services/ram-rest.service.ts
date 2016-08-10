@@ -26,6 +26,25 @@ import {
 } from '../../../commons/RamAPI';
 import {ABRentry} from '../../../commons/abr';
 
+class Href {
+
+    constructor(private href: string) {
+    }
+
+    public param(paramKey: string, paramValue: string|number|boolean, condition: boolean = true): Href {
+        if (condition && paramValue !== undefined && paramValue !== null) {
+            this.href += this.href.indexOf('?') === -1 ? '?' : '&';
+            this.href += paramKey + '=' + paramValue;
+        }
+        return this;
+    }
+
+    public toString(): string {
+        return this.href;
+    }
+
+}
+
 @Injectable()
 export class RAMRestService {
 
@@ -261,7 +280,7 @@ export class RAMRestService {
     public searchRolesByHref(href: string,
                              page: number): Observable<ISearchResult<IHrefValue<IRole>>> {
         return this.http
-            .get(`${href}?page=${page}`)
+            .get(new Href(href).param('page', page).toString())
             .map(this.extractData);
     }
 

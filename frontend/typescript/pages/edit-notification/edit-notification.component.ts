@@ -225,13 +225,13 @@ export class EditNotificationComponent extends AbstractPageComponent {
             // call model service getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, empty programs) ...
             // set the array of agency services ...
 
-            const searchRolesByIdentityAndPage = (idValue: string, identity:IHrefValue<IIdentity>, page: number) => {
+            const searchRolesByIdentityAndPage = (href: string, identity:IHrefValue<IIdentity>, page: number) => {
 
-                this.services.rest.searchRolesByIdentity(idValue, page).subscribe((results) => {
+                this.services.rest.searchRolesByHref(href, page).subscribe((results) => {
 
                     // check for OSP role
                     for (let role of results.list) {
-                        // TODO is there a better way to match?
+                        // TODO is there a better way to match? also we need to check status?
                         if (role.value.roleType.href.endsWith(this.services.constants.RelationshipTypeCode.OSP)) {
                             this.delegateParty = party;
                             this.ospRoleRef = role;
@@ -243,7 +243,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
                     const hasMore = (results.page * results.pageSize) < results.totalCount;
                     if (hasMore) {
-                        searchRolesByIdentityAndPage(idValue, identity, page + 1);
+                        searchRolesByIdentityAndPage(href, identity, page + 1);
                     } else {
                         // no OSP role found
                         this.addGlobalMessages(['The business matching the ABN is not a registered Online Service Provider']);
@@ -255,7 +255,8 @@ export class EditNotificationComponent extends AbstractPageComponent {
             for (let identity of party.identities) {
                 if (identity.value.rawIdValue === abn) {
                     // found business
-                    searchRolesByIdentityAndPage(identity.value.idValue, identity, 1);
+                    let href = this.services.model.getLinkByType('role-list', identity.value._links).href;
+                    searchRolesByIdentityAndPage(href, identity, 1);
                 } else {
                     // no identity found
                     this.addGlobalMessages(['Cannot match ABN']);
