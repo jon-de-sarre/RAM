@@ -30,4 +30,8 @@ export class RAMConstantsService {
         SELECTED_GOVERNMENT_SERVICES_LIST: 'SELECTED_GOVERNMENT_SERVICES_LIST',
     };
 
+    public RoleStatusCode = {
+        ACTIVE: 'ACTIVE'
+    };
+
 }

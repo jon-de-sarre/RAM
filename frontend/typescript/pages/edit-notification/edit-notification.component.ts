@@ -109,6 +109,14 @@ export class EditNotificationComponent extends AbstractPageComponent {
                     let abn = this.services.model.abnForParty(delegate);
                     (this.form.controls['abn'] as FormControl).updateValue(abn);
                     this.findByABN();
+                    let ssidsAttribute = this.services.model.getRelationshipAttribute(relationship, this.services.constants.RelationshipTypeAttributeCode.SSID, null);
+                    if (ssidsAttribute && ssidsAttribute.value) {
+                        let ssids = ssidsAttribute.value;
+                        this.getSSIDFormArray().removeAt(0);
+                        for (let i = 0; i < ssids.length; i = i + 1) {
+                            this.getSSIDFormArray().push(this._fb.control(ssids[i], Validators.required));
+                        }
+                    }
                     // todo, not yet implemented
                 });
             }
@@ -229,14 +237,14 @@ export class EditNotificationComponent extends AbstractPageComponent {
                     let href = this.services.model.getLinkHrefByType('role-list', identity.value._links);
                     const filterString = new FilterParams()
                         .add('roleType', this.services.constants.RelationshipTypeCode.OSP)
-                        .add('status', 'ACTIVE')
+                        .add('status', this.services.constants.RoleStatusCode.ACTIVE)
                         .encode();
 
                     this.services.rest.searchRolesByHref(href, filterString, 1).subscribe((results) => {
                         for (let role of results.list) {
                             if (role.value.roleType.href.endsWith(this.services.constants.RelationshipTypeCode.OSP)) {
-                                this.delegateParty = party;
                                 this.ospRoleRef = role;
+                                this.delegateParty = party;
                                 this.delegateIdentityRef = identity;
                                 this.ospServices = this.services.model.getAccessibleAgencyServiceRoleAttributeNames(role, []);
                                 return;
@@ -256,6 +264,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
         }, (err) => {
             this.addGlobalMessages(['Cannot match ABN']);
         });
+
     }
 
     public onAgencyServiceChange(attributeCode: string) {

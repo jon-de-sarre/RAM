@@ -18,7 +18,8 @@ import {
     IRoleAttributeName,
     IRelationshipAttributeName,
     IRelationshipAttributeNameUsage,
-    IRoleAttribute
+    IRoleAttribute,
+    IRelationshipAttribute
 } from '../../../commons/RamAPI';
 
 @Injectable()
@@ -209,6 +210,18 @@ export class RAMModelService {
             for (let ref of roleStatusRefs) {
                 if (ref.value.code === code) {
                     return ref.value;
+                }
+            }
+        }
+        return null;
+    }
+
+    public getRelationshipAttribute(relationshipRef: IRelationship, code: string, classifier: string): IRelationshipAttribute {
+        for (let attr of relationshipRef.attributes) {
+            const attributeNameRef = attr.attributeName;
+            if (attributeNameRef.value.code === code) {
+                if(!classifier || classifier === attributeNameRef.value.classifier) {
+                    return attr;
                 }
             }
         }
