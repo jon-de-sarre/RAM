@@ -4,6 +4,8 @@ import {sendResource, sendError, sendNotFoundError, validateReqSchema, sendSearc
 import {IIdentityModel} from '../models/identity.model';
 import {AUSkeyType} from '../models/auskey.model';
 import {IAUSkeyProvider} from '../providers/auskey.provider';
+import {FilterParams} from '../../../commons/RamAPI';
+import {Assert} from '../models/base';
 
 export class AuskeyController {
 
@@ -26,12 +28,15 @@ export class AuskeyController {
             .catch(sendError(res));
     };
 
-    private searchAusKeys = (req: Request,  res: Response) => {
+    private searchAusKeys = (req: Request, res: Response) => {
         const schema = {
             'idValue': {
                 in: 'params',
                 notEmpty: true,
                 errorMessage: 'Identity Id is not valid'
+            },
+            'filter': {
+                in: 'query'
             },
             'page': {
                 in: 'query',
@@ -48,12 +53,19 @@ export class AuskeyController {
                 }
             }
         };
-
+        const filterParams = FilterParams.decode(req.query.filter);
         validateReqSchema(req, schema)
             .then(async(req: Request) => {
+                const auskeyType = filterParams.get('auskeyType');
+                Assert.assertNotNull(auskeyType, 'Filter param auskeyType must be supplied');
+
                 const identity = await this.identityModel.findByIdValue(req.params.idValue);
-                // todo hard coded DEVICE type (For now)
-                return await this.auskeyProvider.searchByABN(identity.rawIdValue, AUSkeyType.Device, req.query.page, req.query.pageSize);
+                return await this.auskeyProvider.searchByABN(
+                    identity.rawIdValue,
+                    AUSkeyType.valueOf(auskeyType),
+                    parseInt(req.query.page),
+                    req.query.pageSize ? parseInt(req.query.pageSize) : null
+                );
             })
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
             .then(sendSearchResult(res))
