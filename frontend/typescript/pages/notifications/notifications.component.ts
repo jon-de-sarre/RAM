@@ -10,7 +10,6 @@ import {RAMServices} from '../../services/ram-services';
 
 import {
     ISearchResult,
-    IParty,
     IIdentity,
     IRelationship,
     IRelationshipStatus,
