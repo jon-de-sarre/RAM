@@ -1,4 +1,5 @@
 import 'rxjs/add/operator/merge';
+import {Response} from '@angular/http';
 import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 import {OnInit, OnDestroy} from '@angular/core';
@@ -131,6 +132,13 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
             for (let message of messages) {
                 this.globalMessages.push(message);
             }
+        }
+    }
+
+    protected addGlobalErrorMessages(response: Response) {
+        if (response) {
+            let messages = this.services.rest.extractErrorMessages(response);
+            this.addGlobalMessages(messages);
         }
     }
 
