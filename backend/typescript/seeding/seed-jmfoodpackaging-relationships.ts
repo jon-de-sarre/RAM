@@ -26,7 +26,7 @@ export class JMFoodPackagingRelationshipsSeeder {
                     delegate: Seeder.jenscatering_party,
                     delegateNickName: Seeder.jenscatering_name,
                     startTimestamp: new Date(),
-                    status: RelationshipStatus.Active.code,
+                    status: RelationshipStatus.Accepted.code,
                     initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({

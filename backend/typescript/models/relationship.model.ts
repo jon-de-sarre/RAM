@@ -34,18 +34,22 @@ const MAX_PAGE_SIZE = 10;
 
 export class RelationshipStatus extends RAMEnum {
 
-    public static Active = new RelationshipStatus('ACTIVE', 'Active');
+    public static Accepted = new RelationshipStatus('ACCEPTED', 'Accepted');
     public static Cancelled = new RelationshipStatus('CANCELLED', 'Cancelled');
-    public static Deleted = new RelationshipStatus('DELETED', 'Deleted');
     public static Declined = new RelationshipStatus('DECLINED', 'Declined');
+    public static Deleted = new RelationshipStatus('DELETED', 'Deleted');
     public static Pending = new RelationshipStatus('PENDING', 'Pending');
+    public static Revoked = new RelationshipStatus('REVOKED', 'Revoked');
+    public static Suspended = new RelationshipStatus('SUSPENDED', 'Suspended');
 
     protected static AllValues = [
-        RelationshipStatus.Active,
+        RelationshipStatus.Accepted,
         RelationshipStatus.Cancelled,
-        RelationshipStatus.Deleted,
         RelationshipStatus.Declined,
-        RelationshipStatus.Pending
+        RelationshipStatus.Deleted,
+        RelationshipStatus.Pending,
+        RelationshipStatus.Revoked,
+        RelationshipStatus.Suspended
     ];
 
     constructor(code: string, shortDecodeText: string) {
@@ -426,7 +430,7 @@ RelationshipSchema.method('acceptPendingInvitation', async function (acceptingDe
     Assert.assertTrue(acceptingDelegateIdentity.party.id === this.delegate.id, 'Not allowed');
 
     // mark relationship as active
-    this.status = RelationshipStatus.Active.code;
+    this.status = RelationshipStatus.Accepted.code;
     await this.save();
 
     // TODO notify relevant parties
@@ -494,13 +498,13 @@ RelationshipSchema.static('add2', async (relationshipType: IRelationshipType,
     let status = RelationshipStatus.Pending;
 
     // check subject
-    if(initiatedBy === RelationshipInitiatedBy.Subject && relationshipType.autoAcceptIfInitiatedFromSubject) {
-        status = RelationshipStatus.Active;
+    if (initiatedBy === RelationshipInitiatedBy.Subject && relationshipType.autoAcceptIfInitiatedFromSubject) {
+        status = RelationshipStatus.Accepted;
     }
 
     // check delegate
-    if(initiatedBy === RelationshipInitiatedBy.Delegate && relationshipType.autoAcceptIfInitiatedFromDelegate) {
-        status = RelationshipStatus.Active;
+    if (initiatedBy === RelationshipInitiatedBy.Delegate && relationshipType.autoAcceptIfInitiatedFromDelegate) {
+        status = RelationshipStatus.Accepted;
     }
 
     return await this.RelationshipModel.create({
@@ -597,7 +601,7 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
             .findOne({
                 subject: requestedParty,
                 delegate: requestingParty,
-                status: RelationshipStatus.Active.code,
+                status: RelationshipStatus.Accepted.code,
                 $or: [{endDate: null}, {endDate: {$gte: date}}]
             })
             .exec();
@@ -614,7 +618,7 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
                         '$match': {
                             '$and': [
                                 {'subject': new mongoose.Types.ObjectId(requestedParty.id)},
-                                {'status': RelationshipStatus.Active.code},
+                                {'status': RelationshipStatus.Accepted.code},
                                 {'$or': [{endDate: null}, {endDate: {$gte: date}}]}
                             ]
                         }
@@ -629,7 +633,7 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
                         '$match': {
                             '$and': [
                                 {'delegate': new mongoose.Types.ObjectId(requestingParty.id)},
-                                {'status': RelationshipStatus.Active.code},
+                                {'status': RelationshipStatus.Accepted.code},
                                 {'$or': [{endDate: null}, {endDate: {$gte: date}}]}
                             ]
                         }

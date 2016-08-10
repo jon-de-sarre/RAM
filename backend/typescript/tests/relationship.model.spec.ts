@@ -189,7 +189,7 @@ describe('RAM Relationship', () => {
                 delegate: delegateParty1,
                 delegateNickName: delegateNickName1,
                 startTimestamp: new Date(),
-                status: RelationshipStatus.Active.code,
+                status: RelationshipStatus.Accepted.code,
                 initiatedBy: RelationshipInitiatedBy.Subject.code
             });
 
@@ -197,7 +197,7 @@ describe('RAM Relationship', () => {
             expect(instance.id).not.toBeNull();
             expect(instance.subject).not.toBeNull();
             expect(instance.status).not.toBeNull();
-            expect(instance.statusEnum()).toBe(RelationshipStatus.Active);
+            expect(instance.statusEnum()).toBe(RelationshipStatus.Accepted);
             expect(instance.endEventTimestamp).toBeFalsy();
             expect(instance._subjectNickNameString).not.toBeNull();
             expect(instance._delegateNickNameString).not.toBeNull();
@@ -221,7 +221,7 @@ describe('RAM Relationship', () => {
                 delegateNickName: delegateNickName1,
                 startTimestamp: new Date(),
                 endTimestamp: new Date(),
-                status: RelationshipStatus.Active.code,
+                status: RelationshipStatus.Accepted.code,
                 initiatedBy: RelationshipInitiatedBy.Subject.code
             });
 
@@ -229,7 +229,7 @@ describe('RAM Relationship', () => {
             expect(instance.id).not.toBeNull();
             expect(instance.subject).not.toBeNull();
             expect(instance.status).not.toBeNull();
-            expect(instance.statusEnum()).toBe(RelationshipStatus.Active);
+            expect(instance.statusEnum()).toBe(RelationshipStatus.Accepted);
             expect(instance.endEventTimestamp).not.toBeFalsy();
             expect(instance._subjectNickNameString).not.toBeNull();
             expect(instance._delegateNickNameString).not.toBeNull();
@@ -330,7 +330,7 @@ describe('RAM Relationship', () => {
 
             const retrievedAcceptedDelegateIdentity = await IdentityModel.findByIdValue(acceptingDelegateIdentity1.idValue);
 
-            expect(relationshipToAccept.statusEnum()).toBe(RelationshipStatus.Active);
+            expect(relationshipToAccept.statusEnum()).toBe(RelationshipStatus.Accepted);
             expect(acceptedInstance.statusEnum()).toBe(relationshipToAccept.statusEnum());
             expect(acceptedInstance.delegate.id).toBe(retrievedAcceptedDelegateIdentity.party.id);
             expect(retrievedAcceptedInstance.delegate.id).toBe(retrievedAcceptedDelegateIdentity.party.id);
@@ -375,7 +375,7 @@ describe('RAM Relationship', () => {
             });
 
             await relationship1.acceptPendingInvitation(acceptingDelegateIdentity1);
-            expect(relationship1.statusEnum()).toBe(RelationshipStatus.Active);
+            expect(relationship1.statusEnum()).toBe(RelationshipStatus.Accepted);
 
             await relationship1.acceptPendingInvitation(acceptingDelegateIdentity1);
             fail('should not have been able to accept a non-pending relationship');
