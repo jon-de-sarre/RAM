@@ -7,20 +7,20 @@
 import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
 import {sendResource, sendError, sendNotFoundError} from './helpers';
-import { ABR } from '../providers/abr.provider';
+import {ABR} from '../providers/abr.provider';
 import {IdentityModel} from '../models/identity.model';
 
-// todo this needs to return DTOs!
 export class BusinessController {
+
     /*
      * Pop off the the ABR and retrieve an entry for the ABN provided.
      * Return it as an array of one entry if found - to match findByName.
      */
-    private findByABN = (req:Request, res:Response) => {
+    private findByABN = (req: Request, res: Response) => {
         ABR.searchABN(req.params.abn)
-        .then(sendResource(res))
-        .then(sendNotFoundError(res))
-        .catch(sendError(res));
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     /*
@@ -30,11 +30,11 @@ export class BusinessController {
      * related names. More than just Soundex since ATO matches Australian Tax
      * Office among others.
      */
-    private findByName = (req:Request, res:Response) => {
+    private findByName = (req: Request, res: Response) => {
         ABR.searchNames(req.params.name)
-        .then(sendResource(res))
-        .then(sendNotFoundError(res))
-        .catch(sendError(res));
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
     };
 
     /*
@@ -43,7 +43,7 @@ export class BusinessController {
      * if one does not already exist. Even if one does exist for the ABN, it
      * may be under a different name.
      */
-    private registerABRRetrievedCompany = (req:Request, res:Response) => {
+    private registerABRRetrievedCompany = (req: Request, res: Response) => {
         IdentityModel.addCompany(req.params.abn, req.params.name)
             .then((model) => model ? model.toDTO() : null)
             .then(sendResource(res))
@@ -51,7 +51,7 @@ export class BusinessController {
             .catch(sendError(res));
     };
 
-    public assignRoutes = (router:Router) => {
+    public assignRoutes = (router: Router) => {
 
         router.get('/v1/business/abn/:abn',
             security.isAuthenticated,
