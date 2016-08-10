@@ -5,20 +5,18 @@
 
 <form [formGroup]="form">
 
-    <div class="panel panel-default" *ngIf="!role" >
+    <div class="panel panel-default" *ngIf="!role">
         <div class="panel-heading">
             <h4>Select a role</h4>
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <div class="col-md-12">
-                    <h4>Role type*</h4>
-                    <select class="form-control" [formControl]="form.controls['roleType']" #t (change)="onRoleTypeChange(t.value)">
-                        <option value="-" disabled hidden>Please Choose...</option>
-                        <option *ngFor="let roleTypeRef of roleTypeRefs" value={{roleTypeRef.value.code}}>{{roleTypeRef.value.shortDecodeText}}</option>
-                    </select>
-                    <br/>
-                </div>
+                <h4>Role type*</h4>
+                <select class="form-control" [formControl]="form.controls['roleType']" #t (change)="onRoleTypeChange(t.value)">
+                    <option value="-" disabled hidden>Please Choose...</option>
+                    <option *ngFor="let roleTypeRef of roleTypeRefs" value={{roleTypeRef.value.code}}>{{roleTypeRef.value.shortDecodeText}}</option>
+                </select>
+                <br/>
             </div>
         </div>
     </div>
@@ -28,12 +26,7 @@
             <h4>Role Type</h4>
         </div>
         <div class="panel-body">
-            <div class="form-group">
-                <div class="col-md-12">
-                    {{ role.roleType?.value?.shortDecodeText }}
-                    <br/>
-                </div>
-            </div>
+            {{ role.roleType?.value?.shortDecodeText }}
         </div>
     </div>
 
@@ -43,13 +36,13 @@
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <div class="col-md-12">
-                    <h4>Access to government agencies services</h4>
-                    <div class="checkbox" *ngFor="let attributeUsage of agencyServiceRoleAttributeNameUsages">
-                        <label>
-                            <input type="checkbox" [checked]="isAgencyServiceSelected(attributeUsage.attributeNameDef.value.code)" (change)="onAgencyServiceChange(attributeUsage.attributeNameDef.value.code)"> {{attributeUsage.attributeNameDef.value.shortDecodeText}}
-                        </label>
-                    </div>
+                <h4>Access to government agencies services</h4>
+                <div class="checkbox" *ngFor="let attributeUsage of agencyServiceRoleAttributeNameUsages">
+                    <label>
+                        <input type="checkbox" [checked]="isAgencyServiceSelected(attributeUsage.attributeNameDef.value.code)"
+                               (change)="onAgencyServiceChange(attributeUsage.attributeNameDef.value.code)">
+                        {{attributeUsage.attributeNameDef.value.shortDecodeText}}
+                    </label>
                 </div>
             </div>
         </div>
@@ -61,38 +54,36 @@
         </div>
         <div class="panel-body">
             <div class="form-group">
-                <div class="col-md-12">
-                    <h4>Preferred Name</h4>
-                    <input type="text" class="form-control" placeholder="" [formControl]="form.controls['preferredName']"/>
-                    <br/>
-                </div>
+                <h4>Preferred Name</h4>
+                <input type="text" class="form-control" placeholder="" [formControl]="form.controls['preferredName']"/>
+                <br/>
             </div>
             <div class="form-group">
-                <div class="col-md-12">
-                    <h4>Assign credentials for software provider services</h4>
-                    <table class="table table-hover">
-                        <thead>
-                            <tr>
-                                <th><h4>Credential</h4></th>
-                                <th><div class="checkbox"><input type="checkbox"/></div></th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <tr *ngFor="let auskeyRef of (deviceAusKeyRefs$|async)?.list">
-                                <td>
-                                       {{auskeyRef.value.id}}
-                                </td>
-                                <td>
-                                    <div class="checkbox"><input type="checkbox" [checked]="isAusKeySelected(auskeyRef.value.id)" (change)="onAusKeyChange(auskeyRef.value.id)"/></div>
-                                </td>
-                            </tr>
-                        </tbody>
-                    </table>
-                    <search-result-pagination
-                            [searchResult]="deviceAusKeyRefs$|async"
-                            [delegate]="auskeyPaginationDelegate">
-                    </search-result-pagination>
-                </div>
+                <h4>Assign credentials for software provider services</h4>
+                <table class="table table-hover">
+                    <thead>
+                    <tr>
+                        <th>Credential</th>
+                        <th>
+                            <div class="checkbox"><input type="checkbox"/></div>
+                        </th>
+                    </tr>
+                    </thead>
+                    <tbody>
+                    <tr *ngFor="let auskeyRef of (deviceAusKeyRefs$|async)?.list">
+                        <td>
+                            {{auskeyRef.value.id}}
+                        </td>
+                        <td>
+                            <div class="checkbox"><input type="checkbox" [checked]="isAusKeySelected(auskeyRef.value.id)" (change)="onAusKeyChange(auskeyRef.value.id)"/></div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+                <search-result-pagination
+                    [searchResult]="deviceAusKeyRefs$|async"
+                    [delegate]="auskeyPaginationDelegate">
+                </search-result-pagination>
             </div>
         </div>
     </div>
