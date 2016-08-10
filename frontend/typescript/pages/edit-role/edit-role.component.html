@@ -70,23 +70,21 @@
             <div class="form-group">
                 <div class="col-md-12">
                     <h4>Assign credentials for software provider services</h4>
-                    <table class="table">
+                    <table class="table table-hover">
                         <thead>
                             <tr>
                                 <th><h4>Credential</h4></th>
-                                <th class="col-md-2"><h4><input type="checkbox"></h4></th>
+                                <th><div class="checkbox"><input type="checkbox"/></div></th>
                             </tr>
                         </thead>
                         <tbody>
-                            <tr>
+                            <tr *ngFor="let auskeyRef of (deviceAusKeyRefs$|async)?.list">
                                 <td>
-                                  <div class="checkbox" *ngFor="let auskeyRef of (deviceAusKeyRefs$|async)?.list">
-                                    <label>
-                                      <input type="checkbox" [checked]="isAusKeySelected(auskeyRef.value.id)" (change)="onAusKeyChange(auskeyRef.value.id)"> {{auskeyRef.value.id}}
-                                    </label>
-                                  </div>
+                                       {{auskeyRef.value.id}}
                                 </td>
-                                <td></td>
+                                <td>
+                                    <div class="checkbox"><input type="checkbox" [checked]="isAusKeySelected(auskeyRef.value.id)" (change)="onAusKeyChange(auskeyRef.value.id)"/></div>
+                                </td>
                             </tr>
                         </tbody>
                     </table>
