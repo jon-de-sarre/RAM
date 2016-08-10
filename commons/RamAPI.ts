@@ -196,13 +196,15 @@ export class HrefValue<T> implements IHrefValue<T> {
 }
 
 export interface IParty {
+    _links: ILink[];
     partyType: string;
     identities: Array<IHrefValue<IIdentity>>;
 }
 
 export class Party implements IParty {
-    constructor(public partyType:string,
-                public identities:HrefValue<Identity>[]) {
+    constructor(public _links: ILink[],
+                public partyType: string,
+                public identities: HrefValue<Identity>[]) {
     }
 }
 

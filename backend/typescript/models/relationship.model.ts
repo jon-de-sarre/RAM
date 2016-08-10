@@ -320,6 +320,7 @@ RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
     const pendingWithInvitationCode = invitationCode && this.statusEnum() === RelationshipStatus.Pending;
     return new DTO(
         Url.links()
+            .push('self', Url.GET, await Url.forRelationship(this))
             .push('accept', Url.POST, await Url.forRelationshipAccept(invitationCode), pendingWithInvitationCode)
             .push('reject', Url.POST, await Url.forRelationshipReject(invitationCode), pendingWithInvitationCode)
             .push('notifyDelegate', Url.POST, await Url.forRelationshipNotifyDelegate(invitationCode), pendingWithInvitationCode)

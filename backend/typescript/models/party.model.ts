@@ -101,6 +101,9 @@ PartySchema.method('toHrefValue', async function (includeValue: boolean) {
 PartySchema.method('toDTO', async function () {
     const identities = await IdentityModel.listByPartyId(this.id);
     return new DTO(
+        Url.links()
+            .push('self', Url.GET, await Url.forParty(this))
+            .toArray(),
         this.partyType,
         await Promise.all<HrefValue<IdentityDTO>>(identities.map(
             async (identity: IIdentity) => {

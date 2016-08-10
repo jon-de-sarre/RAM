@@ -22,7 +22,8 @@ import {
     Relationship,
     IRelationship,
     IRelationshipAttribute,
-    RelationshipAttribute
+    RelationshipAttribute,
+    FilterParams
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -214,53 +215,43 @@ export class EditNotificationComponent extends AbstractPageComponent {
     }
 
     public findByABN() {
-        const abn = this.form.controls['abn'].value.replace(/ /g, '');
 
         this.clearGlobalMessages();
 
+        const abn = this.form.controls['abn'].value.replace(/ /g, '');
+
         this.services.rest.findPartyByABN(abn).subscribe((party) => {
 
-            // TODO check party has OSR role
-            // set ospRoleRef ...
-            // call model service getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, empty programs) ...
-            // set the array of agency services ...
-
-            const searchRolesByIdentityAndPage = (href: string, identity:IHrefValue<IIdentity>, page: number) => {
-
-                this.services.rest.searchRolesByHref(href, null, page).subscribe((results) => {
-
-                    // check for OSP role
-                    for (let role of results.list) {
-                        // TODO is there a better way to match? also we need to check status?
-                        if (role.value.roleType.href.endsWith(this.services.constants.RelationshipTypeCode.OSP)) {
-                            this.delegateParty = party;
-                            this.ospRoleRef = role;
-                            this.delegateIdentityRef = identity;
-                            this.ospServices = this.services.model.getAccessibleAgencyServiceRoleAttributeNames(role, []);
-                            return;
-                        }
-                    }
-
-                    const hasMore = (results.page * results.pageSize) < results.totalCount;
-                    if (hasMore) {
-                        searchRolesByIdentityAndPage(href, identity, page + 1);
-                    } else {
-                        // no OSP role found
-                        this.addGlobalMessages(['The business matching the ABN is not a registered Online Service Provider']);
-                    }
-
-                });
-            };
-
             for (let identity of party.identities) {
+
                 if (identity.value.rawIdValue === abn) {
+
                     // found business
                     let href = this.services.model.getLinkHrefByType('role-list', identity.value._links);
-                    searchRolesByIdentityAndPage(href, identity, 1);
+                    const filterString = new FilterParams()
+                        .add('roleType', this.services.constants.RelationshipTypeCode.OSP)
+                        .add('status', 'ACTIVE')
+                        .encode();
+
+                    this.services.rest.searchRolesByHref(href, filterString, 1).subscribe((results) => {
+                        for (let role of results.list) {
+                            if (role.value.roleType.href.endsWith(this.services.constants.RelationshipTypeCode.OSP)) {
+                                this.delegateParty = party;
+                                this.ospRoleRef = role;
+                                this.delegateIdentityRef = identity;
+                                this.ospServices = this.services.model.getAccessibleAgencyServiceRoleAttributeNames(role, []);
+                                return;
+                            }
+                        }
+                        // no OSP role found
+                        this.addGlobalMessages(['The business matching the ABN is not a registered Online Service Provider']);
+                    });
+
                 } else {
                     // no identity found
                     this.addGlobalMessages(['Cannot match ABN']);
                 }
+
             }
 
         }, (err) => {

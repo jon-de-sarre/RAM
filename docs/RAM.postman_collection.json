@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "RAM",
-		"_postman_id": "55697973-47c9-e813-9a64-2fa1312a2bb0",
+		"_postman_id": "bd88d28d-0504-d57e-c570-e78db2a0c231",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -1221,6 +1221,20 @@
 					"name": "List roles (EdTech)",
 					"request": {
 						"url": "{{host}}/api/v1/roles/identity/PUBLIC_IDENTIFIER:ABN:10000000001?page=1",
+						"method": "GET",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": []
+						},
+						"description": "List roles"
+					},
+					"response": []
+				},
+				{
+					"name": "List roles (EdTech, OSP, Active)",
+					"request": {
+						"url": "{{host}}/api/v1/roles/identity/PUBLIC_IDENTIFIER:ABN:10000000001?filter=roleType%3DOSP%26status%3DACTIVE&page=1",
 						"method": "GET",
 						"header": [],
 						"body": {
