@@ -46,13 +46,15 @@ export class EditRoleComponent extends AbstractPageComponent {
     public auskeyPage: number;
     public auskeyPaginationDelegate: SearchResultPaginationDelegate;
 
+    public deviceAusKeyRefs$: Observable<ISearchResult<IHrefValue<IAUSkey>>>;
+    public deviceAusKeyRefs: ISearchResult<IHrefValue<IAUSkey>>;
+
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
     public me: IAgencyUser;
     public identity: IIdentity;
     public role: IRole;
     public roleTypeRefs: IHrefValue<IRoleType>[];
     public agencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[];
-    public deviceAusKeyRefs$: Observable<ISearchResult<IHrefValue<IAUSkey>>>;
 
     public form: FormGroup;
 
@@ -75,7 +77,8 @@ export class EditRoleComponent extends AbstractPageComponent {
             roleType: '-',
             preferredName: '',
             agencyServices: [[]],
-            deviceAusKeys: [[]]
+            deviceAusKeys: [[]],
+            toggleAllAuskeys: false
         });
 
         // extract path and query parameters
@@ -107,7 +110,10 @@ export class EditRoleComponent extends AbstractPageComponent {
             // todo code below doesn't look right
             this.auskeyPaginationDelegate = {
                 goToPage: (page: number) => {
-                    this.deviceAusKeyRefs$ = this.services.rest.listAusKeys(this.identity.idValue, this.auskeyFilter.encode(), page);
+                    // this.deviceAusKeyRefs$ = this.services.rest.listAusKeys(this.identity.idValue, this.auskeyFilter.encode(), page);
+                    this.services.rest.listAusKeys(this.identity.idValue, this.auskeyFilter.encode(), page).subscribe((auskeys) => {
+                        this.deviceAusKeyRefs = auskeys;
+                    });
                 }
             } as SearchResultPaginationDelegate;
             this.auskeyPaginationDelegate.goToPage(1);
@@ -185,6 +191,28 @@ export class EditRoleComponent extends AbstractPageComponent {
 
     public isAgencyServiceSelected(code: string) {
         return this.form.controls['agencyServices'].value.indexOf(code) > -1;
+    }
+
+    public toggleAllAuskeys() {
+        if (this.form.controls['toggleAllAuskeys'].value) {
+            // toggle off
+            const arr = this.form.controls['deviceAusKeys'].value;
+            for (let val of this.deviceAusKeyRefs.list) {
+                let index = arr.indexOf(val.value.id);
+                if (index > -1) {
+                    arr.splice(index, 1);
+                }
+            }
+        } else {
+            // toggle on
+            const arr = this.form.controls['deviceAusKeys'].value;
+            for (let val of this.deviceAusKeyRefs.list) {
+                let index = arr.indexOf(val.value.id);
+                if (index === -1) {
+                    arr.push(val.value.id);
+                }
+            }
+        }
     }
 
     private toggleArrayValue(arr: string[], val: string) {

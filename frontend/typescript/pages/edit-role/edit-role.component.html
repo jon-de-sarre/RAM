@@ -39,7 +39,8 @@
                 <h4>Access to government agencies services</h4>
                 <div class="checkbox" *ngFor="let attributeUsage of agencyServiceRoleAttributeNameUsages">
                     <label>
-                        <input type="checkbox" [checked]="isAgencyServiceSelected(attributeUsage.attributeNameDef.value.code)"
+                        <input type="checkbox"
+                               [checked]="isAgencyServiceSelected(attributeUsage.attributeNameDef.value.code)"
                                (change)="onAgencyServiceChange(attributeUsage.attributeNameDef.value.code)">
                         {{attributeUsage.attributeNameDef.value.shortDecodeText}}
                     </label>
@@ -65,12 +66,12 @@
                     <tr>
                         <th>Credential</th>
                         <th>
-                            <div class="checkbox"><input type="checkbox"/></div>
+                            <div class="checkbox"><input (change)="toggleAllAuskeys()" type="checkbox" [formControl]="form.controls['toggleAllAuskeys']"/></div>
                         </th>
                     </tr>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let auskeyRef of (deviceAusKeyRefs$|async)?.list">
+                    <tr *ngFor="let auskeyRef of deviceAusKeyRefs?.list">
                         <td>
                             {{auskeyRef.value.id}}
                         </td>
@@ -81,7 +82,7 @@
                     </tbody>
                 </table>
                 <search-result-pagination
-                    [searchResult]="deviceAusKeyRefs$|async"
+                    [searchResult]="deviceAusKeyRefs"
                     [delegate]="auskeyPaginationDelegate">
                 </search-result-pagination>
             </div>
