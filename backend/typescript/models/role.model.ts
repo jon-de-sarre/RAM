@@ -1,5 +1,5 @@
 import * as mongoose from 'mongoose';
-import {RAMEnum, IRAMObject, RAMSchema, Query} from './base';
+import {RAMEnum, IRAMObject, RAMSchema} from './base';
 import {Url} from './url';
 import {IParty, PartyModel} from './party.model';
 import {IRoleType, RoleTypeModel} from './roleType.model';
@@ -135,9 +135,11 @@ export interface IRoleModel extends mongoose.Model<IRole> {
          attributes: IRoleAttribute[]) => Promise<IRole>;
     findByIdentifier:(id: string) => Promise<IRole>;
     findByRoleTypeAndParty:(roleType: IRoleType, party: IParty) => Promise<IRole>;
-    search:(page: number, pageSize: number)
-        => Promise<SearchResult<IRole>>;
-    searchByIdentity:(identityIdValue: string, page: number, pageSize: number)
+    searchByIdentity:(identityIdValue: string,
+                      roleType: string,
+                      status: string,
+                      page: number,
+                      pageSize: number)
         => Promise<SearchResult<IRole>>;
 }
 
@@ -250,36 +252,12 @@ RoleSchema.static('findByRoleTypeAndParty', (roleType: IRoleType, party: IParty)
         .exec();
 });
 
-RoleSchema.static('search', (page: number,
-                             reqPageSize: number) => {
-    return new Promise<SearchResult<IRole>>(async (resolve, reject) => {
-        const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
-        try {
-            const query = await (new Query()
-                .build());
-            const count = await this.RoleModel
-                .count(query)
-                .exec();
-            const list = await this.RoleModel
-                .find(query)
-                .deepPopulate([
-                    'roleType',
-                    'party',
-                    'attributes.attributeName'
-                ])
-                .skip((page - 1) * pageSize)
-                .limit(pageSize)
-                .sort({name: 1})
-                .exec();
-            resolve(new SearchResult<IRole>(page, count, pageSize, list));
-        } catch (e) {
-            reject(e);
-        }
-    });
-});
-
 /* tslint:disable:max-func-body-length */
-RoleSchema.static('searchByIdentity', (identityIdValue: string, page: number, reqPageSize: number) => {
+RoleSchema.static('searchByIdentity', (identityIdValue: string,
+                                       roleType: string,
+                                       status: string,
+                                       page: number,
+                                       reqPageSize: number) => {
     return new Promise<SearchResult<IRole>>(async (resolve, reject) => {
         const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
         try {
@@ -288,6 +266,12 @@ RoleSchema.static('searchByIdentity', (identityIdValue: string, page: number, re
             mainAnd.push({
                 party: party
             });
+            if (roleType) {
+                mainAnd.push({'_roleTypeCode': roleType});
+            }
+            if (status) {
+                mainAnd.push({'status': status});
+            }
             const where: {[key: string]: Object} = {};
             where['$and'] = mainAnd;
             const count = await this.RoleModel

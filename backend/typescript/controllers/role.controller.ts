@@ -1,11 +1,10 @@
 import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
-import {
-    sendResource, sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema
-} from './helpers';
+import {sendResource, sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema} from './helpers';
 import {Assert} from '../models/base';
 import {IPartyModel, PartyModel, IParty} from '../models/party.model';
 import {IRoleModel, RoleStatus} from '../models/role.model';
+import {FilterParams} from '../../../commons/RamAPI';
 
 // todo add data security
 export class RoleController {
@@ -54,9 +53,12 @@ export class RoleController {
                 }
             }
         };
+        const filterParams = FilterParams.decode(req.query.filter);
         validateReqSchema(req, schema)
             .then((req:Request) => this.roleModel.searchByIdentity(
                 req.params.identity_id,
+                filterParams.get('roleType'),
+                filterParams.get('status'),
                 parseInt(req.query.page),
                 req.query.pageSize ? parseInt(req.query.pageSize) : null)
             )

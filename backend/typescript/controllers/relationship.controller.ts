@@ -1,12 +1,22 @@
 import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
 import {
-    sendResource, sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema, REGULAR_CHARS
+    sendResource,
+    sendList,
+    sendSearchResult,
+    sendError,
+    sendNotFoundError,
+    validateReqSchema,
+    REGULAR_CHARS
 } from './helpers';
-import {IPartyModel} from '../models/party.model';
+import {IPartyModel, PartyModel} from '../models/party.model';
 import {IRelationshipModel, RelationshipStatus} from '../models/relationship.model';
-import {FilterParams, IInvitationCodeRelationshipAddDTO, ICreateInvitationCodeDTO, IAttributeDTO} from '../../../commons/RamAPI';
-import {PartyModel} from '../models/party.model';
+import {
+    FilterParams,
+    IInvitationCodeRelationshipAddDTO,
+    ICreateInvitationCodeDTO,
+    IAttributeDTO
+} from '../../../commons/RamAPI';
 import {Headers} from './headers';
 import {Assert} from '../models/base';
 
