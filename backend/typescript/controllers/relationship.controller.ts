@@ -425,7 +425,7 @@ export class RelationshipController {
             .then(async (req:Request) => {
                 const myPrincipal = security.getAuthenticatedPrincipal(res);
                 const myIdentity = security.getAuthenticatedIdentity(res);
-                const hasAccess = await this.partyModel.hasAccess(req.params.identity_id, myPrincipal, myIdentity);
+                const hasAccess = await this.partyModel.hasAccess(subjectIdValue, myPrincipal, myIdentity);
                 Assert.assertTrue(hasAccess, 'You do not have access to this party.');
                 return req;
             })
