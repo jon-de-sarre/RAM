@@ -587,22 +587,6 @@ export class RoleStatus implements IRoleStatus {
     }
 }
 
-// todo to be evaluated and removed if required
-// role search ........................................................................................................
-
-export interface IRoleSearchDTO {
-    totalCount: number;
-    pageSize: number;
-    list: Array<IHrefValue<IRole>>;
-}
-
-export class RoleSearchDTO implements IRoleSearchDTO {
-    constructor(public totalCount: number,
-                public pageSize: number,
-                public list: Array<IHrefValue<IRole>>) {
-    }
-}
-
 // role type ..........................................................................................................
 
 export interface IRoleType extends ICodeDecode {
