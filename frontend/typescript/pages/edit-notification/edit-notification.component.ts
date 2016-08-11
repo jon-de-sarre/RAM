@@ -108,13 +108,15 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
         // osp relationship type
         this.services.rest.listRelationshipTypes().subscribe({
-            next: this.onListRelationshipTypes.bind(this)
+            next: this.onListRelationshipTypes.bind(this),
+            error: this.onServerError.bind(this)
         });
 
         // relationship in focus
         if (this.relationshipHref) {
             this.services.rest.findRelationshipByHref(this.relationshipHref).subscribe({
-                next: this.onFindRelationship.bind(this)
+                next: this.onFindRelationship.bind(this),
+                error: this.onServerError.bind(this)
             });
         }
 
@@ -124,7 +126,8 @@ export class EditNotificationComponent extends AbstractPageComponent {
         for (let ref of relationshipTypeRefs) {
             if (ref.value.code === this.services.constants.RelationshipTypeCode.OSP) {
                 this.ospRelationshipTypeRef = ref;
-                this.declarationText = this.services.model.getRelationshipTypeAttributeNameUsage(ref, 'SUBJECT_RELATIONSHIP_TYPE_DECLARATION').defaultValue;
+                this.declarationText = this.services.model.getRelationshipTypeAttributeNameUsage(ref,
+                    this.services.constants.RelationshipTypeAttributeCode.SUBJECT_RELATIONSHIP_TYPE_DECLARATION).defaultValue;
                 break;
             }
         }
@@ -241,12 +244,8 @@ export class EditNotificationComponent extends AbstractPageComponent {
             // todo this needs to handle the edit case
             // save relationship
             this.services.rest.createRelationship2(relationship).subscribe({
-                next: (role) => {
-                    this.back();
-                },
-                error: (err) => {
-                    this.addGlobalErrorMessages(err);
-                }
+                next: this.back.bind(this),
+                error: this.onServerError.bind(this)
             });
 
         }
@@ -269,10 +268,14 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
         this.services.rest.findPartyByABN(abn).subscribe({
             next: (party) => {
-                this.onFindPartyByABN(party,  abn)
+                this.onFindPartyByABN(party, abn);
             },
             error: (err) => {
-                this.addGlobalMessages(['Cannot match ABN']);
+                if (err.status === 404) {
+                    this.addGlobalMessages(['Cannot match ABN']);
+                } else {
+                    this.onServerError(err);
+                }
             }
         });
 
