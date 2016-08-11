@@ -127,14 +127,16 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
     }
 
     protected addGlobalMessage(message: string) {
-        this.globalMessages.push(message);
+        if (this.globalMessages.indexOf(message) === -1) {
+            this.globalMessages.push(message);
+        }
         $('html, body').animate({ scrollTop: 0 }, 'slow');
     }
 
     protected addGlobalMessages(messages: string[]) {
         if (messages) {
             for (let message of messages) {
-                this.globalMessages.push(message);
+                this.addGlobalMessage(message);
             }
         }
     }
