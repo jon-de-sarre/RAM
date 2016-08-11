@@ -86,7 +86,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
         // forms
         this.form = this.fb.group({
             abn: [null, Validators.compose([Validators.required, RAMNgValidators.validateABNFormat])],
-            accepted: false,
+            accepted: [false],
             agencyServices: [[]],
             ssids: this.fb.array([this.fb.control(null, Validators.required)])
         });
