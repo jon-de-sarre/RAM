@@ -7,6 +7,7 @@ import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
 import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
     from '../../components/search-result-pagination/search-result-pagination.component';
+import {RAMConstants} from '../../services/ram-constants.service';
 import {RAMServices} from '../../services/ram-services';
 
 import {
@@ -72,7 +73,7 @@ export class RelationshipsComponent extends AbstractPageComponent {
         this.page = params.query['page'] ? +params.query['page'] : 1;
 
         // restrict to authorisations
-        this.filter.add('relationshipTypeCategory', this.services.constants.RelationshipTypeCategory.AUTHORISATION);
+        this.filter.add('relationshipTypeCategory', RAMConstants.RelationshipTypeCategory.AUTHORISATION);
 
         // message
         const msg = params.query['msg'];
@@ -109,7 +110,7 @@ export class RelationshipsComponent extends AbstractPageComponent {
         // relationship types
         this.services.rest.listRelationshipTypes().subscribe((relationshipTypeRefs) => {
             this.relationshipTypeRefs = relationshipTypeRefs.filter((relationshipType) => {
-                return relationshipType.value.category === this.services.constants.RelationshipTypeCategory.AUTHORISATION;
+                return relationshipType.value.category === RAMConstants.RelationshipTypeCategory.AUTHORISATION;
             });
         });
 

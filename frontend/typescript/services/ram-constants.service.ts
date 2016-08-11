@@ -1,34 +1,31 @@
-import { Injectable } from '@angular/core';
+export const RAMConstants = {
 
-@Injectable()
-export class RAMConstantsService {
-
-    public AUSkey = {
+    AUSkey: {
         DEVICE_TYPE: 'DEVICE'
-    };
+    },
 
-    public RelationshipTypeCategory = {
+    RelationshipTypeCategory: {
         AUTHORISATION: 'AUTHORISATION',
         NOTIFICATION: 'NOTIFICATION'
-    };
+    },
 
-    public RelationshipInitiatedBy = {
+    RelationshipInitiatedBy: {
         SUBJECT: 'SUBJECT',
         DELEGATE: 'DELEGATE'
-    };
+    },
 
-    public RelationshipTypeCode = {
+    RelationshipTypeCode: {
         OSP: 'OSP'
-    };
+    },
 
-    public RelationshipTypeAttributeCode = {
+    RelationshipTypeAttributeCode: {
         SSID: 'SSID',
         SELECTED_GOVERNMENT_SERVICES_LIST: 'SELECTED_GOVERNMENT_SERVICES_LIST',
         SUBJECT_RELATIONSHIP_TYPE_DECLARATION: 'SUBJECT_RELATIONSHIP_TYPE_DECLARATION'
-    };
+    },
 
-    public RoleStatusCode = {
+    RoleStatusCode: {
         ACTIVE: 'ACTIVE'
-    };
+    }
 
-}
+};

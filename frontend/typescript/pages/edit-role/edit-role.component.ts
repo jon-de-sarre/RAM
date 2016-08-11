@@ -9,6 +9,7 @@ import {
     SearchResultPaginationComponent, SearchResultPaginationDelegate
 }
     from '../../components/search-result-pagination/search-result-pagination.component';
+import {RAMConstants} from '../../services/ram-constants.service';
 import {RAMServices} from '../../services/ram-services';
 
 import {
@@ -86,7 +87,7 @@ export class EditRoleComponent extends AbstractPageComponent {
         this.auskeyPage = params.query['auskeyPage'] ? +params.query['auskeyPage'] : 1;
 
         // restrict to device auskeys
-        this.auskeyFilter.add('auskeyType', this.services.constants.AUSkey.DEVICE_TYPE);
+        this.auskeyFilter.add('auskeyType', RAMConstants.AUSkey.DEVICE_TYPE);
 
         // me (agency user)
         this.services.rest.findMyAgencyUser().subscribe((me) => {

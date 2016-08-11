@@ -6,6 +6,7 @@ import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
 import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
     from '../../components/search-result-pagination/search-result-pagination.component';
+import {RAMConstants} from '../../services/ram-constants.service';
 import {RAMServices} from '../../services/ram-services';
 
 import {
@@ -59,7 +60,7 @@ export class NotificationsComponent extends AbstractPageComponent {
         this.page = params.query['page'] ? +params.query['page'] : 1;
 
         // restrict to notifications
-        this.filter.add('relationshipTypeCategory', this.services.constants.RelationshipTypeCategory.NOTIFICATION);
+        this.filter.add('relationshipTypeCategory', RAMConstants.RelationshipTypeCategory.NOTIFICATION);
 
         // message
         const msg = params.query['msg'];
