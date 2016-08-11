@@ -84,7 +84,9 @@
                     <h4>Set the agencies to notify:</h4>
                     <div class="checkbox" *ngFor="let attributeName of ospServices">
                         <label>
-                            <input type="checkbox" (change)="onAgencyServiceChange(attributeName.code)">
+                            <input type="checkbox"
+                                   [checked]="isAgencyServiceSelected(attributeName.code)"
+                                   (change)="onAgencyServiceChange(attributeName.code)">
                             {{attributeName.shortDecodeText}}
                         </label>
                     </div>

@@ -154,9 +154,12 @@ export class EditNotificationComponent extends AbstractPageComponent {
         // ...
         // ...
 
-        // todo agency services
-        // ...
-        // ...
+        // agency services
+        let agencyServicesAttribute = this.services.model.getRelationshipAttribute(relationship, this.services.constants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST, null);
+        if (agencyServicesAttribute && agencyServicesAttribute.value) {
+            let agencyServices = agencyServicesAttribute.value;
+            (this.form.controls['agencyServices'] as FormControl).updateValue(agencyServices);
+        }
 
     }
 
@@ -322,6 +325,10 @@ export class EditNotificationComponent extends AbstractPageComponent {
         } else {
             agencyServices.splice(index, 1);
         }
+    }
+
+    public isAgencyServiceSelected(code: string) {
+        return this.form.controls['agencyServices'].value.indexOf(code) > -1;
     }
 
     public getSSIDs(): string[] {
