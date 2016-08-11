@@ -13,6 +13,7 @@ import {sendNotFoundError} from './controllers/helpers';
 
 import {forgeRockSimulator} from './controllers/forgeRock.simulator.middleware';
 import {security} from './controllers/security.middleware';
+import {Translator} from './ram/translator';
 
 // DEVELOPMENT CONTROLLERS
 import {AuthenticatorSimulatorController} from './controllers/authenticator.simulator.controller';
@@ -43,8 +44,6 @@ import {RoleModel} from './models/role.model';
 import {RoleTypeModel} from './models/roleType.model';
 import {AUSkeyProvider} from './providers/auskey.provider';
 
-import {TranslateUniversalLoader} from './translateUniversalLoader';
-
 // connect to the database ............................................................................................
 
 mongoose.connect(conf.mongoURL, {}, () => {
@@ -74,12 +73,7 @@ server.use(methodOverride());
 server.use(express.static(path.join(__dirname, conf.frontendDir)));
 server.use(express.static('swagger'));
 
-let translate = new TranslateUniversalLoader();
-let translation2 = translate.getTranslation('en');
-translation2.subscribe(data => {
-    let trans = data['HELLO'];
-    logger.info(`${trans}`);
-});
+Translator.initialise();
 
 // server.use(continueOnlyIfJWTisValid(conf.jwtSecretKey,true));
 
