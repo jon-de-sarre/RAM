@@ -1,10 +1,16 @@
 import {Router, Request, Response} from 'express';
 import {sendResource, sendError, sendNotFoundError, validateReqSchema} from './helpers';
 import {HealthCheck} from '../models/healthCheck.model';
+import {logger} from '../logger';
+import {Translator} from '../ram/translator';
 
 export class SystemController {
 
     private healthCheckShallow = async(req: Request, res: Response) => {
+
+        const trans = Translator.get('HELLO');
+        logger.info(`${trans}`);
+
         const schema = {};
         validateReqSchema(req, schema)
             .then((req: Request) => {
