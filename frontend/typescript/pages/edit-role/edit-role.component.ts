@@ -9,6 +9,7 @@ import {
     SearchResultPaginationComponent, SearchResultPaginationDelegate
 }
     from '../../components/search-result-pagination/search-result-pagination.component';
+import {RAMConstants} from '../../services/ram-constants.service';
 import {RAMServices} from '../../services/ram-services';
 
 import {
@@ -87,6 +88,16 @@ export class EditRoleComponent extends AbstractPageComponent {
             deviceAusKeys: [[]],
             toggleAllAuskeys: false
         });
+
+        // extract path and query parameters
+        this.identityHref = params.path['identityHref'];
+        this.roleHref = params.path['roleHref'];
+
+        this.auskeyFilter = FilterParams.decode(params.query['auskeyFilter']);
+        this.auskeyPage = params.query['auskeyPage'] ? +params.query['auskeyPage'] : 1;
+
+        // restrict to device auskeys
+        this.auskeyFilter.add('auskeyType', RAMConstants.AUSkey.DEVICE_TYPE);
 
         // me (agency user)
         this.services.rest.findMyAgencyUser().subscribe({

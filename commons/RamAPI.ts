@@ -1,4 +1,4 @@
-// system domain ......................................................................................................
+// response ...........................................................................................................
 
 export enum RAMMessageType {
     Error = 1,
@@ -6,45 +6,33 @@ export enum RAMMessageType {
     Success = 3
 }
 
-export interface IResponse<T> {
-    data?:T;
-    token?:string;
-    alert?:Alert;
+export interface Alert {
+    messages: string[];
+    alertType: RAMMessageType;
 }
 
-export interface Alert {
-    messages:string[];
-    alertType:RAMMessageType;
+export interface IResponse<T> {
+    data?: T;
+    token?: string;
+    alert?: Alert;
 }
 
 export class ErrorResponse implements IResponse<void> {
-    alert:Alert;
 
-    constructor(messages:string | string[],
-                alertType:number = RAMMessageType.Error) {
+    alert: Alert;
+
+    constructor(messages: string | string[],
+                alertType: number = RAMMessageType.Error) {
         if (Array.isArray(messages)) {
             this.alert = {messages: messages, alertType: alertType} as Alert;
         } else {
             this.alert = {messages: [messages], alertType: alertType} as Alert;
         }
     }
+
 }
 
-export interface ISearchResult<T> {
-    page: number,
-    totalCount: number,
-    pageSize: number,
-    list: T[];
-}
-
-export class SearchResult<T> implements ISearchResult<T> {
-    constructor(public page:number, public totalCount:number, public pageSize:number, public list:T[]) {
-    }
-
-    public map<U>(callback:(value:T, index:number, array:T[]) => U):SearchResult<U> {
-        return new SearchResult(this.page, this.totalCount, this.pageSize, this.list.map(callback));
-    }
-}
+// filter params ......................................................................................................
 
 declare type FilterParamsData = {
     [key: string]: string;
@@ -54,16 +42,16 @@ export class FilterParams {
 
     private data: FilterParamsData = {};
 
-    public get(key:string, defaultValue?:string):string {
+    public get(key: string, defaultValue?: string): string {
         const value = this.data[key];
-        return value ? value: defaultValue;
+        return value ? value : defaultValue;
     }
 
-    public isEmpty():boolean {
+    public isEmpty(): boolean {
         return Object.keys(this.data).length === 0;
     }
 
-    public add(key:string, value:Object):FilterParams {
+    public add(key: string, value: Object): FilterParams {
         this.data[key] = value ? value.toString() : null;
         return this;
     }
@@ -99,7 +87,75 @@ export class FilterParams {
     }
 
 }
-// business domain ....................................................................................................
+
+// search result ......................................................................................................
+
+export interface ISearchResult<T> {
+    page: number,
+    totalCount: number,
+    pageSize: number,
+    list: T[];
+}
+
+export class SearchResult<T> implements ISearchResult<T> {
+
+    constructor(public page: number, public totalCount: number, public pageSize: number, public list: T[]) {
+    }
+
+    public map<U>(callback: (value: T, index: number, array: T[]) => U): SearchResult<U> {
+        return new SearchResult(this.page, this.totalCount, this.pageSize, this.list.map(callback));
+    }
+
+}
+
+// href value .........................................................................................................
+
+export interface IHrefValue<T> {
+    href: string;
+    value?: T;
+}
+
+export class HrefValue<T> implements IHrefValue<T> {
+    constructor(public href: string,
+                public value?: T) {
+    }
+}
+
+// link .............................................................................................................
+
+export interface ILink {
+    type: string;
+    method: string;
+    href: string;
+}
+
+export class Link implements ILink {
+    constructor(public type: string,
+                public method: string,
+                public href: string) {
+    }
+}
+
+// code/decode ........................................................................................................
+
+export interface ICodeDecode {
+    code: string;
+    shortDecodeText: string;
+    longDecodeText: string;
+    startTimestamp: Date;
+    endTimestamp: Date;
+}
+
+export class CodeDecode implements ICodeDecode {
+    constructor(public code: string,
+                public shortDecodeText: string,
+                public longDecodeText: string,
+                public startTimestamp: Date,
+                public endTimestamp: Date) {
+    }
+}
+
+// principal ..........................................................................................................
 
 export interface IPrincipal {
     id: string;
@@ -108,11 +164,13 @@ export interface IPrincipal {
 }
 
 export class Principal implements IPrincipal {
-    constructor(public id:string,
-                public displayName:string,
-                public agencyUserInd:boolean) {
+    constructor(public id: string,
+                public displayName: string,
+                public agencyUserInd: boolean) {
     }
 }
+
+// agency user ........................................................................................................
 
 export interface IAgencyUser {
     id: string;
@@ -123,14 +181,16 @@ export interface IAgencyUser {
 }
 
 export class AgencyUser implements IAgencyUser {
-    constructor(public id:string,
-                public givenName:string,
-                public familyName:string,
-                public displayName:string,
-                public agency:string,
-                public programRoles:AgencyUserProgramRole[]) {
+    constructor(public id: string,
+                public givenName: string,
+                public familyName: string,
+                public displayName: string,
+                public agency: string,
+                public programRoles: AgencyUserProgramRole[]) {
     }
 }
+
+// agency user program role ...........................................................................................
 
 export interface IAgencyUserProgramRole {
     program: string;
@@ -138,10 +198,12 @@ export interface IAgencyUserProgramRole {
 }
 
 export class AgencyUserProgramRole implements IAgencyUserProgramRole {
-    constructor(public program:string,
-                public role:string) {
+    constructor(public program: string,
+                public role: string) {
     }
 }
+
+// auskey .............................................................................................................
 
 export interface IAUSkey {
     id: string;
@@ -154,46 +216,7 @@ export class AUSkey implements IAUSkey {
     }
 }
 
-export interface ICodeDecode {
-    code: string;
-    shortDecodeText: string;
-    longDecodeText: string;
-    startTimestamp: Date;
-    endTimestamp: Date;
-}
-
-export class CodeDecode implements ICodeDecode {
-    constructor(public code:string,
-                public shortDecodeText:string,
-                public longDecodeText:string,
-                public startTimestamp:Date,
-                public endTimestamp:Date) {
-    }
-}
-
-export interface ILink {
-    type: string;
-    method: string;
-    href: string;
-}
-
-export class Link implements ILink {
-    constructor(public type: string,
-                public method: string,
-                public href:string) {
-    }
-}
-
-export interface IHrefValue<T> {
-    href: string;
-    value?: T;
-}
-
-export class HrefValue<T> implements IHrefValue<T> {
-    constructor(public href:string,
-                public value?:T) {
-    }
-}
+// party ..............................................................................................................
 
 export interface IParty {
     _links: ILink[];
@@ -208,16 +231,20 @@ export class Party implements IParty {
     }
 }
 
+// party type .........................................................................................................
+
 export interface IPartyType {
     code: string;
     shortDecodeText: string;
 }
 
-export class PartyType implements IPartyType{
-    constructor(public code:string,
-                public shortDecodeText:string) {
+export class PartyType implements IPartyType {
+    constructor(public code: string,
+                public shortDecodeText: string) {
     }
 }
+
+// name ...............................................................................................................
 
 export interface IName {
     givenName?: string;
@@ -227,16 +254,18 @@ export interface IName {
 }
 
 export class Name implements IName {
-    constructor(public givenName:string,
-                public familyName:string,
-                public unstructuredName:string,
-                public _displayName:string) {
+    constructor(public givenName: string,
+                public familyName: string,
+                public unstructuredName: string,
+                public _displayName: string) {
     }
 
-    public displayName():string {
+    public displayName(): string {
         return this.unstructuredName ? this.unstructuredName : this.givenName + ' ' + this.familyName;
     }
 }
+
+// relationship .......................................................................................................
 
 export interface IRelationship {
     _links: ILink[];
@@ -271,22 +300,20 @@ export class Relationship implements IRelationship {
     }
 }
 
+// relationship status ................................................................................................
+
 export interface IRelationshipStatus {
     code: string;
     shortDecodeText: string;
 }
 
 export class RelationshipStatus implements IRelationshipStatus {
-    constructor(public code:string,
-                public shortDecodeText:string) {
+    constructor(public code: string,
+                public shortDecodeText: string) {
     }
 }
 
-export interface RelationshipSearchDTO {
-    totalCount: number;
-    pageSize: number;
-    list: Array<IHrefValue<IRelationship>>;
-}
+// relationship type ..................................................................................................
 
 export interface IRelationshipType extends ICodeDecode {
     voluntaryInd: boolean;
@@ -296,18 +323,20 @@ export interface IRelationshipType extends ICodeDecode {
 }
 
 export class RelationshipType extends CodeDecode implements RelationshipType {
-    constructor(code:string,
-                shortDecodeText:string,
-                longDecodeText:string,
-                startTimestamp:Date,
-                endTimestamp:Date,
-                public voluntaryInd:boolean,
-                public managedExternallyInd:boolean,
-                public category:string,
-                public relationshipAttributeNames:RelationshipAttributeNameUsage[]) {
+    constructor(code: string,
+                shortDecodeText: string,
+                longDecodeText: string,
+                startTimestamp: Date,
+                endTimestamp: Date,
+                public voluntaryInd: boolean,
+                public managedExternallyInd: boolean,
+                public category: string,
+                public relationshipAttributeNames: RelationshipAttributeNameUsage[]) {
         super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
     }
 }
+
+// relationship attribute name usage ..................................................................................
 
 export interface IRelationshipAttributeNameUsage {
     mandatory: boolean;
@@ -316,11 +345,13 @@ export interface IRelationshipAttributeNameUsage {
 }
 
 export class RelationshipAttributeNameUsage implements IRelationshipAttributeNameUsage {
-    constructor(public mandatory:boolean,
-                public defaultValue:string,
-                public attributeNameDef:HrefValue<RelationshipAttributeName>) {
+    constructor(public mandatory: boolean,
+                public defaultValue: string,
+                public attributeNameDef: HrefValue<RelationshipAttributeName>) {
     }
 }
+
+// relationship attribute name ........................................................................................
 
 export interface IRelationshipAttributeName extends ICodeDecode {
     domain: string;
@@ -330,73 +361,66 @@ export interface IRelationshipAttributeName extends ICodeDecode {
 }
 
 export class RelationshipAttributeName extends CodeDecode implements IRelationshipAttributeName {
-    constructor(code:string,
-                shortDecodeText:string,
-                longDecodeText:string,
-                startTimestamp:Date,
-                endTimestamp:Date,
-                public name:string,
-                public domain:string,
-                public classifier:string,
-                public category:string,
-                public permittedValues:string[]) {
+    constructor(code: string,
+                shortDecodeText: string,
+                longDecodeText: string,
+                startTimestamp: Date,
+                endTimestamp: Date,
+                public name: string,
+                public domain: string,
+                public classifier: string,
+                public category: string,
+                public permittedValues: string[]) {
         super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
     }
 }
+
+// shared secret ......................................................................................................
 
 interface ISharedSecret {
     value: string;
     sharedSecretType: ISharedSecretType;
 }
 
-export class RoleAttributeName extends CodeDecode {
-    constructor(code:string,
-                shortDecodeText:string,
-                longDecodeText:string,
-                startTimestamp:Date,
-                endTimestamp:Date,
-                public name:string,
-                public domain:string,
-                public classifier:string,
-                public category:string,
-                public permittedValues:string[]) {
-        super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
+export class SharedSecret implements ISharedSecret {
+    constructor(public value: string,
+                public sharedSecretType: SharedSecretType) {
     }
 }
 
-export class SharedSecret implements ISharedSecret {
-    constructor(public value:string,
-                public sharedSecretType:SharedSecretType) {
-    }
-}
+// shared secret type .................................................................................................
 
 export interface ISharedSecretType extends ICodeDecode {
     domain: string;
 }
 
 export class SharedSecretType extends CodeDecode implements ISharedSecretType {
-    constructor(code:string,
-                shortDecodeText:string,
-                longDecodeText:string,
-                startTimestamp:Date,
-                endTimestamp:Date,
-                public domain:string) {
+    constructor(code: string,
+                shortDecodeText: string,
+                longDecodeText: string,
+                startTimestamp: Date,
+                endTimestamp: Date,
+                public domain: string) {
         super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
     }
 }
+
+// legislative program ................................................................................................
 
 export interface ILegislativeProgram extends ICodeDecode {
 }
 
 export class LegislativeProgram extends CodeDecode implements ILegislativeProgram {
-    constructor(code:string,
-                shortDecodeText:string,
-                longDecodeText:string,
-                startTimestamp:Date,
-                endTimestamp:Date) {
+    constructor(code: string,
+                shortDecodeText: string,
+                longDecodeText: string,
+                startTimestamp: Date,
+                endTimestamp: Date) {
         super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
     }
 }
+
+// profile ............................................................................................................
 
 export interface IProfile {
     provider: string;
@@ -405,11 +429,13 @@ export interface IProfile {
 }
 
 export class Profile implements IProfile {
-    constructor(public provider:string,
-                public name:Name,
-                public sharedSecrets:SharedSecret[]) {
+    constructor(public provider: string,
+                public name: Name,
+                public sharedSecrets: SharedSecret[]) {
     }
 }
+
+// profile provider ...................................................................................................
 
 export interface IProfileProvider {
     code: string;
@@ -417,10 +443,12 @@ export interface IProfileProvider {
 }
 
 export class ProfileProvider implements IProfileProvider {
-    constructor(public code:string,
-                public shortDecodeText:string) {
+    constructor(public code: string,
+                public shortDecodeText: string) {
     }
 }
+
+// identity ...........................................................................................................
 
 export interface IIdentity {
     _links: ILink[];
@@ -443,23 +471,25 @@ export interface IIdentity {
 
 export class Identity implements IIdentity {
     constructor(public _links: ILink[],
-                public idValue:string,
-                public rawIdValue:string,
-                public identityType:string,
-                public defaultInd:boolean,
-                public agencyScheme:string,
-                public agencyToken:string,
-                public invitationCodeStatus:string,
-                public invitationCodeExpiryTimestamp:Date,
-                public invitationCodeClaimedTimestamp:Date,
-                public invitationCodeTemporaryEmailAddress:string,
-                public publicIdentifierScheme:string,
-                public linkIdScheme:string,
-                public linkIdConsumer:string,
-                public profile:Profile,
-                public party:HrefValue<Party>) {
+                public idValue: string,
+                public rawIdValue: string,
+                public identityType: string,
+                public defaultInd: boolean,
+                public agencyScheme: string,
+                public agencyToken: string,
+                public invitationCodeStatus: string,
+                public invitationCodeExpiryTimestamp: Date,
+                public invitationCodeClaimedTimestamp: Date,
+                public invitationCodeTemporaryEmailAddress: string,
+                public publicIdentifierScheme: string,
+                public linkIdScheme: string,
+                public linkIdConsumer: string,
+                public profile: Profile,
+                public party: HrefValue<Party>) {
     }
 }
+
+// relationship attribute .............................................................................................
 
 export interface IRelationshipAttribute {
     value: string[];
@@ -467,51 +497,56 @@ export interface IRelationshipAttribute {
 }
 
 export class RelationshipAttribute implements IRelationshipAttribute {
-    constructor(public value:string[],
-                public attributeName:IHrefValue<IRelationshipAttributeName>) {
+    constructor(public value: string[],
+                public attributeName: IHrefValue<IRelationshipAttributeName>) {
     }
 }
 
+// todo to be evaluated and removed if required
+// create invitation code .............................................................................................
+
 export interface ICreateInvitationCodeDTO {
-    givenName?:string;
-    familyName?:string;
-    sharedSecretValue:string;
+    givenName?: string;
+    familyName?: string;
+    sharedSecretValue: string;
 }
 
 export interface ICreateIdentityDTO {
-    rawIdValue?:string;
-    partyType:string;
-    givenName?:string;
-    familyName?:string;
-    unstructuredName?:string;
-    sharedSecretTypeCode:string;
-    sharedSecretValue:string;
-    identityType:string;
-    agencyScheme?:string;
-    agencyToken?:string;
-    linkIdScheme?:string;
-    linkIdConsumer?:string;
-    publicIdentifierScheme?:string;
-    profileProvider?:string;
+    rawIdValue?: string;
+    partyType: string;
+    givenName?: string;
+    familyName?: string;
+    unstructuredName?: string;
+    sharedSecretTypeCode: string;
+    sharedSecretValue: string;
+    identityType: string;
+    agencyScheme?: string;
+    agencyToken?: string;
+    linkIdScheme?: string;
+    linkIdConsumer?: string;
+    publicIdentifierScheme?: string;
+    profileProvider?: string;
 }
 
 export interface IAttributeDTO {
-    code:string;
-    value:string;
+    code: string;
+    value: string;
 }
 
 export interface IInvitationCodeRelationshipAddDTO {
-    relationshipType:string;
-    subjectIdValue:string;
-    delegate:ICreateInvitationCodeDTO;
-    startTimestamp:Date;
-    endTimestamp:Date;
-    attributes:IAttributeDTO[];
+    relationshipType: string;
+    subjectIdValue: string;
+    delegate: ICreateInvitationCodeDTO;
+    startTimestamp: Date;
+    endTimestamp: Date;
+    attributes: IAttributeDTO[];
 }
 
 export interface INotifyDelegateDTO {
-    email:string;
+    email: string;
 }
+
+// role ...............................................................................................................
 
 export interface IRole {
     _links: ILink[];
@@ -539,6 +574,8 @@ export class Role implements IRole {
     }
 }
 
+// role status ........................................................................................................
+
 export interface IRoleStatus {
     code: string;
     shortDecodeText: string;
@@ -550,18 +587,7 @@ export class RoleStatus implements IRoleStatus {
     }
 }
 
-export interface IRoleSearchDTO {
-    totalCount: number;
-    pageSize: number;
-    list: Array<IHrefValue<IRole>>;
-}
-
-export class RoleSearchDTO implements IRoleSearchDTO {
-    constructor(public totalCount: number,
-                public pageSize: number,
-                public list: Array<IHrefValue<IRole>>) {
-    }
-}
+// role type ..........................................................................................................
 
 export interface IRoleType extends ICodeDecode {
     roleAttributeNames: IRoleAttributeNameUsage[];
@@ -578,16 +604,20 @@ export class RoleType extends CodeDecode implements IRoleType {
     }
 }
 
+// role attribute .....................................................................................................
+
 export interface IRoleAttribute {
     value: string;
     attributeName: IHrefValue<IRoleAttributeName>;
 }
 
 export class RoleAttribute implements IRoleAttribute {
-    constructor(public value:string,
-                public attributeName:IHrefValue<IRoleAttributeName>) {
+    constructor(public value: string,
+                public attributeName: IHrefValue<IRoleAttributeName>) {
     }
 }
+
+// role attribute name usage ..........................................................................................
 
 export interface IRoleAttributeNameUsage {
     mandatory: boolean;
@@ -602,9 +632,26 @@ export class RoleAttributeNameUsage implements IRelationshipAttributeNameUsage {
     }
 }
 
+// role attribute name ................................................................................................
+
 export interface IRoleAttributeName extends ICodeDecode {
     domain: string;
     classifier: string;
     category: string;
     permittedValues: string[];
+}
+
+export class RoleAttributeName extends CodeDecode implements IRoleAttributeName {
+    constructor(code: string,
+                shortDecodeText: string,
+                longDecodeText: string,
+                startTimestamp: Date,
+                endTimestamp: Date,
+                public name: string,
+                public domain: string,
+                public classifier: string,
+                public category: string,
+                public permittedValues: string[]) {
+        super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
+    }
 }

@@ -16,6 +16,7 @@ import {AccessPeriodComponent, AccessPeriodComponentData} from '../../components
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
 import {MarkdownComponent} from '../../components/ng2-markdown/ng2-markdown.component';
+import {RAMConstants} from '../../services/ram-constants.service';
 import {RAMServices} from '../../services/ram-services';
 import {RAMNgValidators} from '../../commons/ram-ng-validators';
 
@@ -121,10 +122,10 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
     public onListRelationshipTypes(relationshipTypeRefs: IHrefValue<IRelationshipType>[]) {
         for (let ref of relationshipTypeRefs) {
-            if (ref.value.code === this.services.constants.RelationshipTypeCode.OSP) {
+            if (ref.value.code === RAMConstants.RelationshipTypeCode.OSP) {
                 this.ospRelationshipTypeRef = ref;
                 this.declarationText = this.services.model.getRelationshipTypeAttributeNameUsage(ref,
-                    this.services.constants.RelationshipTypeAttributeCode.SUBJECT_RELATIONSHIP_TYPE_DECLARATION).defaultValue;
+                    RAMConstants.RelationshipTypeAttributeCode.SUBJECT_RELATIONSHIP_TYPE_DECLARATION).defaultValue;
                 break;
             }
         }
@@ -141,7 +142,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
         this.findByABN();
 
         // ssid
-        let ssidsAttribute = this.services.model.getRelationshipAttribute(relationship, this.services.constants.RelationshipTypeAttributeCode.SSID, null);
+        let ssidsAttribute = this.services.model.getRelationshipAttribute(relationship, RAMConstants.RelationshipTypeAttributeCode.SSID, null);
         if (ssidsAttribute && ssidsAttribute.value) {
             let ssids = ssidsAttribute.value;
             this.getSSIDFormArray().removeAt(0);
@@ -156,7 +157,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
         this.accessPeriod.noEndDate = relationship.endTimestamp === undefined || relationship.endTimestamp === null;
 
         // agency services
-        let agencyServicesAttribute = this.services.model.getRelationshipAttribute(relationship, this.services.constants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST, null);
+        let agencyServicesAttribute = this.services.model.getRelationshipAttribute(relationship, RAMConstants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST, null);
         if (agencyServicesAttribute && agencyServicesAttribute.value) {
             let agencyServices = agencyServicesAttribute.value;
             (this.form.controls['agencyServices'] as FormControl).updateValue(agencyServices);
@@ -213,12 +214,12 @@ export class EditNotificationComponent extends AbstractPageComponent {
             // ssid attribute
             attributes.push(new RelationshipAttribute(ssids,
                 this.services.model.getRelationshipTypeAttributeNameRef(
-                    this.ospRelationshipTypeRef, this.services.constants.RelationshipTypeAttributeCode.SSID)));
+                    this.ospRelationshipTypeRef, RAMConstants.RelationshipTypeAttributeCode.SSID)));
 
             // agency services
             attributes.push(new RelationshipAttribute(agencyServiceCodes,
                 this.services.model.getRelationshipTypeAttributeNameRef(
-                    this.ospRelationshipTypeRef, this.services.constants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST)));
+                    this.ospRelationshipTypeRef, RAMConstants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST)));
 
             // build relationship
             let relationship = new Relationship(
@@ -233,7 +234,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
                 this.accessPeriod.endDate,
                 null,
                 null,
-                this.services.constants.RelationshipInitiatedBy.DELEGATE,
+                RAMConstants.RelationshipInitiatedBy.DELEGATE,
                 attributes
             );
 
@@ -286,8 +287,8 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
                 let href = this.services.model.getLinkHrefByType('role-list', identityRef.value._links);
                 const filterString = new FilterParams()
-                    .add('roleType', this.services.constants.RelationshipTypeCode.OSP)
-                    .add('status', this.services.constants.RoleStatusCode.ACTIVE)
+                    .add('roleType', RAMConstants.RelationshipTypeCode.OSP)
+                    .add('status', RAMConstants.RoleStatusCode.ACTIVE)
                     .encode();
 
                 this.services.rest.searchRolesByHref(href, filterString, 1).subscribe({
@@ -307,7 +308,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
     public onSearchOSPActiveRoles(results: ISearchResult<IHrefValue<IRole>>, party: IParty, identityRef: IHrefValue<IIdentity>) {
         for (let role of results.list) {
-            if (role.value.roleType.href.endsWith(this.services.constants.RelationshipTypeCode.OSP)) {
+            if (role.value.roleType.href.endsWith(RAMConstants.RelationshipTypeCode.OSP)) {
                 this.ospRoleRef = role;
                 this.delegateParty = party;
                 this.delegateIdentityRef = identityRef;

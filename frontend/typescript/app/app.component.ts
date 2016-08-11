@@ -8,7 +8,6 @@ import {RAMRestService} from '../services/ram-rest.service';
 import {RAMModelService} from '../services/ram-model.service';
 import {RAMRouteService} from '../services/ram-route.service';
 import {RAMNavService} from '../services/ram-nav.service';
-import {RAMConstantsService} from '../services/ram-constants.service';
 
 import {BannerComponent} from '../components/banner/banner.component';
 import {BannerService} from '../components/banner/banner.service';
@@ -27,13 +26,13 @@ import {TranslateService} from 'ng2-translate/ng2-translate';
         RAMModelService,
         RAMRouteService,
         RAMNavService,
-        RAMConstantsService,
         BannerService,
         ErrorService
     ]
 })
 
 export class AppComponent {
+
     constructor(translate: TranslateService) {
         let userLang = navigator.language.split('-')[0]; // use navigator lang if available
         userLang = /(fr|en)/gi.test(userLang) ? userLang : 'en';
