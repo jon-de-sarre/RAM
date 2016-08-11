@@ -348,7 +348,7 @@ export class RAMRestService {
                     if (key === 'timestamp' || key.indexOf('Timestamp') !== -1 || key.endsWith('At')) {
                         if (value) {
                             object[key] = new Date(value);
-                            console.log('converting string to date value: ', value, object[key]);
+                            // console.log('converting string to date value: ', value, object[key]);
                         }
                     } else if (typeof value === 'object') {
                         convertExtractedData(value);

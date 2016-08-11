@@ -150,9 +150,10 @@ export class EditNotificationComponent extends AbstractPageComponent {
             }
         }
 
-        // todo date
-        // ...
-        // ...
+        // date
+        this.accessPeriod.startDate = relationship.startTimestamp;
+        this.accessPeriod.endDate = relationship.endTimestamp;
+        this.accessPeriod.noEndDate = relationship.endTimestamp === undefined || relationship.endTimestamp === null;
 
         // agency services
         let agencyServicesAttribute = this.services.model.getRelationshipAttribute(relationship, this.services.constants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST, null);
