@@ -142,7 +142,7 @@ describe('RAM Relationship', () => {
         }
     });
 
-    it('finds by identifier', async (done) => {
+    it('auto converts strings to dates', async (done) => {
         try {
 
             const retrievedInstance = await RelationshipModel.findByIdentifier(relationship1.id);
@@ -150,6 +150,14 @@ describe('RAM Relationship', () => {
             expect(retrievedInstance).not.toBeNull();
             expect(retrievedInstance.id).not.toBeNull();
             expect(retrievedInstance.id).toBe(relationship1.id);
+            expect(typeof retrievedInstance.startTimestamp).toBe('object');
+
+            const coerceStringAndDate = (input: string): Date|String => {
+                return input;
+            };
+
+            retrievedInstance.startTimestamp = coerceStringAndDate('2012-12-10') as Date;
+            expect(typeof retrievedInstance.startTimestamp).toBe('object');
 
             done();
 
