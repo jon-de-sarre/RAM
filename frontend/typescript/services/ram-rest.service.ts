@@ -341,8 +341,24 @@ export class RAMRestService {
         if (res.status < 200 || res.status >= 300) {
             throw new Error('Status code is:' + res.status);
         }
-        const body = res.json();
-        return body || {};
+        const convertExtractedData = (object: Object) => {
+            if (object) {
+                for (let key of Object.keys(object)) {
+                    let value = object[key];
+                    if (key === 'timestamp' || key.indexOf('Timestamp') !== -1 || key.endsWith('At')) {
+                        if (value) {
+                            object[key] = new Date(value);
+                            console.log('converting string to date value: ', value, object[key]);
+                        }
+                    } else if (typeof value === 'object') {
+                        convertExtractedData(value);
+                    }
+                }
+            }
+        };
+        let payload = res.json() || {};
+        convertExtractedData(payload);
+        return payload;
     }
 
 }
