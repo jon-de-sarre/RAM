@@ -1,6 +1,7 @@
 import {Observable} from 'rxjs/Observable';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
+import {FormBuilder} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
@@ -91,10 +92,8 @@ export class EditRelationshipComponent extends AbstractPageComponent {
         }
     };
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 

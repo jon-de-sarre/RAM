@@ -29,11 +29,8 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
     public form: FormGroup;
     public formUdn: FormGroup;
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices,
-                private _fb: FormBuilder) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 
@@ -50,10 +47,10 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
         });
 
         // forms
-        this.form = this._fb.group({
+        this.form = this.fb.group({
             'email': ['', Validators.compose([Validators.required, RAMNgValidators.validateEmailFormat])]
         });
-        this.formUdn = this._fb.group({
+        this.formUdn = this.fb.group({
             'udn': ['']
         });
         // 'udn': ['', Validators.compose([Validators.required, RAMNgValidators.validateUDNFormat])]

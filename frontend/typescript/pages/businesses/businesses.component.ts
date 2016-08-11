@@ -44,11 +44,8 @@ export class BusinessesComponent extends AbstractPageComponent {
 
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices,
-                private _fb: FormBuilder) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Software Provider Services');
     }
 
@@ -99,7 +96,7 @@ export class BusinessesComponent extends AbstractPageComponent {
         } as SearchResultPaginationDelegate;
 
         // forms
-        this.form = this._fb.group({
+        this.form = this.fb.group({
             text: this.filter.get('text', ''),
             sort: this.filter.get('sort', '-')
         });

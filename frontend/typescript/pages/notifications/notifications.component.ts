@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
+import {FormBuilder} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
@@ -43,10 +44,8 @@ export class NotificationsComponent extends AbstractPageComponent {
 
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Software Provider Services');
     }
 

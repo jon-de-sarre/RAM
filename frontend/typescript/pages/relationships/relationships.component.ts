@@ -55,11 +55,8 @@ export class RelationshipsComponent extends AbstractPageComponent {
 
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices,
-                private _fb: FormBuilder) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 
@@ -149,7 +146,7 @@ export class RelationshipsComponent extends AbstractPageComponent {
         } as SearchResultPaginationDelegate;
 
         // forms
-        this.form = this._fb.group({
+        this.form = this.fb.group({
             partyType: this.filter.get('partyType', '-'),
             relationshipType: this.filter.get('relationshipType', '-'),
             profileProvider: this.filter.get('profileProvider', '-'),

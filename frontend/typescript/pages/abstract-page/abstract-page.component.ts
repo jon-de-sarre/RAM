@@ -4,6 +4,7 @@ import {Observable} from 'rxjs/Observable';
 import {Subscription} from 'rxjs/Subscription';
 import {OnInit, OnDestroy} from '@angular/core';
 import {ActivatedRoute, Router, Params} from '@angular/router';
+import {FormBuilder} from '@angular/forms';
 
 import {RAMServices} from '../../services/ram-services';
 
@@ -17,6 +18,7 @@ export abstract class AbstractPageComponent implements OnInit, OnDestroy {
 
     constructor(public route: ActivatedRoute,
                 public router: Router,
+                public fb: FormBuilder,
                 public services: RAMServices) {
     }
 

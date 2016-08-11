@@ -1,6 +1,7 @@
 import {Observable} from 'rxjs/Observable';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
+import {FormBuilder} from '@angular/forms';
 import {DatePipe} from '@angular/common';
 import {Dialog} from 'primeng/primeng';
 
@@ -39,10 +40,8 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
 
     public declineDisplay: boolean = false;
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 

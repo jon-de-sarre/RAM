@@ -23,11 +23,8 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
 
     public form: FormGroup;
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices,
-                private _fb: FormBuilder) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 
@@ -48,7 +45,7 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
         });
 
         // forms
-        this.form = this._fb.group({
+        this.form = this.fb.group({
             'relationshipCode': ['', Validators.compose([Validators.required])]
         });
 

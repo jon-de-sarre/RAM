@@ -72,11 +72,8 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
     public form: FormGroup;
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices,
-                private _fb: FormBuilder) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Software Provider Services');
     }
 
@@ -87,11 +84,11 @@ export class EditNotificationComponent extends AbstractPageComponent {
         this.relationshipHref = params.path['relationshipHref'];
 
         // forms
-        this.form = this._fb.group({
+        this.form = this.fb.group({
             abn: [null, Validators.compose([Validators.required, RAMNgValidators.validateABNFormat])],
             accepted: false,
             agencyServices: [[]],
-            ssids: this._fb.array([this._fb.control(null, Validators.required)])
+            ssids: this.fb.array([this.fb.control(null, Validators.required)])
         });
 
         // identity in focus
@@ -149,7 +146,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
             let ssids = ssidsAttribute.value;
             this.getSSIDFormArray().removeAt(0);
             for (let i = 0; i < ssids.length; i = i + 1) {
-                this.getSSIDFormArray().push(this._fb.control(ssids[i], Validators.required));
+                this.getSSIDFormArray().push(this.fb.control(ssids[i], Validators.required));
             }
         }
 
@@ -340,7 +337,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
     }
 
     public addAnotherSSID() {
-        this.getSSIDFormArray().push(this._fb.control(null, Validators.required));
+        this.getSSIDFormArray().push(this.fb.control(null, Validators.required));
     }
 
     public removeSSID() {

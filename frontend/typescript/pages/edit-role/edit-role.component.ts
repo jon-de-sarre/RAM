@@ -60,11 +60,8 @@ export class EditRoleComponent extends AbstractPageComponent {
 
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices,
-                private _fb: FormBuilder) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 
@@ -73,7 +70,7 @@ export class EditRoleComponent extends AbstractPageComponent {
         this._isLoading = true;
 
         // forms
-        this.form = this._fb.group({
+        this.form = this.fb.group({
             roleType: '-',
             preferredName: '',
             agencyServices: [[]],
