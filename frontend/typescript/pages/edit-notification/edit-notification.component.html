@@ -41,8 +41,10 @@
                             {{delegateIdentityRef.value.profile.name.unstructuredName}}
                         </div>
                     </div>
-                    <br/>
-                    <button class="btn btn-secondary align-center" (click)="resetDelegate()">Change ABN</button>
+                    <div *ngIf="!relationship">
+                        <br/>
+                        <button class="btn btn-secondary align-center" (click)="resetDelegate()">Change ABN</button>
+                    </div>
                 </div>
             </div>
         </div>
