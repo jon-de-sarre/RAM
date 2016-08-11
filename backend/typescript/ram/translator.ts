@@ -9,6 +9,7 @@ export class Translator {
 
     public static initialise() {
         this.initialiaseTranslateServiceFor('en');
+        this.initialiaseTranslateServiceFor('fr');
     }
 
     private static initialiaseTranslateServiceFor(lang: string) {
@@ -28,9 +29,13 @@ export class Translator {
         // figure out language somehow
         let lang = 'en';
 
-        let translateService = translateServiceMap['en'];
+        let translateService = translateServiceMap[lang];
+
         if (translateService === null) {
-            this.initialiaseTranslateServiceFor(lang);
+            // sync call to async not possible - boo
+            // this.initialiaseTranslateServiceFor(lang);
+
+            // we don't have language, so just use english
             translateService = translateServiceMap['en'];
         }
 
