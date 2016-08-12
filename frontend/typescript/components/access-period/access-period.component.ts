@@ -19,6 +19,7 @@ import {Calendar} from 'primeng/primeng';
 export class AccessPeriodComponent implements OnInit {
 
     public form: FormGroup;
+    public dateFormat: string = 'dd/mm/yy';
 
     @Input('data') public data: AccessPeriodComponentData;
 
@@ -33,7 +34,7 @@ export class AccessPeriodComponent implements OnInit {
 
         const startDate = this.data.startDate;
         const endDate = this.data.endDate;
-        const formattedStartDate: string = startDate === null || startDate === undefined ? null : startDate.toISOString().slice(0, 10);
+        const formattedStartDate: string = null; //string = startDate === null || startDate === undefined ? null : startDate.toISOString().slice(0, 10);
         const formattedEndDate: string = endDate === null || endDate === undefined ? null : endDate.toISOString().slice(0, 10);
 
         this.form = this._fb.group(
