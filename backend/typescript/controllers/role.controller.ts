@@ -4,6 +4,7 @@ import {sendResource, sendList, sendSearchResult, sendError, sendNotFoundError, 
 import {Assert} from '../models/base';
 import {IPartyModel, PartyModel, IParty} from '../models/party.model';
 import {IRoleModel, RoleStatus} from '../models/role.model';
+import {Url} from '../models/url';
 import {FilterParams} from '../../../commons/RamAPI';
 
 // todo add data security
@@ -11,22 +12,6 @@ export class RoleController {
 
     constructor(private roleModel:IRoleModel, private partyModel:IPartyModel) {
     }
-
-    private findByIdentifier = async(req:Request, res:Response) => {
-        const schema = {
-            'identifier': {
-                in: 'params',
-                notEmpty: true,
-                errorMessage: 'Identifier is not valid'
-            }
-        };
-        validateReqSchema(req, schema)
-            .then((req:Request) => this.roleModel.findByIdentifier(req.params.identifier))
-            .then((model) => model ? model.toDTO() : null)
-            .then(sendResource(res))
-            .then(sendNotFoundError(res))
-            .catch(sendError(res));
-    };
 
     private searchByIdentity = async(req:Request, res:Response) => {
         const schema = {
@@ -68,7 +53,23 @@ export class RoleController {
             .catch(sendError(res));
     };
 
-    private createByIdentity = async(req:Request, res:Response) => {
+    private findByIdentifier = async(req:Request, res:Response) => {
+        const schema = {
+            'identifier': {
+                in: 'params',
+                notEmpty: true,
+                errorMessage: 'Identifier is not valid'
+            }
+        };
+        validateReqSchema(req, schema)
+            .then((req:Request) => this.roleModel.findByIdentifier(req.params.identifier))
+            .then((model) => model ? model.toDTO() : null)
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
+    };
+
+    private create = async(req:Request, res:Response) => {
         const schema = {
             'roleType.value.code': {
                 in: 'body',
@@ -105,6 +106,50 @@ export class RoleController {
             .catch(sendError(res));
     };
 
+    private modify = async(req:Request, res:Response) => {
+        const schema = {
+            'roleType.href': {
+                in: 'body',
+                notEmpty: true,
+                errorMessage: 'Code is not valid'
+            },
+            'party.href': {
+                in: 'body',
+                notEmpty: true,
+                errorMessage: 'Party is missing'
+            }
+        };
+        validateReqSchema(req, schema)
+            .then(async (req: Request) => {
+                const idValue = Url.lastPathElement(req.body.party.href);
+                if (!idValue) {
+                    console.log('Id value not found from party href', req.body.party.href);
+                    throw new Error('400');
+                }
+                const myPrincipal = security.getAuthenticatedPrincipal(res);
+                const myIdentity = security.getAuthenticatedIdentity(res);
+                const hasAccess = await this.partyModel.hasAccess(idValue, myPrincipal, myIdentity);
+                if (!hasAccess) {
+                    console.log('Identity access denied or does not exist', idValue);
+                    throw new Error('403');
+                }
+                const party = await this.partyModel.findByIdentityIdValue(idValue);
+                if (!party) {
+                    console.log('Party not found for id value', idValue);
+                    throw new Error('404');
+                }
+                return party;
+            })
+            .then((party:IParty) => {
+                const agencyUser = security.getAuthenticatedAgencyUser(res);
+                return party.modifyRole(req.body, agencyUser);
+            })
+            .then((model) => model ? model.toDTO() : null)
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
+    };
+
     private listStatuses = (req:Request, res:Response) => {
         const schema = {};
         validateReqSchema(req, schema)
@@ -117,17 +162,21 @@ export class RoleController {
 
     public assignRoutes = (router:Router) => {
 
-        router.get('/v1/role/:identifier',
-            security.isAuthenticated,
-            this.findByIdentifier);
-
         router.get('/v1/roles/identity/:identity_id',
             security.isAuthenticated,
             this.searchByIdentity);
 
+        router.get('/v1/role/:identifier',
+            security.isAuthenticated,
+            this.findByIdentifier);
+
         router.post('/v1/role',
-            security.isAuthenticatedAsAgencyUser,
-            this.createByIdentity);
+            security.isAuthenticated,
+            this.create);
+
+        router.put('/v1/role',
+            security.isAuthenticated,
+            this.modify);
 
         router.get('/v1/roleStatuses',
             this.listStatuses);

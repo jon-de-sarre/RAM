@@ -47,6 +47,15 @@ export class Url {
         return new UrlLinks();
     }
 
+    public static pathElements(url: string): string[] {
+        return url ? url.split('/').map((value) => decodeURIComponent(value)) : [];
+    }
+
+    public static lastPathElement(url: string): string {
+        const pathElements = Url.pathElements(url);
+        return pathElements && pathElements.length > 0 ? pathElements[pathElements.length - 1] : null;
+    }
+
     // identity .......................................................................................................
 
     public static async forIdentity(model: identity.IIdentity): Promise<string> {

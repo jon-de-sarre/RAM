@@ -77,6 +77,7 @@ export interface IParty extends IRAMObject {
     addRelationship(dto: IInvitationCodeRelationshipAddDTO):Promise<IRelationship>;
     addRelationship2(relationshipDTO: IRelationshipDTO):Promise<IRelationship>;
     addRole(role: IRole, agencyUser: IAgencyUser):Promise<IRole>;
+    modifyRole(role: IRole, agencyUser: IAgencyUser):Promise<IRole>;
 }
 
 /* tslint:disable:no-empty-interfaces */
@@ -274,6 +275,78 @@ PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAge
 
         if (shouldSave) {
             await processAttribute(roleAttributeNameCode, roleAttributeValue, roleAttributes, role);
+        }
+    }
+
+    role.attributes = roleAttributes;
+
+    role.saveAttributes();
+
+    return Promise.resolve(role);
+
+});
+
+PartySchema.method('modifyRole', async function (roleDTO: RoleDTO, agencyUser: IAgencyUser) {
+
+    const now = new Date();
+
+    const roleTypeCode = Url.lastPathElement(roleDTO.roleType.href);
+    Assert.assertNotNull(roleTypeCode, 'Role type code from href invalid');
+
+    const roleType = await RoleTypeModel.findByCodeInDateRange(roleTypeCode, now);
+    Assert.assertTrue(roleType !== null, 'Role type invalid');
+
+    const role = await RoleModel.findByRoleTypeAndParty(roleType, this);
+    Assert.assertNotNull(role, 'Party does not have role type');
+
+    const roleAttributes = role.attributes;
+
+    let updateOrCreateRoleAttributeIfExists = async (code: string, value: string, roleAttributes: IRoleAttribute[], role: IRole) => {
+        const roleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(code);
+        if (roleAttributeName) {
+            const filteredRoleAttributes = role.attributes.filter((item) => {
+                return item.attributeName.code === code;
+            });
+            const roleAttributeDoesNotExist = filteredRoleAttributes.length === 0;
+            if (roleAttributeDoesNotExist) {
+                roleAttributes.push(await RoleAttributeModel.create({
+                    value: value,
+                    attributeName: roleAttributeName
+                }));
+            } else {
+                const filteredRoleAttribute = filteredRoleAttributes[0];
+                filteredRoleAttribute.value = [value];
+                await filteredRoleAttribute.save();
+                roleAttributes.push(filteredRoleAttribute);
+            }
+        }
+    };
+
+    if (agencyUser) {
+        await updateOrCreateRoleAttributeIfExists('CREATOR_ID', agencyUser.id, roleAttributes, role);
+        await updateOrCreateRoleAttributeIfExists('CREATOR_NAME', agencyUser.displayName, roleAttributes, role);
+        await updateOrCreateRoleAttributeIfExists('CREATOR_AGENCY', agencyUser.agency, roleAttributes, role);
+    }
+
+    for (let roleAttribute of roleDTO.attributes) {
+        const roleAttributeValue = roleAttribute.value;
+        const roleAttributeNameCode = roleAttribute.attributeName.value.code;
+        const roleAttributeNameCategory = roleAttribute.attributeName.value.category;
+
+        let shouldSave = false;
+        if (agencyUser && roleAttribute.attributeName.value.classifier === 'AGENCY_SERVICE') {
+            for (let programRole of agencyUser.programRoles) {
+                if (programRole.role === 'ROLE_ADMIN' && programRole.program === roleAttributeNameCategory) {
+                    shouldSave = true;
+                    break;
+                }
+            }
+        } else {
+            shouldSave = true;
+        }
+
+        if (shouldSave) {
+            await updateOrCreateRoleAttributeIfExists(roleAttributeNameCode, roleAttributeValue, roleAttributes, role);
         }
     }
 
