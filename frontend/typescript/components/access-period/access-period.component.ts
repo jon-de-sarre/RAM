@@ -12,6 +12,7 @@ import {Calendar} from 'primeng/primeng';
 export class AccessPeriodComponent implements OnInit {
 
     public form: FormGroup;
+    public dateFormat: string = 'dd/mm/yy';
 
     @Input('data') public data: AccessPeriodComponentData;
 
@@ -24,14 +25,20 @@ export class AccessPeriodComponent implements OnInit {
 
     public ngOnInit() {
         const startDate = this.data.startDate;
-        const formattedStartDate:string = startDate === null ? null : startDate.toISOString().slice(0, 10);
-        this.form = this._fb.group({
-            'startDate': [formattedStartDate,
-                Validators.compose([Validators.required, RAMNgValidators.dateFormatValidator])],
-            'endDate': [this.data.endDate,
-                Validators.compose([RAMNgValidators.dateFormatValidator])],
-            'noEndDate': [this.data.noEndDate]
-        }, { validator: Validators.compose([this._isDateBefore('startDate', 'endDate')]) });
+        const endDate = this.data.endDate;
+        const formattedStartDate: string = null; //string = startDate === null || startDate === undefined ? null : startDate.toISOString().slice(0, 10);
+        const formattedEndDate: string = endDate === null || endDate === undefined ? null : endDate.toISOString().slice(0, 10);
+
+        this.form = this._fb.group(
+            {
+                'startDate': [formattedStartDate, Validators.compose([Validators.required, RAMNgValidators.dateFormatValidator])],
+                'endDate': [formattedEndDate, Validators.compose([RAMNgValidators.dateFormatValidator])],
+                'noEndDate': [this.data.noEndDate]
+            },
+            {
+                validator: Validators.compose([this._isDateBefore('startDate', 'endDate')])
+            }
+        );
 
         let endDate = this.form.controls['endDate'] as FormControl;
         let noEndDate = this.form.controls['noEndDate'];

@@ -19,14 +19,14 @@ export class Utils {
             return null;
         }
 
-        if (!/^\d{4}\-\d{1,2}\-\d{1,2}$/.test(dateString)) {
+        if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString)) {
             return null;
         }
 
-        let parts = dateString.split('-');
-        let day = parseInt(parts[2], 10);
+        let parts = dateString.split('/');
+        let day = parseInt(parts[0], 10);
         let month = parseInt(parts[1], 10);
-        let year = parseInt(parts[0], 10);
+        let year = parseInt(parts[2], 10);
 
         if (year < 1000 || year > 3000 || month === 0 || month > 12) {
             return null;
