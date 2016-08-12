@@ -36,9 +36,10 @@
         <div class="panel-body">
             <div class="form-group">
                 <h4>Access to government agencies services</h4>
-                <div class="checkbox" *ngFor="let attributeUsage of agencyServiceRoleAttributeNameUsages">
+                <div class="checkbox" [class.disabled]="!hasAccessToAgencyService(attributeUsage.attributeNameDef.value.code)" *ngFor="let attributeUsage of allAgencyServiceRoleAttributeNameUsages">
                     <label>
                         <input type="checkbox"
+                               [disabled]="!hasAccessToAgencyService(attributeUsage.attributeNameDef.value.code)"
                                [checked]="isAgencyServiceSelected(attributeUsage.attributeNameDef.value.code)"
                                (change)="onAgencyServiceChange(attributeUsage.attributeNameDef.value.code)">
                         {{attributeUsage.attributeNameDef.value.shortDecodeText}}

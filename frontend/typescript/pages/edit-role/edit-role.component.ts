@@ -53,7 +53,8 @@ export class EditRoleComponent extends AbstractPageComponent {
     public identity: IIdentity;
     public role: IRole;
     public roleTypeRefs: IHrefValue<IRoleType>[];
-    public agencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[];
+    public allAgencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[]; // all agency services
+    public accessibleAgencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[]; // agency services that the user can manage
 
     public form: FormGroup;
 
@@ -186,7 +187,8 @@ export class EditRoleComponent extends AbstractPageComponent {
                 }
             }
             if (roleTypeRef) {
-                this.agencyServiceRoleAttributeNameUsages = this.services.model.getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, programs);
+                this.allAgencyServiceRoleAttributeNameUsages = this.services.model.getAllAgencyServiceRoleAttributeNameUsages(roleTypeRef, programs);
+                this.accessibleAgencyServiceRoleAttributeNameUsages = this.services.model.getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, programs);
             }
         }
     }
@@ -205,6 +207,15 @@ export class EditRoleComponent extends AbstractPageComponent {
 
     public isAgencyServiceSelected(code: string) {
         return this.form.controls['agencyServices'].value.indexOf(code) > -1;
+    }
+
+    public hasAccessToAgencyService(code: string) {
+        for(let attr of this.accessibleAgencyServiceRoleAttributeNameUsages) {
+            if(attr.attributeNameDef.value.code === code) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public toggleAllAuskeys() {
@@ -250,7 +261,7 @@ export class EditRoleComponent extends AbstractPageComponent {
         const deviceAusKeys = this.form.controls['deviceAusKeys'].value;
         if (!roleTypeCode || roleTypeCode === '-') {
             this.addGlobalMessage('Please select a role type.');
-        } else if (!this.agencyServiceRoleAttributeNameUsages || this.agencyServiceRoleAttributeNameUsages.length === 0) {
+        } else if (!this.accessibleAgencyServiceRoleAttributeNameUsages || this.accessibleAgencyServiceRoleAttributeNameUsages.length === 0) {
             this.addGlobalMessage('You do not have access to any government services.');
         } else if (agencyServiceCodes.length === 0) {
             this.addGlobalMessage('Please select at least one government agency service.');

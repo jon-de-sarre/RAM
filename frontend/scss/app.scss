@@ -517,6 +517,10 @@ footer {
   position: inherit;
 }
 
+div.checkbox.disabled > label, div.radio.disabled > label {
+  color: $text-muted;
+}
+
 .ui-calendar {
   display: inherit !important;
 }
