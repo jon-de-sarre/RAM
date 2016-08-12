@@ -532,6 +532,12 @@ div.checkbox.disabled > label, div.radio.disabled > label {
   -webkit-border-radius: 0 !important;
 }
 
+.ui-datepicker-month,
+.ui-datepicker-year
+{
+  padding: 0;
+}
+
 .has-error.form-control {
   border: 1px solid #FF0039;
 }
