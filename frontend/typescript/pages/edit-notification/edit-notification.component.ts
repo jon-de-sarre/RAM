@@ -285,7 +285,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
             if (identityRef.value.rawIdValue === abn) {
 
-                let href = this.services.model.getLinkHrefByType('role-list', identityRef.value._links);
+                let href = this.services.model.getLinkHrefByType('role-list', identityRef.value);
                 const filterString = new FilterParams()
                     .add('roleType', RAMConstants.RelationshipTypeCode.OSP)
                     .add('status', RAMConstants.RoleStatusCode.ACTIVE)
