@@ -69,20 +69,9 @@ export class NotificationsComponent extends AbstractPageComponent {
         }
 
         // identity in focus
-        this.services.rest.findIdentityByHref(this.identityHref).subscribe((identity) => {
-
-            this.identity = identity;
-
-            // relationships
-            this.services.rest.searchRelationshipsByIdentity(this.identity.idValue, this.filter.encode(), this.page)
-                .subscribe((searchResult) => {
-                    this.relationshipSearchResult = searchResult;
-                    this._isLoading = false;
-                }, (err) => {
-                    this.addGlobalErrorMessages(err);
-                    this._isLoading = false;
-                });
-
+        this.services.rest.findIdentityByHref(this.identityHref).subscribe({
+            next: this.onFindIdentity.bind(this),
+            error: this.onServerError.bind(this)
         });
 
         // if the user can see more than one business, they can see the dashboard
@@ -91,17 +80,38 @@ export class NotificationsComponent extends AbstractPageComponent {
         // });
         this.canReturnToDashboard = true; // TODO compute this properly
 
-        // relationship statuses
-        this.services.rest.listRelationshipStatuses().subscribe((relationshipStatusRefs) => {
-            this.relationshipStatusRefs = relationshipStatusRefs;
-        });
-
         // pagination delegate
         this.paginationDelegate = {
             goToPage: (page: number) => {
                 this.services.route.goToNotificationsPage(this.identityHref, page);
             }
         } as SearchResultPaginationDelegate;
+
+    }
+
+    public onFindIdentity(identity: IIdentity) {
+
+        this.identity = identity;
+
+        // relationships
+        this.services.rest.searchRelationshipsByIdentity(this.identity.idValue, this.filter.encode(), this.page).subscribe({
+            next: (searchResult) => {
+                this.relationshipSearchResult = searchResult;
+                this._isLoading = false;
+            },
+            error: (err) => {
+                this.onServerError(err);
+                this._isLoading = false;
+            }
+        });
+
+        // relationship statuses
+        this.services.rest.listRelationshipStatuses().subscribe({
+            next: (relationshipStatusRefs) => {
+                this.relationshipStatusRefs = relationshipStatusRefs;
+            },
+            error: this.onServerError.bind(this)
+        });
 
     }
 

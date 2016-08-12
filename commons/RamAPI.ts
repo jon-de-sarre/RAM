@@ -161,12 +161,16 @@ export interface IPrincipal {
     id: string;
     displayName: string;
     agencyUserInd: boolean;
+    agencyUser?: IAgencyUser;
+    identity?: IIdentity;
 }
 
 export class Principal implements IPrincipal {
     constructor(public id: string,
                 public displayName: string,
-                public agencyUserInd: boolean) {
+                public agencyUserInd: boolean,
+                public agencyUser?: IAgencyUser,
+                public identity?: IIdentity) {
     }
 }
 

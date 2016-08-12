@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "RAM",
-		"_postman_id": "a81d4b31-e71c-453e-2a6b-debaa24212ae",
+		"_postman_id": "b9e982b4-c5f1-ef92-e045-9ae441fc28bd",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -281,6 +281,33 @@
 								{
 									"key": "credentials",
 									"value": "ted_agent",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Authenticate Agency User (Max Agent)",
+					"request": {
+						"url": "{{host}}/api/v1/simulators/authenticator/authenticate",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "max_agent",
 									"type": "text",
 									"enabled": true
 								}
