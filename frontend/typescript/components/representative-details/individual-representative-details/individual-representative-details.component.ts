@@ -11,6 +11,7 @@ import {Calendar} from 'primeng/primeng';
 export class IndividualRepresentativeDetailsComponent implements OnInit {
 
     public form: FormGroup;
+    public dateFormat: string = 'dd/mm/yy';
 
     @Input('data') public data: IndividualRepresentativeDetailsComponentData;
 

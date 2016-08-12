@@ -1,16 +1,17 @@
 import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
 import {sendResource, sendError, sendNotFoundError, validateReqSchema, sendSearchResult} from './helpers';
-import {IIdentityModel} from '../models/identity.model';
-import {AUSkeyType} from '../models/auskey.model';
 import {IAUSkeyProvider} from '../providers/auskey.provider';
+import {AUSkeyType} from '../models/auskey.model';
+import {IPartyModel} from '../models/party.model';
+import {IIdentityModel} from '../models/identity.model';
 import {FilterParams} from '../../../commons/RamAPI';
 import {Assert} from '../models/base';
 import {Translator} from '../ram/translator';
 
 export class AuskeyController {
 
-    constructor(private identityModel: IIdentityModel, private auskeyProvider: IAUSkeyProvider) {
+    constructor(private auskeyProvider: IAUSkeyProvider, private partyModel: IPartyModel, private identityModel: IIdentityModel) {
     }
 
     private findAusKey = (req: Request, res: Response) => {
@@ -56,6 +57,19 @@ export class AuskeyController {
         };
         const filterParams = FilterParams.decode(req.query.filter);
         validateReqSchema(req, schema)
+            .then(async (req: Request) => {
+                const idValue = req.params.idValue;
+                const myPrincipal = security.getAuthenticatedPrincipal(res);
+                if (!myPrincipal.agencyUserInd) {
+                    const myIdentity = security.getAuthenticatedIdentity(res);
+                    const hasAccess = await this.partyModel.hasAccess(idValue, myPrincipal, myIdentity);
+                    if (!hasAccess) {
+                        console.log('Identity access denied or does not exist', idValue);
+                        throw new Error('403');
+                    }
+                }
+                return req;
+            })
             .then(async(req: Request) => {
                 const auskeyType = filterParams.get('auskeyType');
                 Assert.assertNotNull(auskeyType, 'Filter param auskeyType must be supplied');
@@ -81,7 +95,7 @@ export class AuskeyController {
             this.findAusKey);
 
         router.get('/v1/auskeys/identity/:idValue',
-            security.isAuthenticatedAsAgencyUser,
+            security.isAuthenticated,
             this.searchAusKeys);
 
         return router;

@@ -24,8 +24,8 @@ System.config({
     "ng2-bootstrap": "npm:ng2-bootstrap@1.0.17",
     "ng2-markdown-component": "github:evanplaice/ng2-markdown@0.2.3",
     "ng2-translate": "npm:ng2-translate@2.2.2",
-    "primeng": "npm:primeng@1.0.0-beta.9",
-    "primeui": "npm:primeui@4.1.12",
+    "primeng": "npm:primeng@1.0.0-beta.12",
+    "primeui": "npm:primeui@4.1.14",
     "reflect-metadata": "npm:reflect-metadata@0.1.3",
     "rxjs": "npm:rxjs@5.0.0-beta.6",
     "showdown": "github:showdownjs/showdown@1.4.2",
@@ -314,10 +314,10 @@ System.config({
       "process": "github:jspm/nodelibs-process@0.1.2",
       "systemjs-json": "github:systemjs/plugin-json@0.1.2"
     },
-    "npm:primeng@1.0.0-beta.9": {
-      "primeui": "npm:primeui@4.1.12"
+    "npm:primeng@1.0.0-beta.12": {
+      "primeui": "npm:primeui@4.1.14"
     },
-    "npm:primeui@4.1.12": {
+    "npm:primeui@4.1.14": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:process@0.11.5": {

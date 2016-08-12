@@ -1,8 +1,7 @@
 import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
 import {sendResource, sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema} from './helpers';
-import {Assert} from '../models/base';
-import {IPartyModel, PartyModel, IParty} from '../models/party.model';
+import {IPartyModel, IParty} from '../models/party.model';
 import {IRoleModel, RoleStatus} from '../models/role.model';
 import {Url} from '../models/url';
 import {FilterParams} from '../../../commons/RamAPI';
@@ -83,22 +82,29 @@ export class RoleController {
             }
         };
         validateReqSchema(req, schema)
-            .then((req: Request) => {
-                const partyHref = req.body.party.href;
-
-                // todo move to util
-                const searchString = '/api/v1/party/identity/';
-                let idValue:string = null;
-                if (partyHref.startsWith(searchString, partyHref)) {
-                    idValue = decodeURIComponent(partyHref.substr(searchString.length));
+            .then(async (req: Request) => {
+                const idValue = Url.lastPathElement(req.body.party.href);
+                if (!idValue) {
+                    console.log('Id value not found from party href', req.body.party.href);
+                    throw new Error('400');
                 }
-
-                return idValue !== null ? PartyModel.findByIdentityIdValue(idValue) : null;
+                const myPrincipal = security.getAuthenticatedPrincipal(res);
+                const myIdentity = security.getAuthenticatedIdentity(res);
+                const hasAccess = await this.partyModel.hasAccess(idValue, myPrincipal, myIdentity);
+                if (!hasAccess) {
+                    console.log('Identity access denied or does not exist', idValue);
+                    throw new Error('403');
+                }
+                const party = await this.partyModel.findByIdentityIdValue(idValue);
+                if (!party) {
+                    console.log('Party not found for id value', idValue);
+                    throw new Error('404');
+                }
+                return party;
             })
             .then((party:IParty) => {
-                Assert.assertTrue(party !== null, 'Party not found');
                 const agencyUser = security.getAuthenticatedAgencyUser(res);
-                return party.addRole(req.body, agencyUser);
+                return party.addOrModifyRole(req.body, agencyUser);
             })
             .then((model) => model ? model.toDTO() : null)
             .then(sendResource(res))
