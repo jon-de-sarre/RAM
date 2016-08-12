@@ -23,7 +23,8 @@ import {
     IRole,
     IRoleType,
     IRoleAttributeNameUsage,
-    IAUSkey
+    IAUSkey,
+    IPrincipal
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -47,7 +48,6 @@ export class EditRoleComponent extends AbstractPageComponent {
     public auskeyPage: number;
     public auskeyPaginationDelegate: SearchResultPaginationDelegate;
 
-    public deviceAusKeyRefs$: Observable<ISearchResult<IHrefValue<IAUSkey>>>;
     public deviceAusKeyRefs: ISearchResult<IHrefValue<IAUSkey>>;
 
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
@@ -76,7 +76,7 @@ export class EditRoleComponent extends AbstractPageComponent {
         this.auskeyPage = params.query['auskeyPage'] ? +params.query['auskeyPage'] : 1;
 
         // restrict to device auskeys
-        this.auskeyFilter.add('auskeyType', this.services.constants.AUSkey.DEVICE_TYPE);
+        this.auskeyFilter.add('auskeyType', RAMConstants.AUSkey.DEVICE_TYPE);
 
         this._isLoading = true;
 
@@ -113,9 +113,7 @@ export class EditRoleComponent extends AbstractPageComponent {
 
         // role types
         this.services.rest.listRoleTypes().subscribe({
-            next: (roleTypeRefs) => {
-                this.roleTypeRefs = roleTypeRefs;
-            },
+            next: (roleTypeRefs) => this.roleTypeRefs = roleTypeRefs,
             error: this.onServerError.bind(this)
         });
     }
@@ -129,9 +127,7 @@ export class EditRoleComponent extends AbstractPageComponent {
             goToPage: (page: number) => {
                 let href = this.services.model.getLinkHrefByType('auskey-list', this.identity._links);
                 this.services.rest.searchAusKeysByHref(href, this.auskeyFilter.encode(), page).subscribe({
-                    next: (auskeys) => {
-                        this.deviceAusKeyRefs = auskeys;
-                    },
+                    next: (auskeys) => this.deviceAusKeyRefs = auskeys,
                     error: this.onServerError.bind(this)
                 });
             }
