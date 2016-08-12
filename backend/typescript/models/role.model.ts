@@ -1,11 +1,11 @@
 import * as mongoose from 'mongoose';
-import {RAMEnum, IRAMObject, RAMSchema, Query} from './base';
+import {RAMEnum, IRAMObject, RAMSchema} from './base';
+import {Url} from './url';
 import {IParty, PartyModel} from './party.model';
 import {IRoleType, RoleTypeModel} from './roleType.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
 import {RoleAttributeNameModel} from './roleAttributeName.model';
 import {
-    Link,
     HrefValue,
     Role as DTO,
     RoleStatus as RoleStatusDTO,
@@ -41,9 +41,9 @@ export class RoleStatus extends RAMEnum {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue: boolean): Promise<HrefValue<RoleStatusDTO>> {
+    public async toHrefValue(includeValue: boolean): Promise<HrefValue<RoleStatusDTO>> {
         return Promise.resolve(new HrefValue(
-            '/api/v1/roleStatus/' + this.code,
+            await Url.forRoleStatus(this),
             includeValue ? this.toDTO() : undefined
         ));
     }
@@ -133,10 +133,13 @@ export interface IRoleModel extends mongoose.Model<IRole> {
          endTimestamp: Date,
          roleStatus:RoleStatus,
          attributes: IRoleAttribute[]) => Promise<IRole>;
+    findByIdentifier:(id: string) => Promise<IRole>;
     findByRoleTypeAndParty:(roleType: IRoleType, party: IParty) => Promise<IRole>;
-    search:(page: number, pageSize: number)
-        => Promise<SearchResult<IRole>>;
-    searchByIdentity:(identityIdValue: string, page: number, pageSize: number)
+    searchByIdentity:(identityIdValue: string,
+                      roleType: string,
+                      status: string,
+                      page: number,
+                      pageSize: number)
         => Promise<SearchResult<IRole>>;
 }
 
@@ -176,19 +179,19 @@ RoleSchema.method('saveAttributes', async function() {
 
 // todo what is the href we use here?
 RoleSchema.method('toHrefValue', async function (includeValue: boolean) {
-    const roleId: string = this._id.toString();
     return new HrefValue(
-        '/api/v1/role/' + encodeURIComponent(roleId),
+        await Url.forRole(this),
         includeValue ? await this.toDTO() : undefined
     );
 });
 
 RoleSchema.method('toDTO', async function () {
-    const links: Link[] = [];
-    // links.push(new Link('self', `/api/v1/role/${this.id}`));
-
     return new DTO(
-        links,
+        Url.links()
+            .push('self', Url.GET, await Url.forRole(this))
+            .push('modify', Url.PUT, await Url.forRole(this))
+            .toArray(),
+        this._id.toString() /*todo what code should we use?*/,
         await this.roleType.toHrefValue(false),
         await this.party.toHrefValue(true),
         this.startTimestamp,
@@ -221,6 +224,20 @@ RoleSchema.static('add', async (roleType: IRoleType,
     });
 });
 
+RoleSchema.static('findByIdentifier', (id: string) => {
+    // TODO migrate from _id to another id
+    return this.RoleModel
+        .findOne({
+            _id: id
+        })
+        .deepPopulate([
+            'roleType',
+            'party',
+            'attributes.attributeName'
+        ])
+        .exec();
+});
+
 RoleSchema.static('findByRoleTypeAndParty', (roleType: IRoleType, party: IParty) => {
     return this.RoleModel
         .findOne({
@@ -235,36 +252,12 @@ RoleSchema.static('findByRoleTypeAndParty', (roleType: IRoleType, party: IParty)
         .exec();
 });
 
-RoleSchema.static('search', (page: number,
-                             reqPageSize: number) => {
-    return new Promise<SearchResult<IRole>>(async (resolve, reject) => {
-        const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
-        try {
-            const query = await (new Query()
-                .build());
-            const count = await this.RoleModel
-                .count(query)
-                .exec();
-            const list = await this.RoleModel
-                .find(query)
-                .deepPopulate([
-                    'roleType',
-                    'party',
-                    'attributes.attributeName'
-                ])
-                .skip((page - 1) * pageSize)
-                .limit(pageSize)
-                .sort({name: 1})
-                .exec();
-            resolve(new SearchResult<IRole>(page, count, pageSize, list));
-        } catch (e) {
-            reject(e);
-        }
-    });
-});
-
 /* tslint:disable:max-func-body-length */
-RoleSchema.static('searchByIdentity', (identityIdValue: string, page: number, reqPageSize: number) => {
+RoleSchema.static('searchByIdentity', (identityIdValue: string,
+                                       roleType: string,
+                                       status: string,
+                                       page: number,
+                                       reqPageSize: number) => {
     return new Promise<SearchResult<IRole>>(async (resolve, reject) => {
         const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
         try {
@@ -273,6 +266,12 @@ RoleSchema.static('searchByIdentity', (identityIdValue: string, page: number, re
             mainAnd.push({
                 party: party
             });
+            if (roleType) {
+                mainAnd.push({'_roleTypeCode': roleType});
+            }
+            if (status) {
+                mainAnd.push({'status': status});
+            }
             const where: {[key: string]: Object} = {};
             where['$and'] = mainAnd;
             const count = await this.RoleModel

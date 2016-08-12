@@ -1,12 +1,22 @@
 import {Router, Request, Response} from 'express';
 import {security} from './security.middleware';
 import {
-    sendResource, sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema, REGULAR_CHARS
+    sendResource,
+    sendList,
+    sendSearchResult,
+    sendError,
+    sendNotFoundError,
+    validateReqSchema,
+    REGULAR_CHARS
 } from './helpers';
-import {IPartyModel} from '../models/party.model';
+import {IPartyModel, PartyModel} from '../models/party.model';
 import {IRelationshipModel, RelationshipStatus} from '../models/relationship.model';
-import {FilterParams, IInvitationCodeRelationshipAddDTO, ICreateInvitationCodeDTO, IAttributeDTO} from '../../../commons/RamAPI';
-import {PartyModel} from '../models/party.model';
+import {
+    FilterParams,
+    IInvitationCodeRelationshipAddDTO,
+    ICreateInvitationCodeDTO,
+    IAttributeDTO
+} from '../../../commons/RamAPI';
 import {Headers} from './headers';
 import {Assert} from '../models/base';
 
@@ -201,10 +211,10 @@ export class RelationshipController {
         validateReqSchema(req, schema)
             .then(async (req:Request) => {
                 const myPrincipal = security.getAuthenticatedPrincipal(res);
-                if (!myPrincipal.agencyUserInd) {
-                    const myIdentity = security.getAuthenticatedIdentity(res);
-                    const hasAccess = await this.partyModel.hasAccess(myIdentity.party, req.params.identity_id);
-                    Assert.assertTrue(hasAccess, 'You do not have access to this party.');
+                const myIdentity = security.getAuthenticatedIdentity(res);
+                const hasAccess = await this.partyModel.hasAccess(req.params.identity_id, myPrincipal, myIdentity);
+                if (!hasAccess) {
+                    throw new Error('403');
                 }
                 return req;
             })
@@ -426,10 +436,10 @@ export class RelationshipController {
         validateReqSchema(req, schema)
             .then(async (req:Request) => {
                 const myPrincipal = security.getAuthenticatedPrincipal(res);
-                if (!myPrincipal.agencyUserInd) {
-                    const myIdentity = security.getAuthenticatedIdentity(res);
-                    const hasAccess = await this.partyModel.hasAccess(myIdentity.party, subjectIdValue);
-                    Assert.assertTrue(hasAccess, 'You do not have access to this party.');
+                const myIdentity = security.getAuthenticatedIdentity(res);
+                const hasAccess = await this.partyModel.hasAccess(subjectIdValue, myPrincipal, myIdentity);
+                if (!hasAccess) {
+                    throw new Error('403');
                 }
                 return req;
             })
@@ -444,12 +454,12 @@ export class RelationshipController {
             .catch(sendError(res));
     };
 
-    private findStatusByName = (req:Request, res:Response) => {
+    private findStatusByCode = (req:Request, res:Response) => {
         const schema = {
-            'name': {
+            'code': {
                 in: 'params',
                 notEmpty: true,
-                errorMessage: 'Name is not valid'
+                errorMessage: 'Code is not valid'
             }
         };
         validateReqSchema(req, schema)
@@ -508,17 +518,17 @@ export class RelationshipController {
             security.isAuthenticated,
             this.searchByIdentity);
 
-        router.post('/v1/relationship',
+        router.post('/v1/relationship-by-invitation',
             security.isAuthenticated,
             this.createUsingInvitation);
 
         // todo need to add to swagger
-        router.post('/v1/relationship2',
+        router.post('/v1/relationship',
             security.isAuthenticated,
             this.create);
 
         router.get('/v1/relationshipStatus/:code',
-            this.findStatusByName);
+            this.findStatusByCode);
 
         router.get('/v1/relationshipStatuses',
             this.listStatuses);

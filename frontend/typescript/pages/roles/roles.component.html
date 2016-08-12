@@ -14,7 +14,7 @@
         </tr>
     </thead>
     <tbody *ngIf="!isLoading">
-        <tr *ngFor="let roleRef of (roles$|async)?.list">
+        <tr *ngFor="let roleRef of roleSearchResult?.list">
             <td>{{services.model.roleTypeLabel(roleTypeRefs, roleRef.value)}}</td>
             <td>{{services.model.displayDate(roleRef.value.assignedTimestamp)}}</td>
             <td>
@@ -33,6 +33,6 @@
 </table>
 
 <search-result-pagination
-        [searchResult]="roles$|async"
+        [searchResult]="roleSearchResult"
         [delegate]="paginationDelegate">
 </search-result-pagination>

@@ -44,11 +44,8 @@ export class BusinessesComponent extends AbstractPageComponent {
 
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices,
-                private _fb: FormBuilder) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Software Provider Services');
     }
 
@@ -86,7 +83,7 @@ export class BusinessesComponent extends AbstractPageComponent {
             if (err.status === 403) {
                 this.services.route.goToAccessDeniedPage();
             } else {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this.addGlobalErrorMessages(err);
                 this._isLoading = false;
             }
         });
@@ -99,7 +96,7 @@ export class BusinessesComponent extends AbstractPageComponent {
         } as SearchResultPaginationDelegate;
 
         // forms
-        this.form = this._fb.group({
+        this.form = this.fb.group({
             text: this.filter.get('text', ''),
             sort: this.filter.get('sort', '-')
         });
@@ -121,16 +118,15 @@ export class BusinessesComponent extends AbstractPageComponent {
         return (this.partyRefs && this.partyRefs.length > 0) || !this.filter.get('text');
     }
 
-    public goToNotificationsContext(partyResource: IHrefValue<IParty>) {
-        const defaultIdentityResource = this.services.model.getDefaultIdentityResource(partyResource.value);
-        if (defaultIdentityResource) {
-            const identityIdValue = defaultIdentityResource.value.idValue;
-            this.goToNotificationsPage(identityIdValue);
+    public goToNotificationsContext(partyRef: IHrefValue<IParty>) {
+        const defaultIdentityRef = this.services.model.getDefaultIdentityResource(partyRef.value);
+        if (defaultIdentityRef) {
+            this.goToNotificationsPage(defaultIdentityRef.href);
         }
     }
 
-    public goToNotificationsPage(idValue: string) {
-        this.services.route.goToNotificationsPage(idValue);
+    public goToNotificationsPage(identityHref: string) {
+        this.services.route.goToNotificationsPage(identityHref);
     };
 
     public goToHomePage() {

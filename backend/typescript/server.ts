@@ -13,15 +13,16 @@ import {sendNotFoundError} from './controllers/helpers';
 
 import {forgeRockSimulator} from './controllers/forgeRock.simulator.middleware';
 import {security} from './controllers/security.middleware';
+import {Translator} from './ram/translator';
 
-// DEVELOPMENT RESOURCES
+// DEVELOPMENT CONTROLLERS
 import {AuthenticatorSimulatorController} from './controllers/authenticator.simulator.controller';
 import {AgencyUserController} from './controllers/agencyUser.controller';
 import {ResetController} from './controllers/reset.server.controller';
 
-// PRODUCTION RESOURCES
+// PRODUCTION CONTROLLERS
+import {SystemController} from './controllers/system.controller';
 import {PrincipalController} from './controllers/principal.controller';
-import {BusinessController} from './controllers/business.controller';
 import {PartyController} from './controllers/party.controller';
 import {ProfileController} from './controllers/profile.controller';
 import {IdentityController} from './controllers/identity.controller';
@@ -30,6 +31,8 @@ import {RelationshipTypeController} from './controllers/relationshipType.control
 import {RelationshipAttributeNameController} from './controllers/relationshipAttributeName.controller';
 import {RoleController} from './controllers/role.controller';
 import {RoleTypeController} from './controllers/roleType.controller';
+import {BusinessController} from './controllers/business.controller';
+import {AuskeyController} from './controllers/auskey.controller';
 
 import {IdentityModel} from './models/identity.model';
 import {PartyModel} from './models/party.model';
@@ -39,6 +42,7 @@ import {RelationshipTypeModel} from './models/relationshipType.model';
 import {RelationshipAttributeNameModel} from './models/relationshipAttributeName.model';
 import {RoleModel} from './models/role.model';
 import {RoleTypeModel} from './models/roleType.model';
+import {AUSkeyProvider} from './providers/auskey.provider';
 
 // connect to the database ............................................................................................
 
@@ -63,11 +67,13 @@ switch (conf.devMode) {
 
 server.use(cookieParser());
 server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({ extended: true }));
+server.use(bodyParser.urlencoded({extended: true}));
 server.use(expressValidator());
 server.use(methodOverride());
 server.use(express.static(path.join(__dirname, conf.frontendDir)));
 server.use(express.static('swagger'));
+
+Translator.initialise();
 
 // server.use(continueOnlyIfJWTisValid(conf.jwtSecretKey,true));
 
@@ -94,6 +100,10 @@ server.use('/api/reset',
 
 // setup route handlers (production) ..................................................................................
 
+server.use('/system',
+    new SystemController()
+        .assignRoutes(express.Router()));
+
 server.use('/api/',
     new PrincipalController()
         .assignRoutes(express.Router()));
@@ -115,10 +125,6 @@ server.use('/api/',
         .assignRoutes(express.Router()));
 
 server.use('/api/',
-    new BusinessController()
-        .assignRoutes(express.Router()));
-
-server.use('/api/',
     new ProfileController(ProfileModel)
         .assignRoutes(express.Router()));
 
@@ -132,6 +138,14 @@ server.use('/api/',
 
 server.use('/api/',
     new RoleTypeController(RoleTypeModel, PartyModel)
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new BusinessController()
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new AuskeyController(IdentityModel, AUSkeyProvider)
         .assignRoutes(express.Router()));
 
 // setup error handlers ...............................................................................................

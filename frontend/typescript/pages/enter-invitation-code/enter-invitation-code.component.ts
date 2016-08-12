@@ -23,18 +23,15 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
 
     public form: FormGroup;
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices,
-                private _fb: FormBuilder) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 
     public onInit(params: {path:Params, query:Params}) {
 
         // extract path and query parameters
-        this.idValue = decodeURIComponent(params.path['idValue']);
+        this.idValue = params.path['idValue'];
 
         // message
         const msg = params.query['msg'];
@@ -48,7 +45,7 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
         });
 
         // forms
-        this.form = this._fb.group({
+        this.form = this.fb.group({
             'relationshipCode': ['', Validators.compose([Validators.required])]
         });
 
@@ -67,7 +64,7 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
                 if (status === 404) {
                     this.addGlobalMessage('The code you have entered does not exist or is invalid.');
                 } else {
-                    this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                    this.addGlobalErrorMessages(err);
                 }
             });
 

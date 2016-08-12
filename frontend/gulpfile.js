@@ -36,6 +36,11 @@ gulp.task("publish:tarball", ["dist"], function () {
         .pipe(gulp.dest("./"));
 });
 
+gulp.task("copy:i18n", function () {
+    return gulp.src(["i18n/{**,./}/*.json"], { base: "./" })
+        .pipe(gulp.dest("dist"));
+});
+
 gulp.task("copy:images", function () {
     return gulp.src(["images/{**,./}/*.{jpeg,jpg,png,svg,gif,ico}"], { base: "./" })
         .pipe(gulp.dest("dist"));
@@ -66,7 +71,7 @@ gulp.task("copy:index.html", function () {
         .pipe(gulp.dest("dist"));
 });
 
-gulp.task("dist", seq(["clean"], ["ts:compile", "copy:images", "scss:compile", "copy:data", "copy:index.html"], ["copy:font", "copy:jslib", "copy:jspm", "copy:dev"]));
+gulp.task("dist", seq(["clean"], ["ts:compile", "copy:i18n", "copy:images", "scss:compile", "copy:data", "copy:index.html"], ["copy:font", "copy:jslib", "copy:jspm", "copy:dev"]));
 
 gulp.task("clean", function () {
     return gulp.src(["dist"], { read: false }).pipe(rimraf());
@@ -134,7 +139,7 @@ gulp.task("ts:lint", function () {
 });
 gulp.task("watch", ["scss:watch", "ts:watch", "html:watch", "data:watch"]);
 
-gulp.task("serve", ["copy:images", "scss:watch", "ts:watch", "html:watch", "data:watch", "copy:jslib"], function () {
+gulp.task("serve", ["copy:i18n", "copy:images", "scss:watch", "ts:watch", "html:watch", "data:watch", "copy:jslib"], function () {
     var proxyOptions = url.parse("http://localhost:3000/api");
     proxyOptions.route = "/api";
 
@@ -152,6 +157,7 @@ gulp.task("serve", ["copy:images", "scss:watch", "ts:watch", "html:watch", "data
         "./dev/*",
         "./typescript/{**,./}/*.html",
         "./scss/*.*",
+        "./i18n/*.*",
         "./images/*.*",
     ], [browserSync.reload]);
 });

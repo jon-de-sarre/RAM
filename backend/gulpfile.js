@@ -44,11 +44,17 @@ gulp.task("ts:compile", ["ts:lint"], function () {
         .pipe(gulp.dest("dist/"));
 });
 
-gulp.task("ts:watch", ["ts:compile"], function () {
-    gulp.watch(["typescript/**/*.ts", "../commons/**/*.ts", "typings/**/*.d.ts"], ["ts:compile"]);
+gulp.task("copy:i18n", function () {
+    return gulp.src(["i18n/{**,./}/*.json"], { base: "./" })
+            .pipe(gulp.dest("dist"));
 });
 
-gulp.task('serve', ["ts:watch"], function () {
+gulp.task("ts:watch", ["ts:compile"], function () {
+    gulp.watch(["typescript/**/*.ts", "../commons/**/*.ts", "typings/**/*.d.ts"], ["ts:compile"]);
+    gulp.watch(["i18n/*.*"], ["copy:i18n"]);
+});
+
+gulp.task('serve', ["copy:i18n", "ts:watch"], function () {
     nodemon({
         script: 'dist/backend/typescript/server.js',
         "verbose": false,

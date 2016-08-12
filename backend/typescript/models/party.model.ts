@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import {RAMEnum, IRAMObject, RAMSchema, Assert} from './base';
+import {Url} from './url';
 import {IIdentity, IdentityModel} from './identity.model';
 import {RelationshipModel, IRelationship, RelationshipInitiatedBy} from './relationship.model';
 import {RelationshipTypeModel} from './relationshipType.model';
@@ -10,6 +11,7 @@ import {IRole, RoleModel, RoleStatus} from './role.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
 import {IAgencyUser} from './agencyUser.model';
 import {RoleAttributeNameModel} from './roleAttributeName.model';
+import {IPrincipal} from './principal.model';
 import {
     HrefValue,
     Party as DTO,
@@ -42,9 +44,9 @@ export class PartyType extends RAMEnum {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue: boolean): Promise<HrefValue<PartyTypeDTO>> {
+    public async toHrefValue(includeValue: boolean): Promise<HrefValue<PartyTypeDTO>> {
         return Promise.resolve(new HrefValue(
-            '/api/v1/partyType/' + this.code,
+            await Url.forPartyType(this),
             includeValue ? this.toDTO() : undefined
         ));
     }
@@ -75,12 +77,13 @@ export interface IParty extends IRAMObject {
     addRelationship(dto: IInvitationCodeRelationshipAddDTO):Promise<IRelationship>;
     addRelationship2(relationshipDTO: IRelationshipDTO):Promise<IRelationship>;
     addRole(role: IRole, agencyUser: IAgencyUser):Promise<IRole>;
+    modifyRole(role: IRole, agencyUser: IAgencyUser):Promise<IRole>;
 }
 
 /* tslint:disable:no-empty-interfaces */
 export interface IPartyModel extends mongoose.Model<IParty> {
     findByIdentityIdValue:(idValue: string) => Promise<IParty>;
-    hasAccess:(requestingParty: IParty, requestedIdValue: string) => Promise<boolean>;
+    hasAccess:(requestedIdValue: string, requestingPrincipal: IPrincipal, requestingIdentity: IIdentity) => Promise<boolean>;
 }
 
 // instance methods ...................................................................................................
@@ -90,20 +93,18 @@ PartySchema.method('partyTypeEnum', function () {
 });
 
 PartySchema.method('toHrefValue', async function (includeValue: boolean) {
-    const defaultIdentity = await IdentityModel.findDefaultByPartyId(this.id);
-    if (defaultIdentity) {
         return new HrefValue(
-            '/api/v1/party/identity/' + encodeURIComponent(defaultIdentity.idValue),
+            await Url.forParty(this),
             includeValue ? await this.toDTO() : undefined
         );
-    } else {
-        throw new Error('Default Identity not found');
-    }
 });
 
 PartySchema.method('toDTO', async function () {
     const identities = await IdentityModel.listByPartyId(this.id);
     return new DTO(
+        Url.links()
+            .push('self', Url.GET, await Url.forParty(this))
+            .toArray(),
         this.partyType,
         await Promise.all<HrefValue<IdentityDTO>>(identities.map(
             async (identity: IIdentity) => {
@@ -236,14 +237,15 @@ PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAge
             const filteredRoleAttributes = role.attributes.filter((item) => {
                 return item.attributeName.code === code;
             });
-            if (filteredRoleAttributes.length === 0) {
+            const roleAttributeDoesNotExist = filteredRoleAttributes.length === 0;
+            if (roleAttributeDoesNotExist) {
                 roleAttributes.push(await RoleAttributeModel.create({
                     value: value,
                     attributeName: roleAttributeName
                 }));
             } else {
                 const filteredRoleAttribute = filteredRoleAttributes[0];
-                filteredRoleAttribute.value = value;
+                filteredRoleAttribute.value = [value];
                 await filteredRoleAttribute.save();
                 roleAttributes.push(filteredRoleAttribute);
             }
@@ -284,6 +286,78 @@ PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAge
 
 });
 
+PartySchema.method('modifyRole', async function (roleDTO: RoleDTO, agencyUser: IAgencyUser) {
+
+    const now = new Date();
+
+    const roleTypeCode = Url.lastPathElement(roleDTO.roleType.href);
+    Assert.assertNotNull(roleTypeCode, 'Role type code from href invalid');
+
+    const roleType = await RoleTypeModel.findByCodeInDateRange(roleTypeCode, now);
+    Assert.assertTrue(roleType !== null, 'Role type invalid');
+
+    const role = await RoleModel.findByRoleTypeAndParty(roleType, this);
+    Assert.assertNotNull(role, 'Party does not have role type');
+
+    const roleAttributes = role.attributes;
+
+    let updateOrCreateRoleAttributeIfExists = async (code: string, value: string, roleAttributes: IRoleAttribute[], role: IRole) => {
+        const roleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(code);
+        if (roleAttributeName) {
+            const filteredRoleAttributes = role.attributes.filter((item) => {
+                return item.attributeName.code === code;
+            });
+            const roleAttributeDoesNotExist = filteredRoleAttributes.length === 0;
+            if (roleAttributeDoesNotExist) {
+                roleAttributes.push(await RoleAttributeModel.create({
+                    value: value,
+                    attributeName: roleAttributeName
+                }));
+            } else {
+                const filteredRoleAttribute = filteredRoleAttributes[0];
+                filteredRoleAttribute.value = [value];
+                await filteredRoleAttribute.save();
+                roleAttributes.push(filteredRoleAttribute);
+            }
+        }
+    };
+
+    if (agencyUser) {
+        await updateOrCreateRoleAttributeIfExists('CREATOR_ID', agencyUser.id, roleAttributes, role);
+        await updateOrCreateRoleAttributeIfExists('CREATOR_NAME', agencyUser.displayName, roleAttributes, role);
+        await updateOrCreateRoleAttributeIfExists('CREATOR_AGENCY', agencyUser.agency, roleAttributes, role);
+    }
+
+    for (let roleAttribute of roleDTO.attributes) {
+        const roleAttributeValue = roleAttribute.value;
+        const roleAttributeNameCode = roleAttribute.attributeName.value.code;
+        const roleAttributeNameCategory = roleAttribute.attributeName.value.category;
+
+        let shouldSave = false;
+        if (agencyUser && roleAttribute.attributeName.value.classifier === 'AGENCY_SERVICE') {
+            for (let programRole of agencyUser.programRoles) {
+                if (programRole.role === 'ROLE_ADMIN' && programRole.program === roleAttributeNameCategory) {
+                    shouldSave = true;
+                    break;
+                }
+            }
+        } else {
+            shouldSave = true;
+        }
+
+        if (shouldSave) {
+            await updateOrCreateRoleAttributeIfExists(roleAttributeNameCode, roleAttributeValue, roleAttributes, role);
+        }
+    }
+
+    role.attributes = roleAttributes;
+
+    role.saveAttributes();
+
+    return Promise.resolve(role);
+
+});
+
 // static methods .....................................................................................................
 
 PartySchema.static('findByIdentityIdValue', async (idValue: string) => {
@@ -291,18 +365,28 @@ PartySchema.static('findByIdentityIdValue', async (idValue: string) => {
     return identity ? identity.party : null;
 });
 
-PartySchema.static('hasAccess', async (requestingParty: IParty, requestedIdValue: string) => {
+PartySchema.static('hasAccess', async (requestedIdValue: string, requestingPrincipal: IPrincipal, requestingIdentity: IIdentity) => {
     const requestedIdentity = await IdentityModel.findByIdValue(requestedIdValue);
     if (requestedIdentity) {
-        const requestedParty = requestedIdentity.party;
-        if (requestingParty.id === requestedParty.id) {
+        // requested party exists
+        if (requestingPrincipal && requestingPrincipal.agencyUserInd) {
+            // agency users have implicit global access
             return true;
-        } else {
-            return await RelationshipModel.hasActiveInDateRange1stOr2ndLevelConnection(
-                requestingParty,
-                requestedIdValue,
-                new Date()
-            );
+        } else if (requestingIdentity) {
+            // regular users have explicit access
+            let requestingParty = requestingIdentity.party;
+            const requestedParty = requestedIdentity.party;
+            if (requestingParty.id === requestedParty.id) {
+                // requested and requester are the same
+                return true;
+            } else {
+                // check 1st and 2nd level relationships
+                return await RelationshipModel.hasActiveInDateRange1stOr2ndLevelConnection(
+                    requestingParty,
+                    requestedIdValue,
+                    new Date()
+                );
+            }
         }
     }
     return false;

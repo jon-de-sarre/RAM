@@ -5,4 +5,3 @@ export default class InitializationHelper {
         // TODO
     };
 }
-

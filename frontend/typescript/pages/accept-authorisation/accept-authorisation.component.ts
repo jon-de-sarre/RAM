@@ -1,7 +1,9 @@
 import {Observable} from 'rxjs/Observable';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
+import {FormBuilder} from '@angular/forms';
 import {DatePipe} from '@angular/common';
+import {Dialog} from 'primeng/primeng';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
@@ -19,7 +21,7 @@ import {
 @Component({
     selector: 'accept-authorisation',
     templateUrl: 'accept-authorisation.component.html',
-    directives: [ROUTER_DIRECTIVES, PageHeaderAuthComponent, MarkdownComponent]
+    directives: [ROUTER_DIRECTIVES, PageHeaderAuthComponent, MarkdownComponent, Dialog]
 })
 
 export class AcceptAuthorisationComponent extends AbstractPageComponent {
@@ -36,10 +38,10 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
     public delegateManageAuthorisationAllowedIndAttribute: IRelationshipAttribute;
     public delegateRelationshipTypeDeclarationAttributeUsage: IRelationshipAttributeNameUsage;
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices) {
-        super(route, router, services);
+    public declineDisplay: boolean = false;
+
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 
@@ -47,8 +49,8 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
     public onInit(params: {path: Params, query: Params}) {
 
         // extract path and query parameters
-        this.idValue = decodeURIComponent(params.path['idValue']);
-        this.code = decodeURIComponent(params.path['invitationCode']);
+        this.idValue = params.path['idValue'];
+        this.code = params.path['invitationCode'];
 
         // identity in focus
         this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
@@ -76,17 +78,27 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
             if (err.status === 404) {
                 this.goToEnterAuthorisationPage();
             } else {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this.addGlobalErrorMessages(err);
             }
         });
 
     }
 
-    public declineAuthorisation = () => {
+    public showDeclineConfirmation = () => {
+        this.declineDisplay = true;
+    };
+
+    public cancelDeclineConfirmation = () => {
+        this.declineDisplay = false;
+    };
+
+    public confirmDeclineAuthorisation = () => {
         this.services.rest.rejectPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
+            this.declineDisplay = false;
             this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'DECLINED_RELATIONSHIP');
         }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+            this.declineDisplay = false;
+            this.addGlobalErrorMessages(err);
         });
     };
 
@@ -94,7 +106,7 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
         this.services.rest.acceptPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
             this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'ACCEPTED_RELATIONSHIP');
         }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+            this.addGlobalErrorMessages(err);
         });
     };
 

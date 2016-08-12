@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
+import {FormBuilder} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {RAMServices} from '../../services/ram-services';
@@ -17,10 +18,8 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
     private me: IPrincipal = null;
     private _isLoading = true;
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Relationship Authorisation Manager');
     }
 

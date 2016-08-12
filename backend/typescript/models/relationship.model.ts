@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import {RAMEnum, IRAMObject, RAMSchema, Query, Assert} from './base';
+import {Url} from './url';
 import {DOB_SHARED_SECRET_TYPE_CODE} from './sharedSecretType.model';
 import {IParty, PartyModel} from './party.model';
 import {IName, NameModel} from './name.model';
@@ -7,7 +8,6 @@ import {IRelationshipType} from './relationshipType.model';
 import {IRelationshipAttribute, RelationshipAttributeModel} from './relationshipAttribute.model';
 import {IdentityModel, IIdentity, IdentityType, IdentityInvitationCodeStatus} from './identity.model';
 import {
-    Link,
     HrefValue,
     Relationship as DTO,
     RelationshipStatus as RelationshipStatusDTO,
@@ -34,27 +34,31 @@ const MAX_PAGE_SIZE = 10;
 
 export class RelationshipStatus extends RAMEnum {
 
-    public static Active = new RelationshipStatus('ACTIVE', 'Active');
+    public static Accepted = new RelationshipStatus('ACCEPTED', 'Accepted');
     public static Cancelled = new RelationshipStatus('CANCELLED', 'Cancelled');
+    public static Declined = new RelationshipStatus('DECLINED', 'Declined');
     public static Deleted = new RelationshipStatus('DELETED', 'Deleted');
-    public static Invalid = new RelationshipStatus('INVALID', 'Invalid');
     public static Pending = new RelationshipStatus('PENDING', 'Pending');
+    public static Revoked = new RelationshipStatus('REVOKED', 'Revoked');
+    public static Suspended = new RelationshipStatus('SUSPENDED', 'Suspended');
 
     protected static AllValues = [
-        RelationshipStatus.Active,
+        RelationshipStatus.Accepted,
         RelationshipStatus.Cancelled,
+        RelationshipStatus.Declined,
         RelationshipStatus.Deleted,
-        RelationshipStatus.Invalid,
-        RelationshipStatus.Pending
+        RelationshipStatus.Pending,
+        RelationshipStatus.Revoked,
+        RelationshipStatus.Suspended
     ];
 
     constructor(code: string, shortDecodeText: string) {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue: boolean): Promise<HrefValue<RelationshipStatusDTO>> {
+    public async toHrefValue(includeValue: boolean): Promise<HrefValue<RelationshipStatusDTO>> {
         return Promise.resolve(new HrefValue(
-            '/api/v1/relationshipStatus/' + this.code,
+            await Url.forRelationshipStatus(this),
             includeValue ? this.toDTO() : undefined
         ));
     }
@@ -306,26 +310,23 @@ RelationshipSchema.method('statusEnum', function () {
 
 // todo what is the href we use here?
 RelationshipSchema.method('toHrefValue', async function (includeValue: boolean) {
-    const relationshipId: string = this._id.toString();
     return new HrefValue(
-        '/api/v1/relationship/' + encodeURIComponent(relationshipId),
+        await Url.forRelationship(this),
         includeValue ? await this.toDTO(null) : undefined
     );
 });
 
 RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
-    const links: Link[] = [];
-    // links.push(new Link('self', `/api/v1/relationship/${this.id}`));
-
-    // TODO what other logic around when to add links?
-    if (invitationCode && this.statusEnum() === RelationshipStatus.Pending) {
-        links.push(new Link('accept', `/api/v1/relationship/invitationCode/${invitationCode}/accept`));
-        links.push(new Link('reject', `/api/v1/relationship/invitationCode/${invitationCode}/reject`));
-        links.push(new Link('notifyDelegate', `/api/v1/relationship/invitationCode/${invitationCode}/notifyDelegate`));
-    }
-
+    const pendingWithInvitationCode = invitationCode && this.statusEnum() === RelationshipStatus.Pending;
     return new DTO(
-        links,
+        Url.links()
+            .push('self', Url.GET, await Url.forRelationship(this))
+            .push('accept', Url.POST, await Url.forRelationshipAccept(invitationCode), pendingWithInvitationCode)
+            .push('reject', Url.POST, await Url.forRelationshipReject(invitationCode), pendingWithInvitationCode)
+            .push('notifyDelegate', Url.POST, await Url.forRelationshipNotifyDelegate(invitationCode), pendingWithInvitationCode)
+            .push('modify', Url.PUT, await Url.forRelationship(this))
+            .toArray(),
+        this._id.toString() /*todo what code should we use?*/,
         await this.relationshipType.toHrefValue(false),
         await this.subject.toHrefValue(true),
         await this.subjectNickName.toDTO(),
@@ -431,7 +432,7 @@ RelationshipSchema.method('acceptPendingInvitation', async function (acceptingDe
     Assert.assertTrue(acceptingDelegateIdentity.party.id === this.delegate.id, 'Not allowed');
 
     // mark relationship as active
-    this.status = RelationshipStatus.Active.code;
+    this.status = RelationshipStatus.Accepted.code;
     await this.save();
 
     // TODO notify relevant parties
@@ -447,7 +448,7 @@ RelationshipSchema.method('rejectPendingInvitation', async function (rejectingDe
     Assert.assertTrue(rejectingDelegateIdentity.party.id === this.delegate.id, 'Not allowed');
 
     // mark relationship as invalid
-    this.status = RelationshipStatus.Invalid.code;
+    this.status = RelationshipStatus.Declined.code;
     await this.save();
 
     // TODO notify relevant parties
@@ -499,13 +500,13 @@ RelationshipSchema.static('add2', async (relationshipType: IRelationshipType,
     let status = RelationshipStatus.Pending;
 
     // check subject
-    if(initiatedBy === RelationshipInitiatedBy.Subject && relationshipType.autoAcceptIfInitiatedFromSubject) {
-        status = RelationshipStatus.Active;
+    if (initiatedBy === RelationshipInitiatedBy.Subject && relationshipType.autoAcceptIfInitiatedFromSubject) {
+        status = RelationshipStatus.Accepted;
     }
 
     // check delegate
-    if(initiatedBy === RelationshipInitiatedBy.Delegate && relationshipType.autoAcceptIfInitiatedFromDelegate) {
-        status = RelationshipStatus.Active;
+    if (initiatedBy === RelationshipInitiatedBy.Delegate && relationshipType.autoAcceptIfInitiatedFromDelegate) {
+        status = RelationshipStatus.Accepted;
     }
 
     return await this.RelationshipModel.create({
@@ -602,7 +603,7 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
             .findOne({
                 subject: requestedParty,
                 delegate: requestingParty,
-                status: RelationshipStatus.Active.code,
+                status: RelationshipStatus.Accepted.code,
                 $or: [{endDate: null}, {endDate: {$gte: date}}]
             })
             .exec();
@@ -619,7 +620,7 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
                         '$match': {
                             '$and': [
                                 {'subject': new mongoose.Types.ObjectId(requestedParty.id)},
-                                {'status': RelationshipStatus.Active.code},
+                                {'status': RelationshipStatus.Accepted.code},
                                 {'$or': [{endDate: null}, {endDate: {$gte: date}}]}
                             ]
                         }
@@ -634,7 +635,7 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
                         '$match': {
                             '$and': [
                                 {'delegate': new mongoose.Types.ObjectId(requestingParty.id)},
-                                {'status': RelationshipStatus.Active.code},
+                                {'status': RelationshipStatus.Accepted.code},
                                 {'$or': [{endDate: null}, {endDate: {$gte: date}}]}
                             ]
                         }

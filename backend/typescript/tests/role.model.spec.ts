@@ -16,7 +16,7 @@ describe('RAM Role', () => {
 
     connectDisconnectMongo();
 
-    let roleTypeCustom:IRoleType;
+    let roleTypeOsp:IRoleType;
 
     let partyNickName1:IName;
     let partyProfile1:IProfile;
@@ -37,7 +37,7 @@ describe('RAM Role', () => {
 
                 try {
 
-                    roleTypeCustom = Seeder.osp_roleType;
+                    roleTypeOsp = Seeder.osp_roleType;
 
                     partyNickName1 = await NameModel.create({
                         givenName: 'Jane',
@@ -62,7 +62,8 @@ describe('RAM Role', () => {
                         party: party1
                     });
 
-                    role1 = await RoleModel.add(roleTypeCustom,
+                    role1 = await RoleModel.add(
+                        roleTypeOsp,
                         party1,
                         new Date(),
                         null,
@@ -84,7 +85,7 @@ describe('RAM Role', () => {
         try {
 
             const instance = await RoleModel.create({
-                roleType: roleTypeCustom,
+                roleType: roleTypeOsp,
                 party: party1,
                 startTimestamp: new Date(),
                 status: RoleStatus.Active.code,
@@ -107,7 +108,7 @@ describe('RAM Role', () => {
         try {
 
             const instance = await RoleModel.create({
-                roleType: roleTypeCustom,
+                roleType: roleTypeOsp,
                 party: party1,
                 startTimestamp: new Date(),
                 endTimestamp: new Date(),
@@ -129,7 +130,7 @@ describe('RAM Role', () => {
     it('searches successfully', async (done) => {
         try {
 
-            const roles = await RoleModel.search(1, 10);
+            const roles = await RoleModel.searchByIdentity(partyIdentity1.idValue, roleTypeOsp.code, RoleStatus.Active.code,  1, 10);
             expect(roles.totalCount).toBeGreaterThan(0);
             expect(roles.list.length).toBeGreaterThan(0);
 

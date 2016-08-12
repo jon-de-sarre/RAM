@@ -1,0 +1,8 @@
+{
+  "HELLO" : "Hi there",
+  "Party Type" : "Party Type",
+  "Authorisation Type" : "Authorisation Type",
+  "error.identityIdInvalid" : "Identity Id is not valid",
+  "error.pageInvalid" : "Page is not valid",
+  "error.pageSizeInvalid" : "Page Size is not valid"
+}

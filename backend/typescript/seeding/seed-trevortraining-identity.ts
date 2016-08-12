@@ -38,7 +38,7 @@ export class TrevorTrainingIdentitySeeder {
                 Seeder.log('');
 
                 Seeder.trevortraining_identity_1 = await Seeder.createIdentityModel({
-                    rawIdValue: 'ABNTrevTr123',
+                    rawIdValue: '10000000002',
                     identityType: IdentityType.PublicIdentifier.code,
                     defaultInd: true,
                     publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.code,

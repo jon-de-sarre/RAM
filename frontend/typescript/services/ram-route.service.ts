@@ -35,22 +35,29 @@ export class RAMRouteService {
             queryParams['msg'] = msg;
         }
         this.router.navigate(['/relationships',
-                encodeURIComponent(idValue)],
+                this.encodeURIComponent(idValue, false)],
             {queryParams: queryParams}
         );
     }
 
-    public goToRelationshipAddPage(idValue: string) {
+    public goToAddRelationshipPage(idValue: string) {
         this.router.navigate(['/relationships/add',
-            encodeURIComponent(idValue)
+            this.encodeURIComponent(idValue, false)
+        ]);
+    }
+
+    public goToEditRelationshipPage(idValue: string, key: string) {
+        this.router.navigate(['/relationships/edit',
+            this.encodeURIComponent(idValue, false),
+            this.encodeURIComponent(key, false)
         ]);
     }
 
     public goToRelationshipAddCompletePage(idValue: string, code: string, displayName: string) {
         this.router.navigate(['/relationships/add/complete',
-            encodeURIComponent(idValue),
-            encodeURIComponent(code),
-            encodeURIComponent(displayName)
+            this.encodeURIComponent(idValue, false),
+            this.encodeURIComponent(code, false),
+            this.encodeURIComponent(displayName, false)
         ]);
     }
 
@@ -60,32 +67,40 @@ export class RAMRouteService {
             queryParams['msg'] = msg;
         }
         this.router.navigate(['/relationships/add/enter',
-                encodeURIComponent(idValue)
+                this.encodeURIComponent(idValue, false)
             ], {queryParams: queryParams}
         );
     }
 
     public goToRelationshipAcceptPage(idValue: string, code: string) {
         this.router.navigate(['/relationships/add/accept',
-            encodeURIComponent(idValue),
-            encodeURIComponent(code)
+            this.encodeURIComponent(idValue, false),
+            this.encodeURIComponent(code, false)
         ]);
     }
 
-    public goToRolesPage(idValue: string, page?: number) {
+    public goToRolesPage(href: string, page?: number) {
         const queryParams = {};
         if (page) {
             queryParams['page'] = page;
         }
         this.router.navigate(['/roles',
-                encodeURIComponent(idValue)
+                this.encodeURIComponent(href, true)
             ], {queryParams: queryParams}
         );
     }
 
-    public goToAddRolePage(idValue: string) {
+    public goToAddRolePage(href: string) {
         this.router.navigate(['/roles/add',
-                encodeURIComponent(idValue)
+                this.encodeURIComponent(href, true)
+            ], {queryParams: {}}
+        );
+    }
+
+    public goToEditRolePage(identityHref: string, roleHref: string) {
+        this.router.navigate(['/roles/edit',
+                this.encodeURIComponent(identityHref, true),
+                this.encodeURIComponent(roleHref, true)
             ], {queryParams: {}}
         );
     }
@@ -103,17 +118,42 @@ export class RAMRouteService {
         );
     }
 
-    public goToNotificationsPage(idValue: string) {
+    public goToNotificationsPage(identityHref: string, page?: number) {
+        const queryParams = {};
+        if (page) {
+            queryParams['page'] = page;
+        }
         this.router.navigate(['/notifications/',
-                encodeURIComponent(idValue)
-            ], {queryParams: {}}
+                this.encodeURIComponent(identityHref, true)
+            ], {queryParams: queryParams}
         );
     }
 
-    public goToAddNotificationPage(idValue: string) {
+    public goToAddNotificationPage(identityHref: string) {
         this.router.navigate(['/notifications/add/',
-            encodeURIComponent(idValue)
+            this.encodeURIComponent(identityHref, true)
         ]);
+    }
+
+    public goToEditNotificationPage(identityHref: string, relationshipHref: string) {
+        this.router.navigate(['/notifications/edit/',
+            this.encodeURIComponent(identityHref, true),
+            this.encodeURIComponent(relationshipHref, true)
+        ]);
+    }
+
+    private encodeURIComponent(value: string, href: boolean) {
+        if (href) {
+            return encodeURIComponent(window.btoa(value));
+        }
+        return encodeURIComponent(value);
+    }
+
+    public decodeURIComponent(key: string, value: string) {
+        if (key === 'href' || key.indexOf('Href') !== -1) {
+            return window.atob(decodeURIComponent(value));
+        }
+        return decodeURIComponent(value);
     }
 
     public goToAgencySelectBusinessForAuthorisationsPage() {

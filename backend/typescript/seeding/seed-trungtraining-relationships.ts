@@ -26,7 +26,7 @@ export class TrungTrainingRelationshipsSeeder {
                     delegate: Seeder.edtechosp_party,
                     delegateNickName: Seeder.edtechosp_name,
                     startTimestamp: new Date(),
-                    status: RelationshipStatus.Active.code,
+                    status: RelationshipStatus.Accepted.code,
                     initiatedBy: RelationshipInitiatedBy.Delegate.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({

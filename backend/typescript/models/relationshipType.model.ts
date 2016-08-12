@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
-import {ICodeDecode, CodeDecodeSchema, RAMEnum} from './base';
+import {RAMEnum, ICodeDecode, CodeDecodeSchema} from './base';
+import {Url} from './url';
 import {RelationshipAttributeNameModel} from './relationshipAttributeName.model';
 import {IRelationshipAttributeNameUsage, RelationshipAttributeNameUsageModel} from './relationshipAttributeNameUsage.model';
 import {
@@ -109,7 +110,7 @@ RelationshipTypeSchema.method('categoryEnum', function () {
 
 RelationshipTypeSchema.method('toHrefValue', async function (includeValue:boolean) {
     return new HrefValue(
-        '/api/v1/relationshipType/' + encodeURIComponent(this.code),
+        await Url.forRelationshipType(this),
         includeValue ? await this.toDTO() : undefined
     );
 });

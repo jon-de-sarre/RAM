@@ -37,7 +37,7 @@ export class JensCateringRelationshipsSeeder {
                     delegate: Seeder.jennifermaxims_party,
                     delegateNickName: Seeder.jennifermaxims_name,
                     startTimestamp: new Date(),
-                    status: RelationshipStatus.Active.code,
+                    status: RelationshipStatus.Accepted.code,
                     initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
@@ -87,7 +87,7 @@ export class JensCateringRelationshipsSeeder {
                     delegate: Seeder.edtechosp_party,
                     delegateNickName: Seeder.edtechosp_name,
                     startTimestamp: new Date(),
-                    status: RelationshipStatus.Active.code,
+                    status: RelationshipStatus.Accepted.code,
                     initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
@@ -129,7 +129,7 @@ export class JensCateringRelationshipsSeeder {
                     delegate: Seeder.johnmaxims_party,
                     delegateNickName: Seeder.johnmaxims_name,
                     startTimestamp: new Date(),
-                    status: RelationshipStatus.Active.code,
+                    status: RelationshipStatus.Accepted.code,
                     initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
@@ -378,7 +378,7 @@ export class JensCateringRelationshipsSeeder {
                         delegate: delegateParty,
                         delegateNickName: delegateName,
                         startTimestamp: new Date(),
-                        status: RelationshipStatus.Active.code,
+                        status: RelationshipStatus.Accepted.code,
                         initiatedBy: RelationshipInitiatedBy.Subject.code,
                         attributes: [
                             await Seeder.createRelationshipAttributeModel({

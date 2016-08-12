@@ -38,7 +38,7 @@ export class EdTechOSPIdentitySeeder {
                 Seeder.log('');
 
                 Seeder.edtechosp_identity_1 = await Seeder.createIdentityModel({
-                    rawIdValue: 'EdTechABN',
+                    rawIdValue: '10000000001',
                     identityType: IdentityType.PublicIdentifier.code,
                     defaultInd: true,
                     publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.code,

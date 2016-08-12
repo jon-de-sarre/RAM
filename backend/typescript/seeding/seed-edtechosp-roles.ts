@@ -19,7 +19,7 @@ export class EdTechOspRolesSeeder {
 
             } else {
 
-                Seeder.edTech_osp_relationship = await Seeder.createRoleModel({
+                Seeder.edTech_osp_role = await Seeder.createRoleModel({
                     roleType: Seeder.osp_roleType,
                     party: Seeder.edtechosp_party,
                     startTimestamp: new Date(),
@@ -34,8 +34,8 @@ export class EdTechOspRolesSeeder {
                             attributeName: Seeder.usi_roleAttributeName
                         } as any),
                         await Seeder.createRoleAttributeModel({
-                            value: 'Here are some notes',
-                            attributeName: Seeder.notes_roleAttributeName
+                            value: 'Education Tech',
+                            attributeName: Seeder.preferredName_roleAttributeName
                         } as any),
                         await Seeder.createRoleAttributeModel({
                             value: 'ted_agent',
@@ -48,6 +48,10 @@ export class EdTechOspRolesSeeder {
                         await Seeder.createRoleAttributeModel({
                             value: 'Department of Education',
                             attributeName: Seeder.creatorAgency_roleAttributeName
+                        } as any),
+                        await Seeder.createRoleAttributeModel({
+                            value: ['10000000001-device-0','10000000001-device-2'],
+                            attributeName: Seeder.deviceAuskeys_roleAttributeName
                         } as any)
                     ]
                 } as any);

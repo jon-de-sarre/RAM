@@ -7,6 +7,7 @@
   "globalDependencies": {
     "es6-shim": "registry:dt/es6-shim#0.31.2+20160317120654",
     "jasmine": "registry:dt/jasmine#2.2.0+20160505161446",
+    "jquery": "registry:dt/jquery#1.10.0+20160704162008",
     "lodash": "registry:dt/lodash#3.10.0+20160330154726",
     "node": "registry:dt/node#4.0.0+20160509154515",
     "showdown": "https://raw.githubusercontent.com/DefinitelyTyped/DefinitelyTyped/master/showdown/showdown.d.ts",

@@ -38,7 +38,7 @@ export class CakeryBakeryIdentitySeeder {
                 Seeder.log('');
 
                 Seeder.cakerybakery_identity_1 = await Seeder.createIdentityModel({
-                    rawIdValue: 'cakerybakeryABN',
+                    rawIdValue: '00000000002',
                     identityType: IdentityType.PublicIdentifier.code,
                     defaultInd: true,
                     publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.code,

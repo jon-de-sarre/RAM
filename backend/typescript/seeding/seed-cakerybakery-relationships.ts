@@ -26,7 +26,7 @@ export class CakeryBakeryRelationshipsSeeder {
                     delegate: Seeder.jennifermaxims_party,
                     delegateNickName: Seeder.jennifermaxims_name,
                     startTimestamp: new Date(),
-                    status: RelationshipStatus.Active.code,
+                    status: RelationshipStatus.Accepted.code,
                     initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({

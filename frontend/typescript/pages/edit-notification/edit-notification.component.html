@@ -29,7 +29,6 @@
                     <br/>
                 </div>
             </div>
-
             <div *ngIf="delegateParty && delegateIdentityRef">
                 <div class="col-md-12 padding-btn-20">
                     <div class="row">
@@ -42,15 +41,16 @@
                             {{delegateIdentityRef.value.profile.name.unstructuredName}}
                         </div>
                     </div>
-                    <br/>
-                    <button class="btn btn-secondary align-center" (click)="resetDelegate()">Change ABN</button>
+                    <div *ngIf="!relationship">
+                        <br/>
+                        <button class="btn btn-secondary align-center" (click)="resetDelegate()">Change ABN</button>
+                    </div>
                 </div>
             </div>
         </div>
     </div>
 
     <div *ngIf="delegateParty && delegateIdentityRef">
-
         <div class="panel panel-default">
             <div class="panel-heading">
                 <h4>Notification Details</h4>
@@ -71,20 +71,19 @@
                             class="btn btn-link align-center"
                             (click)="removeSSID()">Remove</button>
                 </div>
-
                 <div>
                     <access-period [(data)]='accessPeriod' (isValid)='accessPeriodIsValid=$event'>
                     </access-period>
                 </div>
-
                 <br style="clear: both"/>
                 <hr/>
-
                 <div class="col-md-12">
                     <h4>Set the agencies to notify:</h4>
                     <div class="checkbox" *ngFor="let attributeName of ospServices">
                         <label>
-                            <input type="checkbox" (change)="onAgencyServiceChange(attributeName.code)">
+                            <input type="checkbox"
+                                   [checked]="isAgencyServiceSelected(attributeName.code)"
+                                   (change)="onAgencyServiceChange(attributeName.code)">
                             {{attributeName.shortDecodeText}}
                         </label>
                     </div>
@@ -105,8 +104,8 @@
                 </div>
             </div>
         </div>
-
     </div>
+
 </form>
 
 <br/>

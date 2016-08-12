@@ -115,9 +115,7 @@ class Security {
                         ));
                     }
                 }
-                res.locals[Headers.Principal] = new Principal(idValue, displayName, true);
-                res.locals[Headers.PrincipalIdValue] = idValue;
-                res.locals[Headers.AgencyUser] = new AgencyUser(
+                const agencyUser = new AgencyUser(
                     idValue,
                     givenName,
                     familyName,
@@ -125,6 +123,9 @@ class Security {
                     this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserAgency),
                     programRoles
                 );
+                res.locals[Headers.Principal] = new Principal(idValue, displayName, true, agencyUser, undefined);
+                res.locals[Headers.PrincipalIdValue] = idValue;
+                res.locals[Headers.AgencyUser] = agencyUser;
             }
         };
     }
@@ -133,7 +134,7 @@ class Security {
         return (identity?: IIdentity) => {
             logger.info('Identity context:', (identity ? colors.magenta(identity.idValue) : colors.red('[not found]')));
             if (identity) {
-                res.locals[Headers.Principal] = new Principal(identity.idValue, identity.profile.name._displayName, false);
+                res.locals[Headers.Principal] = new Principal(identity.idValue, identity.profile.name._displayName, false, undefined, identity);
                 res.locals[Headers.PrincipalIdValue] = identity.idValue;
                 res.locals[Headers.Identity] = identity;
                 res.locals[Headers.IdentityIdValue] = identity.idValue;
@@ -215,6 +216,18 @@ class Security {
             res.status(401);
             res.send(new ErrorResponse('Not authenticated as agency user.'));
         }
+    }
+
+    public getAuthenticatedABN(res: Response): string {
+        return res.locals[Headers.ABN];
+    }
+
+    public getAuthenticatedAUSkey(res: Response): string {
+        return res.locals[Headers.AUSkey];
+    }
+
+    public getAuthenticatedClientAuth(res: Response): string {
+        return res.locals[Headers.ClientAuth];
     }
 
     // private logHeaders(req:Request) {

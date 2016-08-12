@@ -29,20 +29,17 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
     public form: FormGroup;
     public formUdn: FormGroup;
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices,
-                private _fb: FormBuilder) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 
     public onInit(params: {path: Params, query: Params}) {
 
         // extract path and query parameters
-        this.idValue = decodeURIComponent(params.path['idValue']);
-        this.code = decodeURIComponent(params.path['invitationCode']);
-        this.displayName = decodeURIComponent(params.path['displayName']);
+        this.idValue = params.path['idValue'];
+        this.code = params.path['invitationCode'];
+        this.displayName = params.path['displayName'];
 
         // identity in focus
         this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
@@ -50,10 +47,10 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
         });
 
         // forms
-        this.form = this._fb.group({
+        this.form = this.fb.group({
             'email': ['', Validators.compose([Validators.required, RAMNgValidators.validateEmailFormat])]
         });
-        this.formUdn = this._fb.group({
+        this.formUdn = this.fb.group({
             'udn': ['']
         });
         // 'udn': ['', Validators.compose([Validators.required, RAMNgValidators.validateUDNFormat])]
@@ -78,7 +75,7 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
             if (status === 404) {
                 this.addGlobalMessage('The code you have entered does not exist or is invalid.');
             } else {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this.addGlobalErrorMessages(err);
             }
         });
         return false;

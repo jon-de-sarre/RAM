@@ -3,6 +3,7 @@ import {DatePipe} from '@angular/common';
 
 import {
     ILink,
+    IHasLinks,
     IHrefValue,
     IName,
     IParty,
@@ -17,7 +18,9 @@ import {
     IRoleAttributeNameUsage,
     IRoleAttributeName,
     IRelationshipAttributeName,
-    IRelationshipAttributeNameUsage
+    IRelationshipAttributeNameUsage,
+    IRoleAttribute,
+    IRelationshipAttribute
 } from '../../../commons/RamAPI';
 
 @Injectable()
@@ -53,11 +56,16 @@ export class RAMModelService {
     }
 
     public abnLabelForParty(party: IParty): string {
+        let abn = this.abnForParty(party);
+        return abn ? 'ABN ' + abn : null;
+    }
+
+    public abnForParty(party: IParty): string {
         if (party && party.identities && party.identities.length > 0) {
             for (const resource of party.identities) {
                 const identity = resource.value;
                 if (identity.identityType === 'PUBLIC_IDENTIFIER' && identity.publicIdentifierScheme === 'ABN') {
-                    return 'ABN ' + identity.rawIdValue;
+                    return identity.rawIdValue;
                 }
             }
             return null;
@@ -124,9 +132,14 @@ export class RAMModelService {
 
     // model lookups ..................................................................................................
 
-    public getLinkByType(type: string, links: ILink[]): ILink {
-        if (type && links) {
-            for (let link of links) {
+    public getLinkHrefByType(type: string, model: IHasLinks): string {
+        let link = this.getLinkByType(type, model);
+        return link ? link.href : null;
+    }
+
+    public getLinkByType(type: string, model: IHasLinks): ILink {
+        if (type && model && model._links) {
+            for (let link of model._links) {
                 if (link.type === type) {
                     return link;
                 }
@@ -204,6 +217,18 @@ export class RAMModelService {
         return null;
     }
 
+    public getRelationshipAttribute(relationshipRef: IRelationship, code: string, classifier: string): IRelationshipAttribute {
+        for (let attr of relationshipRef.attributes) {
+            const attributeNameRef = attr.attributeName;
+            if (attributeNameRef.value.code === code) {
+                if(!classifier || classifier === attributeNameRef.value.classifier) {
+                    return attr;
+                }
+            }
+        }
+        return null;
+    }
+
     public getRelationshipTypeAttributeNameRef(relationshipTypeRef: IHrefValue<IRelationshipType>, code: string): IHrefValue<IRelationshipAttributeName> {
         for (let usage of relationshipTypeRef.value.relationshipAttributeNames) {
             const attributeNameRef = usage.attributeNameDef;
@@ -222,6 +247,19 @@ export class RAMModelService {
             }
         }
         return null;
+    }
+
+    public getAllAgencyServiceRoleAttributeNameUsages(roleTypeRef: IHrefValue<IRoleType>, programs: string[]): IRoleAttributeNameUsage[] {
+        let agencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[] = [];
+        if (roleTypeRef) {
+            for (let roleAttributeNameUsage of roleTypeRef.value.roleAttributeNames) {
+                let classifier = roleAttributeNameUsage.attributeNameDef.value.classifier;
+                if (classifier === 'AGENCY_SERVICE') {
+                    agencyServiceRoleAttributeNameUsages.push(roleAttributeNameUsage);
+                }
+            }
+        }
+        return agencyServiceRoleAttributeNameUsages;
     }
 
     public getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef: IHrefValue<IRoleType>, programs: string[]): IRoleAttributeNameUsage[] {
@@ -275,4 +313,39 @@ export class RAMModelService {
         return null;
     }
 
+    public getRoleAttribute(roleRef: IRole, code: string, classifier: string): IRoleAttribute {
+        for (let attr of roleRef.attributes) {
+            const attributeNameRef = attr.attributeName;
+            if (attributeNameRef.value.code === code) {
+                if(!classifier || classifier === attributeNameRef.value.classifier) {
+                    return attr;
+                }
+            }
+        }
+        return null;
+    }
+
+    public getRoleAttributesByClassifier(roleRef: IRole, classifier: string): IRoleAttribute[] {
+        const values: IRoleAttribute[] = [];
+
+        for (let attr of roleRef.attributes) {
+            const attributeNameRef = attr.attributeName;
+            if (attributeNameRef.value.classifier === classifier) {
+                values.push(attr);
+            }
+        }
+        return values;
+    }
+
+    public getRoleAttributeValue(attribute: IRoleAttribute) {
+        if(attribute) {
+            if(attribute.attributeName.value.domain === 'SELECT_MULTI') {
+                return attribute.value;
+            }
+            if(attribute.value) {
+                return attribute.value[0];
+            }
+        }
+        return null;
+    }
 }
