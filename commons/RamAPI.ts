@@ -276,7 +276,6 @@ export class Name implements IName {
 // relationship .......................................................................................................
 
 export interface IRelationship extends IHasLinks {
-    _links: ILink[];
     code?: string;
     relationshipType: IHrefValue<IRelationshipType>;
     subject: IHrefValue<IParty>;
@@ -459,7 +458,6 @@ export class ProfileProvider implements IProfileProvider {
 // identity ...........................................................................................................
 
 export interface IIdentity extends IHasLinks {
-    _links: ILink[];
     idValue: string;
     rawIdValue: string;
     identityType: string;
@@ -557,7 +555,6 @@ export interface INotifyDelegateDTO {
 // role ...............................................................................................................
 
 export interface IRole extends IHasLinks {
-    _links: ILink[];
     code: string;
     roleType: IHrefValue<IRoleType>;
     party: IHrefValue<IParty>;

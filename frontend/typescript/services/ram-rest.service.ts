@@ -247,7 +247,7 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
-    public saveRelationshipByHref(href: string, relationship: IRelationship): Observable<IRelationship> {
+    public insertRelationshipByHref(href: string, relationship: IRelationship): Observable<IRelationship> {
         return this.http
             .post(new Href(href).toString(), JSON.stringify(relationship), {
                 headers: this.headersForJson()
