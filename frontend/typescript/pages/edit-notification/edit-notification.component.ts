@@ -238,15 +238,14 @@ export class EditNotificationComponent extends AbstractPageComponent {
                 attributes
             );
 
-            // todo this needs to use the HATEOAS href
-            // todo this needs to handle the edit case
-            // save relationship
+            // insert relationship
             let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.RELATIONSHIP_CREATE, this.identity);
-            console.log('Save href =', saveHref);
             this.services.rest.saveRelationshipByHref(saveHref, relationship).subscribe({
                 next: this.back.bind(this),
                 error: this.onServerError.bind(this)
             });
+
+            // todo this needs to handle the edit case
 
         }
 
