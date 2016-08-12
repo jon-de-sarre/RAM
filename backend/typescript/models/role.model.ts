@@ -12,6 +12,7 @@ import {
     RoleAttribute as RoleAttributeDTO,
     SearchResult
 } from '../../../commons/RamAPI';
+import {RoleAttribute} from "../../../docs/data-types";
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
 
@@ -106,6 +107,18 @@ RoleSchema.pre('validate', function (next: () => void) {
     if (this.roleType) {
         this._roleTypeCode = this.roleType.code;
     }
+
+    let hasAgencyServiceWhichIsNotEndDated = false;
+    for (let attribute of this.attributes) {
+        if (attribute.attributeName.classifier === 'AGENCY_SERVICE' && attribute.value === 'true' && !attribute.attributeName.isEndDated()) {
+            hasAgencyServiceWhichIsNotEndDated = true;
+            break;
+        }
+    }
+    if (!hasAgencyServiceWhichIsNotEndDated) {
+        this.status = RoleStatus.Suspended.code;
+    }
+
     next();
 });
 

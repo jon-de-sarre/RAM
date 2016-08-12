@@ -88,6 +88,7 @@ export interface IRoleAttributeName extends ICodeDecode {
     purposeText: string;
     permittedValues: string[];
     domainEnum(): RoleAttributeNameDomain;
+    isEndDated(): boolean;
     toHrefValue(includeValue:boolean): Promise<HrefValue<DTO>>;
     toDTO(): Promise<DTO>;
 }
@@ -103,6 +104,14 @@ export interface IRoleAttributeNameModel extends mongoose.Model<IRoleAttributeNa
 
 RoleAttributeNameSchema.method('domainEnum', function () {
     return RoleAttributeNameDomain.valueOf(this.domain);
+});
+
+RoleAttributeNameSchema.method('isEndDated', () => {
+    if (this.endDate && this.endDate < new Date()) {
+        return true;
+    } else {
+        return false;
+    }
 });
 
 RoleAttributeNameSchema.method('toHrefValue', async function (includeValue:boolean) {
