@@ -76,7 +76,7 @@ export interface IParty extends IRAMObject {
     toDTO():Promise<DTO>;
     addRelationship(dto: IInvitationCodeRelationshipAddDTO):Promise<IRelationship>;
     addRelationship2(relationshipDTO: IRelationshipDTO):Promise<IRelationship>;
-    addRole(role: IRole, agencyUser: IAgencyUser):Promise<IRole>;
+    addOrModifyRole(role: IRole, agencyUser: IAgencyUser):Promise<IRole>;
     modifyRole(role: IRole, agencyUser: IAgencyUser):Promise<IRole>;
 }
 
@@ -211,7 +211,7 @@ PartySchema.method('addRelationship2', async function (dto: IRelationshipDTO) {
 
 });
 
-PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAgencyUser) {
+PartySchema.method('addOrModifyRole', async function (roleDTO: RoleDTO, agencyUser: IAgencyUser) {
 
     const now = new Date();
     const roleTypeCode = roleDTO.roleType.value.code;
