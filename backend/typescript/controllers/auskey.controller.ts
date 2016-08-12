@@ -6,6 +6,7 @@ import {AUSkeyType} from '../models/auskey.model';
 import {IAUSkeyProvider} from '../providers/auskey.provider';
 import {FilterParams} from '../../../commons/RamAPI';
 import {Assert} from '../models/base';
+import {Translator} from '../ram/translator';
 
 export class AuskeyController {
 
@@ -33,7 +34,7 @@ export class AuskeyController {
             'idValue': {
                 in: 'params',
                 notEmpty: true,
-                errorMessage: 'Identity Id is not valid'
+                errorMessage: Translator.get('error.identityIdInvalid')
             },
             'filter': {
                 in: 'query'
@@ -42,14 +43,14 @@ export class AuskeyController {
                 in: 'query',
                 notEmpty: true,
                 isNumeric: {
-                    errorMessage: 'Page is not valid'
+                    errorMessage: Translator.get('error.pageInvalid')
                 }
             },
             'pageSize': {
                 in: 'query',
                 optional: true,
                 isNumeric: {
-                    errorMessage: 'Page Size is not valid'
+                    errorMessage: Translator.get('error.pageSizeInvalid')
                 }
             }
         };
