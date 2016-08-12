@@ -145,7 +145,7 @@ server.use('/api/',
         .assignRoutes(express.Router()));
 
 server.use('/api/',
-    new AuskeyController(IdentityModel, AUSkeyProvider)
+    new AuskeyController(AUSkeyProvider, PartyModel, IdentityModel)
         .assignRoutes(express.Router()));
 
 // setup error handlers ...............................................................................................

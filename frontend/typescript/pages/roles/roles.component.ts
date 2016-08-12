@@ -60,8 +60,8 @@ export class RolesComponent extends AbstractPageComponent {
         this.page = params.query['page'] ? +params.query['page'] : 1;
 
         // agency user
-        this.services.rest.findMyAgencyUser().subscribe((me) => {
-            this.agencyUser = me;
+        this.services.rest.findMyPrincipal().subscribe((me) => {
+            this.agencyUser = me.agencyUser;
         });
 
         // identity in focus

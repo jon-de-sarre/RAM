@@ -16,6 +16,7 @@ import {
     FilterParams,
     ISearchResult,
     IAgencyUser,
+    IPrincipal,
     IIdentity,
     Role,
     RoleAttribute,
@@ -99,7 +100,7 @@ export class EditRoleComponent extends AbstractPageComponent {
         this.auskeyFilter.add('auskeyType', RAMConstants.AUSkey.DEVICE_TYPE);
 
         // me (agency user)
-        this.services.rest.findMyAgencyUser().subscribe({
+        this.services.rest.findMyPrincipal().subscribe({
             next: this.onFindMe.bind(this),
             error: this.onServerError.bind(this)
         });
@@ -170,8 +171,8 @@ export class EditRoleComponent extends AbstractPageComponent {
         }
     }
 
-    private onFindMe(me: IAgencyUser) {
-        this.me = me;
+    private onFindMe(me: IPrincipal) {
+        this.me = me.agencyUser;
     }
 
     public onRoleTypeChange(newRoleTypeCode: string) {
