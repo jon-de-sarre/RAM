@@ -25,23 +25,44 @@
 </head>
 
 <body>
+    <ram-app></ram-app>
 
     <script src="/js/lib/ie10-viewport-bug-workaround.js"></script>
     <!-- 1. Load libraries -->
     <!-- IE required polyfills, in this exact order -->
    <script src="//cdn.rawgit.com/systemjs/systemjs/master/dist/system.js"></script>
     <!--<script src="jspm_packages/system.js"></script>-->
-    <script src="js/system.config.js"></script>
-    <script src="js/frontend/typescript/Boot.js"></script>
+    <script src="system.config.js"></script>
+    <!--
+        system.config above is over-written by "jspm install" command.
+        So, to tweak the config we need a separate script. If we are not
+        in debug mode we need to map RAM code paths to ram-app.js
+      -->
     <script>
-        System.import('primeui/themes/omega/theme.css!');
-        System.import('primeui/primeui-ng-all.min.css!');
+        try {
+            if (window.location.search.indexOf("?debug") !== 0) {
+                // JSPM builder starts files with dist/ - we need to redirect.
+                // Side-benefit: without this system loads individual files.
+                System.config({
+                    paths: { "js/frontend/*": "dist/js/frontend/*.js" }
+                })
+            }
+        } catch (e) {}
+    </script>
+    <!--<script src="js/frontend/typescript/Boot.js"></script>-->
+
+    <!--
+        Combimed files for JSPM and RAM code. If search string on loading
+        URL starts with ?debug then ram-app is ignored and the individual
+        JS files are loaded (not for JSPM libraries). This gives access to
+        TypeScript code in the debugger.
+     -->
+    <script src="ram-lib.js"></script>
+    <script src="ram-app.js"></script>
+    <script>
         System.import('js/frontend/typescript/Boot')
          .then(null, console.error.bind(console));
     </script>
 
-    <ram-app></ram-app>
-
 </body>
-
 </html>
