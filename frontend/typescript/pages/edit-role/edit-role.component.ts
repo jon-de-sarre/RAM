@@ -1,4 +1,3 @@
-import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
 import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES, FormControl} from '@angular/forms';
@@ -23,8 +22,7 @@ import {
     IRole,
     IRoleType,
     IRoleAttributeNameUsage,
-    IAUSkey,
-    IPrincipal
+    IAUSkey
 } from '../../../../commons/RamAPI';
 
 @Component({
