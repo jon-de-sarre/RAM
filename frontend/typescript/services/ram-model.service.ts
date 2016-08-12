@@ -3,6 +3,7 @@ import {DatePipe} from '@angular/common';
 
 import {
     ILink,
+    IHasLinks,
     IHrefValue,
     IName,
     IParty,
@@ -131,14 +132,14 @@ export class RAMModelService {
 
     // model lookups ..................................................................................................
 
-    public getLinkHrefByType(type: string, links: ILink[]): string {
-        let link = this.getLinkByType(type, links);
+    public getLinkHrefByType(type: string, model: IHasLinks): string {
+        let link = this.getLinkByType(type, model);
         return link ? link.href : null;
     }
 
-    public getLinkByType(type: string, links: ILink[]): ILink {
-        if (type && links) {
-            for (let link of links) {
+    public getLinkByType(type: string, model: IHasLinks): ILink {
+        if (type && model && model._links) {
+            for (let link of model._links) {
                 if (link.type === type) {
                     return link;
                 }

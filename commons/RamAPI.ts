@@ -136,6 +136,10 @@ export class Link implements ILink {
     }
 }
 
+export interface IHasLinks {
+    _links: ILink[];
+}
+
 // code/decode ........................................................................................................
 
 export interface ICodeDecode {
@@ -222,7 +226,7 @@ export class AUSkey implements IAUSkey {
 
 // party ..............................................................................................................
 
-export interface IParty {
+export interface IParty extends IHasLinks {
     _links: ILink[];
     partyType: string;
     identities: Array<IHrefValue<IIdentity>>;
@@ -271,8 +275,7 @@ export class Name implements IName {
 
 // relationship .......................................................................................................
 
-export interface IRelationship {
-    _links: ILink[];
+export interface IRelationship extends IHasLinks {
     code?: string;
     relationshipType: IHrefValue<IRelationshipType>;
     subject: IHrefValue<IParty>;
@@ -454,8 +457,7 @@ export class ProfileProvider implements IProfileProvider {
 
 // identity ...........................................................................................................
 
-export interface IIdentity {
-    _links: ILink[];
+export interface IIdentity extends IHasLinks {
     idValue: string;
     rawIdValue: string;
     identityType: string;
@@ -552,8 +554,7 @@ export interface INotifyDelegateDTO {
 
 // role ...............................................................................................................
 
-export interface IRole {
-    _links: ILink[];
+export interface IRole extends IHasLinks {
     code: string;
     roleType: IHrefValue<IRoleType>;
     party: IHrefValue<IParty>;

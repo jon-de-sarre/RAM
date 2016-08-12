@@ -238,13 +238,19 @@ export class EditNotificationComponent extends AbstractPageComponent {
                 attributes
             );
 
-            // todo this needs to use the HATEOAS href
+            // save
+            if (!this.relationshipHref) {
+                // insert relationship
+                let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.RELATIONSHIP_CREATE, this.identity);
+                this.services.rest.insertRelationshipByHref(saveHref, relationship).subscribe({
+                    next: this.back.bind(this),
+                    error: this.onServerError.bind(this)
+                });
+            } else {
+                // update relationship
+            }
+
             // todo this needs to handle the edit case
-            // save relationship
-            this.services.rest.createRelationship2(relationship).subscribe({
-                next: this.back.bind(this),
-                error: this.onServerError.bind(this)
-            });
 
         }
 
@@ -285,7 +291,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
             if (identityRef.value.rawIdValue === abn) {
 
-                let href = this.services.model.getLinkHrefByType('role-list', identityRef.value._links);
+                let href = this.services.model.getLinkHrefByType('role-list', identityRef.value);
                 const filterString = new FilterParams()
                     .add('roleType', RAMConstants.RelationshipTypeCode.OSP)
                     .add('status', RAMConstants.RoleStatusCode.ACTIVE)
