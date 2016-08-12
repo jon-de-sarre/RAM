@@ -25,8 +25,8 @@ export class Principal implements IPrincipal {
             this.id,
             this.displayName,
             this.agencyUserInd,
-            this.agencyUser ? await this.agencyUser.toDTO() : null,
-            this.identity ? await this.identity.toDTO() : null
+            this.agencyUser ? await this.agencyUser.toDTO() : undefined,
+            this.identity ? await this.identity.toDTO() : undefined
         ));
     }
 
