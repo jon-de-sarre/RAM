@@ -39,15 +39,25 @@
         in debug mode we need to map RAM code paths to ram-app.js
       -->
     <script>
-        try {
-            if (window.location.search.indexOf("?debug") !== 0) {
-                // JSPM builder starts files with dist/ - we need to redirect.
-                // Side-benefit: without this system loads individual files.
-                System.config({
-                    paths: { "js/frontend/*": "dist/js/frontend/*.js" }
-                })
-            }
-        } catch (e) {}
+        /*
+         * The browser looks for debug at the start of the search section
+         * of the url, as in
+         * 
+         * http://localhost:3000/?debug#/relationships/LINK_ID%3AMY_GOV%3Ajohnmaxims
+         * 
+         * If ?debug is added to the url, app-specific Typescript debugging is
+         * available. Otherwise you will only have the transpiled JavaScript.
+         * 
+         * The ?debug disappears, but typescript debugging is available
+         * until the browser is reloaded. Create a bookmark if necessary.
+         */
+        if (window.location.search.indexOf("?debug") !== 0) {
+            // JSPM builder starts files with dist/ - we need to redirect.
+            // Side-benefit: without this system loads individual files.
+            System.config({
+                paths: { "js/frontend/*": "dist/js/frontend/*.js" }
+            })
+        }
     </script>
     <!--<script src="js/frontend/typescript/Boot.js"></script>-->
 
