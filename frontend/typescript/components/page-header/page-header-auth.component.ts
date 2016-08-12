@@ -33,7 +33,7 @@ export class PageHeaderAuthComponent {
 
     public getIdentityHref(): string {
         if (this.identity) {
-            return this.services.model.getLinkHrefByType('self', this.identity._links);
+            return this.services.model.getLinkHrefByType('self', this.identity);
         }
         return undefined;
     }

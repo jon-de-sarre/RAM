@@ -72,7 +72,7 @@ export class AgencySelectBusinessComponent extends AbstractPageComponent {
             if (this.dashboard === 'auth') {
                 this.services.route.goToRelationshipsPage(identity.idValue);
             } else {
-                let href = this.services.model.getLinkHrefByType('self', identity._links);
+                let href = this.services.model.getLinkHrefByType('self', identity);
                 this.services.route.goToNotificationsPage(href);
             }
         },(err:any) => {

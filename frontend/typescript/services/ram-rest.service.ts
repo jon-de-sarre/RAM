@@ -221,13 +221,13 @@ export class RAMRestService {
 
     public acceptPendingRelationshipByInvitationCode(relationship: IRelationship): Observable<IRelationship> {
         return this.http
-            .post(this.modelService.getLinkHrefByType('accept', relationship._links), '')
+            .post(this.modelService.getLinkHrefByType('accept', relationship), '')
             .map(this.extractData);
     }
 
     public rejectPendingRelationshipByInvitationCode(relationship: IRelationship): Observable<IRelationship> {
         return this.http
-            .post(this.modelService.getLinkHrefByType('reject', relationship._links), '')
+            .post(this.modelService.getLinkHrefByType('reject', relationship), '')
             .map(this.extractData);
     }
 
@@ -241,15 +241,15 @@ export class RAMRestService {
 
     public createRelationship(relationship: IInvitationCodeRelationshipAddDTO): Observable<IRelationship> {
         return this.http
-            .post(`/api/v1/relationship`, JSON.stringify(relationship), {
+            .post(`/api/v1/relationship-by-invitation`, JSON.stringify(relationship), {
                 headers: this.headersForJson()
             })
             .map(this.extractData);
     }
 
-    public createRelationship2(relationship: IRelationship): Observable<IRelationship> {
+    public saveRelationshipByHref(href: string, relationship: IRelationship): Observable<IRelationship> {
         return this.http
-            .post(`/api/v1/relationship2`, JSON.stringify(relationship), {
+            .post(new Href(href).toString(), JSON.stringify(relationship), {
                 headers: this.headersForJson()
             })
             .map(this.extractData);

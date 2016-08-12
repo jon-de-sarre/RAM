@@ -518,12 +518,12 @@ export class RelationshipController {
             security.isAuthenticated,
             this.searchByIdentity);
 
-        router.post('/v1/relationship',
+        router.post('/v1/relationship-by-invitation',
             security.isAuthenticated,
             this.createUsingInvitation);
 
         // todo need to add to swagger
-        router.post('/v1/relationship2',
+        router.post('/v1/relationship',
             security.isAuthenticated,
             this.create);
 

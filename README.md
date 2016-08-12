@@ -205,3 +205,9 @@ While working on the travis configuration file you can validate it using the fol
 Creation of favicon to [Alexandr Cherkinsky](https://thenounproject.com/cherkinskiy/).
 
 Cross browser testing using [BrowserStack](https://www.browserstack.com/).
+
+## Technology documentation
+
+https://angular.io/docs/ts/latest/
+
+https://xgrommx.github.io/rx-book/

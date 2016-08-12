@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "RAM",
-		"_postman_id": "b9e982b4-c5f1-ef92-e045-9ae441fc28bd",
+		"_postman_id": "4896be36-b6d4-3146-e080-c81596677ce7",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -1014,7 +1014,7 @@
 				{
 					"name": "Create",
 					"request": {
-						"url": "{{host}}/api/v1/relationship",
+						"url": "{{host}}/api/v1/relationship-by-invitation",
 						"method": "POST",
 						"header": [
 							{

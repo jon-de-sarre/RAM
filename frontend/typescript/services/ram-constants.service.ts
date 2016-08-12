@@ -1,5 +1,15 @@
 export const RAMConstants = {
 
+    Link: {
+        'SELF': 'self',
+        'RELATIONSHIP_LIST': 'relationship-list',
+        'RELATIONSHIP_CREATE': 'relationship-create',
+        'ROLE_LIST': 'role-list',
+        'ROLE_CREATE': 'role-list',
+        'MODIFY': 'modify',
+        'DELETE': 'modify'
+    },
+
     AUSkey: {
         DEVICE_TYPE: 'DEVICE'
     },
