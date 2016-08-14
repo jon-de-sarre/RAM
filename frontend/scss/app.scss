@@ -525,6 +525,11 @@ div.checkbox.disabled > label, div.radio.disabled > label {
   display: inherit !important;
 }
 
+.ui-calendar input {
+  background: url('../images/calendar_font_awesome.png') no-repeat 97% 50%;
+  background-size: 25px 25px;
+}
+
 .hasDatepicker {
   padding: $padding-base-vertical $padding-base-horizontal !important;
   border-radius: 0 !important;
