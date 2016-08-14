@@ -36,6 +36,28 @@
         <div class="panel-body">
             <div class="form-group">
                 <h4>Access to government agencies services</h4>
+
+                <table class="table table-hover">
+                    <tbody>
+                    <tr *ngFor="let attributeUsage of allAgencyServiceRoleAttributeNameUsages">
+                        <td [class.clickable]="hasAccessToAgencyService(attributeUsage.attributeNameDef.value.code)"
+                            (click)="hasAccessToAgencyService(attributeUsage.attributeNameDef.value.code) && onAgencyServiceChange(attributeUsage.attributeNameDef.value.code)">
+                            <div [class.text-muted]="!hasAccessToAgencyService(attributeUsage.attributeNameDef.value.code)">
+                                {{attributeUsage.attributeNameDef.value.shortDecodeText}}
+                            </div>
+                        </td>
+                        <td>
+                            <div class="checkbox">
+                                <input type="checkbox"
+                                       [disabled]="!hasAccessToAgencyService(attributeUsage.attributeNameDef.value.code)"
+                                       [checked]="isAgencyServiceSelected(attributeUsage.attributeNameDef.value.code)"
+                                       (change)="onAgencyServiceChange(attributeUsage.attributeNameDef.value.code)">
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
+
                 <div class="checkbox" [class.disabled]="!hasAccessToAgencyService(attributeUsage.attributeNameDef.value.code)" *ngFor="let attributeUsage of allAgencyServiceRoleAttributeNameUsages">
                     <label>
                         <input type="checkbox"
