@@ -26,8 +26,8 @@ export class AccessPeriodComponent implements OnInit {
     public ngOnInit() {
         const startDate = this.data.startDate;
         const endDate = this.data.endDate;
-        const formattedStartDate: string = null; //string = startDate === null || startDate === undefined ? null : startDate.toISOString().slice(0, 10);
-        const formattedEndDate: string = endDate === null || endDate === undefined ? null : endDate.toISOString().slice(0, 10);
+        const formattedStartDate: string = this.formatDate(startDate);
+        const formattedEndDate: string = this.formatDate(endDate);
 
         this.form = this._fb.group(
             {
@@ -53,6 +53,10 @@ export class AccessPeriodComponent implements OnInit {
             this.dataChanges.emit(v);
             this.isValid.emit(this.form.valid);
         });
+    }
+
+    private formatDate(d: Date) {
+        return d === null || d === undefined ? null : ("0" + d.getDate()).slice(-2) + '/' + ("0"+(d.getMonth()+1)).slice(-2) + '/' + d.getFullYear();
     }
 
     private _isDateBefore = (startDateCtrlName: string, endDateCtrlName: string) => {
