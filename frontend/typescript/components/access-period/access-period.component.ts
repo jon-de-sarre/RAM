@@ -40,19 +40,20 @@ export class AccessPeriodComponent implements OnInit {
             }
         );
 
-        let endDate = this.form.controls['endDate'] as FormControl;
         let noEndDate = this.form.controls['noEndDate'];
 
         noEndDate.valueChanges.subscribe((v: Boolean) => {
             if (v === true) {
                 // reset endDate if noEndDate checkbox is selected
-                endDate.updateValue(null);
+                ( this.form.controls['endDate'] as FormControl).updateValue(null);
             }
         });
         this.form.valueChanges.subscribe((v: AccessPeriodComponentData) => {
             this.dataChanges.emit(v);
             this.isValid.emit(this.form.valid);
         });
+
+        this.isValid.emit(this.form.valid);
     }
 
     private formatDate(d: Date) {
