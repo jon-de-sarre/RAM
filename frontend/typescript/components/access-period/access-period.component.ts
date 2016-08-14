@@ -56,7 +56,7 @@ export class AccessPeriodComponent implements OnInit {
     }
 
     private formatDate(d: Date) {
-        return d === null || d === undefined ? null : ("0" + d.getDate()).slice(-2) + '/' + ("0"+(d.getMonth()+1)).slice(-2) + '/' + d.getFullYear();
+        return d === null || d === undefined ? null : ('0' + d.getDate()).slice(-2) + '/' + ('0'+(d.getMonth()+1)).slice(-2) + '/' + d.getFullYear();
     }
 
     private _isDateBefore = (startDateCtrlName: string, endDateCtrlName: string) => {
