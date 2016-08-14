@@ -62,6 +62,7 @@ export class AccessPeriodComponent implements OnInit {
             this.isValid.emit(this.form.valid);
         });
 
+        this.isValid.emit(this.form.valid);
     }
 
     private formatDate(d: Date) {
