@@ -43,12 +43,17 @@ import {RelationshipAttributeNameModel} from './models/relationshipAttributeName
 import {RoleModel} from './models/role.model';
 import {RoleTypeModel} from './models/roleType.model';
 import {AUSkeyProvider} from './providers/auskey.provider';
+import {context} from './providers/context.provider';
 
 // connect to the database ............................................................................................
 
 mongoose.connect(conf.mongoURL, {}, () => {
     logger.info(`Connected to db: ${conf.mongoURL}\n`);
 });
+
+// configure execution context ........................................................................................
+
+context.init();
 
 // configure express ..................................................................................................
 
