@@ -1,5 +1,36 @@
 {
   "HELLO" : "Hi there",
   "Party Type" : "Party Type",
-  "Authorisation Type" : "Authorisation Type"
+  "Authorisation Type" : "Authorisation Type",
+
+  "yes" : "Yes",
+  "no" : "No",
+  "back" : "Back",
+  "pleaseChoose" : "Please Choose ...",
+  "date.placeholder" : "dd/mm/yyyy ...",
+
+  "addRelationship.repDetails.heading" : "Enter representative details",
+  "addRelationship.individual" : "Individual",
+  "addRelationship.organisation" : "Organisation",
+  "addRelationship.givenName.label" : "Given name",
+  "addRelationship.givenName.placeholder" : "Given name ...",
+  "addRelationship.familyName.label" : "Family name",
+  "addRelationship.familyName.placeholder" : "Family name ...",
+  "addRelationship.dob.label" : "Date of birth",
+  "addRelationship.dob.placeholder" : "dd/mm/yyyy ...",
+  "addRelationship.abn.label" : "ABN",
+  "addRelationship.checkABN" : "Check ABN",
+  "addRelationship.changeABN" : "Change ABN",
+  "addRelationship.authType.heading" : "Set authorisation type",
+  "addRelationship.authType.whatType" : "What type of authorisation do you want this representative to have?",
+  "addRelationship.authType" : "Authorisation type",
+  "addRelationship.authType.notes" : "Additional notes",
+  "addRelationship.accessPeriod.header" : "Set access period",
+  "addRelationship.accessPeriod.startDate" : "Start date",
+  "addRelationship.accessPeriod.endDate" : "End date",
+  "addRelationship.accessPeriod.noEndDate" : "No end date",
+  "addRelationship.authMgmt.header" : "Set authorisation management",
+  "addRelationship.declaration.header" : "Declaration",
+  "addRelationship.declaration.agree" : "I agree to this declaration",
+  "addRelationship.authorise" : "Authorise"
 }

@@ -1,6 +1,6 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h4><span class="badge square">1</span> Enter representative details</h4>
+        <h4><span class="badge square">1</span> {{'addRelationship.repDetails.heading' | translate}}</h4>
     </div>
     <div class="panel-body">
         <form>
@@ -9,13 +9,13 @@
                     <div class="col-lg-2">
                         <label><h4>
                             <input type="radio" name="repType"
-                            [checked]="!isOrganisation" (change)="isOrganisation=false" >Individual</h4></label>
+                            [checked]="!isOrganisation" (change)="isOrganisation=false" >{{'addRelationship.individual' | translate}}</h4></label>
                     </div>
                     <div class="col-lg-2">
                         <label><h4>
                             <input type="radio" 
                             name="repType" [checked]="isOrganisation"
-                            (change)="isOrganisation=true">Organisation</h4></label>
+                            (change)="isOrganisation=true">{{'addRelationship.organisation' | translate}}</h4></label>
                     </div>
                 </div>
                 <div class="clearfix"></div>
