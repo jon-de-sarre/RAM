@@ -1,5 +1,5 @@
 import {Router, Request, Response} from 'express';
-import {security} from './security.middleware';
+import {context} from '../providers/context.provider';
 import {sendResource, sendList, sendError, sendNotFoundError, validateReqSchema} from './helpers';
 import {Headers} from './headers';
 import {IPartyModel, PartyType} from '../models/party.model';
@@ -66,17 +66,21 @@ export class PartyController {
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/party/identity/me',
-            security.isAuthenticated,
+            context.begin,
+            context.isAuthenticated,
             this.findMe);
 
         router.get('/v1/party/identity/:idValue',
-            security.isAuthenticated,
+            context.begin,
+            context.isAuthenticated,
             this.findByIdentityIdValue);
 
         router.get('/v1/partyType/:code',
+            context.begin,
             this.findTypeByCode);
 
         router.get('/v1/partyTypes',
+            context.begin,
             this.listTypes);
 
         return router;

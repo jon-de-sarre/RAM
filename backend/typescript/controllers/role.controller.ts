@@ -1,5 +1,5 @@
 import {Router, Request, Response} from 'express';
-import {security} from './security.middleware';
+import {context} from '../providers/context.provider';
 import {sendResource, sendList, sendSearchResult, sendError, sendNotFoundError, validateReqSchema} from './helpers';
 import {IPartyModel, IParty} from '../models/party.model';
 import {IRoleModel, RoleStatus} from '../models/role.model';
@@ -88,8 +88,8 @@ export class RoleController {
                     console.log('Id value not found from party href', req.body.party.href);
                     throw new Error('400');
                 }
-                const myPrincipal = security.getAuthenticatedPrincipal(res);
-                const myIdentity = security.getAuthenticatedIdentity(res);
+                const myPrincipal = context.getAuthenticatedPrincipal();
+                const myIdentity = context.getAuthenticatedIdentity();
                 const hasAccess = await this.partyModel.hasAccess(idValue, myPrincipal, myIdentity);
                 if (!hasAccess) {
                     console.log('Identity access denied or does not exist', idValue);
@@ -103,7 +103,7 @@ export class RoleController {
                 return party;
             })
             .then((party:IParty) => {
-                const agencyUser = security.getAuthenticatedAgencyUser(res);
+                const agencyUser = context.getAuthenticatedAgencyUser();
                 return party.addOrModifyRole(req.body, agencyUser);
             })
             .then((model) => model ? model.toDTO() : null)
@@ -132,8 +132,8 @@ export class RoleController {
                     console.log('Id value not found from party href', req.body.party.href);
                     throw new Error('400');
                 }
-                const myPrincipal = security.getAuthenticatedPrincipal(res);
-                const myIdentity = security.getAuthenticatedIdentity(res);
+                const myPrincipal = context.getAuthenticatedPrincipal();
+                const myIdentity = context.getAuthenticatedIdentity();
                 const hasAccess = await this.partyModel.hasAccess(idValue, myPrincipal, myIdentity);
                 if (!hasAccess) {
                     console.log('Identity access denied or does not exist', idValue);
@@ -147,7 +147,7 @@ export class RoleController {
                 return party;
             })
             .then((party:IParty) => {
-                const agencyUser = security.getAuthenticatedAgencyUser(res);
+                const agencyUser = context.getAuthenticatedAgencyUser();
                 return party.modifyRole(req.body, agencyUser);
             })
             .then((model) => model ? model.toDTO() : null)
@@ -169,22 +169,27 @@ export class RoleController {
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/roles/identity/:identity_id',
-            security.isAuthenticated,
+            context.begin,
+            context.isAuthenticated,
             this.searchByIdentity);
 
         router.get('/v1/role/:identifier',
-            security.isAuthenticated,
+            context.begin,
+            context.isAuthenticated,
             this.findByIdentifier);
 
         router.post('/v1/role',
-            security.isAuthenticated,
+            context.begin,
+            context.isAuthenticated,
             this.create);
 
         router.put('/v1/role',
-            security.isAuthenticated,
+            context.begin,
+            context.isAuthenticated,
             this.modify);
 
         router.get('/v1/roleStatuses',
+            context.begin,
             this.listStatuses);
 
         return router;

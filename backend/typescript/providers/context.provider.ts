@@ -54,19 +54,19 @@ class Context {
         return Context.get(Headers.Identity);
     }
 
-    public static getAuthenticatedAgencyUserLoginId(res: Response): string {
+    public static getAuthenticatedAgencyUserLoginId(): string {
         return Context.get(Headers.AgencyUserLoginId);
     }
 
-    public static getAuthenticatedAgencyUser(res: Response): IAgencyUser {
+    public static getAuthenticatedAgencyUser(): IAgencyUser {
         return Context.get(Headers.AgencyUser);
     }
 
-    public static getAuthenticatedPrincipalIdValue(res: Response): string {
+    public static getAuthenticatedPrincipalIdValue(): string {
         return Context.get(Headers.PrincipalIdValue);
     }
 
-    public static getAuthenticatedPrincipal(res: Response): IPrincipal {
+    public static getAuthenticatedPrincipal(): IPrincipal {
         return Context.get(Headers.Principal);
     }
 

@@ -1,12 +1,14 @@
 import {Router, Request, Response} from 'express';
-import {security} from './security.middleware';
+import {context} from '../providers/context.provider';
 import {sendResource, sendError, sendNotFoundError, validateReqSchema} from './helpers';
 import {Headers} from './headers';
 import {IPrincipal} from '../models/principal.model';
+import {IdentityModel} from '../models/identity.model';
 
 export class PrincipalController {
 
     private findMe = async(req: Request, res: Response) => {
+        console.log('Me:', context.getAuthenticatedIdentityIdValue());
         const principal = res.locals[Headers.Principal];
         const schema = {};
         validateReqSchema(req, schema)
@@ -20,7 +22,8 @@ export class PrincipalController {
     public assignRoutes = (router: Router) => {
 
         router.get('/v1/me',
-            security.isAuthenticated,
+            context.begin,
+            context.isAuthenticated,
             this.findMe);
 
         return router;

@@ -1,5 +1,5 @@
 import {Router, Request, Response} from 'express';
-import {security} from './security.middleware';
+import {context} from '../providers/context.provider';
 import {sendResource, sendError, sendNotFoundError, validateReqSchema, sendSearchResult} from './helpers';
 import {Headers} from './headers';
 import {conf} from '../bootstrap';
@@ -83,15 +83,18 @@ export class IdentityController {
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/identity/me',
-            security.isAuthenticated,
+            context.begin,
+            context.isAuthenticated,
             this.findMe);
 
         router.get('/v1/identity/:idValue',
-            security.isAuthenticated,
+            context.begin,
+            context.isAuthenticated,
             this.findByIdentityIdValue);
 
         router.get('/v1/identity/invitationCode/:invitationCode',
-            security.isAuthenticated,
+            context.begin,
+            context.isAuthenticated,
             this.findPendingByInvitationCodeInDateRange);
 
         if (conf.devMode) {
