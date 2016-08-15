@@ -163,6 +163,7 @@ case "$1" in
     echo "Starting frontend"
     echo ""
     cd frontend
+    gulp build:jspm
     gulp serve
     echo ""
     ;;
