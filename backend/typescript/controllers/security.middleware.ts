@@ -4,9 +4,8 @@ import {Request, Response} from 'express';
 import {Headers} from './headers';
 import {ErrorResponse, ICreateIdentityDTO} from '../../../commons/RamAPI';
 import {AgencyUser, IAgencyUserProgramRole, AgencyUserProgramRole} from '../models/agencyUser.model';
-import {IPrincipal, Principal} from '../models/principal.model';
+import {Principal} from '../models/principal.model';
 import {IIdentity, IdentityModel} from '../models/identity.model';
-import {IAgencyUser} from '../models/agencyUser.model';
 import {DOB_SHARED_SECRET_TYPE_CODE} from '../models/sharedSecretType.model';
 
 // todo determine if we need to base64 decode header values to be spec compliant?
@@ -170,64 +169,6 @@ class Security {
             res.status(401);
             res.send(new ErrorResponse('Unable to look up identity.'));
         };
-    }
-
-    public getAuthenticatedIdentityIdValue(res: Response): string {
-        return res.locals[Headers.IdentityIdValue];
-    }
-
-    public getAuthenticatedIdentity(res: Response): IIdentity {
-        return res.locals[Headers.Identity];
-    }
-
-    public getAuthenticatedAgencyUserLoginId(res: Response): string {
-        return res.locals[Headers.AgencyUserLoginId];
-    }
-
-    public getAuthenticatedAgencyUser(res: Response): IAgencyUser {
-        return res.locals[Headers.AgencyUser];
-    }
-
-    public getAuthenticatedPrincipalIdValue(res: Response): string {
-        return res.locals[Headers.PrincipalIdValue];
-    }
-
-    public getAuthenticatedPrincipal(res: Response): IPrincipal {
-        return res.locals[Headers.Principal];
-    }
-
-    public isAuthenticated(req: Request, res: Response, next: () => void) {
-        const id = res.locals[Headers.PrincipalIdValue];
-        if (id) {
-            next();
-        } else {
-            logger.error('Unable to invoke route requiring authentication'.red);
-            res.status(401);
-            res.send(new ErrorResponse('Not authenticated.'));
-        }
-    }
-
-    public isAuthenticatedAsAgencyUser(req: Request, res: Response, next: () => void) {
-        const principal = res.locals[Headers.Principal];
-        if (principal && principal.agencyUserInd) {
-            next();
-        } else {
-            logger.error('Unable to invoke route requiring agency user'.red);
-            res.status(401);
-            res.send(new ErrorResponse('Not authenticated as agency user.'));
-        }
-    }
-
-    public getAuthenticatedABN(res: Response): string {
-        return res.locals[Headers.ABN];
-    }
-
-    public getAuthenticatedAUSkey(res: Response): string {
-        return res.locals[Headers.AUSkey];
-    }
-
-    public getAuthenticatedClientAuth(res: Response): string {
-        return res.locals[Headers.ClientAuth];
     }
 
     // private logHeaders(req:Request) {

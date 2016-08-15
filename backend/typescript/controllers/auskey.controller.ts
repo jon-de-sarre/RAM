@@ -1,5 +1,5 @@
 import {Router, Request, Response} from 'express';
-import {security} from './security.middleware';
+import {context} from '../providers/context.provider';
 import {sendResource, sendError, sendNotFoundError, validateReqSchema, sendSearchResult} from './helpers';
 import {IAUSkeyProvider} from '../providers/auskey.provider';
 import {AUSkeyType} from '../models/auskey.model';
@@ -59,9 +59,9 @@ export class AuskeyController {
         validateReqSchema(req, schema)
             .then(async (req: Request) => {
                 const idValue = req.params.idValue;
-                const myPrincipal = security.getAuthenticatedPrincipal(res);
+                const myPrincipal = context.getAuthenticatedPrincipal();
                 if (!myPrincipal.agencyUserInd) {
-                    const myIdentity = security.getAuthenticatedIdentity(res);
+                    const myIdentity = context.getAuthenticatedIdentity();
                     const hasAccess = await this.partyModel.hasAccess(idValue, myPrincipal, myIdentity);
                     if (!hasAccess) {
                         console.log('Identity access denied or does not exist', idValue);
@@ -91,11 +91,11 @@ export class AuskeyController {
     public assignRoutes = (router: Router) => {
 
         router.get('/v1/auskey/:id',
-            security.isAuthenticatedAsAgencyUser,
+            context.isAuthenticatedAsAgencyUser,
             this.findAusKey);
 
         router.get('/v1/auskeys/identity/:idValue',
-            security.isAuthenticated,
+            context.isAuthenticated,
             this.searchAusKeys);
 
         return router;

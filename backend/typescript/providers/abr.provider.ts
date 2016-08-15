@@ -30,7 +30,7 @@
  * If the configuration item is empty, mock data is returned. The
  * provider does not access the Internet. The mock return is the
  * same data independent of name or abn provided.
- * 
+ *
  * Sample ABNs
  * 12586695715 34241177887 49093669660 33531321789 76093555992
  * 53772093958 85832766990 56006580883 78345431247 48212321102
@@ -77,7 +77,7 @@ const extractName = (item:any) =>
 // build the static typed organisation details for the rest
 // of the system to use (client and server)
 const buildOrganisationEntry = (item:any):ABRentry => {
-console.log(JSON.stringify(item,null,2))
+    console.log(JSON.stringify(item, null, 2));
     const addressRecord = address(item.mainBusinessPhysicalAddress);
     return {
         abn:        item.ABN[0].identifierValue[0],

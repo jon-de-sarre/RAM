@@ -73,6 +73,18 @@ class Context {
         return Context.get(Headers.Principal);
     }
 
+    public static getAuthenticatedABN(res: Response): string {
+        return Context.get(Headers.ABN);
+    }
+
+    public static getAuthenticatedAUSkey(res: Response): string {
+        return Context.get(Headers.AUSkey);
+    }
+
+    public static getAuthenticatedClientAuth(res: Response): string {
+        return Context.get(Headers.ClientAuth);
+    }
+
     public static isAuthenticated(req: Request, res: Response, next: () => void) {
             const id = res.locals[Headers.PrincipalIdValue];
             if (id) {
@@ -93,18 +105,6 @@ class Context {
             res.status(401);
             res.send(new ErrorResponse('Not authenticated as agency user.'));
         }
-    }
-
-    public static getAuthenticatedABN(res: Response): string {
-        return res.locals[Headers.ABN];
-    }
-
-    public static getAuthenticatedAUSkey(res: Response): string {
-        return res.locals[Headers.AUSkey];
-    }
-
-    public static getAuthenticatedClientAuth(res: Response): string {
-        return res.locals[Headers.ClientAuth];
     }
 
     public static getNamespace() {
