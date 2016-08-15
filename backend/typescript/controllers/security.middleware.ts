@@ -152,9 +152,9 @@ class Security {
     private prepareCommonResponseLocals(req: Request, res: Response, next: () => void) {
         return () => {
             for (let key of Object.keys(req.headers)) {
-                // headers should be lowercase, but lets make sure
+                // keys should be lowercase, but let's make sure
                 const keyLower = key.toLowerCase();
-                // if it's an application header, copy it to locals
+                // if it's an application key, copy it to locals
                 if (keyLower.startsWith(Headers.Prefix)) {
                     const value = req.get(key);
                     res.locals[keyLower] = value;
