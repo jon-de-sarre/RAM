@@ -64,8 +64,8 @@ export class NotificationsComponent extends AbstractPageComponent {
 
         // message
         const msg = params.query['msg'];
-        if (msg === 'CREATED_RELATIONSHIP') {
-            this.addGlobalMessage('A notification has been created.');
+        if (msg === RAMConstants.GlobalMessage.SAVED_NOTIFICATION) {
+            this.addGlobalMessage('The notification has been saved successfully.');
         }
 
         // identity in focus

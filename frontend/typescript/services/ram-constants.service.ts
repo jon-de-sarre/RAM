@@ -1,5 +1,9 @@
 export const RAMConstants = {
 
+    GlobalMessage: {
+        SAVED_NOTIFICATION: 'SAVED_NOTIFICATION'
+    },
+
     Link: {
         'SELF': 'self',
         'RELATIONSHIP_LIST': 'relationship-list',

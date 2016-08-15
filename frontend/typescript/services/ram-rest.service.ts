@@ -255,6 +255,14 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
+    public updateRelationshipByHref(href: string, relationship: IRelationship): Observable<IRelationship> {
+        return this.http
+            .put(new Href(href).toString(), JSON.stringify(relationship), {
+                headers: this.headersForJson()
+            })
+            .map(this.extractData);
+    }
+
     // relationship type ..............................................................................................
 
     public findRelationshipTypeByCode(code: string): Observable<IRelationshipType> {

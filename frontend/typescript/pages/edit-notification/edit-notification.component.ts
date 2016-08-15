@@ -253,7 +253,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
                 let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.RELATIONSHIP_CREATE, this.identity);
                 this.services.rest.insertRelationshipByHref(saveHref, this.relationship).subscribe({
-                    next: this.back.bind(this),
+                    next: this.onSave.bind(this),
                     error: this.onServerError.bind(this)
                 });
 
@@ -266,11 +266,20 @@ export class EditNotificationComponent extends AbstractPageComponent {
                 this.relationship.attributes = attributes;
 
                 // todo this needs to invoke save api
+                let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.MODIFY, this.identity);
+                this.services.rest.updateRelationshipByHref(saveHref, this.relationship).subscribe({
+                    next: this.onSave.bind(this),
+                    error: this.onServerError.bind(this)
+                });
 
             }
 
         }
 
+    }
+
+    public onSave() {
+        this.services.route.goToNotificationsPage(this.identityHref, 1, RAMConstants.GlobalMessage.SAVED_NOTIFICATION);
     }
 
     public resetDelegate() {
