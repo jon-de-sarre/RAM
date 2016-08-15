@@ -66,7 +66,6 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
     public identity: IIdentity;
     public relationship: IRelationship;
-    public ospRelationshipTypeRef: IHrefValue<IRelationshipType>;
     public ospRoleRef: IHrefValue<IRole>;
     public ospServices: IRoleAttributeName[];
     public declarationText: string;
@@ -242,26 +241,33 @@ export class EditNotificationComponent extends AbstractPageComponent {
                 this.services.model.getRelationshipTypeAttributeNameRef(
                     this.ospRelationshipTypeRef, RAMConstants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST)));
 
-            // build relationship
-            this.relationship.relationshipType = this.ospRelationshipTypeRef;
-            this.relationship.delegate = this.delegateIdentityRef.value.party;
-            this.relationship.startTimestamp = this.accessPeriod.startDate;
-            this.relationship.endTimestamp = this.accessPeriod.endDate;
-            this.relationship.attributes = attributes;
-
             // save
             if (!this.relationshipHref) {
+
                 // insert relationship
+
+                this.relationship.delegate = this.delegateIdentityRef.value.party;
+                this.relationship.startTimestamp = this.accessPeriod.startDate;
+                this.relationship.endTimestamp = this.accessPeriod.endDate;
+                this.relationship.attributes = attributes;
+
                 let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.RELATIONSHIP_CREATE, this.identity);
                 this.services.rest.insertRelationshipByHref(saveHref, this.relationship).subscribe({
                     next: this.back.bind(this),
                     error: this.onServerError.bind(this)
                 });
-            } else {
-                // update relationship
-            }
 
-            // todo this needs to handle the edit case
+            } else {
+
+                // update relationship
+
+                this.relationship.startTimestamp = this.accessPeriod.startDate;
+                this.relationship.endTimestamp = this.accessPeriod.endDate;
+                this.relationship.attributes = attributes;
+
+                // todo this needs to invoke save api
+
+            }
 
         }
 
@@ -323,12 +329,12 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
     }
 
-    public onSearchOSPActiveRoles(results: ISearchResult<IHrefValue<IRole>>, party: IParty, identityRef: IHrefValue<IIdentity>) {
+    public onSearchOSPActiveRoles(results: ISearchResult<IHrefValue<IRole>>, party: IParty, abnIdentityRef: IHrefValue<IIdentity>) {
         for (let role of results.list) {
             if (role.value.roleType.href.endsWith(RAMConstants.RelationshipTypeCode.OSP)) {
                 this.ospRoleRef = role;
                 this.delegateParty = party;
-                this.delegateIdentityRef = identityRef;
+                this.delegateIdentityRef = abnIdentityRef;
                 this.ospServices = this.services.model.getAccessibleAgencyServiceRoleAttributeNames(role, []);
                 return;
             }
@@ -363,7 +369,16 @@ export class EditNotificationComponent extends AbstractPageComponent {
         ssids.removeAt(ssids.length - 1);
     }
 
-    private getSSIDFormArray() {
+    public getSSIDFormArray() {
         return this.form.controls['ssids'] as FormArray;
     }
+
+    public get ospRelationshipTypeRef(): IHrefValue<IRelationshipType> {
+        return this.relationship.relationshipType;
+    }
+
+    public set ospRelationshipTypeRef(relationshipTypeRef: IHrefValue<IRelationshipType>) {
+        this.relationship.relationshipType = relationshipTypeRef;
+    }
+
 }
