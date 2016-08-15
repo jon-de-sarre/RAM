@@ -12,6 +12,7 @@ import {Calendar} from 'primeng/primeng';
 export class AccessPeriodComponent implements OnInit {
 
     public form: FormGroup;
+    public dateFormat: string = 'dd/mm/yy';
 
     @Input('data') public data: AccessPeriodComponentData;
 
@@ -24,28 +25,39 @@ export class AccessPeriodComponent implements OnInit {
 
     public ngOnInit() {
         const startDate = this.data.startDate;
-        const formattedStartDate:string = startDate === null ? null : startDate.toISOString().slice(0, 10);
-        this.form = this._fb.group({
-            'startDate': [formattedStartDate,
-                Validators.compose([Validators.required, RAMNgValidators.dateFormatValidator])],
-            'endDate': [this.data.endDate,
-                Validators.compose([RAMNgValidators.dateFormatValidator])],
-            'noEndDate': [this.data.noEndDate]
-        }, { validator: Validators.compose([this._isDateBefore('startDate', 'endDate')]) });
+        const endDate = this.data.endDate;
+        const formattedStartDate: string = this.formatDate(startDate);
+        const formattedEndDate: string = this.formatDate(endDate);
 
-        let endDate = this.form.controls['endDate'] as FormControl;
+        this.form = this._fb.group(
+            {
+                'startDate': [formattedStartDate, Validators.compose([Validators.required, RAMNgValidators.dateFormatValidator])],
+                'endDate': [formattedEndDate, Validators.compose([RAMNgValidators.dateFormatValidator])],
+                'noEndDate': [this.data.noEndDate]
+            },
+            {
+                validator: Validators.compose([this._isDateBefore('startDate', 'endDate')])
+            }
+        );
+
         let noEndDate = this.form.controls['noEndDate'];
 
         noEndDate.valueChanges.subscribe((v: Boolean) => {
             if (v === true) {
                 // reset endDate if noEndDate checkbox is selected
-                endDate.updateValue(null);
+                ( this.form.controls['endDate'] as FormControl).updateValue(null);
             }
         });
         this.form.valueChanges.subscribe((v: AccessPeriodComponentData) => {
             this.dataChanges.emit(v);
             this.isValid.emit(this.form.valid);
         });
+
+        this.isValid.emit(this.form.valid);
+    }
+
+    private formatDate(d: Date) {
+        return d === null || d === undefined ? null : ('0' + d.getDate()).slice(-2) + '/' + ('0'+(d.getMonth()+1)).slice(-2) + '/' + d.getFullYear();
     }
 
     private _isDateBefore = (startDateCtrlName: string, endDateCtrlName: string) => {

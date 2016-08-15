@@ -23,8 +23,9 @@ System.config({
     "lodash": "npm:lodash@4.13.1",
     "ng2-bootstrap": "npm:ng2-bootstrap@1.0.17",
     "ng2-markdown-component": "github:evanplaice/ng2-markdown@0.2.3",
-    "primeng": "npm:primeng@1.0.0-beta.9",
-    "primeui": "npm:primeui@4.1.12",
+    "ng2-translate": "npm:ng2-translate@2.2.2",
+    "primeng": "npm:primeng@1.0.0-beta.12",
+    "primeui": "npm:primeui@4.1.14",
     "reflect-metadata": "npm:reflect-metadata@0.1.3",
     "rxjs": "npm:rxjs@5.0.0-beta.6",
     "showdown": "github:showdownjs/showdown@1.4.2",
@@ -283,6 +284,15 @@ System.config({
       "@angular/core": "npm:@angular/core@2.0.0-rc.4",
       "moment": "npm:moment@2.13.0"
     },
+    "npm:ng2-translate@2.2.2": {
+      "@angular/common": "npm:@angular/common@2.0.0-rc.4",
+      "@angular/compiler": "npm:@angular/compiler@2.0.0-rc.4",
+      "@angular/core": "npm:@angular/core@2.0.0-rc.4",
+      "@angular/http": "npm:@angular/http@2.0.0-rc.4",
+      "path": "github:jspm/nodelibs-path@0.1.0",
+      "process": "github:jspm/nodelibs-process@0.1.2",
+      "systemjs-json": "github:systemjs/plugin-json@0.1.2"
+    },
     "npm:parse-asn1@5.0.0": {
       "asn1.js": "npm:asn1.js@4.6.2",
       "browserify-aes": "npm:browserify-aes@1.0.6",
@@ -304,10 +314,10 @@ System.config({
       "process": "github:jspm/nodelibs-process@0.1.2",
       "systemjs-json": "github:systemjs/plugin-json@0.1.2"
     },
-    "npm:primeng@1.0.0-beta.9": {
-      "primeui": "npm:primeui@4.1.12"
+    "npm:primeng@1.0.0-beta.12": {
+      "primeui": "npm:primeui@4.1.14"
     },
-    "npm:primeui@4.1.12": {
+    "npm:primeui@4.1.14": {
       "process": "github:jspm/nodelibs-process@0.1.2"
     },
     "npm:process@0.11.5": {
