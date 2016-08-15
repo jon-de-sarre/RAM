@@ -5,7 +5,7 @@
  * officially.
  */
 import {Router, Request, Response} from 'express';
-import {security} from './security.middleware';
+import {context} from '../providers/context.provider';
 import {sendResource, sendError, sendNotFoundError} from './helpers';
 import {ABR} from '../providers/abr.provider';
 import {IdentityModel} from '../models/identity.model';
@@ -54,15 +54,15 @@ export class BusinessController {
     public assignRoutes = (router: Router) => {
 
         router.get('/v1/business/abn/:abn',
-            security.isAuthenticated,
+            context.isAuthenticated,
             this.findByABN);
 
         router.get('/v1/business/name/:name',
-            security.isAuthenticated,
+            context.isAuthenticated,
             this.findByName);
 
         router.get('/v1/business/register/:abn/:name',
-            security.isAuthenticated,
+            context.isAuthenticated,
             this.registerABRRetrievedCompany);
 
         return router;
