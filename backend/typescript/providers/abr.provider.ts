@@ -77,7 +77,7 @@ const extractName = (item:any) =>
 // build the static typed organisation details for the rest
 // of the system to use (client and server)
 const buildOrganisationEntry = (item:any):ABRentry => {
-    console.log(JSON.stringify(item, null, 2));
+    //console.log(JSON.stringify(item, null, 2));
     const addressRecord = address(item.mainBusinessPhysicalAddress);
     return {
         abn:        item.ABN[0].identifierValue[0],
