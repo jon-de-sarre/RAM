@@ -2,7 +2,7 @@
 	"variables": [],
 	"info": {
 		"name": "RAM",
-		"_postman_id": "4896be36-b6d4-3146-e080-c81596677ce7",
+		"_postman_id": "ea1cfde1-1600-8780-a02c-4c8e10896959",
 		"description": "",
 		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json"
 	},
@@ -308,6 +308,66 @@
 								{
 									"key": "credentials",
 									"value": "max_agent",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Business",
+			"description": "",
+			"item": [
+				{
+					"name": "Get By ABN (Peaceful Gardens)",
+					"request": {
+						"url": "{{host}}/api/v1/business/abn/14126318518",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
+									"type": "text",
+									"enabled": true
+								}
+							]
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Register By ABN (Peaceful Gardens)",
+					"request": {
+						"url": "{{host}}/api/v1/business/register/14126318518/Peaceful Gardens Organic Cooking School Ltd.",
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "urlencoded",
+							"urlencoded": [
+								{
+									"key": "credentials",
+									"value": "LINK_ID:MY_GOV:jennifermaxims_identity_1",
 									"type": "text",
 									"enabled": true
 								}
