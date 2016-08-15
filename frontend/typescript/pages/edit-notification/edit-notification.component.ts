@@ -117,6 +117,9 @@ export class EditNotificationComponent extends AbstractPageComponent {
                 error: this.onServerError.bind(this)
             });
         }
+        else {
+            this.onNewRelationship();
+        }
 
     }
 
@@ -163,6 +166,24 @@ export class EditNotificationComponent extends AbstractPageComponent {
             (this.form.controls['agencyServices'] as FormControl).updateValue(agencyServices);
         }
 
+    }
+
+    public onNewRelationship() {
+        this.relationship = new Relationship(
+            [],
+            null,
+            null,
+            new HrefValue(this.identity.party.href, null),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            RAMConstants.RelationshipInitiatedBy.DELEGATE,
+            []
+        );
     }
 
     public back() {
@@ -222,27 +243,17 @@ export class EditNotificationComponent extends AbstractPageComponent {
                     this.ospRelationshipTypeRef, RAMConstants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST)));
 
             // build relationship
-            let relationship = new Relationship(
-                [],
-                null,
-                this.ospRelationshipTypeRef,
-                new HrefValue(this.identity.party.href, null),
-                null,
-                this.delegateIdentityRef.value.party,
-                null,
-                this.accessPeriod.startDate,
-                this.accessPeriod.endDate,
-                null,
-                null,
-                RAMConstants.RelationshipInitiatedBy.DELEGATE,
-                attributes
-            );
+            this.relationship.relationshipType = this.ospRelationshipTypeRef;
+            this.relationship.delegate = this.delegateIdentityRef.value.party;
+            this.relationship.startTimestamp = this.accessPeriod.startDate;
+            this.relationship.endTimestamp = this.accessPeriod.endDate;
+            this.relationship.attributes = attributes;
 
             // save
             if (!this.relationshipHref) {
                 // insert relationship
                 let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.RELATIONSHIP_CREATE, this.identity);
-                this.services.rest.insertRelationshipByHref(saveHref, relationship).subscribe({
+                this.services.rest.insertRelationshipByHref(saveHref, this.relationship).subscribe({
                     next: this.back.bind(this),
                     error: this.onServerError.bind(this)
                 });
