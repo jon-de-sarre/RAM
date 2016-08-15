@@ -28,8 +28,7 @@ class Context {
     };
 
     public static setup(req: Request, res: Response, next: () => void) {
-        console.log('Setting up context ...');
-        console.log('Me orig:', res.locals[Headers.IdentityIdValue]);
+        // console.log('Setting up context ...');
         for (let key of Object.keys(res.locals)) {
             // keys should be lowercase, but let's make sure
             const keyLower = key.toLowerCase();
