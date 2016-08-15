@@ -39,6 +39,9 @@ export class AppComponent {
         translate.setDefaultLang('en');
         // the lang to use, if the lang isn't available, it will use the loader defined to get them
         translate.use(userLang);
+        // uncomment these two lines to test that you're using translation - it will just display the key you're using instead of any translation
+        // translate.setDefaultLang('test');
+        // translate.use('test');
     }
 
 }
