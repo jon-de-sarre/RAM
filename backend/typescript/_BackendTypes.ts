@@ -31,7 +31,7 @@ declare module 'cls-domains-promise' {
 
     import {Namespace as CLSNamespace} from 'continuation-local-storage';
 
-    function patchIt(namespace: CLSNamespace, proto: Promise);
+    function patchIt(namespace: CLSNamespace, proto: Promise): void;
 
     export = patchIt;
 

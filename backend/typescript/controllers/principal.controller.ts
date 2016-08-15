@@ -3,7 +3,6 @@ import {context} from '../providers/context.provider';
 import {sendResource, sendError, sendNotFoundError, validateReqSchema} from './helpers';
 import {Headers} from './headers';
 import {IPrincipal} from '../models/principal.model';
-import {IdentityModel} from '../models/identity.model';
 
 export class PrincipalController {
 
