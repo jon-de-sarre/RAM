@@ -2,7 +2,10 @@ import {logger} from '../logger';
 import {Request, Response, NextFunction} from 'express';
 import {Headers} from '../controllers/headers';
 import {Namespace} from 'continuation-local-storage';
-import {IIdentity, ErrorResponse, IAgencyUser, IPrincipal} from '../../../commons/RamAPI';
+import {IPrincipal} from '../models/principal.model';
+import {IIdentity} from '../models/identity.model';
+import {IAgencyUser} from '../models/agencyUser.model';
+import {ErrorResponse} from '../../../commons/RamAPI';
 
 import cls = require('continuation-local-storage');
 import clsDomainsPromise = require('cls-domains-promise');
