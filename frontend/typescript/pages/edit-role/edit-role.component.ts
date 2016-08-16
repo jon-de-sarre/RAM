@@ -138,37 +138,46 @@ export class EditRoleComponent extends AbstractPageComponent {
         // role in focus
         if (this.roleHref) {
             this.services.rest.findRoleByHref(this.roleHref).subscribe({
-                next: this.onRoleLoaded.bind(this),
+                next: this.onFindRole.bind(this),
                 error: this.onServerError.bind(this)
             });
         }
     }
 
-    private onRoleLoaded(role: IRole) {
+    private onFindRole(role: IRole) {
+
         this.role = role;
 
-        // load relationship type
-        this.services.rest.findRoleTypeByHref(role.roleType.href).subscribe({
-            next: (roleType) => {
-                (this.form.controls['roleType'] as FormControl).updateValue(roleType.code);
-                this.role.roleType.value = roleType;
-                this.onRoleTypeChange(roleType.code);
-            },
-            error: this.onServerError.bind(this)
-        });
+        if (!this.services.model.hasLinkHrefByType(RAMConstants.Link.MODIFY, this.role)) {
+            // no modify access
+            this.services.route.goToAccessDeniedPage();
+        } else {
 
-        const preferredName = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(role, 'PREFERRED_NAME', 'OTHER'));
-        const deviceAusKeys = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(role, 'DEVICE_AUSKEYS', 'OTHER'));
+            // load relationship type
+            this.services.rest.findRoleTypeByHref(role.roleType.href).subscribe({
+                next: (roleType) => {
+                    (this.form.controls['roleType'] as FormControl).updateValue(roleType.code);
+                    this.role.roleType.value = roleType;
+                    this.onRoleTypeChange(roleType.code);
+                },
+                error: this.onServerError.bind(this)
+            });
 
-        (this.form.controls['preferredName'] as FormControl).updateValue(preferredName);
-        (this.form.controls['deviceAusKeys'] as FormControl).updateValue(deviceAusKeys);
+            const preferredName = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(role, 'PREFERRED_NAME', 'OTHER'));
+            const deviceAusKeys = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(role, 'DEVICE_AUSKEYS', 'OTHER'));
 
-        const agencyAttributes = this.services.model.getRoleAttributesByClassifier(role, 'AGENCY_SERVICE');
-        for (let attr of agencyAttributes) {
-            if (attr.value[0] === 'true') {
-                this.onAgencyServiceChange(attr.attributeName.value.code);
+            (this.form.controls['preferredName'] as FormControl).updateValue(preferredName);
+            (this.form.controls['deviceAusKeys'] as FormControl).updateValue(deviceAusKeys);
+
+            const agencyAttributes = this.services.model.getRoleAttributesByClassifier(role, 'AGENCY_SERVICE');
+            for (let attr of agencyAttributes) {
+                if (attr.value[0] === 'true') {
+                    this.onAgencyServiceChange(attr.attributeName.value.code);
+                }
             }
+
         }
+
     }
 
     private onFindMe(me: IPrincipal) {
