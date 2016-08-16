@@ -211,3 +211,19 @@ Cross browser testing using [BrowserStack](https://www.browserstack.com/).
 https://angular.io/docs/ts/latest/
 
 https://xgrommx.github.io/rx-book/
+
+## Intellij IDEA/Webstorm configuration
+
+* Install plugins for Angular 2...
+* Exclude folders:
+    * dist
+    * node_modules
+    * frontend/bower_components
+    * frontend/node_modules
+    * backend/dist
+    * backend/node_modules
+* Add folders to Preferences > Language & Frameworks > Javascript > Libraries so that IDEA can find the resources:
+    * frontend/dist
+    * frontend/node_modules
+    * backend/dist
+    * backend/node_modules
