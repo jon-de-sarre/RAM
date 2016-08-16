@@ -5,6 +5,7 @@
 
 <form [formGroup]="form">
 
+    <!-- ROLE TYPE SELECTOR WHEN CREATING A NEW ROLE -->
     <div class="panel panel-default" *ngIf="!role">
         <div class="panel-heading">
             <h4>Select a role</h4>
@@ -20,6 +21,7 @@
         </div>
     </div>
 
+    <!-- ROLE TYPE DISPLAY IF EDITING AN EXISTING ROLE -->
     <div class="panel panel-default" *ngIf="role">
         <div class="panel-heading">
             <h4>Role Type</h4>
@@ -29,6 +31,7 @@
         </div>
     </div>
 
+    <!-- AGENCIES ALLOCATED TO THE ROLE -->
     <div class="panel panel-default" *ngIf="form.controls['roleType'].value !== '-'">
         <div class="panel-heading">
             <h4>Online software provider agencies services</h4>
@@ -37,9 +40,14 @@
             <div class="form-group">
                 <h4>Access to government agencies services</h4>
 
-                <table class="table table-hover checkbox-table">
+                <div *ngIf="hasServiceBeenRemoved">
+                    <div class="alert alert-warning" role="alert">Removing agency services will affect existing relationships</div>
+                </div>
+                <!-- AGENCY SELECTOR FOR USERS WHO CAN EDIT AGENCIES - LIST ALL, WITH ONLY THOSE USER HAS ACCESS TO ENABLED -->
+                <table class="table table-hover checkbox-table" *ngIf="me.agencyUserInd">
                     <tbody>
-                    <tr *ngFor="let attributeUsage of allAgencyServiceRoleAttributeNameUsages" (click)="hasAccessToAgencyService(attributeUsage.attributeNameDef.value.code) && onAgencyServiceChange(attributeUsage.attributeNameDef.value.code)">
+                    <tr *ngFor="let attributeUsage of allAgencyServiceRoleAttributeNameUsages"
+                        (click)="hasAccessToAgencyService(attributeUsage.attributeNameDef.value.code) && onAgencyServiceChange(attributeUsage.attributeNameDef.value.code)">
                         <td [class.clickable]="hasAccessToAgencyService(attributeUsage.attributeNameDef.value.code)">
                             <div [class.text-muted]="!hasAccessToAgencyService(attributeUsage.attributeNameDef.value.code)">
                                 {{attributeUsage.attributeNameDef.value.shortDecodeText}}
@@ -56,6 +64,18 @@
                     </tbody>
                 </table>
 
+                <!-- LIST AGENCIES ASSIGNED TO ROLE FOR USERS WHO CANNOT EDIT AGENCIES -->
+                <table class="table table-hover checkbox-table" *ngIf="!me.agencyUserInd">
+                    <tbody>
+                    <tr *ngFor="let attribute of assignedAgencyAttributes">
+                        <td>
+                            <div>
+                                {{attribute.attributeName.value.shortDecodeText}}
+                            </div>
+                        </td>
+                    </tr>
+                    </tbody>
+                </table>
             </div>
         </div>
     </div>

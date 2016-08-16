@@ -15,7 +15,6 @@ import {
     IHrefValue,
     FilterParams,
     ISearchResult,
-    IAgencyUser,
     IPrincipal,
     IIdentity,
     Role,
@@ -23,7 +22,8 @@ import {
     IRole,
     IRoleType,
     IRoleAttributeNameUsage,
-    IAUSkey
+    IAUSkey,
+    IRoleAttribute
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -50,14 +50,16 @@ export class EditRoleComponent extends AbstractPageComponent {
     public deviceAusKeyRefs: ISearchResult<IHrefValue<IAUSkey>>;
 
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
-    public me: IAgencyUser;
+    public me: IPrincipal;
     public identity: IIdentity;
     public role: IRole;
     public roleTypeRefs: IHrefValue<IRoleType>[];
     public allAgencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[]; // all agency services
     public accessibleAgencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[]; // agency services that the user can manage
-
+    public assignedAgencyAttributes: IRoleAttribute[]; // agency services assigned to the role
     public form: FormGroup;
+
+    public hasServiceBeenRemoved: boolean = false;
 
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
@@ -169,8 +171,8 @@ export class EditRoleComponent extends AbstractPageComponent {
             (this.form.controls['preferredName'] as FormControl).updateValue(preferredName);
             (this.form.controls['deviceAusKeys'] as FormControl).updateValue(deviceAusKeys);
 
-            const agencyAttributes = this.services.model.getRoleAttributesByClassifier(role, 'AGENCY_SERVICE');
-            for (let attr of agencyAttributes) {
+            this.assignedAgencyAttributes = this.services.model.getRoleAttributesByClassifier(role, 'AGENCY_SERVICE');
+            for (let attr of this.assignedAgencyAttributes) {
                 if (attr.value[0] === 'true') {
                     this.onAgencyServiceChange(attr.attributeName.value.code);
                 }
@@ -181,7 +183,7 @@ export class EditRoleComponent extends AbstractPageComponent {
     }
 
     private onFindMe(me: IPrincipal) {
-        this.me = me.agencyUser;
+        this.me = me;
     }
 
     public onRoleTypeChange(newRoleTypeCode: string) {
@@ -189,22 +191,55 @@ export class EditRoleComponent extends AbstractPageComponent {
             this.form.controls['agencyServices'].updateValueAndValidity([]);
             let roleTypeRef: IHrefValue<IRoleType> = this.services.model.getRoleTypeRef(this.roleTypeRefs, newRoleTypeCode);
             const programs: string[] = [];
-            for (let programRole of this.me.programRoles) {
-                if (programRole.role === 'ROLE_ADMIN') {
-                    if (programs.indexOf(programRole.program) === -1) {
-                        programs.push(programRole.program);
+
+            if(this.me.agencyUserInd) {
+                // agency users can select program roles
+                for (let programRole of this.me.agencyUser.programRoles) {
+                    if (programRole.role === 'ROLE_ADMIN') {
+                        if (programs.indexOf(programRole.program) === -1) {
+                            programs.push(programRole.program);
+                        }
                     }
                 }
             }
+
             if (roleTypeRef) {
                 this.allAgencyServiceRoleAttributeNameUsages = this.services.model.getAllAgencyServiceRoleAttributeNameUsages(roleTypeRef, programs);
                 this.accessibleAgencyServiceRoleAttributeNameUsages = this.services.model.getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, programs);
+
+                // if a role of this type already exists, then edit that otherwise we are adding a new role
+                let filterParams = new FilterParams().add('roleType', roleTypeRef.value.code);
+                const rolesHref = this.services.model.getLinkHrefByType(RAMConstants.Link.ROLE_LIST, this.identity);
+
+                this.services.rest.searchRolesByHref(rolesHref, filterParams.encode(), 1)
+                    .subscribe((searchResult) => {
+                        if (searchResult.totalCount === 1) {
+                            this.role = searchResult.list[0].value;
+                            this.role.roleType = roleTypeRef;
+                        }
+                        this._isLoading = false;
+                    }, (err) => {
+                        this.addGlobalErrorMessages(err);
+                        this._isLoading = false;
+                    });
+            } else {
+                this.role = null;
             }
+
         }
     }
 
     public onAgencyServiceChange(attributeCode: string) {
         this.toggleArrayValue(this.form.controls['agencyServices'].value, attributeCode);
+        let hasServiceBeenRemoved = false;
+
+        for (let attr of this.assignedAgencyAttributes) {
+            if(this.form.controls['agencyServices'].value.indexOf(attr.attributeName.value.code) === -1) {
+                hasServiceBeenRemoved = true;
+                break;
+            }
+        }
+        this.hasServiceBeenRemoved = hasServiceBeenRemoved;
     }
 
     public onAusKeyChange(auskey: string) {

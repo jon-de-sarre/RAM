@@ -2,9 +2,13 @@ import {Router, Request, Response} from 'express';
 import {context} from '../providers/context.provider';
 import {sendResource, sendError, sendNotFoundError, validateReqSchema} from './helpers';
 import {ITransactRequest, TransactResponse} from '../../../commons/RamAPI';
-//import {Headers} from './headers';
+import {IRoleModel, RoleStatus} from '../models/role.model';
+import {Url} from '../models/url';
 
 export class TransactController {
+
+    constructor(private roleModel: IRoleModel) {
+    }
 
     private allowed = async(req: Request, res: Response) => {
 
@@ -35,10 +39,19 @@ export class TransactController {
         console.log('auskey =', auskey, ', abn =', abn);
 
         validateReqSchema(req, schema)
-            .then((req: Request) => {
+            .then(async(req: Request) => {
                 if (!auskey || !abn) {
                     throw new Error('401');
                 } else {
+                    // look up the OSP via the ABN
+                    // ensure a valid OSP role exists with the requested agency service
+                    let roles = await this.roleModel.searchByIdentity(Url.abnIdValue(abn), 'OSP', RoleStatus.Active.code, true, 1, 10);
+                    console.log('roles=', roles);
+                    // ensure there is a selected device AUSkey for the role
+                    // lookup the client business via the ABN
+                    // ensure there is a valid OSP relationship between the two parties
+                    // ensure the relationship has enabled the requested agency service
+                    // ensure the relationship has the requested SSID
                     const allowed = true; // todo compute allowed flag
                     return new TransactResponse(request, allowed);
                 }

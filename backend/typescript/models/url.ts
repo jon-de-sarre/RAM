@@ -58,6 +58,10 @@ export class Url {
 
     // identity .......................................................................................................
 
+    public static abnIdValue(abn: string): string {
+        return `PUBLIC_IDENTIFIER:ABN:${abn}`;
+    }
+
     public static async forIdentity(model: identity.IIdentity): Promise<string> {
         return '/api/v1/identity/' + encodeURIComponent(model.idValue);
     }

@@ -98,13 +98,13 @@ describe('RAM Role Attribute', () => {
             const attributeName = Seeder.ssid_roleAttributeName;
 
             const instance = await RoleAttributeModel.create({
-                value: value,
+                value: [value],
                 attributeName: attributeName
             });
 
             expect(instance).not.toBeNull();
             expect(instance.id).not.toBeNull();
-            expect(instance.value).toBe(value);
+            expect(instance.value[0]).toBe(value);
             expect(instance.attributeName.id).toBe(attributeName.id);
 
             done();

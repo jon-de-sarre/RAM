@@ -43,6 +43,7 @@ export class RoleController {
                 req.params.identity_id,
                 filterParams.get('roleType'),
                 filterParams.get('status'),
+                filterParams.get('inDateRange') === 'true',
                 parseInt(req.query.page),
                 req.query.pageSize ? parseInt(req.query.pageSize) : null)
             )
