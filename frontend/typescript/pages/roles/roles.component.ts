@@ -128,8 +128,7 @@ export class RolesComponent extends AbstractPageComponent {
     }
 
     public isEditRoleEnabled(roleRef: IHrefValue<IRole>) {
-        let href = this.services.model.getLinkHrefByType(RAMConstants.Link.MODIFY, roleRef.value);
-        return href !== null && href !== undefined;
+        return this.services.model.hasLinkHrefByType(RAMConstants.Link.MODIFY, roleRef.value);
     }
 
 }

@@ -129,15 +129,13 @@ export class NotificationsComponent extends AbstractPageComponent {
 
     public isAddNotificationEnabled() {
         if (this.identity) {
-            let href = this.services.model.getLinkHrefByType(RAMConstants.Link.RELATIONSHIP_CREATE, this.identity);
-            return href !== null && href !== undefined;
+            return this.services.model.hasLinkHrefByType(RAMConstants.Link.RELATIONSHIP_CREATE, this.identity);
         }
         return false;
     }
 
     public isEditNotificationEnabled(relationshipRef: IHrefValue<IRelationship>) {
-        let href = this.services.model.getLinkHrefByType(RAMConstants.Link.MODIFY, relationshipRef.value);
-        return href !== null && href !== undefined;
+        return this.services.model.hasLinkHrefByType(RAMConstants.Link.MODIFY, relationshipRef.value);
     }
 
 }
