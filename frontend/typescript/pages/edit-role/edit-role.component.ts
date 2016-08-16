@@ -206,7 +206,26 @@ export class EditRoleComponent extends AbstractPageComponent {
             if (roleTypeRef) {
                 this.allAgencyServiceRoleAttributeNameUsages = this.services.model.getAllAgencyServiceRoleAttributeNameUsages(roleTypeRef, programs);
                 this.accessibleAgencyServiceRoleAttributeNameUsages = this.services.model.getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, programs);
+
+                // if a role of this type already exists, then edit that otherwise we are adding a new role
+                var filterParams = new FilterParams().add('roleType', roleTypeRef.value.code);
+                const rolesHref = this.services.model.getLinkHrefByType(RAMConstants.Link.ROLE_LIST, this.identity);
+
+                this.services.rest.searchRolesByHref(rolesHref, filterParams.encode(), 1)
+                    .subscribe((searchResult) => {
+                        if (searchResult.totalCount === 1) {
+                            this.role = searchResult.list[0].value;
+                            this.role.roleType = roleTypeRef;
+                        }
+                        this._isLoading = false;
+                    }, (err) => {
+                        this.addGlobalErrorMessages(err);
+                        this._isLoading = false;
+                    });
+            } else {
+                this.role = null;
             }
+
         }
     }
 
