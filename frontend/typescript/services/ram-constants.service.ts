@@ -16,7 +16,7 @@ export const RAMConstants = {
         'ROLE_LIST': 'role-list',
         'ROLE_CREATE': 'role-list',
         'MODIFY': 'modify',
-        'DELETE': 'modify'
+        'DELETE': 'delete'
     },
 
     AUSkey: {
