@@ -56,7 +56,7 @@ export class EditRoleComponent extends AbstractPageComponent {
     public roleTypeRefs: IHrefValue<IRoleType>[];
     public allAgencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[]; // all agency services
     public accessibleAgencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[]; // agency services that the user can manage
-    public assignedAgencyAttributes: IRoleAttribute[]; // agency services assigned to the role
+    public assignedAgencyAttributes: IRoleAttribute[] = []; // agency services assigned to the role
     public form: FormGroup;
 
     public hasServiceBeenRemoved: boolean = false;
@@ -107,11 +107,6 @@ export class EditRoleComponent extends AbstractPageComponent {
             error: this.onServerError.bind(this)
         });
 
-        // identity in focus
-        this.services.rest.findIdentityByHref(this.identityHref).subscribe({
-            next: this.onFindIdentity.bind(this),
-            error: this.onServerError.bind(this)
-        });
 
         // role types
         this.services.rest.listRoleTypes().subscribe({
@@ -165,18 +160,6 @@ export class EditRoleComponent extends AbstractPageComponent {
                 error: this.onServerError.bind(this)
             });
 
-            const preferredName = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(role, 'PREFERRED_NAME', 'OTHER'));
-            const deviceAusKeys = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(role, 'DEVICE_AUSKEYS', 'OTHER'));
-
-            (this.form.controls['preferredName'] as FormControl).updateValue(preferredName);
-            (this.form.controls['deviceAusKeys'] as FormControl).updateValue(deviceAusKeys);
-
-            this.assignedAgencyAttributes = this.services.model.getRoleAttributesByClassifier(role, 'AGENCY_SERVICE');
-            for (let attr of this.assignedAgencyAttributes) {
-                if (attr.value[0] === 'true') {
-                    this.onAgencyServiceChange(attr.attributeName.value.code);
-                }
-            }
 
         }
 
@@ -184,6 +167,12 @@ export class EditRoleComponent extends AbstractPageComponent {
 
     private onFindMe(me: IPrincipal) {
         this.me = me;
+
+        // identity in focus
+        this.services.rest.findIdentityByHref(this.identityHref).subscribe({
+            next: this.onFindIdentity.bind(this),
+            error: this.onServerError.bind(this)
+        });
     }
 
     public onRoleTypeChange(newRoleTypeCode: string) {
@@ -216,6 +205,7 @@ export class EditRoleComponent extends AbstractPageComponent {
                         if (searchResult.totalCount === 1) {
                             this.role = searchResult.list[0].value;
                             this.role.roleType = roleTypeRef;
+                            this.setUpForm();
                         }
                         this._isLoading = false;
                     }, (err) => {
@@ -244,6 +234,29 @@ export class EditRoleComponent extends AbstractPageComponent {
 
     public onAusKeyChange(auskey: string) {
         this.toggleArrayValue(this.form.controls['deviceAusKeys'].value, auskey);
+    }
+
+    private setUpForm() {
+        const preferredName = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(this.role, 'PREFERRED_NAME', 'OTHER'));
+        const deviceAusKeys = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(this.role, 'DEVICE_AUSKEYS', 'OTHER'));
+
+        (this.form.controls['preferredName'] as FormControl).updateValue(preferredName);
+        (this.form.controls['deviceAusKeys'] as FormControl).updateValue(deviceAusKeys);
+
+        this.updateAgencyServices();
+    }
+
+    private updateAgencyServices() {
+        this.form.controls['agencyServices'].updateValueAndValidity([]);
+
+        this.assignedAgencyAttributes = this.services.model.getRoleAttributesByClassifier(this.role, 'AGENCY_SERVICE');
+        if (this.assignedAgencyAttributes) {
+            for (let attr of this.assignedAgencyAttributes) {
+                if (attr.value[0] === 'true') {
+                    this.onAgencyServiceChange(attr.attributeName.value.code);
+                }
+            }
+        }
     }
 
     public isAusKeySelected(auskey: string) {
