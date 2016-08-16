@@ -208,7 +208,7 @@ export class EditRoleComponent extends AbstractPageComponent {
                 this.accessibleAgencyServiceRoleAttributeNameUsages = this.services.model.getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, programs);
 
                 // if a role of this type already exists, then edit that otherwise we are adding a new role
-                var filterParams = new FilterParams().add('roleType', roleTypeRef.value.code);
+                let filterParams = new FilterParams().add('roleType', roleTypeRef.value.code);
                 const rolesHref = this.services.model.getLinkHrefByType(RAMConstants.Link.ROLE_LIST, this.identity);
 
                 this.services.rest.searchRolesByHref(rolesHref, filterParams.encode(), 1)
