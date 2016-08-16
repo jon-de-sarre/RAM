@@ -171,7 +171,6 @@ export class EditNotificationComponent extends AbstractPageComponent {
         this.relationship = new Relationship(
             [],
             null,
-            null,
             new HrefValue(this.identity.party.href, null),
             null,
             null,
