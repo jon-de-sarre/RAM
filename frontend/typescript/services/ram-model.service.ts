@@ -132,6 +132,11 @@ export class RAMModelService {
 
     // model lookups ..................................................................................................
 
+    public hasLinkHrefByType(type: string, model: IHasLinks): boolean {
+        let link = this.getLinkByType(type, model);
+        return link && link.href !== null && link.href !== undefined;
+    }
+
     public getLinkHrefByType(type: string, model: IHasLinks): string {
         let link = this.getLinkByType(type, model);
         return link ? link.href : null;
