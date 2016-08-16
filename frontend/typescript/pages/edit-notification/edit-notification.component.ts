@@ -265,7 +265,6 @@ export class EditNotificationComponent extends AbstractPageComponent {
                 this.relationship.endTimestamp = this.accessPeriod.endDate;
                 this.relationship.attributes = attributes;
 
-                // todo this needs to invoke save api
                 let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.MODIFY, this.identity);
                 this.services.rest.updateRelationshipByHref(saveHref, this.relationship).subscribe({
                     next: this.onSave.bind(this),
