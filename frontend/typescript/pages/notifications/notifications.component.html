@@ -31,7 +31,7 @@
         [delegate]="paginationDelegate">
 </search-result-pagination>
 
-<div *ngIf="canReturnToDashboard">
+<div *ngIf="isDashboardEnabled()">
     <div id="action-button-bar">
         <div class="pull-left">
             <a class="btn btn-default align-center" (click)="goToBusinessesPage()">← Back</a>

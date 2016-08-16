@@ -53,9 +53,10 @@ export class BusinessesComponent extends AbstractPageComponent {
     public onInit(params: {path: Params, query: Params}) {
 
         this._isLoading = true;
-        this.filter = FilterParams.decode(params.query['filter']);
-        this.filter.add('partyType', 'ABN');
-        this.filter.add('authorisationManagement', true);
+
+        this.filter = FilterParams.decode(params.query['filter'])
+            .add('partyType', 'ABN')
+            .add('authorisationManagement', true);
 
         // extract path and query parameters
         this.page = params.query['page'] ? +params.query['page'] : 1;
