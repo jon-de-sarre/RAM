@@ -59,6 +59,8 @@ export class EditRoleComponent extends AbstractPageComponent {
     public assignedAgencyAttributes: IRoleAttribute[]; // agency services assigned to the role
     public form: FormGroup;
 
+    public hasServiceBeenRemoved: boolean = false;
+
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
     constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
@@ -199,13 +201,7 @@ export class EditRoleComponent extends AbstractPageComponent {
                         }
                     }
                 }
-            } else {
-                // standard users can see program roles assigned
-
             }
-
-
-
 
             if (roleTypeRef) {
                 this.allAgencyServiceRoleAttributeNameUsages = this.services.model.getAllAgencyServiceRoleAttributeNameUsages(roleTypeRef, programs);
@@ -216,6 +212,15 @@ export class EditRoleComponent extends AbstractPageComponent {
 
     public onAgencyServiceChange(attributeCode: string) {
         this.toggleArrayValue(this.form.controls['agencyServices'].value, attributeCode);
+        let hasServiceBeenRemoved = false;
+
+        for (let attr of this.assignedAgencyAttributes) {
+            if(this.form.controls['agencyServices'].value.indexOf(attr.attributeName.value.code) === -1) {
+                hasServiceBeenRemoved = true;
+                break;
+            }
+        }
+        this.hasServiceBeenRemoved = hasServiceBeenRemoved;
     }
 
     public onAusKeyChange(auskey: string) {
