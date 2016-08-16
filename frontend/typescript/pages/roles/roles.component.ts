@@ -7,6 +7,7 @@ import {PageHeaderAuthComponent} from '../../components/page-header/page-header-
 import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
     from '../../components/search-result-pagination/search-result-pagination.component';
 import {RAMServices} from '../../services/ram-services';
+import {RAMConstants} from '../../services/ram-constants.service';
 
 import {
     IHrefValue,
@@ -70,7 +71,7 @@ export class RolesComponent extends AbstractPageComponent {
             this.identity = identity;
 
             // roles
-            const rolesHref = this.services.model.getLinkHrefByType('role-list', this.identity);
+            const rolesHref = this.services.model.getLinkHrefByType(RAMConstants.Link.ROLE_LIST, this.identity);
             this.services.rest.searchRolesByHref(rolesHref, null, this.page)
                 .subscribe((searchResult) => {
                     this.roleSearchResult = searchResult;
@@ -111,7 +112,7 @@ export class RolesComponent extends AbstractPageComponent {
 
     public goToAddRolePage() {
         if (this.agencyUser && this.identity) {
-            this.services.route.goToAddRolePage(this.services.model.getLinkHrefByType('self', this.identity));
+            this.services.route.goToAddRolePage(this.services.model.getLinkHrefByType(RAMConstants.Link.SELF, this.identity));
         }
     }
 
@@ -124,6 +125,10 @@ export class RolesComponent extends AbstractPageComponent {
 
     public isAddRoleEnabled() {
         return this.agencyUser !== null && this.agencyUser !== undefined;
+    }
+
+    public isEditRoleEnabled(roleRef: IHrefValue<IRole>) {
+        return this.services.model.hasLinkHrefByType(RAMConstants.Link.MODIFY, roleRef.value);
     }
 
 }

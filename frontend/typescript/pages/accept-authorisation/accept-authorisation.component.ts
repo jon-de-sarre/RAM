@@ -9,6 +9,7 @@ import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
 import {MarkdownComponent} from '../../components/ng2-markdown/ng2-markdown.component';
 import {RAMServices} from '../../services/ram-services';
+import {RAMConstants} from '../../services/ram-constants.service';
 
 import {
     IIdentity,
@@ -95,7 +96,7 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
     public confirmDeclineAuthorisation = () => {
         this.services.rest.rejectPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
             this.declineDisplay = false;
-            this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'DECLINED_RELATIONSHIP');
+            this.services.route.goToRelationshipsPage(this.idValue, null, 1, RAMConstants.GlobalMessage.DECLINED_RELATIONSHIP);
         }, (err) => {
             this.declineDisplay = false;
             this.addGlobalErrorMessages(err);
@@ -104,18 +105,18 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
 
     public acceptAuthorisation = () => {
         this.services.rest.acceptPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
-            this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'ACCEPTED_RELATIONSHIP');
+            this.services.route.goToRelationshipsPage(this.idValue, null, 1, RAMConstants.GlobalMessage.ACCEPTED_RELATIONSHIP);
         }, (err) => {
             this.addGlobalErrorMessages(err);
         });
     };
 
     public goToEnterAuthorisationPage = () => {
-        this.services.route.goToRelationshipEnterCodePage(this.idValue, 'INVALID_CODE');
+        this.services.route.goToRelationshipEnterCodePage(this.idValue, RAMConstants.GlobalMessage.INVALID_CODE);
     };
 
     public goToRelationshipsPage = () => {
-        this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'CANCEL_ACCEPT_RELATIONSHIP');
+        this.services.route.goToRelationshipsPage(this.idValue, null, 1, RAMConstants.GlobalMessage.CANCEL_ACCEPT_RELATIONSHIP);
     };
 
     // TODO: not sure how to set the locale, Implement as a pipe

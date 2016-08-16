@@ -1,4 +1,5 @@
 import {Router, Request, Response} from 'express';
+import {context} from '../providers/context.provider';
 import {sendResource, sendList, sendError, sendNotFoundError, validateReqSchema} from './helpers';
 import {IRelationshipTypeModel } from '../models/relationshipType.model';
 
@@ -36,9 +37,11 @@ export class RelationshipTypeController {
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/relationshipType/:code',
+            context.begin,
             this.findByCodeIgnoringDateRange);
 
         router.get('/v1/relationshipTypes',
+            context.begin,
             this.listIgnoringDateRange);
 
         return router;

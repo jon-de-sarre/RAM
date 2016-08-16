@@ -1,5 +1,5 @@
 import {Router, Request, Response} from 'express';
-import {security} from './security.middleware';
+import {context} from '../providers/context.provider';
 import {sendResource, sendList, sendError, sendNotFoundError, validateReqSchema} from './helpers';
 import {conf} from '../bootstrap';
 import {Headers} from './headers';
@@ -32,7 +32,7 @@ export class AgencyUserController {
     public assignRoutes = (router: Router) => {
 
         router.get('/v1/agencyUser/me',
-            security.isAuthenticatedAsAgencyUser,
+            context.isAuthenticatedAsAgencyUser,
             this.findMe);
 
         if (conf.devMode) {

@@ -1,5 +1,46 @@
 {
   "HELLO" : "Hi there",
   "Party Type" : "Party Type",
-  "Authorisation Type" : "Authorisation Type"
+  "Authorisation Type" : "Authorisation Type",
+
+  "yes" : "Yes",
+  "no" : "No",
+  "back" : "Back",
+  "pleaseChoose" : "Please Choose ...",
+  "date.placeholder" : "dd/mm/yyyy ...",
+
+  "addRelationship.repDetails.heading" : "Enter representative details",
+  "addRelationship.individual" : "Individual",
+  "addRelationship.organisation" : "Organisation",
+  "addRelationship.givenName.label" : "Given name",
+  "addRelationship.givenName.placeholder" : "Given name ...",
+  "addRelationship.familyName.label" : "Family name",
+  "addRelationship.familyName.placeholder" : "Family name ...",
+  "addRelationship.dob.label" : "Date of birth",
+  "addRelationship.dob.placeholder" : "dd/mm/yyyy ...",
+  "addRelationship.abn.label" : "ABN",
+  "addRelationship.checkABN" : "Check ABN",
+  "addRelationship.changeABN" : "Change ABN",
+  "addRelationship.authType.heading" : "Set authorisation type",
+  "addRelationship.authType.whatType" : "What type of authorisation do you want this representative to have?",
+  "addRelationship.authType" : "Authorisation type",
+  "addRelationship.authType.notes" : "Additional notes",
+  "addRelationship.accessPeriod.header" : "Set access period",
+  "addRelationship.accessPeriod.startDate" : "Start date",
+  "addRelationship.accessPeriod.endDate" : "End date",
+  "addRelationship.accessPeriod.noEndDate" : "No end date",
+  "addRelationship.authMgmt.header" : "Set authorisation management",
+  "addRelationship.declaration.header" : "Declaration",
+  "addRelationship.declaration.agree" : "I agree to this declaration",
+  "addRelationship.authorise" : "Authorise",
+  "_comment - person's name comes before this" : "",
+  "addRelationship.complete.printOption1" : "must accept this authorisation before it is active. Instructions are included in a document for you to",
+  "_comment - next line is a link" : "",
+  "addRelationship.complete.printOption2" : "open a print friendly version",
+  "addRelationship.complete.printOption3" : "and provide to",
+  "_comment - person's name after this" : "",
+
+  "acceptRelationship.enterAuthCode" : "Please enter the authorisation code for the relationship you wish to establish.",
+
+  "dummy" : "to avoid having to keep adding a comma when adding on to the end of this file :)"
 }

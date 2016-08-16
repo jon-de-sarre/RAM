@@ -10,7 +10,7 @@
             <th class="col-md-2"><h4>Date Assigned</h4></th>
             <th class="col-md-3"><h4>Operator</h4></th>
             <th class="col-md-2"><h4>Status</h4></th>
-            <th class="col-md-2"><a class="btn btn-primary align-center" *ngIf="isAddRoleEnabled()" (click)="goToAddRolePage()">Add Role</a></th>
+            <th class="col-md-2"><a class="btn btn-primary align-center" (click)="goToAddRolePage()" *ngIf="isAddRoleEnabled()">Add Role</a></th>
         </tr>
     </thead>
     <tbody *ngIf="!isLoading">
@@ -22,7 +22,7 @@
                 <div class="text-muted">{{services.model.roleAttributeLabel(roleRef.value, 'CREATOR_NAME')}}</div>
             </td>
             <td>{{services.model.roleStatusLabel(roleStatusRefs, roleRef.value.status)}}</td>
-            <td><a class="btn btn-sm btn-secondary align-center" (click)="goToRolePage(roleRef)">Manage <span class="caret"></span></a></td>
+            <td><a class="btn btn-sm btn-secondary align-center" (click)="goToRolePage(roleRef)" *ngIf="isEditRoleEnabled(roleRef)">Manage <span class="caret"></span></a></td>
         </tr>
     </tbody>
     <tbody *ngIf="isLoading">

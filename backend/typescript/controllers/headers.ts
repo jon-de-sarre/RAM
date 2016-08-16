@@ -5,7 +5,7 @@ export class Headers {
     public static AuthToken = `${Headers.Prefix}-auth-token`;
     public static AuthTokenDecoded = `${Headers.Prefix}-auth-token-decoded`;
 
-    public static AUSkey = `${Headers.Prefix}-auskey`;
+    public static AuthAUSkey = `${Headers.Prefix}-auth-auskey`;
 
     public static ClientAuth = `${Headers.Prefix}-clientauth`;
 

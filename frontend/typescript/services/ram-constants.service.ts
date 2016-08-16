@@ -1,5 +1,14 @@
 export const RAMConstants = {
 
+    GlobalMessage: {
+        DELEGATE_NOTIFIED: 'DELEGATE_NOTIFIED',
+        DECLINED_RELATIONSHIP: 'DECLINED_RELATIONSHIP',
+        ACCEPTED_RELATIONSHIP: 'ACCEPTED_RELATIONSHIP',
+        CANCEL_ACCEPT_RELATIONSHIP: 'CANCEL_ACCEPT_RELATIONSHIP',
+        INVALID_CODE: 'INVALID_CODE',
+        SAVED_NOTIFICATION: 'SAVED_NOTIFICATION'
+    },
+
     Link: {
         'SELF': 'self',
         'RELATIONSHIP_LIST': 'relationship-list',
@@ -7,7 +16,7 @@ export const RAMConstants = {
         'ROLE_LIST': 'role-list',
         'ROLE_CREATE': 'role-list',
         'MODIFY': 'modify',
-        'DELETE': 'modify'
+        'DELETE': 'delete'
     },
 
     AUSkey: {

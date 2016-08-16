@@ -116,6 +116,8 @@ export class EditNotificationComponent extends AbstractPageComponent {
                 next: this.onFindRelationship.bind(this),
                 error: this.onServerError.bind(this)
             });
+        } else {
+            this.onNewRelationship();
         }
 
     }
@@ -134,35 +136,60 @@ export class EditNotificationComponent extends AbstractPageComponent {
     public onFindRelationship(relationship: IRelationship) {
 
         this.relationship = relationship;
-        let delegate = relationship.delegate.value;
-        let abn = this.services.model.abnForParty(delegate);
 
-        // abn
-        (this.form.controls['abn'] as FormControl).updateValue(abn);
-        this.findByABN();
+        if (!this.services.model.hasLinkHrefByType(RAMConstants.Link.MODIFY, this.relationship)) {
+            // no modify access
+            this.services.route.goToAccessDeniedPage();
+        } else {
 
-        // ssid
-        let ssidsAttribute = this.services.model.getRelationshipAttribute(relationship, RAMConstants.RelationshipTypeAttributeCode.SSID, null);
-        if (ssidsAttribute && ssidsAttribute.value) {
-            let ssids = ssidsAttribute.value;
-            this.getSSIDFormArray().removeAt(0);
-            for (let i = 0; i < ssids.length; i = i + 1) {
-                this.getSSIDFormArray().push(this.fb.control(ssids[i], Validators.required));
+            let delegate = relationship.delegate.value;
+            let abn = this.services.model.abnForParty(delegate);
+
+            // abn
+            (this.form.controls['abn'] as FormControl).updateValue(abn);
+            this.findByABN();
+
+            // ssid
+            let ssidsAttribute = this.services.model.getRelationshipAttribute(relationship, RAMConstants.RelationshipTypeAttributeCode.SSID, null);
+            if (ssidsAttribute && ssidsAttribute.value) {
+                let ssids = ssidsAttribute.value;
+                this.getSSIDFormArray().removeAt(0);
+                for (let i = 0; i < ssids.length; i = i + 1) {
+                    this.getSSIDFormArray().push(this.fb.control(ssids[i], Validators.required));
+                }
             }
+
+            // date
+            this.accessPeriod.startDate = relationship.startTimestamp;
+            this.accessPeriod.endDate = relationship.endTimestamp;
+            this.accessPeriod.noEndDate = relationship.endTimestamp === undefined || relationship.endTimestamp === null;
+
+            // agency services
+            let agencyServicesAttribute = this.services.model.getRelationshipAttribute(relationship, RAMConstants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST, null);
+            if (agencyServicesAttribute && agencyServicesAttribute.value) {
+                let agencyServices = agencyServicesAttribute.value;
+                (this.form.controls['agencyServices'] as FormControl).updateValue(agencyServices);
+            }
+
         }
 
-        // date
-        this.accessPeriod.startDate = relationship.startTimestamp;
-        this.accessPeriod.endDate = relationship.endTimestamp;
-        this.accessPeriod.noEndDate = relationship.endTimestamp === undefined || relationship.endTimestamp === null;
+    }
 
-        // agency services
-        let agencyServicesAttribute = this.services.model.getRelationshipAttribute(relationship, RAMConstants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST, null);
-        if (agencyServicesAttribute && agencyServicesAttribute.value) {
-            let agencyServices = agencyServicesAttribute.value;
-            (this.form.controls['agencyServices'] as FormControl).updateValue(agencyServices);
-        }
-
+    public onNewRelationship() {
+        this.relationship = new Relationship(
+            [],
+            null,
+            new HrefValue(this.identity.party.href, null),
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            null,
+            RAMConstants.RelationshipInitiatedBy.DELEGATE,
+            []
+        );
     }
 
     public back() {
@@ -182,17 +209,23 @@ export class EditNotificationComponent extends AbstractPageComponent {
             validationOk = false;
             this.addGlobalMessage('Please select a software provider to link to.');
         } else {
+            let notEmpty = (element: string) => {
+                return element !== null && element !== undefined && element !== '';
+            };
+            let todayMidnight = new Date();
+            todayMidnight.setHours(0, 0, 0, 0);
             if (!this.accessPeriod.startDate) {
                 validationOk = false;
                 this.addGlobalMessage('Please specify a start date.');
             }
             if (!this.accessPeriod.endDate && !this.accessPeriod.noEndDate) {
                 validationOk = false;
-                this.addGlobalMessage('Please specify a end date.');
+                this.addGlobalMessage('Please specify an end date.');
             }
-            let notEmpty = (element: string) => {
-                return element !== null && element !== undefined && element !== '';
-            };
+            if (this.accessPeriod.startDate && this.accessPeriod.startDate < todayMidnight) {
+                validationOk = false;
+                this.addGlobalMessage('Please specify a start date from today to the future.');
+            }
             if (!ssids || ssids.length === 0 || !ssids.every(notEmpty)) {
                 validationOk = false;
                 this.addGlobalMessage('Please specify valid software ids.');
@@ -221,39 +254,45 @@ export class EditNotificationComponent extends AbstractPageComponent {
                 this.services.model.getRelationshipTypeAttributeNameRef(
                     this.ospRelationshipTypeRef, RAMConstants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST)));
 
-            // build relationship
-            let relationship = new Relationship(
-                [],
-                null,
-                this.ospRelationshipTypeRef,
-                new HrefValue(this.identity.party.href, null),
-                null,
-                this.delegateIdentityRef.value.party,
-                null,
-                this.accessPeriod.startDate,
-                this.accessPeriod.endDate,
-                null,
-                null,
-                RAMConstants.RelationshipInitiatedBy.DELEGATE,
-                attributes
-            );
-
             // save
             if (!this.relationshipHref) {
+
                 // insert relationship
+
+                this.relationship.relationshipType = this.ospRelationshipTypeRef;
+                this.relationship.delegate = this.delegateIdentityRef.value.party;
+                this.relationship.startTimestamp = this.accessPeriod.startDate;
+                this.relationship.endTimestamp = this.accessPeriod.endDate;
+                this.relationship.attributes = attributes;
+
                 let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.RELATIONSHIP_CREATE, this.identity);
-                this.services.rest.insertRelationshipByHref(saveHref, relationship).subscribe({
-                    next: this.back.bind(this),
+                this.services.rest.insertRelationshipByHref(saveHref, this.relationship).subscribe({
+                    next: this.onSave.bind(this),
                     error: this.onServerError.bind(this)
                 });
-            } else {
-                // update relationship
-            }
 
-            // todo this needs to handle the edit case
+            } else {
+
+                // update relationship
+
+                this.relationship.startTimestamp = this.accessPeriod.startDate;
+                this.relationship.endTimestamp = this.accessPeriod.endDate;
+                this.relationship.attributes = attributes;
+
+                let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.MODIFY, this.relationship);
+                this.services.rest.updateRelationshipByHref(saveHref, this.relationship).subscribe({
+                    next: this.onSave.bind(this),
+                    error: this.onServerError.bind(this)
+                });
+
+            }
 
         }
 
+    }
+
+    public onSave() {
+        this.services.route.goToNotificationsPage(this.identityHref, 1, RAMConstants.GlobalMessage.SAVED_NOTIFICATION);
     }
 
     public resetDelegate() {
@@ -312,12 +351,12 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
     }
 
-    public onSearchOSPActiveRoles(results: ISearchResult<IHrefValue<IRole>>, party: IParty, identityRef: IHrefValue<IIdentity>) {
+    public onSearchOSPActiveRoles(results: ISearchResult<IHrefValue<IRole>>, party: IParty, abnIdentityRef: IHrefValue<IIdentity>) {
         for (let role of results.list) {
             if (role.value.roleType.href.endsWith(RAMConstants.RelationshipTypeCode.OSP)) {
                 this.ospRoleRef = role;
                 this.delegateParty = party;
-                this.delegateIdentityRef = identityRef;
+                this.delegateIdentityRef = abnIdentityRef;
                 this.ospServices = this.services.model.getAccessibleAgencyServiceRoleAttributeNames(role, []);
                 return;
             }
@@ -352,7 +391,8 @@ export class EditNotificationComponent extends AbstractPageComponent {
         ssids.removeAt(ssids.length - 1);
     }
 
-    private getSSIDFormArray() {
+    public getSSIDFormArray() {
         return this.form.controls['ssids'] as FormArray;
     }
+
 }

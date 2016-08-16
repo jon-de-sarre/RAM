@@ -33,6 +33,7 @@ import {RoleController} from './controllers/role.controller';
 import {RoleTypeController} from './controllers/roleType.controller';
 import {BusinessController} from './controllers/business.controller';
 import {AuskeyController} from './controllers/auskey.controller';
+import {TransactController} from './controllers/transact.controller';
 
 import {IdentityModel} from './models/identity.model';
 import {PartyModel} from './models/party.model';
@@ -43,12 +44,17 @@ import {RelationshipAttributeNameModel} from './models/relationshipAttributeName
 import {RoleModel} from './models/role.model';
 import {RoleTypeModel} from './models/roleType.model';
 import {AUSkeyProvider} from './providers/auskey.provider';
+import {context} from './providers/context.provider';
 
 // connect to the database ............................................................................................
 
 mongoose.connect(conf.mongoURL, {}, () => {
     logger.info(`Connected to db: ${conf.mongoURL}\n`);
 });
+
+// configure execution context ........................................................................................
+
+context.init();
 
 // configure express ..................................................................................................
 
@@ -146,6 +152,10 @@ server.use('/api/',
 
 server.use('/api/',
     new AuskeyController(AUSkeyProvider, PartyModel, IdentityModel)
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new TransactController()
         .assignRoutes(express.Router()));
 
 // setup error handlers ...............................................................................................

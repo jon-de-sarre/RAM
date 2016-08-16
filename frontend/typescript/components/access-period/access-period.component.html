@@ -1,24 +1,24 @@
 <form [formGroup]='form'>
     <div class="form-group col-md-4" [class.has-error]="!form.controls['startDate'].valid">
-        <h4>Start date*</h4>
+        <h4>{{'addRelationship.accessPeriod.startDate' | translate}}*</h4>
         <p-calendar
-                placeholder="dd/mm/yyyy ..."
+                placeholder="{{'date.placeholder' | translate}}"
                 inputStyleClass="form-control"
                 [formControl]="form.controls['startDate']"
                 dateFormat="{{dateFormat}}"></p-calendar>
     </div>
     <div class="form-group col-md-4"
          [class.has-error]="!form.controls['endDate'].valid || form.hasError('isEndDateBeforeStartDate')">
-        <h4>End date</h4>
+        <h4>{{'addRelationship.accessPeriod.endDate' | translate}}</h4>
         <p-calendar
-                placeholder="dd/mm/yyyy ..."
+                placeholder="{{'date.placeholder' | translate}}"
                 inputStyleClass="form-control"
                 [disabled]='form.controls["noEndDate"].value'
                 [formControl]="form.controls['endDate']"
                 dateFormat="{{dateFormat}}"></p-calendar>
     </div>
     <div class="form-group col-md-4">
-        <h4>No end date</h4>
+        <h4>{{'addRelationship.accessPeriod.noEndDate' | translate}}</h4>
         <input [formControl]='form.controls["noEndDate"]' class="big-checkbox" type="checkbox" name="noEndDate" value="false">
     </div>
 </form>

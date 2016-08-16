@@ -1,4 +1,5 @@
 import {Router, Request, Response} from 'express';
+import {context} from '../providers/context.provider';
 import {sendResource, sendList, sendError, sendNotFoundError, validateReqSchema} from './helpers';
 import {IRelationshipAttributeNameModel} from '../models/relationshipAttributeName.model';
 
@@ -36,9 +37,11 @@ export class RelationshipAttributeNameController {
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/relationshipAttributeName/:code',
+            context.begin,
             this.findByCodeIgnoringDateRange);
 
         router.get('/v1/relationshipAttributeNames',
+            context.begin,
             this.listIgnoringDateRange);
 
         return router;

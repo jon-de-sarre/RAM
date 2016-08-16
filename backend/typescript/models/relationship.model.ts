@@ -316,6 +316,7 @@ RelationshipSchema.method('toHrefValue', async function (includeValue: boolean) 
     );
 });
 
+// todo need to use security context to drive the links
 RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
     const pendingWithInvitationCode = invitationCode && this.statusEnum() === RelationshipStatus.Pending;
     return new DTO(
@@ -326,7 +327,6 @@ RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
             .push('notifyDelegate', Url.POST, await Url.forRelationshipNotifyDelegate(invitationCode), pendingWithInvitationCode)
             .push('modify', Url.PUT, await Url.forRelationship(this))
             .toArray(),
-        this._id.toString() /*todo what code should we use?*/,
         await this.relationshipType.toHrefValue(false),
         await this.subject.toHrefValue(true),
         await this.subjectNickName.toDTO(),

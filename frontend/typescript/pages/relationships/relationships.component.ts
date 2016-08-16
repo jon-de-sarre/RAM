@@ -7,8 +7,8 @@ import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
 import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
     from '../../components/search-result-pagination/search-result-pagination.component';
-import {RAMConstants} from '../../services/ram-constants.service';
 import {RAMServices} from '../../services/ram-services';
+import {RAMConstants} from '../../services/ram-constants.service';
 
 import {
     ISearchResult,
@@ -77,13 +77,13 @@ export class RelationshipsComponent extends AbstractPageComponent {
 
         // message
         const msg = params.query['msg'];
-        if (msg === 'DELEGATE_NOTIFIED') {
+        if (msg === RAMConstants.GlobalMessage.DELEGATE_NOTIFIED) {
             this.addGlobalMessage('A notification has been sent to the delegate.');
-        } else if (msg === 'DECLINED_RELATIONSHIP') {
+        } else if (msg === RAMConstants.GlobalMessage.DECLINED_RELATIONSHIP) {
             this.addGlobalMessage('You have declined the relationship.');
-        } else if (msg === 'ACCEPTED_RELATIONSHIP') {
+        } else if (msg === RAMConstants.GlobalMessage.ACCEPTED_RELATIONSHIP) {
             this.addGlobalMessage('You have accepted the relationship.');
-        } else if (msg === 'CANCEL_ACCEPT_RELATIONSHIP') {
+        } else if (msg === RAMConstants.GlobalMessage.CANCEL_ACCEPT_RELATIONSHIP) {
             this.addGlobalMessage('You cancelled without accepting or declining the relationship');
         }
 

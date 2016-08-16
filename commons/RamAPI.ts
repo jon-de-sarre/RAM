@@ -276,7 +276,6 @@ export class Name implements IName {
 // relationship .......................................................................................................
 
 export interface IRelationship extends IHasLinks {
-    code?: string;
     relationshipType: IHrefValue<IRelationshipType>;
     subject: IHrefValue<IParty>;
     subjectNickName?: IName;
@@ -292,7 +291,6 @@ export interface IRelationship extends IHasLinks {
 
 export class Relationship implements IRelationship {
     constructor(public _links: ILink[],
-                public code: string,
                 public relationshipType: IHrefValue<IRelationshipType>,
                 public subject: IHrefValue<IParty>,
                 public subjectNickName: Name,

@@ -2,20 +2,20 @@
     <div class="form-group">
         <div class="col-md-4"
         [class.has-error]="!form.controls['givenName'].valid">
-            <h4>Given name*</h4>
+            <h4>{{'addRelationship.givenName.label' | translate}}*</h4>
             <input class="form-control" type="text" name="givenName" [formControl]="form.controls['givenName']"
-                placeholder="Given name ...">
+                placeholder="{{'addRelationship.givenName.placeholder' | translate}}">
         </div>
         <div class="col-md-4"
         [class.has-error]="!form.controls['familyName'].valid">
-            <h4>Family name</h4>
+            <h4>{{'addRelationship.familyName.label' | translate}}</h4>
             <input class="form-control" type="text" name="familyName" [formControl]="form.controls['familyName']"
-                placeholder="Family name ...">
+                placeholder="{{'addRelationship.familyName.placeholder' | translate}}">
         </div>
         <div class="col-md-4">
-            <h4>Date of birth</h4>
+            <h4>{{'addRelationship.dob.label' | translate}}</h4>
             <p-calendar
-                    placeholder="dd/mm/yyyy ..."
+                    placeholder="{{'addRelationship.dob.placeholder' | translate}}"
                     inputStyleClass="form-control"
                     [formControl]="form.controls['dob']"
                     dateFormat="{{dateFormat}}"

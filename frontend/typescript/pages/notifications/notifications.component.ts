@@ -15,7 +15,8 @@ import {
     IRelationship,
     IRelationshipStatus,
     IHrefValue,
-    FilterParams
+    FilterParams,
+    IPrincipal, IParty
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -37,9 +38,9 @@ export class NotificationsComponent extends AbstractPageComponent {
     public relationshipSearchResult: ISearchResult<IHrefValue<IRelationship>>;
     public relationshipStatusRefs: IHrefValue<IRelationshipStatus>[];
 
-    public canReturnToDashboard: boolean = false;
-
+    public me: IPrincipal;
     public identity: IIdentity;
+    public subjectsTotalCount: number;
 
     public paginationDelegate: SearchResultPaginationDelegate;
 
@@ -64,21 +65,30 @@ export class NotificationsComponent extends AbstractPageComponent {
 
         // message
         const msg = params.query['msg'];
-        if (msg === 'CREATED_RELATIONSHIP') {
-            this.addGlobalMessage('A notification has been created.');
+        if (msg === RAMConstants.GlobalMessage.SAVED_NOTIFICATION) {
+            this.addGlobalMessage('The notification has been saved successfully.');
         }
+
+        // me
+        this.services.rest.findMyPrincipal().subscribe({
+            next: this.onFindMe.bind(this),
+            error: this.onServerError.bind(this)
+        });
+
+        // all subjects
+        let allSubjectsFilterParams = new FilterParams()
+            .add('partyType', 'ABN')
+            .add('authorisationManagement', true);
+        this.services.rest.searchDistinctSubjectsForMe(allSubjectsFilterParams.encode(), 1).subscribe({
+            next: this.onListAllSubjects.bind(this),
+            error: this.onServerError.bind(this)
+        });
 
         // identity in focus
         this.services.rest.findIdentityByHref(this.identityHref).subscribe({
             next: this.onFindIdentity.bind(this),
             error: this.onServerError.bind(this)
         });
-
-        // if the user can see more than one business, they can see the dashboard
-        // this.services.rest.searchDistinctSubjectsForMe(null, 1).subscribe((partyRefs) => {
-        //     this.canReturnToDashboard = partyRefs.totalCount > 1;
-        // });
-        this.canReturnToDashboard = true; // TODO compute this properly
 
         // pagination delegate
         this.paginationDelegate = {
@@ -87,6 +97,14 @@ export class NotificationsComponent extends AbstractPageComponent {
             }
         } as SearchResultPaginationDelegate;
 
+    }
+
+    private onFindMe(me: IPrincipal) {
+        this.me = me;
+    }
+
+    private onListAllSubjects(partySearchResults: ISearchResult<IHrefValue<IParty>>) {
+        this.subjectsTotalCount = partySearchResults.totalCount;
     }
 
     public onFindIdentity(identity: IIdentity) {
@@ -127,9 +145,19 @@ export class NotificationsComponent extends AbstractPageComponent {
         this.services.route.goToEditNotificationPage(this.identityHref, relationshipRef.href);
     }
 
-    // todo what is the logic here?
-    public isAddNotificationEnabled() {
-        return true;
+    public isAddNotificationEnabled(): boolean {
+        if (this.identity) {
+            return this.services.model.hasLinkHrefByType(RAMConstants.Link.RELATIONSHIP_CREATE, this.identity);
+        }
+        return false;
+    }
+
+    public isEditNotificationEnabled(relationshipRef: IHrefValue<IRelationship>): boolean {
+        return this.services.model.hasLinkHrefByType(RAMConstants.Link.MODIFY, relationshipRef.value);
+    }
+
+    public isDashboardEnabled(): boolean {
+        return this.subjectsTotalCount > 0;
     }
 
 }

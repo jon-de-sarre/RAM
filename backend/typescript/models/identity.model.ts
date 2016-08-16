@@ -329,6 +329,7 @@ IdentitySchema.method('toHrefValue', async function (includeValue:boolean) {
     );
 });
 
+// todo need to use security context to drive the links
 IdentitySchema.method('toDTO', async function () {
     return new DTO(
         Url.links()
