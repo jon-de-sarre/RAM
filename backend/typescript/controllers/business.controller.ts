@@ -54,14 +54,17 @@ export class BusinessController {
     public assignRoutes = (router: Router) => {
 
         router.get('/v1/business/abn/:abn',
+            context.begin,
             context.isAuthenticated,
             this.findByABN);
 
         router.get('/v1/business/name/:name',
+            context.begin,
             context.isAuthenticated,
             this.findByName);
 
         router.get('/v1/business/register/:abn/:name',
+            context.begin,
             context.isAuthenticated,
             this.registerABRRetrievedCompany);
 

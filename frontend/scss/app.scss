@@ -546,3 +546,7 @@ div.checkbox.disabled > label, div.radio.disabled > label {
 .has-error.form-control {
   border: 1px solid #FF0039;
 }
+
+.checkbox-table td:last-child {
+  width: 100px;
+}
