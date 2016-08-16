@@ -11,12 +11,16 @@ export class AuthenticatorSimulatorController {
             res.status(200);
             res.cookie(Headers.AuthToken, authTokenEncoded, {maxAge: maxAge, path: '/'});
             res.cookie(Headers.AuthTokenDecoded, authToken, {maxAge: maxAge, path: '/'});
+            if (req.header(Headers.ABN)) {
+                res.cookie(Headers.ABN, req.header(Headers.ABN).valueOf(), {maxAge: maxAge, path: '/'});
+            }
             res.send({token: authTokenEncoded});
         } else {
             res.status(401);
             res.set('WWW-Authenticate', '/api/v1/simulators/authenticate');
             res.clearCookie(Headers.AuthToken);
             res.clearCookie(Headers.AuthTokenDecoded);
+            res.clearCookie(Headers.ABN);
             res.send({token: null});
         }
     };

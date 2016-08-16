@@ -144,6 +144,11 @@ class Security {
                 for (let sharedSecret of identity.profile.sharedSecrets) {
                     res.locals[`${Headers.Prefix}-${sharedSecret.sharedSecretType.code}`.toLowerCase()] = sharedSecret.value;
                 }
+                logger.info(req.rawHeaders.toString());
+                if (req.header(Headers.ABN)) {
+                    logger.info('abn header was set to ' + req.header(Headers.ABN));
+                    res.locals[Headers.ABN] = req.header(Headers.ABN);
+                }
             }
         };
     }
