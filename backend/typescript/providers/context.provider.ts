@@ -72,15 +72,15 @@ class Context {
         return Context.get(Headers.Principal);
     }
 
-    public static getAuthenticatedABN(res: Response): string {
+    public static getAuthenticatedABN(): string {
         return Context.get(Headers.ABN);
     }
 
-    public static getAuthenticatedAUSkey(res: Response): string {
-        return Context.get(Headers.AUSkey);
+    public static getAuthenticatedAUSkey(): string {
+        return Context.get(Headers.AuthAUSkey);
     }
 
-    public static getAuthenticatedClientAuth(res: Response): string {
+    public static getAuthenticatedClientAuth(): string {
         return Context.get(Headers.ClientAuth);
     }
 

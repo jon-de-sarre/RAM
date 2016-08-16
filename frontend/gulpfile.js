@@ -70,7 +70,7 @@ gulp.task("build:jspm", ["copy:systemJsConf"], function () {
     return gulp.src('dist/js/frontend/typescript/Boot.js')
     .pipe(jspm_build({
         fileName:   'ram-lib',
-        arithmetic: "+ css + primeui - [dist/js/**/*]"
+        arithmetic: "+ css + primeui + [jspm_packages/**/*.css] - [dist/js/**/*]"
     }))
     .pipe(gulp.dest("dist"))
 });
@@ -80,7 +80,7 @@ gulp.task("build:jspm", ["copy:systemJsConf"], function () {
  * for quick loading. Called by dist and serve. Used as long as
  * URL search doesn't start with _?debug_
  */
-gulp.task("build:app", ["ts:compile"], function () {
+gulp.task("build:app", ["ts:compile", "copy:dev"], function () {
     return gulp.src('dist/js/frontend/typescript/Boot.js')
     .pipe(jspm_build({
         fileName:   'ram-app',
@@ -125,7 +125,11 @@ gulp.task("html:watch", ["copy:index.html", "copy:dev"], function () {
 });
 
 gulp.task("data:watch", function () {
-    return gulp.watch(["data/{**,./}/*.{json}"], ["copy:data"]);
+    return gulp.watch(["data/{**,./}/*.json"], ["copy:data"]);
+});
+
+gulp.task("i18n:watch", function () {
+    return gulp.watch(["i18n/{**,./}/*.json"], ["copy:i18n"]);
 });
 
 gulp.task("ts:watch", ["ts:compile"], function () {
@@ -155,9 +159,9 @@ gulp.task("ts:lint", function () {
             }));
     }
 });
-gulp.task("watch", ["scss:watch", "ts:watch", "html:watch", "data:watch"]);
+gulp.task("watch", ["scss:watch", "ts:watch", "html:watch", "data:watch", "i18n:watch"]);
 
-gulp.task("serve", ["copy:i18n", "copy:images", "scss:watch", "ts:watch", "html:watch", "data:watch", "copy:jslib", "build:app"], function () {
+gulp.task("serve", ["copy:images", "scss:watch", "ts:watch", "html:watch", "data:watch", "i18n:watch", "copy:jslib", "build:app"], function () {
     var proxyOptions = url.parse("http://localhost:3000/api");
     proxyOptions.route = "/api";
 
@@ -175,7 +179,7 @@ gulp.task("serve", ["copy:i18n", "copy:images", "scss:watch", "ts:watch", "html:
         "./dev/*",
         "./typescript/{**,./}/*.html",
         "./scss/*.*",
-        "./i18n/*.*",
+        "./i18n/*.json",
         "./images/*.*",
         "./ram-app.js"
     ], [browserSync.reload]);
