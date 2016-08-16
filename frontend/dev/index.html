@@ -184,7 +184,7 @@
                     for (var i = 0; i < data.list.length; i++) {
                         // eg. <li class="list-group-item" data-id="LINK_ID:MY_GOV:jennifermaxims_identity_1">Jennifer Maxims</li>
                         var item = data.list[i];
-                        if (item.value.identityType === 'LINK_ID' && !item.value.rawIdValue.startsWith('zoezombie')) {
+                        if (item.value.identityType === 'LINK_ID' && item.value.rawIdValue.slice(0,9) !== 'zoezombie') {
                             var $li = $('<li></li>')
                                     .addClass('list-group-item')
                                     .addClass('regular-user')
@@ -256,8 +256,10 @@
                 var $notLoggedIn = $('#not-logged-in');
 
                 $userDetail.removeClass(effect);
-
-                $.get('/api/v1/simulators/authenticator/locals', function (data) {
+                // spm: added dummy parameter to foil caching
+                $.get('/api/v1/simulators/authenticator/locals',
+                {"_": $.now()},
+                function (data) {
 
                     // clean up state
                     $userDetail.find('table tr').remove();
