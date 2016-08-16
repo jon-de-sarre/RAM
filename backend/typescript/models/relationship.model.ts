@@ -14,7 +14,7 @@ import {
     RelationshipAttribute as RelationshipAttributeDTO,
     SearchResult
 } from '../../../commons/RamAPI';
-import {logger} from '../logger';
+// import {logger} from '../logger';
 import {IdentityPublicIdentifierScheme} from './identity.model';
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
@@ -424,7 +424,7 @@ RelationshipSchema.method('claimPendingInvitation', async function (claimingDele
 
 RelationshipSchema.method('acceptPendingInvitation', async function (acceptingDelegateIdentity: IIdentity) {
 
-    logger.debug('Attempting to accept relationship by ', acceptingDelegateIdentity.idValue);
+    //logger.debug('Attempting to accept relationship by ', acceptingDelegateIdentity.idValue);
 
     Assert.assertTrue(this.statusEnum() === RelationshipStatus.Pending, 'Unable to accept a non-pending relationship');
 
@@ -472,7 +472,7 @@ RelationshipSchema.method('notifyDelegate', async function (email: string, notif
     await identity.save();
 
     // TODO notify relevant parties
-    logger.debug(`TODO Send notification to ${email}`);
+    //logger.debug(`TODO Send notification to ${email}`);
 
     return Promise.resolve(this);
 

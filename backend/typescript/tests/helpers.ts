@@ -7,6 +7,7 @@ console.log('\nUsing mongo: ', conf.mongoURL, '\n');
 export const connectDisconnectMongo = () => {
 
     beforeEach((done) => {
+        mongoose.Promise = global.Promise;
         mongoose.connect(conf.mongoURL, {}, done);
     });
 
