@@ -136,33 +136,41 @@ export class EditNotificationComponent extends AbstractPageComponent {
     public onFindRelationship(relationship: IRelationship) {
 
         this.relationship = relationship;
-        let delegate = relationship.delegate.value;
-        let abn = this.services.model.abnForParty(delegate);
 
-        // abn
-        (this.form.controls['abn'] as FormControl).updateValue(abn);
-        this.findByABN();
+        if (!this.services.model.hasLinkHrefByType(RAMConstants.Link.MODIFY, this.relationship)) {
+            // no modify access
+            this.services.route.goToAccessDeniedPage();
+        } else {
 
-        // ssid
-        let ssidsAttribute = this.services.model.getRelationshipAttribute(relationship, RAMConstants.RelationshipTypeAttributeCode.SSID, null);
-        if (ssidsAttribute && ssidsAttribute.value) {
-            let ssids = ssidsAttribute.value;
-            this.getSSIDFormArray().removeAt(0);
-            for (let i = 0; i < ssids.length; i = i + 1) {
-                this.getSSIDFormArray().push(this.fb.control(ssids[i], Validators.required));
+            let delegate = relationship.delegate.value;
+            let abn = this.services.model.abnForParty(delegate);
+
+            // abn
+            (this.form.controls['abn'] as FormControl).updateValue(abn);
+            this.findByABN();
+
+            // ssid
+            let ssidsAttribute = this.services.model.getRelationshipAttribute(relationship, RAMConstants.RelationshipTypeAttributeCode.SSID, null);
+            if (ssidsAttribute && ssidsAttribute.value) {
+                let ssids = ssidsAttribute.value;
+                this.getSSIDFormArray().removeAt(0);
+                for (let i = 0; i < ssids.length; i = i + 1) {
+                    this.getSSIDFormArray().push(this.fb.control(ssids[i], Validators.required));
+                }
             }
-        }
 
-        // date
-        this.accessPeriod.startDate = relationship.startTimestamp;
-        this.accessPeriod.endDate = relationship.endTimestamp;
-        this.accessPeriod.noEndDate = relationship.endTimestamp === undefined || relationship.endTimestamp === null;
+            // date
+            this.accessPeriod.startDate = relationship.startTimestamp;
+            this.accessPeriod.endDate = relationship.endTimestamp;
+            this.accessPeriod.noEndDate = relationship.endTimestamp === undefined || relationship.endTimestamp === null;
 
-        // agency services
-        let agencyServicesAttribute = this.services.model.getRelationshipAttribute(relationship, RAMConstants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST, null);
-        if (agencyServicesAttribute && agencyServicesAttribute.value) {
-            let agencyServices = agencyServicesAttribute.value;
-            (this.form.controls['agencyServices'] as FormControl).updateValue(agencyServices);
+            // agency services
+            let agencyServicesAttribute = this.services.model.getRelationshipAttribute(relationship, RAMConstants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST, null);
+            if (agencyServicesAttribute && agencyServicesAttribute.value) {
+                let agencyServices = agencyServicesAttribute.value;
+                (this.form.controls['agencyServices'] as FormControl).updateValue(agencyServices);
+            }
+
         }
 
     }
