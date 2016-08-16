@@ -586,6 +586,7 @@ RelationshipSchema.static('findPendingByInvitationCodeInDateRange', async (invit
     return null;
 });
 
+// todo what about start date?
 RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (requestingParty: IParty,
                                                                                 requestedIdValue: string,
                                                                                 date:Date) => {
@@ -604,7 +605,8 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
                 subject: requestedParty,
                 delegate: requestingParty,
                 status: RelationshipStatus.Accepted.code,
-                $or: [{endDate: null}, {endDate: {$gte: date}}]
+                startTimestamp: {$lte: date},
+                $or: [{endTimestamp: null}, {endTimestamp: {$gte: date}}]
             })
             .exec();
 
@@ -621,7 +623,8 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
                             '$and': [
                                 {'subject': new mongoose.Types.ObjectId(requestedParty.id)},
                                 {'status': RelationshipStatus.Accepted.code},
-                                {'$or': [{endDate: null}, {endDate: {$gte: date}}]}
+                                {'startTimestamp': {$lte: date}},
+                                {'$or': [{endTimestamp: null}, {endTimestamp: {$gte: date}}]}
                             ]
                         }
                     },
@@ -636,7 +639,8 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
                             '$and': [
                                 {'delegate': new mongoose.Types.ObjectId(requestingParty.id)},
                                 {'status': RelationshipStatus.Accepted.code},
-                                {'$or': [{endDate: null}, {endDate: {$gte: date}}]}
+                                {'startTimestamp': {$lte: date}},
+                                {'$or': [{endTimestamp: null}, {endTimestamp: {$gte: date}}]}
                             ]
                         }
                     },

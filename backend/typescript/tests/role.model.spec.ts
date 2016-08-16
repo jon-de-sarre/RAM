@@ -6,6 +6,7 @@ import {
     RoleStatus
 } from '../models/role.model';
 import {IRoleType} from '../models/roleType.model';
+import {IRoleAttribute, RoleAttributeModel} from '../models/roleAttribute.model';
 import {IParty, PartyModel, PartyType} from '../models/party.model';
 import {IIdentity, IdentityModel, IdentityType, IdentityLinkIdScheme} from '../models/identity.model';
 import {IProfile, ProfileModel, ProfileProvider} from '../models/profile.model';
@@ -23,6 +24,7 @@ describe('RAM Role', () => {
     let party1:IParty;
     let partyIdentity1:IIdentity;
 
+    let roleAttribute1:IRoleAttribute;
     let role1:IRole;
 
     beforeEach((done) => {
@@ -62,13 +64,18 @@ describe('RAM Role', () => {
                         party: party1
                     });
 
+                    roleAttribute1 = await RoleAttributeModel.create({
+                        value: 'true',
+                        attributeName: Seeder.usi_roleAttributeName
+                    });
+
                     role1 = await RoleModel.add(
                         roleTypeOsp,
                         party1,
-                        new Date(),
+                        new Date(2000, 1, 1),
                         null,
                         RoleStatus.Active,
-                        []
+                        [roleAttribute1]
                     );
 
                 } catch (e) {
@@ -133,6 +140,20 @@ describe('RAM Role', () => {
             const roles = await RoleModel.searchByIdentity(partyIdentity1.idValue, roleTypeOsp.code, RoleStatus.Active.code,  1, 10);
             expect(roles.totalCount).toBeGreaterThan(0);
             expect(roles.list.length).toBeGreaterThan(0);
+
+            done();
+
+        } catch (e) {
+            fail(e);
+            done();
+        }
+    });
+
+    it('find active by identity in date range successfully', async (done) => {
+        try {
+
+            const role = await RoleModel.findActiveByIdentityInDateRange(partyIdentity1.idValue, roleTypeOsp.code, new Date());
+            expect(role).not.toBeNull();
 
             done();
 

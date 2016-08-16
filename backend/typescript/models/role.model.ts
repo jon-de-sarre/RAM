@@ -12,7 +12,6 @@ import {
     RoleAttribute as RoleAttributeDTO,
     SearchResult
 } from '../../../commons/RamAPI';
-import {RoleAttribute} from "../../../docs/data-types";
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
 
@@ -107,10 +106,13 @@ RoleSchema.pre('validate', function (next: () => void) {
     if (this.roleType) {
         this._roleTypeCode = this.roleType.code;
     }
-
     let hasAgencyServiceWhichIsNotEndDated = false;
     for (let attribute of this.attributes) {
-        if (attribute.attributeName.classifier === 'AGENCY_SERVICE' && attribute.value === 'true' && !attribute.attributeName.isEndDated()) {
+        if (attribute.attributeName.classifier === 'AGENCY_SERVICE' &&
+            attribute.value &&
+            attribute.value.length > 0 &&
+            attribute.value[0] === 'true'
+            && !attribute.attributeName.isEndDated()) {
             hasAgencyServiceWhichIsNotEndDated = true;
             break;
         }
@@ -152,8 +154,10 @@ export interface IRoleModel extends mongoose.Model<IRole> {
                       roleType: string,
                       status: string,
                       page: number,
-                      pageSize: number)
-        => Promise<SearchResult<IRole>>;
+                      pageSize: number) => Promise<SearchResult<IRole>>;
+    findActiveByIdentityInDateRange: (identityIdValue: string,
+                                      roleType: string,
+                                      date: Date) => Promise<IRole>;
 }
 
 // instance methods ...................................................................................................
@@ -305,6 +309,26 @@ RoleSchema.static('searchByIdentity', (identityIdValue: string,
             reject(e);
         }
     });
+});
+
+/* tslint:disable:max-func-body-length */
+RoleSchema.static('findActiveByIdentityInDateRange', async(identityIdValue: string,
+                                                           roleType: string,
+                                                           date: Date) => {
+    const party = await PartyModel.findByIdentityIdValue(identityIdValue);
+    return this.RoleModel
+        .findOne({
+            party: party,
+            status: RoleStatus.Active.code,
+            startTimestamp: {$lte: date},
+            $or: [{endTimestamp: null}, {endTimestamp: {$gte: date}}]
+        })
+        .deepPopulate([
+            'roleType',
+            'party',
+            'attributes.attributeName'
+        ])
+        .exec();
 });
 
 // concrete model .....................................................................................................
