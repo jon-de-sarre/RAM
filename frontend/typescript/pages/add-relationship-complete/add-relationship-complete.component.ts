@@ -6,6 +6,7 @@ import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
 import {RAMNgValidators} from '../../commons/ram-ng-validators';
 import {RAMServices} from '../../services/ram-services';
+import {RAMConstants} from '../../services/ram-constants.service';
 
 import {IIdentity, INotifyDelegateDTO} from '../../../../commons/RamAPI';
 
@@ -69,7 +70,7 @@ export class AddRelationshipCompleteComponent extends AbstractPageComponent {
         };
 
         this.services.rest.notifyDelegateByInvitationCode(this.code, notifyDelegateDTO).subscribe((relationship) => {
-            this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'DELEGATE_NOTIFIED');
+            this.services.route.goToRelationshipsPage(this.idValue, null, 1, RAMConstants.GlobalMessage.DELEGATE_NOTIFIED);
         }, (err) => {
             const status = err.status;
             if (status === 404) {

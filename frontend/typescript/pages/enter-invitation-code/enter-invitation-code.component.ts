@@ -5,6 +5,7 @@ import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIREC
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
 import {RAMServices} from '../../services/ram-services';
+import {RAMConstants} from '../../services/ram-constants.service';
 
 import {IIdentity} from '../../../../commons/RamAPI';
 
@@ -35,7 +36,7 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
 
         // message
         const msg = params.query['msg'];
-        if (msg === 'INVALID_CODE') {
+        if (msg === RAMConstants.GlobalMessage.INVALID_CODE) {
             this.addGlobalMessage('The code you have entered does not exist or is invalid.');
         }
 
