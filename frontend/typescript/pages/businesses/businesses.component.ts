@@ -30,6 +30,8 @@ import {
     ]
 })
 
+// todo this component needs to be rewritten to be compliant with project standards
+// todo this component doesn't seem to render with search text via a browser reload
 export class BusinessesComponent extends AbstractPageComponent {
 
     public filter: FilterParams;
