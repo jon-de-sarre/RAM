@@ -71,7 +71,7 @@ export class RolesComponent extends AbstractPageComponent {
             this.identity = identity;
 
             // roles
-            const rolesHref = this.services.model.getLinkHrefByType('role-list', this.identity);
+            const rolesHref = this.services.model.getLinkHrefByType(RAMConstants.Link.ROLE_LIST, this.identity);
             this.services.rest.searchRolesByHref(rolesHref, null, this.page)
                 .subscribe((searchResult) => {
                     this.roleSearchResult = searchResult;
@@ -112,7 +112,7 @@ export class RolesComponent extends AbstractPageComponent {
 
     public goToAddRolePage() {
         if (this.agencyUser && this.identity) {
-            this.services.route.goToAddRolePage(this.services.model.getLinkHrefByType('self', this.identity));
+            this.services.route.goToAddRolePage(this.services.model.getLinkHrefByType(RAMConstants.Link.SELF, this.identity));
         }
     }
 
