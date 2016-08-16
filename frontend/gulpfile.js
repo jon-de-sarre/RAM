@@ -19,7 +19,8 @@ var url = require("url");
 var embedTemplates = require("gulp-angular-embed-templates");
 var merge = require('merge-stream');
 var args = require('yargs').argv;
-
+var filter = require('gulp-filter');
+ 
 gulp.task("copy:font", function () {
     return gulp.src(["fonts/{**,./}/*.{eot,svg,ttf,woff,woff2}"], { base: "./" })
         .pipe(gulp.dest("dist/")); // move the fonts into dist folder
@@ -66,15 +67,20 @@ gulp.task("copy:systemJsConf", function () {
  * Convert all the 1000+ files downloaded by JSPM into a single 5Mb js
  * for quick loading. Called by dist and serve.
  */
-gulp.task("build:jspm", ["copy:systemJsConf"], function () {
+gulp.task('copy:jspm-resources', function() {
+  gulp.src('jspm_packages/**/*', { base: './' })
+         .pipe(filter(["**/*.{css,eot,png,ttf,woff,woff2}"]))
+         .pipe(gulp.dest('dist'));
+});
+gulp.task("build:jspm", ["copy:systemJsConf", "copy:jspm-resources"], function () {
     return gulp.src('dist/js/frontend/typescript/Boot.js')
     .pipe(jspm_build({
         fileName:   'ram-lib',
-        arithmetic: "+ css + primeui + [jspm_packages/**/*.css] - [dist/js/**/*]"
+        arithmetic: "+ css + primeui - [dist/js/**/*]",
+        inject: true
     }))
     .pipe(gulp.dest("dist"))
 });
-
 /*
  * Convert the smaller number of files in RAM into a single 256k js
  * for quick loading. Called by dist and serve. Used as long as

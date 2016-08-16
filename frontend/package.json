@@ -37,6 +37,7 @@
     "gulp": "latest",
     "gulp-angular-embed-templates": "latest",
     "gulp-concat": "latest",
+    "gulp-filter": "^4.0.0",
     "gulp-gzip": "latest",
     "gulp-ignore": "latest",
     "gulp-inject": "latest",
