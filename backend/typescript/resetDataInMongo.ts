@@ -56,9 +56,17 @@ export const doResetDataInMongo = (done?: () => void) => {
 
             let result = Promise.resolve('');
             promises.forEach((promise: Promise<string>) => {
-                result = result.then(() => {
-                    return promise;
-                });
+                result = result
+                    .then(() => {
+                        return promise;
+                    })
+                    .catch((err: Error) => {
+                        console.log('\nUnable to drop mongo:', err);
+                        mainReject();
+                        if (done) {
+                            done();
+                        }
+                    });
             });
 
             mainResolve();
