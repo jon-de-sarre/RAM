@@ -69,11 +69,12 @@ export const doResetDataInMongo = (done?: () => void) => {
                     });
             });
 
-            mainResolve();
-
-            if (done) {
-                done();
-            }
+            result.then(() => {
+                mainResolve();
+                if (done) {
+                    done();
+                }
+            });
 
             // Promise.all(promises)
             //     .then(() => {
