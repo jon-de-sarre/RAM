@@ -137,7 +137,6 @@ export class NotificationsComponent extends AbstractPageComponent {
 
     public isEditNotificationEnabled(relationshipRef: IHrefValue<IRelationship>) {
         let href = this.services.model.getLinkHrefByType(RAMConstants.Link.MODIFY, relationshipRef.value);
-        console.log('modify href = ', href);
         return href !== null && href !== undefined;
     }
 

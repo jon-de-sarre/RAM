@@ -7,6 +7,7 @@ import {PageHeaderAuthComponent} from '../../components/page-header/page-header-
 import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
     from '../../components/search-result-pagination/search-result-pagination.component';
 import {RAMServices} from '../../services/ram-services';
+import {RAMConstants} from '../../services/ram-constants.service';
 
 import {
     IHrefValue,
@@ -124,6 +125,11 @@ export class RolesComponent extends AbstractPageComponent {
 
     public isAddRoleEnabled() {
         return this.agencyUser !== null && this.agencyUser !== undefined;
+    }
+
+    public isEditRoleEnabled(roleRef: IHrefValue<IRole>) {
+        let href = this.services.model.getLinkHrefByType(RAMConstants.Link.MODIFY, roleRef.value);
+        return href !== null && href !== undefined;
     }
 
 }
