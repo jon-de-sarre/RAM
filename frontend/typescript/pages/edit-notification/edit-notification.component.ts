@@ -66,6 +66,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
     public identity: IIdentity;
     public relationship: IRelationship;
+    public ospRelationshipTypeRef: IHrefValue<IRelationshipType>;
     public ospRoleRef: IHrefValue<IRole>;
     public ospServices: IRoleAttributeName[];
     public declarationText: string;
@@ -115,8 +116,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
                 next: this.onFindRelationship.bind(this),
                 error: this.onServerError.bind(this)
             });
-        }
-        else {
+        } else {
             this.onNewRelationship();
         }
 
@@ -209,17 +209,23 @@ export class EditNotificationComponent extends AbstractPageComponent {
             validationOk = false;
             this.addGlobalMessage('Please select a software provider to link to.');
         } else {
+            let notEmpty = (element: string) => {
+                return element !== null && element !== undefined && element !== '';
+            };
+            let todayMidnight = new Date();
+            todayMidnight.setHours(0, 0, 0, 0);
             if (!this.accessPeriod.startDate) {
                 validationOk = false;
                 this.addGlobalMessage('Please specify a start date.');
             }
             if (!this.accessPeriod.endDate && !this.accessPeriod.noEndDate) {
                 validationOk = false;
-                this.addGlobalMessage('Please specify a end date.');
+                this.addGlobalMessage('Please specify an end date.');
             }
-            let notEmpty = (element: string) => {
-                return element !== null && element !== undefined && element !== '';
-            };
+            if (this.accessPeriod.startDate && this.accessPeriod.startDate < todayMidnight) {
+                validationOk = false;
+                this.addGlobalMessage('Please specify a start date from today to the future.');
+            }
             if (!ssids || ssids.length === 0 || !ssids.every(notEmpty)) {
                 validationOk = false;
                 this.addGlobalMessage('Please specify valid software ids.');
@@ -253,6 +259,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
                 // insert relationship
 
+                this.relationship.relationshipType = this.ospRelationshipTypeRef;
                 this.relationship.delegate = this.delegateIdentityRef.value.party;
                 this.relationship.startTimestamp = this.accessPeriod.startDate;
                 this.relationship.endTimestamp = this.accessPeriod.endDate;
@@ -272,7 +279,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
                 this.relationship.endTimestamp = this.accessPeriod.endDate;
                 this.relationship.attributes = attributes;
 
-                let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.MODIFY, this.identity);
+                let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.MODIFY, this.relationship);
                 this.services.rest.updateRelationshipByHref(saveHref, this.relationship).subscribe({
                     next: this.onSave.bind(this),
                     error: this.onServerError.bind(this)
@@ -386,14 +393,6 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
     public getSSIDFormArray() {
         return this.form.controls['ssids'] as FormArray;
-    }
-
-    public get ospRelationshipTypeRef(): IHrefValue<IRelationshipType> {
-        return this.relationship.relationshipType;
-    }
-
-    public set ospRelationshipTypeRef(relationshipTypeRef: IHrefValue<IRelationshipType>) {
-        this.relationship.relationshipType = relationshipTypeRef;
     }
 
 }
