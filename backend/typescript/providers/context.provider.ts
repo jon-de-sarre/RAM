@@ -77,7 +77,7 @@ class Context {
     }
 
     public static getAuthenticatedAUSkey(res: Response): string {
-        return Context.get(Headers.AUSkey);
+        return Context.get(Headers.AuthAUSkey);
     }
 
     public static getAuthenticatedClientAuth(res: Response): string {
