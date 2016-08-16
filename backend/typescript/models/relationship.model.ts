@@ -316,6 +316,7 @@ RelationshipSchema.method('toHrefValue', async function (includeValue: boolean) 
     );
 });
 
+// todo need to use security context to drive the links
 RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
     const pendingWithInvitationCode = invitationCode && this.statusEnum() === RelationshipStatus.Pending;
     return new DTO(

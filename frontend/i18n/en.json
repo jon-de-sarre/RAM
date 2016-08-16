@@ -32,5 +32,15 @@
   "addRelationship.authMgmt.header" : "Set authorisation management",
   "addRelationship.declaration.header" : "Declaration",
   "addRelationship.declaration.agree" : "I agree to this declaration",
-  "addRelationship.authorise" : "Authorise"
+  "addRelationship.authorise" : "Authorise",
+  "_comment - person's name comes before this" : "",
+  "addRelationship.complete.printOption1" : "must accept this authorisation before it is active. Instructions are included in a document for you to",
+  "_comment - next line is a link" : "",
+  "addRelationship.complete.printOption2" : "open a print friendly version",
+  "addRelationship.complete.printOption3" : "and provide to",
+  "_comment - person's name after this" : "",
+
+  "acceptRelationship.enterAuthCode" : "Please enter the authorisation code for the relationship you wish to establish.",
+
+  "dummy" : "to avoid having to keep adding a comma when adding on to the end of this file :)"
 }
