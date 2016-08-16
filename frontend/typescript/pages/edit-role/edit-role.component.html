@@ -37,7 +37,7 @@
             <div class="form-group">
                 <h4>Access to government agencies services</h4>
 
-                <table class="table table-hover">
+                <table class="table table-hover checkbox-table">
                     <tbody>
                     <tr *ngFor="let attributeUsage of allAgencyServiceRoleAttributeNameUsages" (click)="hasAccessToAgencyService(attributeUsage.attributeNameDef.value.code) && onAgencyServiceChange(attributeUsage.attributeNameDef.value.code)">
                         <td [class.clickable]="hasAccessToAgencyService(attributeUsage.attributeNameDef.value.code)">
@@ -72,7 +72,7 @@
             </div>
             <div class="form-group">
                 <h4>Assign credentials for software provider services</h4>
-                <table class="table table-hover">
+                <table class="table table-hover checkbox-table">
                     <thead>
                     <tr>
                         <th>Credential</th>
