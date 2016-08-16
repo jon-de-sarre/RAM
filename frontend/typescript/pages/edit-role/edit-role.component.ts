@@ -138,13 +138,13 @@ export class EditRoleComponent extends AbstractPageComponent {
         // role in focus
         if (this.roleHref) {
             this.services.rest.findRoleByHref(this.roleHref).subscribe({
-                next: this.onRoleLoaded.bind(this),
+                next: this.onFindRole.bind(this),
                 error: this.onServerError.bind(this)
             });
         }
     }
 
-    private onRoleLoaded(role: IRole) {
+    private onFindRole(role: IRole) {
 
         this.role = role;
 
