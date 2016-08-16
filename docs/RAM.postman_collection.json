@@ -1445,7 +1445,33 @@
 		{
 			"name": "Transact",
 			"description": "",
-			"item": []
+			"item": [
+				{
+					"name": "Transact (Jen's Catering Pty Ltd / Ed Tech OSP Pty Ltd)",
+					"request": {
+						"url": "{{host}}/api/v1/transact/allowed",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clientABN\": \"00000000001\",\n    \"ssid\": \"mySSID-1234\",\n    \"agencyService\": \"EDUCATION\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				}
+			]
 		}
 	]
 }
