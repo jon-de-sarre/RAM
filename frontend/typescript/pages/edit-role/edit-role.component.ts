@@ -59,6 +59,8 @@ export class EditRoleComponent extends AbstractPageComponent {
     public assignedAgencyAttributes: IRoleAttribute[]; // agency services assigned to the role
     public form: FormGroup;
 
+    public hasServiceBeenRemoved: boolean = false;
+
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
     constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
@@ -199,23 +201,45 @@ export class EditRoleComponent extends AbstractPageComponent {
                         }
                     }
                 }
-            } else {
-                // standard users can see program roles assigned
-
             }
-
-
-
 
             if (roleTypeRef) {
                 this.allAgencyServiceRoleAttributeNameUsages = this.services.model.getAllAgencyServiceRoleAttributeNameUsages(roleTypeRef, programs);
                 this.accessibleAgencyServiceRoleAttributeNameUsages = this.services.model.getAccessibleAgencyServiceRoleAttributeNameUsages(roleTypeRef, programs);
+
+                // if a role of this type already exists, then edit that otherwise we are adding a new role
+                let filterParams = new FilterParams().add('roleType', roleTypeRef.value.code);
+                const rolesHref = this.services.model.getLinkHrefByType(RAMConstants.Link.ROLE_LIST, this.identity);
+
+                this.services.rest.searchRolesByHref(rolesHref, filterParams.encode(), 1)
+                    .subscribe((searchResult) => {
+                        if (searchResult.totalCount === 1) {
+                            this.role = searchResult.list[0].value;
+                            this.role.roleType = roleTypeRef;
+                        }
+                        this._isLoading = false;
+                    }, (err) => {
+                        this.addGlobalErrorMessages(err);
+                        this._isLoading = false;
+                    });
+            } else {
+                this.role = null;
             }
+
         }
     }
 
     public onAgencyServiceChange(attributeCode: string) {
         this.toggleArrayValue(this.form.controls['agencyServices'].value, attributeCode);
+        let hasServiceBeenRemoved = false;
+
+        for (let attr of this.assignedAgencyAttributes) {
+            if(this.form.controls['agencyServices'].value.indexOf(attr.attributeName.value.code) === -1) {
+                hasServiceBeenRemoved = true;
+                break;
+            }
+        }
+        this.hasServiceBeenRemoved = hasServiceBeenRemoved;
     }
 
     public onAusKeyChange(auskey: string) {
