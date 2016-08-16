@@ -658,3 +658,29 @@ export class RoleAttributeName extends CodeDecode implements IRoleAttributeName 
         super(code, shortDecodeText, longDecodeText, startTimestamp, endTimestamp);
     }
 }
+
+// transact ...........................................................................................................
+
+export interface ITransactRequest {
+    clientABN: string;
+    ssid: string;
+    agencyService: string;
+}
+
+export class TransactRequest implements ITransactRequest {
+    constructor(public clientABN: string,
+                public ssid: string,
+                public agencyService: string) {
+    }
+}
+
+export interface ITransactResponse {
+    request: ITransactRequest;
+    allowed: boolean;
+}
+
+export class TransactResponse implements ITransactResponse {
+    constructor(public request: ITransactRequest,
+                public allowed: boolean) {
+    }
+}
