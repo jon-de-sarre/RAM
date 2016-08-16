@@ -127,9 +127,18 @@ export class NotificationsComponent extends AbstractPageComponent {
         this.services.route.goToEditNotificationPage(this.identityHref, relationshipRef.href);
     }
 
-    // todo what is the logic here?
     public isAddNotificationEnabled() {
-        return true;
+        if (this.identity) {
+            let href = this.services.model.getLinkHrefByType(RAMConstants.Link.RELATIONSHIP_CREATE, this.identity);
+            return href !== null && href !== undefined;
+        }
+        return false;
+    }
+
+    public isEditNotificationEnabled(relationshipRef: IHrefValue<IRelationship>) {
+        let href = this.services.model.getLinkHrefByType(RAMConstants.Link.MODIFY, relationshipRef.value);
+        console.log('modify href = ', href);
+        return href !== null && href !== undefined;
     }
 
 }
