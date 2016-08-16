@@ -58,7 +58,7 @@ export class Url {
 
     // identity .......................................................................................................
 
-    public static async abnIdValue(abn: string): Promise<string> {
+    public static abnIdValue(abn: string): string {
         return `PUBLIC_IDENTIFIER:ABN:${abn}`;
     }
 

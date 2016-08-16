@@ -153,6 +153,7 @@ export interface IRoleModel extends mongoose.Model<IRole> {
     searchByIdentity:(identityIdValue: string,
                       roleType: string,
                       status: string,
+                      inDateRange: boolean,
                       page: number,
                       pageSize: number) => Promise<SearchResult<IRole>>;
     findActiveByIdentityInDateRange: (identityIdValue: string,
@@ -273,6 +274,7 @@ RoleSchema.static('findByRoleTypeAndParty', (roleType: IRoleType, party: IParty)
 RoleSchema.static('searchByIdentity', (identityIdValue: string,
                                        roleType: string,
                                        status: string,
+                                       inDateRange: boolean,
                                        page: number,
                                        reqPageSize: number) => {
     return new Promise<SearchResult<IRole>>(async (resolve, reject) => {
@@ -288,6 +290,11 @@ RoleSchema.static('searchByIdentity', (identityIdValue: string,
             }
             if (status) {
                 mainAnd.push({'status': status});
+            }
+            if (inDateRange) {
+                const date = new Date();
+                mainAnd.push({'startTimestamp': {$lte: date}});
+                mainAnd.push({'$or': [{endTimestamp: null}, {endTimestamp: {$gte: date}}]});
             }
             const where: {[key: string]: Object} = {};
             where['$and'] = mainAnd;

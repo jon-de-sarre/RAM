@@ -45,6 +45,10 @@ export const RAMConstants = {
 
     RoleStatusCode: {
         ACTIVE: 'ACTIVE'
+    },
+
+    RoleTypeCode: {
+        OSP: 'OSP'
     }
 
 };

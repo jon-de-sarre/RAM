@@ -137,7 +137,7 @@ describe('RAM Role', () => {
     it('searches successfully', async (done) => {
         try {
 
-            const roles = await RoleModel.searchByIdentity(partyIdentity1.idValue, roleTypeOsp.code, RoleStatus.Active.code,  1, 10);
+            const roles = await RoleModel.searchByIdentity(partyIdentity1.idValue, roleTypeOsp.code, RoleStatus.Active.code, false, 1, 10);
             expect(roles.totalCount).toBeGreaterThan(0);
             expect(roles.list.length).toBeGreaterThan(0);
 
