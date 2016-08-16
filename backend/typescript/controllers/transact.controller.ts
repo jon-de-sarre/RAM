@@ -36,8 +36,12 @@ export class TransactController {
 
         validateReqSchema(req, schema)
             .then((req: Request) => {
-                const allowed = true; // todo compute allowed flag
-                return new TransactResponse(request, allowed);
+                if (!auskey || !abn) {
+                    throw new Error('401');
+                } else {
+                    const allowed = true; // todo compute allowed flag
+                    return new TransactResponse(request, allowed);
+                }
             })
             //.then((model) => model ? model.toDTO() : null)
             .then(sendResource(res))
