@@ -32,11 +32,14 @@ export class AgencyUserController {
     public assignRoutes = (router: Router) => {
 
         router.get('/v1/agencyUser/me',
+            context.begin,
             context.isAuthenticatedAsAgencyUser,
             this.findMe);
 
         if (conf.devMode) {
-            router.get('/v1/agencyUsers', this.search);
+            router.get('/v1/agencyUsers',
+                context.begin,
+                this.search);
         }
 
         return router;

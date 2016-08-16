@@ -91,10 +91,12 @@ export class AuskeyController {
     public assignRoutes = (router: Router) => {
 
         router.get('/v1/auskey/:id',
+            context.begin,
             context.isAuthenticatedAsAgencyUser,
             this.findAusKey);
 
         router.get('/v1/auskeys/identity/:idValue',
+            context.begin,
             context.isAuthenticated,
             this.searchAusKeys);
 
