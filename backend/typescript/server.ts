@@ -48,7 +48,7 @@ import {context} from './providers/context.provider';
 
 // connect to the database ............................................................................................
 
-mongoose.Promise = global.Promise;
+mongoose.Promise = Promise as any;
 
 mongoose.connect(conf.mongoURL, {}, () => {
     logger.info(`Connected to db: ${conf.mongoURL}\n`);
