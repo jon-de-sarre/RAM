@@ -4,7 +4,7 @@ import {Url} from './url';
 import {IParty, PartyModel} from './party.model';
 import {IRoleType, RoleTypeModel} from './roleType.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
-import {RoleAttributeNameModel} from './roleAttributeName.model';
+import {RoleAttributeNameModel, RoleAttributeNameClassifier} from './roleAttributeName.model';
 import {
     HrefValue,
     Role as DTO,
@@ -137,6 +137,7 @@ export interface IRole extends IRAMObject {
     _roleTypeCode:string;
     updateOrCreateAttribute(roleAttributeNameCode: string, value: string):Promise<IRoleAttribute>;
     saveAttributes():Promise<IRole>;
+    getAgencyServiceAttributesInDateRange(date: Date):IRoleAttribute[];
     toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
     toDTO():Promise<DTO>;
 }
@@ -193,6 +194,20 @@ RoleSchema.method('updateOrCreateAttribute', async function(roleAttributeNameCod
 
 RoleSchema.method('saveAttributes', async function() {
     return this.save();
+});
+
+RoleSchema.method('getAgencyServiceAttributesInDateRange', async function(date: Date) {
+    date.setHours(0, 0, 0, 0);
+    let agencyServiceAttributes: IRoleAttribute[] = [];
+    this.attributes.forEach((attribute: IRoleAttribute) => {
+        const attributeName = attribute.attributeName;
+        if (attributeName.classifier === RoleAttributeNameClassifier.AgencyService.code) {
+            if (attributeName.startDate <= date && (attributeName.endDate === null || attributeName.endDate === undefined || attributeName.endDate >= date)) {
+                agencyServiceAttributes.push(attribute);
+            }
+        }
+    });
+    return agencyServiceAttributes;
 });
 
 // todo what is the href we use here?
