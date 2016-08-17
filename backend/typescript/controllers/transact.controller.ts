@@ -53,10 +53,11 @@ export class TransactController {
                     throw new Error('401:Organisation is not an Online Service Provider');
                 }
                 const ospRole = opsRoles.list[0];
-                const attributes = await ospRole.getAgencyServiceAttributesInDateRange(new Date());
+
+                // ensure agency service matches
                 let agencyServiceMatched = false;
-                for (let i = 0; i < attributes.length; i = i + 1) {
-                    const attribute = attributes[i];
+                const attributes = await ospRole.getAgencyServiceAttributesInDateRange(new Date());
+                for (let attribute of attributes) {
                     if (attribute.attributeName.code === request.agencyService) {
                         agencyServiceMatched = true;
                     }
@@ -65,13 +66,30 @@ export class TransactController {
                     throw new Error('401:Agency Service does not match');
                 }
 
-                // ensure there is a selected device AUSkey for the role
+                // ensure device AUSkey matches
+                let auskeyMatched = false;
+                for (let attribute of ospRole.attributes) {
+                    if (attribute.attributeName.code === 'DEVICE_AUSKEYS') {
+                        for (let value of attribute.value) {
+                            if (value === auskey) {
+                                auskeyMatched = true;
+                                break;
+                            }
+                        }
+                    }
+                }
+                if (!auskeyMatched) {
+                    throw new Error('401:AUSkey does not match');
+                }
+
                 // lookup the client business via the ABN
                 // ensure there is a valid OSP relationship between the two parties
                 // ensure the relationship has enabled the requested agency service
                 // ensure the relationship has the requested SSID
+
                 const allowed = true; // todo compute allowed flag
                 return new TransactResponse(request, allowed);
+
             })
 
             //.then((model) => model ? model.toDTO() : null)
