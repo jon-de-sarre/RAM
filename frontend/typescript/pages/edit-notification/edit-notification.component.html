@@ -79,14 +79,25 @@
                 <hr/>
                 <div class="col-md-12">
                     <h4>Set the agencies to notify:</h4>
-                    <div class="checkbox" *ngFor="let attributeName of ospServices">
-                        <label>
-                            <input type="checkbox"
-                                   [checked]="isAgencyServiceSelected(attributeName.code)"
-                                   (change)="onAgencyServiceChange(attributeName.code)">
-                            {{attributeName.shortDecodeText}}
-                        </label>
-                    </div>
+                    <table class="table table-hover checkbox-table">
+                        <tbody>
+                        <tr *ngFor="let attributeName of ospServices"
+                            (click)="onAgencyServiceChange(attributeName.code)"
+                            class="clickable">
+                            <td>
+                                <div>
+                                    {{attributeName.shortDecodeText}}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="checkbox">
+                                    <input type="checkbox"
+                                           [checked]="isAgencyServiceSelected(attributeName.code)">
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </div>
         </div>

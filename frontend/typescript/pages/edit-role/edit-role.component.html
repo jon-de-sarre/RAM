@@ -100,7 +100,7 @@
                     </tr>
                     </thead>
                     <tbody>
-                    <tr *ngFor="let auskeyRef of deviceAusKeyRefs?.list" (click)="onAusKeyChange(auskeyRef.value.id)">
+                    <tr *ngFor="let auskeyRef of deviceAusKeyRefs?.list" (click)="onAusKeyChange(auskeyRef.value.id)" class="clickable">
                         <td>
                             {{auskeyRef.value.id}}
                         </td>
