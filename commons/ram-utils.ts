@@ -39,8 +39,9 @@ export class Utils {
         }
 
         // Check the range of the day
-        if (day > 0 && day <= monthLength[month - 1]) {
-            return new Date(year, month, day);
+        const jsMonth = month - 1;
+        if (day > 0 && day <= monthLength[jsMonth]) {
+            return new Date(year, jsMonth, day);
         }
         return null;
     };
