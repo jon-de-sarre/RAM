@@ -111,8 +111,8 @@ RoleSchema.pre('validate', function (next: () => void) {
         if (attribute.attributeName.classifier === 'AGENCY_SERVICE' &&
             attribute.value &&
             attribute.value.length > 0 &&
-            attribute.value[0] === 'true'
-            && !attribute.attributeName.isEndDated()) {
+            attribute.value[0] === 'true' &&
+            attribute.attributeName.isInDateRange()) {
             hasAgencyServiceWhichIsNotEndDated = true;
             break;
         }
@@ -120,7 +120,6 @@ RoleSchema.pre('validate', function (next: () => void) {
     if (!hasAgencyServiceWhichIsNotEndDated) {
         this.status = RoleStatus.Suspended.code;
     }
-
     next();
 });
 
