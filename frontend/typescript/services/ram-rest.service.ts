@@ -313,6 +313,22 @@ export class RAMRestService {
             .map(this.extractData);
     }
 
+    public insertRoleByHref(href: string, role: IRole): Observable<IRole> {
+        return this.http
+            .post(new Href(href).toString(), JSON.stringify(role), {
+                headers: this.headersForJson()
+            })
+            .map(this.extractData);
+    }
+
+    public updateRoleByHref(href: string, role: IRole): Observable<IRole> {
+        return this.http
+            .put(new Href(href).toString(), JSON.stringify(role), {
+                headers: this.headersForJson()
+            })
+            .map(this.extractData);
+    }
+
     // role status ....................................................................................................
 
     public listRoleStatuses(): Observable<IHrefValue<IRoleStatus>[]> {

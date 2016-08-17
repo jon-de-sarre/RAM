@@ -21,6 +21,7 @@ import {
     Role as RoleDTO,
     IRelationship as IRelationshipDTO
 } from '../../../commons/RamAPI';
+import {context} from '../providers/context.provider';
 
 /* tslint:disable:no-unused-variable */
 const _RoleAttributeModel = RoleAttributeModel;
@@ -77,7 +78,7 @@ export interface IParty extends IRAMObject {
     addRelationship(dto: IInvitationCodeRelationshipAddDTO):Promise<IRelationship>;
     addRelationship2(relationshipDTO: IRelationshipDTO):Promise<IRelationship>;
     addOrModifyRole(role: IRole, agencyUser: IAgencyUser):Promise<IRole>;
-    modifyRole(role: IRole, agencyUser: IAgencyUser):Promise<IRole>;
+    modifyRole(role: IRole):Promise<IRole>;
 }
 
 /* tslint:disable:no-empty-interfaces */
@@ -231,7 +232,7 @@ PartySchema.method('addOrModifyRole', async function (roleDTO: RoleDTO, agencyUs
 
     const roleAttributes: IRoleAttribute[] = [];
 
-    let processAttribute = async (code: string, value: string, roleAttributes: IRoleAttribute[], role: IRole) => {
+    let processAttribute = async (code: string, value: string[], roleAttributes: IRoleAttribute[], role: IRole) => {
         const roleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(code);
         if (roleAttributeName) {
             const filteredRoleAttributes = role.attributes.filter((item) => {
@@ -252,9 +253,9 @@ PartySchema.method('addOrModifyRole', async function (roleDTO: RoleDTO, agencyUs
         }
     };
 
-    await processAttribute('CREATOR_ID', agencyUser.id, roleAttributes, role);
-    await processAttribute('CREATOR_NAME', agencyUser.displayName, roleAttributes, role);
-    await processAttribute('CREATOR_AGENCY', agencyUser.agency, roleAttributes, role);
+    await processAttribute('CREATOR_ID', [agencyUser.id], roleAttributes, role);
+    await processAttribute('CREATOR_NAME', [agencyUser.displayName], roleAttributes, role);
+    await processAttribute('CREATOR_AGENCY', [agencyUser.agency], roleAttributes, role);
 
     for (let roleAttribute of roleDTO.attributes) {
         const roleAttributeValue = roleAttribute.value;
@@ -286,7 +287,8 @@ PartySchema.method('addOrModifyRole', async function (roleDTO: RoleDTO, agencyUs
 
 });
 
-PartySchema.method('modifyRole', async function (roleDTO: RoleDTO, agencyUser: IAgencyUser) {
+PartySchema.method('modifyRole', async function (roleDTO: RoleDTO) {
+    const principal = context.getAuthenticatedPrincipal();
 
     const now = new Date();
 
@@ -301,7 +303,7 @@ PartySchema.method('modifyRole', async function (roleDTO: RoleDTO, agencyUser: I
 
     const roleAttributes = role.attributes;
 
-    let updateOrCreateRoleAttributeIfExists = async (code: string, value: string, roleAttributes: IRoleAttribute[], role: IRole) => {
+    let updateOrCreateRoleAttributeIfExists = async (code: string, value: string[], roleAttributes: IRoleAttribute[], role: IRole) => {
         const roleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(code);
         if (roleAttributeName) {
             const filteredRoleAttributes = role.attributes.filter((item) => {
@@ -315,17 +317,17 @@ PartySchema.method('modifyRole', async function (roleDTO: RoleDTO, agencyUser: I
                 }));
             } else {
                 const filteredRoleAttribute = filteredRoleAttributes[0];
-                filteredRoleAttribute.value = [value];
+                filteredRoleAttribute.value = value;
                 await filteredRoleAttribute.save();
                 roleAttributes.push(filteredRoleAttribute);
             }
         }
     };
 
-    if (agencyUser) {
-        await updateOrCreateRoleAttributeIfExists('CREATOR_ID', agencyUser.id, roleAttributes, role);
-        await updateOrCreateRoleAttributeIfExists('CREATOR_NAME', agencyUser.displayName, roleAttributes, role);
-        await updateOrCreateRoleAttributeIfExists('CREATOR_AGENCY', agencyUser.agency, roleAttributes, role);
+    if (principal.agencyUserInd) {
+        await updateOrCreateRoleAttributeIfExists('CREATOR_ID', [principal.agencyUser.id], roleAttributes, role);
+        await updateOrCreateRoleAttributeIfExists('CREATOR_NAME', [principal.agencyUser.displayName], roleAttributes, role);
+        await updateOrCreateRoleAttributeIfExists('CREATOR_AGENCY', [principal.agencyUser.agency], roleAttributes, role);
     }
 
     for (let roleAttribute of roleDTO.attributes) {
@@ -334,8 +336,8 @@ PartySchema.method('modifyRole', async function (roleDTO: RoleDTO, agencyUser: I
         const roleAttributeNameCategory = roleAttribute.attributeName.value.category;
 
         let shouldSave = false;
-        if (agencyUser && roleAttribute.attributeName.value.classifier === 'AGENCY_SERVICE') {
-            for (let programRole of agencyUser.programRoles) {
+        if (principal.agencyUser && roleAttribute.attributeName.value.classifier === 'AGENCY_SERVICE') {
+            for (let programRole of principal.agencyUser.programRoles) {
                 if (programRole.role === 'ROLE_ADMIN' && programRole.program === roleAttributeNameCategory) {
                     shouldSave = true;
                     break;
