@@ -54,11 +54,11 @@ export class TransactController {
                 }
 
                 // ensure OSP role
-                const opsRoles = await this.roleModel.searchByIdentity(ospIdentityIdValue, 'OSP', RoleStatus.Active.code, true, 1, 10);
-                if (opsRoles.list.length === 0) {
+                const ospRoles = await this.roleModel.searchByIdentity(ospIdentityIdValue, 'OSP', RoleStatus.Active.code, true, 1, 10);
+                if (ospRoles.list.length === 0) {
                     throw new Error('401:Organisation is not an Online Service Provider');
                 }
-                const ospRole = opsRoles.list[0];
+                const ospRole = ospRoles.list[0];
 
                 // ensure client ABN
                 const clientIdentity = await this.identityModel.findByIdValue(clientIdentityIdValue);
@@ -97,11 +97,11 @@ export class TransactController {
                 }
 
                 // ensure there is a valid OSP relationship between the two parties
-                const acceptedOSPRelationshipSearchResult = await this.relationshipModel.searchByIdentitiesInDateRange(clientIdentityIdValue, ospIdentityIdValue, 'OSP', RelationshipStatus.Accepted.code, new Date(), 1, 10);
-                if (acceptedOSPRelationshipSearchResult.list.length === 0) {
+                const acceptedOspRelationshipSearchResult = await this.relationshipModel.searchByIdentitiesInDateRange(clientIdentityIdValue, ospIdentityIdValue, 'OSP', RelationshipStatus.Accepted.code, new Date(), 1, 10);
+                if (acceptedOspRelationshipSearchResult.list.length === 0) {
                     throw new Error('401:Relationship not found');
                 }
-                const acceptedOspRelationship = acceptedOSPRelationshipSearchResult.list[0];
+                const acceptedOspRelationship = acceptedOspRelationshipSearchResult.list[0];
 
                 // ensure the relationship has enabled the requested agency service
                 let relationshipAgencyServiceMatched = false;
