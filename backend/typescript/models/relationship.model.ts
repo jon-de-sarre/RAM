@@ -537,6 +537,12 @@ RelationshipSchema.method('modify', async function (dto: DTO) {
 
     this.startTimestamp = dto.startTimestamp;
     this.endTimestamp = dto.endTimestamp;
+
+    this.startTimestamp.setHours(0, 0, 0);
+    if (this.endTimestamp) {
+        this.endTimestamp.setHours(0, 0, 0);
+    }
+
     this.save();
 
     return this;
