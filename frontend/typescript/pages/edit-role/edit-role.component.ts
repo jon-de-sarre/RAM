@@ -155,7 +155,7 @@ export class EditRoleComponent extends AbstractPageComponent {
             this.services.rest.findRoleTypeByHref(role.roleType.href).subscribe({
                 next: (roleType) => {
                     (this.form.controls['roleType'] as FormControl).updateValue(roleType.code);
-                    this.role.roleType.value = roleType;
+                    // this.role.roleType.value = roleType;
                     this.onRoleTypeChange(roleType.code);
                 },
                 error: this.onServerError.bind(this)
@@ -177,6 +177,8 @@ export class EditRoleComponent extends AbstractPageComponent {
         if (this.me) {
             this.form.controls['agencyServices'].updateValueAndValidity([]);
             let roleTypeRef: IHrefValue<IRoleType> = this.services.model.getRoleTypeRef(this.roleTypeRefs, newRoleTypeCode);
+
+            this.role.roleType = roleTypeRef;
             const programs: string[] = [];
 
             if(this.me.agencyUserInd) {
@@ -248,7 +250,7 @@ export class EditRoleComponent extends AbstractPageComponent {
             null,
             null,
             []
-        )
+        );
     }
 
     private setUpForm() {
@@ -336,7 +338,6 @@ export class EditRoleComponent extends AbstractPageComponent {
         const preferredName = this.form.controls['preferredName'].value;
         const deviceAusKeys = this.form.controls['deviceAusKeys'].value;
 
-        console.log("deviceAusKeys = " , deviceAusKeys );
         if (!roleTypeCode || roleTypeCode === '-') {
             validationOk = false;
             this.addGlobalMessage('Please select a role type.');
@@ -367,7 +368,7 @@ export class EditRoleComponent extends AbstractPageComponent {
                 // insert
 
                 let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.ROLE_CREATE, this.identity);
-                this.services.rest.insertRoleByHref(saveHref+'/..', this.role).subscribe({
+                this.services.rest.insertRoleByHref(saveHref, this.role).subscribe({
                     next: this.onSave.bind(this),
                     error: this.onServerError.bind(this)
                 });
@@ -377,7 +378,7 @@ export class EditRoleComponent extends AbstractPageComponent {
                 // update
 
                 let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.MODIFY, this.role);
-                this.services.rest.updateRoleByHref(saveHref+'/..', this.role).subscribe({
+                this.services.rest.updateRoleByHref(saveHref, this.role).subscribe({
                     next: this.onSave.bind(this),
                     error: this.onServerError.bind(this)
                 });

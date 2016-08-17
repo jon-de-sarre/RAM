@@ -27,12 +27,12 @@
             <h4>Role Type</h4>
         </div>
         <div class="panel-body">
-            {{ role.roleType?.value?.shortDecodeText }}
+            {{ role?.roleType?.value?.shortDecodeText }}
         </div>
     </div>
 
     <!-- AGENCIES ALLOCATED TO THE ROLE -->
-    <div class="panel panel-default" *ngIf="form.controls['roleType'].value !== '-'">
+    <div class="panel panel-default" *ngIf="role?.roleType">
         <div class="panel-heading">
             <h4>Online software provider agencies services</h4>
         </div>
@@ -78,7 +78,7 @@
         </div>
     </div>
 
-    <div class="panel panel-default" *ngIf="form.controls['roleType'].value !== '-'">
+    <div class="panel panel-default" *ngIf="role?.roleType">
         <div class="panel-heading">
             <h4>Online software provider preferences</h4>
         </div>

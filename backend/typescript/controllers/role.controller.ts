@@ -183,7 +183,7 @@ export class RoleController {
             context.isAuthenticatedAsAgencyUser,
             this.create);
 
-        router.put('/v1/role',
+        router.put('/v1/role/:identifier',
             context.begin,
             context.isAuthenticated,
             this.modify);
