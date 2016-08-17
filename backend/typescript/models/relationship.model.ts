@@ -4,8 +4,9 @@ import {Url} from './url';
 import {DOB_SHARED_SECRET_TYPE_CODE} from './sharedSecretType.model';
 import {IParty, PartyModel} from './party.model';
 import {IName, NameModel} from './name.model';
-import {IRelationshipType} from './relationshipType.model';
+import {IRelationshipType, RelationshipTypeModel} from './relationshipType.model';
 import {IRelationshipAttribute, RelationshipAttributeModel} from './relationshipAttribute.model';
+import {RelationshipAttributeNameModel} from './relationshipAttributeName.model';
 import {IdentityModel, IIdentity, IdentityType, IdentityInvitationCodeStatus} from './identity.model';
 import {
     HrefValue,
@@ -27,6 +28,12 @@ const _NameModel = NameModel;
 
 /* tslint:disable:no-unused-variable */
 const _RelationshipAttributeModel = RelationshipAttributeModel;
+
+/* tslint:disable:no-unused-variable */
+const _RelationshipAttributeNameModel = RelationshipAttributeNameModel;
+
+/* tslint:disable:no-unused-variable */
+const _RelationshipTypeModel = RelationshipTypeModel;
 
 const MAX_PAGE_SIZE = 10;
 
@@ -270,6 +277,7 @@ export interface IRelationship extends IRAMObject {
     acceptPendingInvitation(acceptingDelegateIdentity: IIdentity):Promise<IRelationship>;
     rejectPendingInvitation(rejectingDelegateIdentity: IIdentity):Promise<IRelationship>;
     notifyDelegate(email: string, notifyingIdentity: IIdentity):Promise<IRelationship>;
+    modify(dto: DTO): Promise<IRelationship>;
 }
 
 export interface IRelationshipModel extends mongoose.Model<IRelationship> {
@@ -476,6 +484,54 @@ RelationshipSchema.method('notifyDelegate', async function (email: string, notif
 
     return Promise.resolve(this);
 
+});
+
+RelationshipSchema.method('modify', async function (dto: DTO) {
+    const relationshipTypeCode = decodeURIComponent(Url.lastPathElement(dto.relationshipType.href));
+    Assert.assertNotNull(relationshipTypeCode, 'Relationship type code was empty', `Expected relationshipType href last element to be the code: ${dto.relationshipType.href}`);
+
+    const relationshipType = await RelationshipTypeModel.findByCodeInDateRange(relationshipTypeCode, new Date());
+    Assert.assertNotNull(relationshipType, 'Relationship type not found', `Expected relationship type with code with valid date: ${relationshipTypeCode}`);
+
+    const delegateIdValue = decodeURIComponent(Url.lastPathElement(dto.delegate.href));
+    Assert.assertNotNull(delegateIdValue, 'Delegate identity id value was empty', `Expected delegate href last element to have an id value: ${dto.delegate.href}`);
+
+    const delegateIdentity = await IdentityModel.findByIdValue(delegateIdValue);
+    Assert.assertNotNull(delegateIdentity, 'Delegate identity not found', `Expected to find delegate by id value: ${delegateIdValue}`);
+
+    const subjectIdValue = decodeURIComponent(Url.lastPathElement(dto.subject.href));
+    Assert.assertNotNull(subjectIdValue, 'Subject identity id value was empty', `Expected subject href last element to have an id value: ${dto.subject.href}`);
+
+    const subjectIdentity = await IdentityModel.findByIdValue(subjectIdValue);
+    Assert.assertNotNull(subjectIdentity, 'Subject identity not found', `Expected to find subject by id: ${this.id}`);
+
+    // allow SSID to be modified - future story to change the below to be configuration based and not hard coded
+    for (let attr of dto.attributes) {
+        Assert.assertNotNull(attr.attributeName, 'Attribute did not have an attribute name');
+        Assert.assertNotNull(attr.attributeName.href, 'Attribute did not have an attribute name href');
+
+        const attributeNameCode = decodeURIComponent(Url.lastPathElement(attr.attributeName.href));
+        Assert.assertNotNull(attributeNameCode, 'Attribute name code not found', `Unexpected attribute name href last element: ${attr.attributeName.href}`);
+
+        const attributeName = await RelationshipAttributeNameModel.findByCodeIgnoringDateRange(attributeNameCode);
+        Assert.assertNotNull(attributeName, 'Attribute name not found', `Expected to find attribuet name with code: ${attributeNameCode}`);
+
+        if (attributeName.code === 'SSID') {
+            for (let existingAttribute of this.attributes) {
+                if (existingAttribute.attributeName.code === attributeName.code) {
+                    existingAttribute.value = attr.value;
+                    await existingAttribute.save();
+                }
+            }
+            break;
+        }
+    }
+
+    // todo set dates
+
+    this.save();
+
+    return this;
 });
 
 // RelationshipSchema.method('identitiesByTypeAndStatus', async function (identityType:IdentityType, status:IdentityInvitationCodeStatus) {
