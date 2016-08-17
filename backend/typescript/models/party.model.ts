@@ -10,7 +10,7 @@ import {RoleTypeModel} from './roleType.model';
 import {IRole, RoleModel, RoleStatus} from './role.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
 import {IAgencyUser} from './agencyUser.model';
-import {RoleAttributeNameModel} from './roleAttributeName.model';
+import {RoleAttributeNameModel, IRoleAttributeName} from './roleAttributeName.model';
 import {IPrincipal} from './principal.model';
 import {
     HrefValue,
@@ -22,6 +22,7 @@ import {
     IRelationship as IRelationshipDTO
 } from '../../../commons/RamAPI';
 import {context} from '../providers/context.provider';
+import {logger} from "../logger";
 
 /* tslint:disable:no-unused-variable */
 const _RoleAttributeModel = RoleAttributeModel;
@@ -288,6 +289,7 @@ PartySchema.method('addOrModifyRole', async function (roleDTO: RoleDTO, agencyUs
 });
 
 PartySchema.method('modifyRole', async function (roleDTO: RoleDTO) {
+    logger.info('about to modify role');
     const principal = context.getAuthenticatedPrincipal();
 
     const now = new Date();
@@ -303,31 +305,26 @@ PartySchema.method('modifyRole', async function (roleDTO: RoleDTO) {
 
     const roleAttributes = role.attributes;
 
-    let updateOrCreateRoleAttributeIfExists = async (code: string, value: string[], roleAttributes: IRoleAttribute[], role: IRole) => {
-        const roleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(code);
-        if (roleAttributeName) {
-            const filteredRoleAttributes = role.attributes.filter((item) => {
-                return item.attributeName.code === code;
-            });
-            const roleAttributeDoesNotExist = filteredRoleAttributes.length === 0;
-            if (roleAttributeDoesNotExist) {
-                roleAttributes.push(await RoleAttributeModel.create({
-                    value: value,
-                    attributeName: roleAttributeName
-                }));
-            } else {
-                const filteredRoleAttribute = filteredRoleAttributes[0];
-                filteredRoleAttribute.value = value;
-                await filteredRoleAttribute.save();
-                roleAttributes.push(filteredRoleAttribute);
-            }
+    // todo move this into the role object
+    let updateOrCreateRoleAttributeIfExists = async(roleAttributeName: IRoleAttributeName, value: string[], role: IRole) => {
+        const existingAttribute = await role.findAttribute(roleAttributeName.code);
+        if (!existingAttribute) {
+            logger.debug(`Adding new RoleAttribute ${roleAttributeName.code}`);
+            roleAttributes.push(await RoleAttributeModel.create({
+                value: value,
+                attributeName: roleAttributeName
+            }));
+        } else {
+            logger.debug(`Updating existing RoleAttribute ${roleAttributeName.code}`);
+            existingAttribute.value = value;
+            await existingAttribute.save();
         }
     };
 
     if (principal.agencyUserInd) {
-        await updateOrCreateRoleAttributeIfExists('CREATOR_ID', [principal.agencyUser.id], roleAttributes, role);
-        await updateOrCreateRoleAttributeIfExists('CREATOR_NAME', [principal.agencyUser.displayName], roleAttributes, role);
-        await updateOrCreateRoleAttributeIfExists('CREATOR_AGENCY', [principal.agencyUser.agency], roleAttributes, role);
+        await updateOrCreateRoleAttributeIfExists(await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_ID'), [principal.agencyUser.id], role);
+        await updateOrCreateRoleAttributeIfExists(await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_NAME'), [principal.agencyUser.displayName], role);
+        await updateOrCreateRoleAttributeIfExists(await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_AGENCY'), [principal.agencyUser.agency], role);
     }
 
     for (let roleAttribute of roleDTO.attributes) {
@@ -335,50 +332,54 @@ PartySchema.method('modifyRole', async function (roleDTO: RoleDTO) {
         const roleAttributeNameCode = roleAttribute.attributeName.value.code;
         const roleAttributeNameCategory = roleAttribute.attributeName.value.category;
 
-        let shouldSave = false;
+        const existingAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(roleAttributeNameCode);
 
-        // add agency services that have been specified
-        if (principal.agencyUser && roleAttribute.attributeName.value.classifier === 'AGENCY_SERVICE') {
-            for (let programRole of principal.agencyUser.programRoles) {
-                if (programRole.role === 'ROLE_ADMIN' && programRole.program === roleAttributeNameCategory) {
-                    shouldSave = true;
-                    break;
+        if(existingAttributeName) {
+            logger.debug(`Processing ${existingAttributeName.code}`);
+            // add/update agency services that have been specified applying filtering by agency user role
+            if (principal.agencyUser && existingAttributeName.classifier === 'AGENCY_SERVICE') {
+                logger.debug(`Processing agency service ${existingAttributeName.code}`);
+                if (principal.agencyUser.hasRoleForProgram('ROLE_ADMIN', existingAttributeName.category)) {
+                    logger.debug(`Processing agency service for admin ${existingAttributeName.code}`);
+                    await updateOrCreateRoleAttributeIfExists(existingAttributeName, roleAttributeValue, role);
                 }
             }
-        } else {
-            shouldSave = true;
-        }
 
-        if (shouldSave) {
-            await updateOrCreateRoleAttributeIfExists(roleAttributeNameCode, roleAttributeValue, roleAttributes, role);
+            // add/update non agency services attributes
+            if (existingAttributeName.classifier !== 'AGENCY_SERVICE') {
+                await updateOrCreateRoleAttributeIfExists(existingAttributeName, roleAttributeValue, role);
+            }
+
         }
     }
 
     // remove any agency services this user has access to but were not specified
-    // if(principal.agencyUserInd) {
-    //     for (let programRole of principal.agencyUser.programRoles) {
-    //         // if the user is an admin for this role
-    //         if (programRole.role === 'ROLE_ADMIN') {
-    //             // find out if the program was specified
-    //             let supplied = false;
-    //             for (let roleAttribute of roleDTO.attributes) {
-    //                 if (roleAttribute.attributeName.value.classifier === 'AGENCY_SERVICE' && roleAttribute.attributeName.value.code === programRole.program) {
-    //                     supplied = true;
-    //                     break;
-    //                 }
-    //             }
-    //             if (!supplied) {
-    //                 // delete if it exists
-    //                 await role.deleteAttribute(programRole.program, 'AGENCY_SERVICE');
-    //             }
-    //
-    //         }
-    //     }
-    // }
+    if(principal.agencyUserInd) {
+        for (let attribute of role.attributes) {
+            logger.debug(`testing attribute ${attribute.attributeName.code}`);
+            // find services
+            if(attribute.attributeName.classifier === 'AGENCY_SERVICE') {
+                logger.debug(`testing agency service ${attribute.attributeName.code}`);
+                // if this user has ROLE_ADMIN for this category
+                if(principal.agencyUser.hasRoleForProgram('ROLE_ADMIN', attribute.attributeName.category)) {
+                    logger.debug(`has role admin ${attribute.attributeName.code}`);
+                    // then IF this service was NOT supplied it must be deleted
+                    let matchingAttributes = roleDTO.attributes.filter( (val) => {
+                        return val.attributeName.value.code === attribute.attributeName.code &&
+                            val.attributeName.value.category === attribute.attributeName.category &&
+                            val.attributeName.value.classifier === attribute.attributeName.classifier
+                    });
 
-    role.attributes = roleAttributes;
+                    if(matchingAttributes.length === 0) {
+                        logger.warn(`Delete ${attribute.attributeName.code}`);
+                        await role.deleteAttribute(attribute.attributeName.code, 'AGENCY_SERVICE');
+                    }
+                }
+            }
+        }
+    }
 
-    role.saveAttributes();
+    await role.saveAttributes();
 
     return Promise.resolve(role);
 

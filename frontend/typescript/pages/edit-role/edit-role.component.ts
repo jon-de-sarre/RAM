@@ -358,6 +358,7 @@ export class EditRoleComponent extends AbstractPageComponent {
             let attributes: RoleAttribute[] = [];
             attributes.push(new RoleAttribute(preferredName, this.services.model.getRoleTypeAttributeNameRef(this.role.roleType, 'PREFERRED_NAME')));
             attributes.push(new RoleAttribute(deviceAusKeys, this.services.model.getRoleTypeAttributeNameRef(this.role.roleType, 'DEVICE_AUSKEYS')));
+
             for (let agencyServiceCode of agencyServiceCodes) {
                 attributes.push(new RoleAttribute(['true'], this.services.model.getRoleTypeAttributeNameRef(this.role.roleType, agencyServiceCode)));
             }

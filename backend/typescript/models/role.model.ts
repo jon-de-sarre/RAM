@@ -12,6 +12,7 @@ import {
     RoleAttribute as RoleAttributeDTO,
     SearchResult
 } from '../../../commons/RamAPI';
+import {logger} from "../logger";
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
 
@@ -120,7 +121,7 @@ RoleSchema.pre('validate', function (next: () => void) {
     }
 
     // can only change status if the current status is NOT suspended
-    if(this.status !== RoleStatus.Suspended.code) {
+    if (this.status !== RoleStatus.Suspended.code) {
         if (!hasAgencyServiceWhichIsNotEndDated) {
             // no active agency services
             this.status = RoleStatus.Removed.code;
@@ -136,38 +137,40 @@ RoleSchema.pre('validate', function (next: () => void) {
 // interfaces .........................................................................................................
 
 export interface IRole extends IRAMObject {
-    roleType:IRoleType;
-    party:IParty;
-    startTimestamp:Date;
-    endTimestamp?:Date;
-    endEventTimestamp?:Date;
-    roleStatus:RoleStatus;
-    attributes:IRoleAttribute[];
-    _roleTypeCode:string;
-    updateOrCreateAttribute(roleAttributeNameCode: string, value: string):Promise<IRoleAttribute>;
-    saveAttributes():Promise<IRole>;
-    deleteAttribute(roleAttributeNameCode: string, roleAttributeNameClassifier: string):Promise<IRole>;
-    getAgencyServiceAttributesInDateRange(date: Date):IRoleAttribute[];
-    toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
-    toDTO():Promise<DTO>;
+    roleType: IRoleType;
+    party: IParty;
+    startTimestamp: Date;
+    endTimestamp?: Date;
+    endEventTimestamp?: Date;
+    roleStatus: RoleStatus;
+    attributes: IRoleAttribute[];
+    _roleTypeCode: string;
+    updateOrCreateAttribute(roleAttributeNameCode: string, value: string): Promise<IRoleAttribute>;
+    saveAttributes(): Promise<IRole>;
+    findAttribute(roleAttributeNameCode: string, roleAttributeNameClassifier?: string): IRoleAttribute;
+    deleteAttribute(roleAttributeNameCode: string, roleAttributeNameClassifier: string): Promise<IRole>;
+    getAgencyServiceAttributesInDateRange(date: Date): IRoleAttribute[];
+    toHrefValue(includeValue: boolean): Promise<HrefValue<DTO>>;
+    toDTO(): Promise<DTO>;
 }
 
 export interface IRoleModel extends mongoose.Model<IRole> {
-    add:(roleType: IRoleType,
-         party: IParty,
-         startTimestamp: Date,
-         endTimestamp: Date,
-         roleStatus:RoleStatus,
-         attributes: IRoleAttribute[]) => Promise<IRole>;
-    findByIdentifier:(id: string) => Promise<IRole>;
-    findByRoleTypeAndParty:(roleType: IRoleType, party: IParty) => Promise<IRole>;
-    deleteAttribute(roleAttributeNameCode: string, roleAttributeNameClassifier: string):Promise<IRole>;
-    searchByIdentity:(identityIdValue: string,
-                      roleType: string,
-                      status: string,
-                      inDateRange: boolean,
-                      page: number,
-                      pageSize: number) => Promise<SearchResult<IRole>>;
+    add: (roleType: IRoleType,
+          party: IParty,
+          startTimestamp: Date,
+          endTimestamp: Date,
+          roleStatus: RoleStatus,
+          attributes: IRoleAttribute[]) => Promise<IRole>;
+    findByIdentifier: (id: string) => Promise<IRole>;
+    findByRoleTypeAndParty: (roleType: IRoleType, party: IParty) => Promise<IRole>;
+    findAttribute(roleAttributeNameCode: string, roleAttributeNameClassifier?: string): IRoleAttribute;
+    deleteAttribute(roleAttributeNameCode: string, roleAttributeNameClassifier: string): void;
+    searchByIdentity: (identityIdValue: string,
+                       roleType: string,
+                       status: string,
+                       inDateRange: boolean,
+                       page: number,
+                       pageSize: number) => Promise<SearchResult<IRole>>;
     findActiveByIdentityInDateRange: (identityIdValue: string,
                                       roleType: string,
                                       date: Date) => Promise<IRole>;
@@ -175,7 +178,7 @@ export interface IRoleModel extends mongoose.Model<IRole> {
 
 // instance methods ...................................................................................................
 
-RoleSchema.method('updateOrCreateAttribute', async function(roleAttributeNameCode: string, value: string[]) {
+RoleSchema.method('updateOrCreateAttribute', async function (roleAttributeNameCode: string, value: string[]) {
 
     // todo if attributeName is not inflated and was an object id, should we inflate it?
 
@@ -193,21 +196,24 @@ RoleSchema.method('updateOrCreateAttribute', async function(roleAttributeNameCod
     }
 
     const roleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(roleAttributeNameCode);
-    const roleAttribute = await RoleAttributeModel.create({
-        value: value,
-        attributeName: roleAttributeName
-    });
-    this.attributes.push(roleAttribute);
-    console.log('role after attribute create=', JSON.stringify(this, null, 4));
-    return Promise.resolve(roleAttribute);
-
+    if(roleAttributeName) {
+        const roleAttribute = await RoleAttributeModel.create({
+            value: value,
+            attributeName: roleAttributeName
+        });
+        this.attributes.push(roleAttribute);
+        console.log('role after attribute create=', JSON.stringify(this, null, 4));
+        return Promise.resolve(roleAttribute);
+    } else {
+        logger.error(`Could not find roleAttributeName ${roleAttributeNameCode}`);
+    }
 });
 
-RoleSchema.method('saveAttributes', async function() {
+RoleSchema.method('saveAttributes', async function () {
     return this.save();
 });
 
-RoleSchema.method('getAgencyServiceAttributesInDateRange', async function(date: Date) {
+RoleSchema.method('getAgencyServiceAttributesInDateRange', async function (date: Date) {
     date.setHours(0, 0, 0, 0);
     let agencyServiceAttributes: IRoleAttribute[] = [];
     this.attributes.forEach((attribute: IRoleAttribute) => {
@@ -221,19 +227,20 @@ RoleSchema.method('getAgencyServiceAttributesInDateRange', async function(date: 
     return agencyServiceAttributes;
 });
 
-RoleSchema.method('findAttribute', async function(code: string, classifier: string) {
-    this.attributes.forEach((attribute: IRoleAttribute) => {
-        if(attribute.attributeName.classifier === classifier && attribute.attributeName.code === code) {
+RoleSchema.method('findAttribute', async function (code: string, classifier: string) {
+    for(let attribute of this.attributes) {
+        if (attribute.attributeName.code === code &&
+            (!classifier || attribute.attributeName.classifier === classifier)) {
             return attribute;
         }
-    });
+    }
 });
 
-RoleSchema.method('deleteAttribute', async function(code: string, classifier: string) {
+RoleSchema.method('deleteAttribute', async function (code: string, classifier: string): void {
     this.attributes.forEach((attribute: IRoleAttribute) => {
-        if(attribute.attributeName.classifier === classifier && attribute.attributeName.code === code) {
+        if (attribute.attributeName.classifier === classifier && attribute.attributeName.code === code) {
             console.log("removing = ", attribute);
-            this.attributes.pull({ _id: attribute.id });
+            this.attributes.pull({_id: attribute.id});
             this.save();
             attribute.remove();
         }
@@ -264,7 +271,7 @@ RoleSchema.method('toDTO', async function () {
         this.createdAt,
         this.status,
         await Promise.all<RoleAttributeDTO>(this.attributes.map(
-            async (attribute: IRoleAttribute) => {
+            async(attribute: IRoleAttribute) => {
                 return await attribute.toDTO();
             }))
     );
@@ -272,12 +279,12 @@ RoleSchema.method('toDTO', async function () {
 
 // static methods .....................................................................................................
 
-RoleSchema.static('add', async (roleType: IRoleType,
-                                party: IParty,
-                                startTimestamp: Date,
-                                endTimestamp: Date,
-                                roleStatus: RoleStatus,
-                                attributes: IRoleAttribute[]) => {
+RoleSchema.static('add', async(roleType: IRoleType,
+                               party: IParty,
+                               startTimestamp: Date,
+                               endTimestamp: Date,
+                               roleStatus: RoleStatus,
+                               attributes: IRoleAttribute[]) => {
     return await this.RoleModel.create({
         roleType: roleType,
         party: party,
@@ -323,7 +330,7 @@ RoleSchema.static('searchByIdentity', (identityIdValue: string,
                                        inDateRange: boolean,
                                        page: number,
                                        reqPageSize: number) => {
-    return new Promise<SearchResult<IRole>>(async (resolve, reject) => {
+    return new Promise<SearchResult<IRole>>(async(resolve, reject) => {
         const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
         try {
             const party = await PartyModel.findByIdentityIdValue(identityIdValue);
