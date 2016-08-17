@@ -5,7 +5,7 @@ export class RAMNgValidators {
 
     public static dateFormatValidator(dateCtrl: FormControl) {
         let v = dateCtrl.value;
-        return v !== null && Utils.parseDate(v) === null ? {
+        return v && Utils.parseDate(v) === null ? {
             validateDate: {
                 valid: false
             }
