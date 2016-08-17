@@ -87,6 +87,10 @@
                 <ul class="list-group">
                     <li class="list-group-item" data-id="">Log Out</li>
                 </ul>
+                <div>
+                    ABN header : <input id="abn" type="text"/>
+                    <button type="button" class="btn btn-link" onclick="removeABNCookie()">Remove ABN cookie</button>
+                </div>
                 <ul class="list-group identities">
                 </ul>
             </div>
@@ -132,6 +136,12 @@
 
     <script>
 
+        function removeABNCookie() {
+            document.cookie = 'x-ram-abn=;path=/;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            $('#abn').val('');
+            alert('Removed x-ram-abn cookie');
+        }
+
         $(function () {
 
             var X_RAM_HEADERS_FOR_ADDING = {
@@ -145,6 +155,7 @@
                 'x-ram-dob': '31/01/2000',
 
                 'x-ram-profileprovider': 'MY_GOV',
+                'x-ram-abn': null,
 
                 'x-ram-agencyscheme': null,
                 'x-ram-agencytoken': null,
@@ -239,8 +250,19 @@
 
             function logIn(credentials) {
                 log.debug('Logging in with credentials ', credentials);
-                $.post('/api/v1/simulators/authenticator/authenticate', {credentials: credentials}, function (data) {
-                }).always(function () {
+                var ajaxReq = {
+                    url: '/api/v1/simulators/authenticator/authenticate',
+                    type: 'post',
+                    data: {credentials: credentials}
+                };
+
+                var abn = $('#abn').val();
+                if (abn) {
+                    log.debug('Adding ABN as header x-ram-abn:', abn);
+                    ajaxReq.headers = {'x-ram-abn':abn};
+                }
+
+                $.ajax(ajaxReq).always(function () {
                     refreshPrincipalDetails();
                 });
             }

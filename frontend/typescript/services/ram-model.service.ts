@@ -121,13 +121,13 @@ export class RAMModelService {
         return status ? status.shortDecodeText : '';
     }
 
-    public roleAttributeLabel(role: IRole, code: string): string {
+    public roleAttributeLabel(role: IRole, code: string): string[] {
         for (let attribute of role.attributes) {
             if (attribute.attributeName.value.code === code) {
                 return attribute.value;
             }
         }
-        return '';
+        return [];
     }
 
     // model lookups ..................................................................................................

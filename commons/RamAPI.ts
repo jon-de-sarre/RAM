@@ -610,12 +610,12 @@ export class RoleType extends CodeDecode implements IRoleType {
 // role attribute .....................................................................................................
 
 export interface IRoleAttribute {
-    value: string;
+    value: string[];
     attributeName: IHrefValue<IRoleAttributeName>;
 }
 
 export class RoleAttribute implements IRoleAttribute {
-    constructor(public value: string,
+    constructor(public value: string[],
                 public attributeName: IHrefValue<IRoleAttributeName>) {
     }
 }

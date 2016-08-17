@@ -157,7 +157,7 @@ server.use('/api/',
         .assignRoutes(express.Router()));
 
 server.use('/api/',
-    new TransactController(RoleModel)
+    new TransactController(RoleModel, IdentityModel)
         .assignRoutes(express.Router()));
 
 // setup error handlers ...............................................................................................

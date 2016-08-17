@@ -6,7 +6,7 @@
 <form [formGroup]="form">
 
     <!-- ROLE TYPE SELECTOR WHEN CREATING A NEW ROLE -->
-    <div class="panel panel-default" *ngIf="!role">
+    <div class="panel panel-default" *ngIf="!roleHref">
         <div class="panel-heading">
             <h4>Select a role</h4>
         </div>
@@ -22,7 +22,7 @@
     </div>
 
     <!-- ROLE TYPE DISPLAY IF EDITING AN EXISTING ROLE -->
-    <div class="panel panel-default" *ngIf="role">
+    <div class="panel panel-default" *ngIf="roleHref">
         <div class="panel-heading">
             <h4>Role Type</h4>
         </div>
@@ -37,7 +37,6 @@
             <h4>Online software provider agencies services</h4>
         </div>
         <div class="panel-body">
-            <div class="form-group">
                 <h4>Access to government agencies services</h4>
 
                 <div *ngIf="hasServiceBeenRemoved">
@@ -76,7 +75,6 @@
                     </tr>
                     </tbody>
                 </table>
-            </div>
         </div>
     </div>
 

@@ -550,3 +550,7 @@ div.checkbox.disabled > label, div.radio.disabled > label {
 .checkbox-table td:last-child {
   width: 100px;
 }
+
+div.panel-body > table {
+  margin-bottom: 0;
+}
