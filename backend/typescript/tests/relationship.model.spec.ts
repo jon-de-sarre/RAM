@@ -521,7 +521,7 @@ describe('RAM Relationship', () => {
         try {
 
             const relationships = await RelationshipModel.searchByIdentity(subjectIdentity1.idValue,
-                null, null, null, null, null, null, null, 1, 10);
+                null, null, null, null, null, false, null, null, 1, 10);
             expect(relationships.totalCount).toBe(1);
             expect(relationships.list.length).toBe(1);
             expect(relationships.list[0].id).toBe(relationship1.id);
@@ -538,7 +538,7 @@ describe('RAM Relationship', () => {
         try {
 
             const relationships = await RelationshipModel.searchByIdentity(delegateIdentity1.idValue,
-                null, null, null, null, null, null, null, 1, 10);
+                null, null, null, null, null, false, null, null, 1, 10);
             expect(relationships.totalCount).toBe(1);
             expect(relationships.list.length).toBe(1);
             expect(relationships.list[0].id).toBe(relationship1.id);
@@ -555,7 +555,7 @@ describe('RAM Relationship', () => {
         try {
 
             const relationships = await RelationshipModel.searchByIdentity(subjectIdentity1.idValue,
-                PartyType.Individual.code, null, null, null, null, null, null, 1, 10);
+                PartyType.Individual.code, null, null, null, null, false, null, null, 1, 10);
             expect(relationships.totalCount).toBe(1);
             expect(relationships.list.length).toBe(1);
             expect(relationships.list[0].id).toBe(relationship1.id);
@@ -572,7 +572,7 @@ describe('RAM Relationship', () => {
         try {
 
             const relationships = await RelationshipModel.searchByIdentity(subjectIdentity1.idValue,
-                PartyType.ABN.code, null, null, null, null, null, null, 1, 10);
+                PartyType.ABN.code, null, null, null, null, false, null, null, 1, 10);
             expect(relationships.totalCount).toBe(0);
             expect(relationships.list.length).toBe(0);
 

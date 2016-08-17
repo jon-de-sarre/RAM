@@ -295,18 +295,26 @@ export interface IRelationshipModel extends mongoose.Model<IRelationship> {
     findByInvitationCode:(invitationCode: string) => Promise<IRelationship>;
     findPendingByInvitationCodeInDateRange:(invitationCode: string, date: Date) => Promise<IRelationship>;
     hasActiveInDateRange1stOr2ndLevelConnection:(requestingParty: IParty, requestedIdValue: string, date:Date) => Promise<boolean>;
-    search:(subjectIdentityIdValue: string, delegateIdentityIdValue: string, page: number, pageSize: number)
-        => Promise<SearchResult<IRelationship>>;
+    search:(subjectIdentityIdValue: string, delegateIdentityIdValue: string, page: number, pageSize: number) => Promise<SearchResult<IRelationship>>;
     searchByIdentity:(identityIdValue: string,
                       partyType: string,
                       relationshipType: string,
                       relationshipTypeCategory: string,
                       profileProvider: string,
                       status: string,
+                      inDateRange: boolean,
                       text: string,
                       sort: string,
-                      page: number, pageSize: number) => Promise<SearchResult<IRelationship>>;
-    searchDistinctSubjectsForMe:(requestingParty: IParty, partyType: string, authorisationManagement:string, text: string, sort: string,page: number, pageSize: number)
+                      page: number,
+                      pageSize: number) => Promise<SearchResult<IRelationship>>;
+    searchByIdentitiesInDateRange: (subjectIdValue: string,
+                                    delegateIdValue: string,
+                                    relationshipType: string,
+                                    status: string,
+                                    date: Date,
+                                    page: number,
+                                    pageSize: number) => Promise<SearchResult<IRelationship>>;
+    searchDistinctSubjectsForMe: (requestingParty: IParty, partyType: string, authorisationManagement:string, text: string, sort: string,page: number, pageSize: number)
         => Promise<SearchResult<IParty>>;
 }
 
@@ -766,6 +774,7 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                                                relationshipTypeCategory: string,
                                                profileProvider: string,
                                                status: string,
+                                               inDateRange: boolean,
                                                text: string,
                                                sort: string,
                                                page: number,
@@ -775,7 +784,12 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
         try {
             const party = await PartyModel.findByIdentityIdValue(identityIdValue);
             let mainAnd: {[key: string]: Object}[] = [];
-            mainAnd.push({'$or': [{subject: party}, {delegate: party}]});
+            mainAnd.push({
+                '$or': [
+                    {subject: party},
+                    {delegate: party}
+                ]
+            });
             if (partyType) {
                 mainAnd.push({
                     '$or': [
@@ -800,6 +814,11 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
             }
             if (status) {
                 mainAnd.push({'status': status});
+            }
+            if (inDateRange) {
+                const date = new Date();
+                mainAnd.push({'startTimestamp': {$lte: date}});
+                mainAnd.push({'$or': [{endTimestamp: null}, {endTimestamp: {$gte: date}}]});
             }
             if (text) {
                 mainAnd.push({
@@ -829,6 +848,60 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                 .sort({
                     '_subjectNickNameString': !sort || sort === 'asc' ? 1 : -1,
                     '_delegateNickNameString': !sort || sort === 'asc' ? 1 : -1
+                })
+                .skip((page - 1) * pageSize)
+                .limit(pageSize)
+                .exec();
+            resolve(new SearchResult<IRelationship>(page, count, pageSize, list));
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
+/* tslint:disable:max-func-body-length */
+RelationshipSchema.static('searchByIdentitiesInDateRange', (subjectIdValue: string,
+                                                            delegateIdValue: string,
+                                                            relationshipType: string,
+                                                            status: string,
+                                                            date: Date,
+                                                            page: number,
+                                                            reqPageSize: number) => {
+    return new Promise<SearchResult<IRelationship>>(async(resolve, reject) => {
+        const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
+        try {
+            const subject = await PartyModel.findByIdentityIdValue(subjectIdValue);
+            const delegate = await PartyModel.findByIdentityIdValue(delegateIdValue);
+            let mainAnd: {[key: string]: Object}[] = [];
+            mainAnd.push({'subject': subject});
+            mainAnd.push({'delegate': delegate});
+            if (relationshipType) {
+                mainAnd.push({'_relationshipTypeCode': relationshipType});
+            }
+            if (status) {
+                mainAnd.push({'status': status});
+            }
+            const date = new Date();
+            mainAnd.push({'startTimestamp': {$lte: date}});
+            mainAnd.push({'$or': [{endTimestamp: null}, {endTimestamp: {$gte: date}}]});
+            const where: {[key: string]: Object} = {};
+            where['$and'] = mainAnd;
+            const count = await this.RelationshipModel
+                .count(where)
+                .exec();
+            const list = await this.RelationshipModel
+                .find(where)
+                .deepPopulate([
+                    'relationshipType',
+                    'subject',
+                    'subjectNickName',
+                    'delegate',
+                    'delegateNickName',
+                    'attributes.attributeName'
+                ])
+                .sort({
+                    '_subjectNickNameString': 1,
+                    '_delegateNickNameString': 1
                 })
                 .skip((page - 1) * pageSize)
                 .limit(pageSize)
