@@ -35,7 +35,6 @@ import {
     IRelationshipType,
     IHrefValue
 } from '../../../../commons/RamAPI';
-import {Utils} from '../../../../commons/ram-utils';
 
 @Component({
     selector: 'edit-relationship',
