@@ -87,7 +87,10 @@
                 <ul class="list-group">
                     <li class="list-group-item" data-id="">Log Out</li>
                 </ul>
-                <div>ABN header : <input id="abn" type="text"/></div>
+                <div>
+                    ABN header : <input id="abn" type="text"/>
+                    <button type="button" class="btn btn-link" onclick="removeABNCookie()">Remove ABN cookie</button>
+                </div>
                 <ul class="list-group identities">
                 </ul>
             </div>
@@ -132,6 +135,12 @@
     </div>
 
     <script>
+
+        function removeABNCookie() {
+            document.cookie = 'x-ram-abn=;path=/;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            $('#abn').val('');
+            alert('Removed x-ram-abn cookie');
+        }
 
         $(function () {
 
