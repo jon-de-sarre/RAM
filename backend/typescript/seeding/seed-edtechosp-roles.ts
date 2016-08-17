@@ -26,27 +26,27 @@ export class EdTechOspRolesSeeder {
                     status: RoleStatus.Active.code,
                     attributes: [
                         await Seeder.createRoleAttributeModel({
-                            value: true,
+                            value: ['true'],
                             attributeName: Seeder.ssid_roleAttributeName
                         } as any),
                         await Seeder.createRoleAttributeModel({
-                            value: true,
+                            value: ['true'],
                             attributeName: Seeder.usi_roleAttributeName
                         } as any),
                         await Seeder.createRoleAttributeModel({
-                            value: 'Education Tech',
+                            value: ['Education Tech'],
                             attributeName: Seeder.preferredName_roleAttributeName
                         } as any),
                         await Seeder.createRoleAttributeModel({
-                            value: 'ted_agent',
+                            value: ['ted_agent'],
                             attributeName: Seeder.creatorId_roleAttributeName
                         } as any),
                         await Seeder.createRoleAttributeModel({
-                            value: 'Ted Agent',
+                            value: ['Ted Agent'],
                             attributeName: Seeder.creatorName_roleAttributeName
                         } as any),
                         await Seeder.createRoleAttributeModel({
-                            value: 'Department of Education',
+                            value: ['Department of Education'],
                             attributeName: Seeder.creatorAgency_roleAttributeName
                         } as any),
                         await Seeder.createRoleAttributeModel({
