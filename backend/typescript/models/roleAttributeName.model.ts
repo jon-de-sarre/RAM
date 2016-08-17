@@ -106,7 +106,7 @@ RoleAttributeNameSchema.method('domainEnum', function () {
     return RoleAttributeNameDomain.valueOf(this.domain);
 });
 
-RoleAttributeNameSchema.method('isInDateRange', () => {
+RoleAttributeNameSchema.method('isInDateRange', function() {
     const date = new Date();
     return this.startDate <= date && (this.endDate === null || this.endDate === undefined || this.endDate >= date);
 });
