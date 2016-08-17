@@ -226,6 +226,7 @@ export class RelationshipController {
                 filterParams.get('relationshipTypeCategory'),
                 filterParams.get('profileProvider'),
                 filterParams.get('status'),
+                false,
                 filterParams.get('text'),
                 filterParams.get('sort'),
                 parseInt(req.query.page),
