@@ -122,9 +122,24 @@ export class TransactController {
                 }
 
                 // ensure the relationship has the requested SSID
-                //
+                let relationshipSSIDMatched = false;
+                for (let attribute of acceptedOspRelationship.attributes) {
+                    if (attribute.attributeName.code === 'SSID') {
+                        if (attribute.value) {
+                            for (let value of attribute.value) {
+                                if (value === request.ssid) {
+                                    relationshipSSIDMatched = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (!relationshipSSIDMatched) {
+                    throw new Error('401:Relationship SSID does not match');
+                }
 
-                const allowed = true; // todo compute allowed flag
+                const allowed = true;
                 return new TransactResponse(request, allowed);
 
             })
