@@ -76,7 +76,7 @@
 
 <div class="container">
 
-    <h2 class="animated bounce">RAM Mock Login</h2>
+    <h2 class="animated bounce">RAM Developers Console</h2>
 
     <p>Please select a regular user or agency user from the list below to simulate logging in as that user:</p>
     <p>&nbsp;</p>
@@ -84,9 +84,6 @@
     <div class="row">
         <div class="col-md-6">
             <div id="user-list">
-                <ul class="list-group">
-                    <li class="list-group-item" data-id="">Log Out</li>
-                </ul>
                 <div>
                     ABN header : <input id="abn" type="text"/>
                     <button type="button" class="btn btn-link" onclick="removeABNCookie()">Remove ABN cookie</button>
@@ -106,7 +103,8 @@
                     <table class="table dont-break-out"></table>
                 </div>
                 <div class="panel-footer row">
-                    <a href="/" target="_blank" class="btn btn-primary" id="launch-ram-link">Launch RAM</a>
+                    <a href="/" target="_blank" class="btn btn-primary" id="launch">Launch RAM</a>
+                    <a href="/" target="_blank" class="btn btn-default" id="logout">Logout</a>
                 </div>
             </div>
         </div>
@@ -246,6 +244,10 @@
 
                 });
 
+            }
+
+            function logout() {
+                logIn(undefined);
             }
 
             function logIn(credentials) {

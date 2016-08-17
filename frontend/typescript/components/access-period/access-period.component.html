@@ -4,6 +4,7 @@
         <p-calendar
                 placeholder="{{'date.placeholder' | translate}}"
                 inputStyleClass="form-control"
+                [disabled]='!form.controls["startDateEnabled"].value'
                 [formControl]="form.controls['startDate']"
                 dateFormat="{{dateFormat}}"></p-calendar>
     </div>

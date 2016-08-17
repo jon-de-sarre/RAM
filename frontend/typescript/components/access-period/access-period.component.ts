@@ -39,6 +39,7 @@ export class AccessPeriodComponent implements OnInit {
 
         this.form = this._fb.group(
             {
+                'startDateEnabled': [this.data.startDateEnabled],
                 'startDate': [formattedStartDate, Validators.compose([Validators.required, RAMNgValidators.dateFormatValidator])],
                 'endDate': [formattedEndDate, Validators.compose([RAMNgValidators.dateFormatValidator])],
                 'noEndDate': [this.data.noEndDate]
@@ -58,6 +59,8 @@ export class AccessPeriodComponent implements OnInit {
         });
 
         this.form.valueChanges.subscribe((v: AccessPeriodComponentData) => {
+            v.startDate = Utils.parseDate(v.startDate);
+            v.endDate = Utils.parseDate(v.endDate);
             this.dataChanges.emit(v);
             this.isValid.emit(this.form.valid);
         });
@@ -79,10 +82,12 @@ export class AccessPeriodComponent implements OnInit {
                 }
             } : null;
         };
-    }
+    };
+
 }
 
 export interface AccessPeriodComponentData {
+    startDateEnabled: boolean;
     startDate: Date;
     endDate?: Date;
     noEndDate: boolean;
