@@ -3,11 +3,13 @@ import {context} from '../providers/context.provider';
 import {sendResource, sendError, sendNotFoundError, validateReqSchema} from './helpers';
 import {ITransactRequest, TransactResponse} from '../../../commons/RamAPI';
 import {IRoleModel, RoleStatus} from '../models/role.model';
+import {IIdentityModel} from '../models/identity.model';
 import {Url} from '../models/url';
 
 export class TransactController {
 
-    constructor(private roleModel: IRoleModel) {
+    constructor(private roleModel: IRoleModel,
+                private identityModel: IIdentityModel) {
     }
 
     private allowed = async(req: Request, res: Response) => {
@@ -47,12 +49,18 @@ export class TransactController {
                     throw new Error('401');
                 }
 
-                // ensure a valid OSP role exists with the requested agency service
-                let opsRoles = await this.roleModel.searchByIdentity(Url.abnIdValue(abn), 'OSP', RoleStatus.Active.code, true, 1, 10);
+                // ensure OSP role
+                const opsRoles = await this.roleModel.searchByIdentity(Url.abnIdValue(abn), 'OSP', RoleStatus.Active.code, true, 1, 10);
                 if (opsRoles.list.length === 0) {
                     throw new Error('401:Organisation is not an Online Service Provider');
                 }
                 const ospRole = opsRoles.list[0];
+
+                // ensure client ABN
+                const clientIdentity = await this.identityModel.findByIdValue(Url.abnIdValue(request.clientABN));
+                if (!clientIdentity) {
+                    throw new Error('400:Client ABN does not match');
+                }
 
                 // ensure agency service matches
                 let agencyServiceMatched = false;
@@ -82,7 +90,6 @@ export class TransactController {
                     throw new Error('401:AUSkey does not match');
                 }
 
-                // lookup the client business via the ABN
                 // ensure there is a valid OSP relationship between the two parties
                 // ensure the relationship has enabled the requested agency service
                 // ensure the relationship has the requested SSID
