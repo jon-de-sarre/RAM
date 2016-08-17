@@ -107,6 +107,7 @@ RoleSchema.pre('validate', function (next: () => void) {
         this._roleTypeCode = this.roleType.code;
     }
     let hasAgencyServiceWhichIsNotEndDated = false;
+
     for (let attribute of this.attributes) {
         if (attribute.attributeName.classifier === 'AGENCY_SERVICE' &&
             attribute.value &&
@@ -117,9 +118,18 @@ RoleSchema.pre('validate', function (next: () => void) {
             break;
         }
     }
-    if (!hasAgencyServiceWhichIsNotEndDated) {
-        this.status = RoleStatus.Suspended.code;
+
+    // can only change status if the current status is NOT suspended
+    if(this.status !== RoleStatus.Suspended.code) {
+        if (!hasAgencyServiceWhichIsNotEndDated) {
+            // no active agency services
+            this.status = RoleStatus.Removed.code;
+        } else {
+            // at least one active agency service
+            this.status = RoleStatus.Active.code;
+        }
     }
+
     next();
 });
 
@@ -136,6 +146,7 @@ export interface IRole extends IRAMObject {
     _roleTypeCode:string;
     updateOrCreateAttribute(roleAttributeNameCode: string, value: string):Promise<IRoleAttribute>;
     saveAttributes():Promise<IRole>;
+    deleteAttribute(roleAttributeNameCode: string, roleAttributeNameClassifier: string):Promise<IRole>;
     getAgencyServiceAttributesInDateRange(date: Date):IRoleAttribute[];
     toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
     toDTO():Promise<DTO>;
@@ -150,6 +161,7 @@ export interface IRoleModel extends mongoose.Model<IRole> {
          attributes: IRoleAttribute[]) => Promise<IRole>;
     findByIdentifier:(id: string) => Promise<IRole>;
     findByRoleTypeAndParty:(roleType: IRoleType, party: IParty) => Promise<IRole>;
+    deleteAttribute(roleAttributeNameCode: string, roleAttributeNameClassifier: string):Promise<IRole>;
     searchByIdentity:(identityIdValue: string,
                       roleType: string,
                       status: string,
@@ -163,7 +175,7 @@ export interface IRoleModel extends mongoose.Model<IRole> {
 
 // instance methods ...................................................................................................
 
-RoleSchema.method('updateOrCreateAttribute', async function(roleAttributeNameCode: string, value: string) {
+RoleSchema.method('updateOrCreateAttribute', async function(roleAttributeNameCode: string, value: string[]) {
 
     // todo if attributeName is not inflated and was an object id, should we inflate it?
 
@@ -207,6 +219,26 @@ RoleSchema.method('getAgencyServiceAttributesInDateRange', async function(date: 
         }
     });
     return agencyServiceAttributes;
+});
+
+RoleSchema.method('findAttribute', async function(code: string, classifier: string) {
+    this.attributes.forEach((attribute: IRoleAttribute) => {
+        if(attribute.attributeName.classifier === classifier && attribute.attributeName.code === code) {
+            return attribute;
+        }
+    });
+});
+
+RoleSchema.method('deleteAttribute', async function(code: string, classifier: string) {
+    this.attributes.forEach((attribute: IRoleAttribute) => {
+        if(attribute.attributeName.classifier === classifier && attribute.attributeName.code === code) {
+            console.log("removing = ", attribute);
+            this.attributes.pull({ _id: attribute.id });
+            this.save();
+            attribute.remove();
+        }
+    });
+    this.save();
 });
 
 // todo what is the href we use here?

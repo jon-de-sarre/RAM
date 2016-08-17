@@ -336,6 +336,8 @@ PartySchema.method('modifyRole', async function (roleDTO: RoleDTO) {
         const roleAttributeNameCategory = roleAttribute.attributeName.value.category;
 
         let shouldSave = false;
+
+        // add agency services that have been specified
         if (principal.agencyUser && roleAttribute.attributeName.value.classifier === 'AGENCY_SERVICE') {
             for (let programRole of principal.agencyUser.programRoles) {
                 if (programRole.role === 'ROLE_ADMIN' && programRole.program === roleAttributeNameCategory) {
@@ -350,6 +352,27 @@ PartySchema.method('modifyRole', async function (roleDTO: RoleDTO) {
         if (shouldSave) {
             await updateOrCreateRoleAttributeIfExists(roleAttributeNameCode, roleAttributeValue, roleAttributes, role);
         }
+    }
+
+    // remove any agency services this user has access to but were not specified
+    for (let programRole of principal.agencyUser.programRoles) {
+        // if the user is an admin for this role
+        if (programRole.role === 'ROLE_ADMIN') {
+            // find out if the program was specified
+            let supplied = false;
+            for (let roleAttribute of roleDTO.attributes) {
+                if(roleAttribute.attributeName.value.classifier === 'AGENCY_SERVICE' && roleAttribute.attributeName.value.code === programRole.program) {
+                    supplied = true;
+                    break;
+                }
+            }
+            if(!supplied) {
+                // delete if it exists
+                await role.deleteAttribute(programRole.program, 'AGENCY_SERVICE');
+            }
+
+        }
+
     }
 
     role.attributes = roleAttributes;

@@ -65,7 +65,7 @@ describe('RAM Role', () => {
                     });
 
                     roleAttribute1 = await RoleAttributeModel.create({
-                        value: 'true',
+                        value: ['true'],
                         attributeName: Seeder.usi_roleAttributeName
                     });
 
@@ -153,6 +153,46 @@ describe('RAM Role', () => {
         try {
 
             const role = await RoleModel.findActiveByIdentityInDateRange(partyIdentity1.idValue, roleTypeOsp.code, new Date());
+            expect(role).not.toBeNull();
+
+            done();
+
+        } catch (e) {
+            fail(e);
+            done();
+        }
+    });
+
+    it('attribute should be deleted', async (done) => {
+        try {
+
+            // setup
+            const roleAttribute = await RoleAttributeModel.create({
+                value: ['true'],
+                attributeName: Seeder.usi_roleAttributeName
+            });
+
+            const role = await RoleModel.add(
+                roleTypeOsp,
+                party1,
+                new Date(2000, 1, 1),
+                null,
+                RoleStatus.Active,
+                [roleAttribute]
+            );
+
+            // perform
+            role.deleteAttribute(roleAttribute.attributeName.code, roleAttribute.attributeName.classifier);
+
+            // verify
+            const actualRole = await RoleModel.findById(role.id).exec();
+            console.log("actualRole = ", actualRole);
+            expect(actualRole.attributes.length).toBe(0);
+
+            // attribute should no longer exist
+            const actualRoleAttribute = await RoleAttributeModel.findById(roleAttribute.id);
+            expect(actualRoleAttribute).toBe(null);
+
             expect(role).not.toBeNull();
 
             done();
