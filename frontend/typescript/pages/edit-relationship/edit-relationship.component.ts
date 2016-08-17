@@ -35,6 +35,7 @@ import {
     IRelationshipType,
     IHrefValue
 } from '../../../../commons/RamAPI';
+import {Utils} from '../../../../commons/ram-utils';
 
 @Component({
     selector: 'edit-relationship',
@@ -168,8 +169,8 @@ export class EditRelationshipComponent extends AbstractPageComponent {
             relationshipType: this.newRelationship.authType.authType,
             subjectIdValue: this.idValue,
             delegate: delegate,
-            startTimestamp: this.newRelationship.accessPeriod.startDate,
-            endTimestamp: this.newRelationship.accessPeriod.endDate,
+            startTimestamp: Utils.parseDate(this.newRelationship.accessPeriod.startDate),
+            endTimestamp: Utils.parseDate(this.newRelationship.accessPeriod.endDate),
             attributes: [
                 authorisationManagement
             ] /* TODO setting the attributes */

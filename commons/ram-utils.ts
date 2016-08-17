@@ -14,11 +14,15 @@ export class Utils {
         }
     }
 
-    public static parseDate(dateString: string): Date {
-        if (dateString === null) {
+    public static parseDate(date: string | Date): Date {
+        if (date === null) {
             return null;
         }
+        if (date instanceof Date) {
+            return date;
+        }
 
+        const dateString = <string>date;
         if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString)) {
             return null;
         }
@@ -39,8 +43,9 @@ export class Utils {
         }
 
         // Check the range of the day
-        if (day > 0 && day <= monthLength[month - 1]) {
-            return new Date(year, month, day);
+        const jsMonth = month - 1;
+        if (day > 0 && day <= monthLength[jsMonth]) {
+            return new Date(year, jsMonth, day);
         }
         return null;
     };
