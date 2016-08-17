@@ -346,7 +346,9 @@ export class EditRoleComponent extends AbstractPageComponent {
             validationOk = false;
             this.addGlobalMessage('You do not have access to any government services.');
         }
-        if (agencyServiceCodes.length === 0) {
+
+        // when CREATING a role, at least one agency service must be specified
+        if (agencyServiceCodes.length === 0 && !this.roleHref) {
             validationOk = false;
             this.addGlobalMessage('Please select at least one government agency service.');
         }
