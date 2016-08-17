@@ -35,6 +35,7 @@ import {
     FilterParams,
     ISearchResult
 } from '../../../../commons/RamAPI';
+import {Utils} from '../../../../commons/ram-utils';
 
 @Component({
     selector: 'ram-osp-notification-add',
@@ -275,8 +276,8 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
                 // update relationship
 
-                this.relationship.startTimestamp = this.accessPeriod.startDate;
-                this.relationship.endTimestamp = this.accessPeriod.endDate;
+                this.relationship.startTimestamp = Utils.parseDate(this.accessPeriod.startDate);
+                this.relationship.endTimestamp = Utils.parseDate(this.accessPeriod.endDate);
                 this.relationship.attributes = attributes;
 
                 let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.MODIFY, this.relationship);

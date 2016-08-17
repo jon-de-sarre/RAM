@@ -535,8 +535,8 @@ RelationshipSchema.method('modify', async function (dto: DTO) {
         }
     }
 
-    // todo set dates
-
+    this.startTimestamp = dto.startTimestamp;
+    this.endTimestamp = dto.endTimestamp;
     this.save();
 
     return this;
