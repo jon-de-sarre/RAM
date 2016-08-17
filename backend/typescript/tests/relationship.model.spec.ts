@@ -20,7 +20,8 @@ import {
 import {
     IRelationship,
     RelationshipModel,
-    RelationshipStatus, RelationshipInitiatedBy
+    RelationshipStatus,
+    RelationshipInitiatedBy
 } from '../models/relationship.model';
 import {IRelationshipType} from '../models/relationshipType.model';
 

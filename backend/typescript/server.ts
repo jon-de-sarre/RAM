@@ -48,6 +48,8 @@ import {context} from './providers/context.provider';
 
 // connect to the database ............................................................................................
 
+mongoose.Promise = Promise as any;
+
 mongoose.connect(conf.mongoURL, {}, () => {
     logger.info(`Connected to db: ${conf.mongoURL}\n`);
 });
@@ -155,7 +157,7 @@ server.use('/api/',
         .assignRoutes(express.Router()));
 
 server.use('/api/',
-    new TransactController()
+    new TransactController(RoleModel)
         .assignRoutes(express.Router()));
 
 // setup error handlers ...............................................................................................

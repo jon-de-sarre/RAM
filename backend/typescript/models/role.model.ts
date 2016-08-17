@@ -4,7 +4,7 @@ import {Url} from './url';
 import {IParty, PartyModel} from './party.model';
 import {IRoleType, RoleTypeModel} from './roleType.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
-import {RoleAttributeNameModel} from './roleAttributeName.model';
+import {RoleAttributeNameModel, RoleAttributeNameClassifier} from './roleAttributeName.model';
 import {
     HrefValue,
     Role as DTO,
@@ -12,7 +12,6 @@ import {
     RoleAttribute as RoleAttributeDTO,
     SearchResult
 } from '../../../commons/RamAPI';
-import {RoleAttribute} from "../../../docs/data-types";
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
 
@@ -107,10 +106,13 @@ RoleSchema.pre('validate', function (next: () => void) {
     if (this.roleType) {
         this._roleTypeCode = this.roleType.code;
     }
-
     let hasAgencyServiceWhichIsNotEndDated = false;
     for (let attribute of this.attributes) {
-        if (attribute.attributeName.classifier === 'AGENCY_SERVICE' && attribute.value === 'true' && !attribute.attributeName.isEndDated()) {
+        if (attribute.attributeName.classifier === 'AGENCY_SERVICE' &&
+            attribute.value &&
+            attribute.value.length > 0 &&
+            attribute.value[0] === 'true'
+            && !attribute.attributeName.isEndDated()) {
             hasAgencyServiceWhichIsNotEndDated = true;
             break;
         }
@@ -135,6 +137,7 @@ export interface IRole extends IRAMObject {
     _roleTypeCode:string;
     updateOrCreateAttribute(roleAttributeNameCode: string, value: string):Promise<IRoleAttribute>;
     saveAttributes():Promise<IRole>;
+    getAgencyServiceAttributesInDateRange(date: Date):IRoleAttribute[];
     toHrefValue(includeValue: boolean):Promise<HrefValue<DTO>>;
     toDTO():Promise<DTO>;
 }
@@ -151,9 +154,12 @@ export interface IRoleModel extends mongoose.Model<IRole> {
     searchByIdentity:(identityIdValue: string,
                       roleType: string,
                       status: string,
+                      inDateRange: boolean,
                       page: number,
-                      pageSize: number)
-        => Promise<SearchResult<IRole>>;
+                      pageSize: number) => Promise<SearchResult<IRole>>;
+    findActiveByIdentityInDateRange: (identityIdValue: string,
+                                      roleType: string,
+                                      date: Date) => Promise<IRole>;
 }
 
 // instance methods ...................................................................................................
@@ -188,6 +194,20 @@ RoleSchema.method('updateOrCreateAttribute', async function(roleAttributeNameCod
 
 RoleSchema.method('saveAttributes', async function() {
     return this.save();
+});
+
+RoleSchema.method('getAgencyServiceAttributesInDateRange', async function(date: Date) {
+    date.setHours(0, 0, 0, 0);
+    let agencyServiceAttributes: IRoleAttribute[] = [];
+    this.attributes.forEach((attribute: IRoleAttribute) => {
+        const attributeName = attribute.attributeName;
+        if (attributeName.classifier === RoleAttributeNameClassifier.AgencyService.code) {
+            if (attributeName.startDate <= date && (attributeName.endDate === null || attributeName.endDate === undefined || attributeName.endDate >= date)) {
+                agencyServiceAttributes.push(attribute);
+            }
+        }
+    });
+    return agencyServiceAttributes;
 });
 
 // todo what is the href we use here?
@@ -269,6 +289,7 @@ RoleSchema.static('findByRoleTypeAndParty', (roleType: IRoleType, party: IParty)
 RoleSchema.static('searchByIdentity', (identityIdValue: string,
                                        roleType: string,
                                        status: string,
+                                       inDateRange: boolean,
                                        page: number,
                                        reqPageSize: number) => {
     return new Promise<SearchResult<IRole>>(async (resolve, reject) => {
@@ -284,6 +305,11 @@ RoleSchema.static('searchByIdentity', (identityIdValue: string,
             }
             if (status) {
                 mainAnd.push({'status': status});
+            }
+            if (inDateRange) {
+                const date = new Date();
+                mainAnd.push({'startTimestamp': {$lte: date}});
+                mainAnd.push({'$or': [{endTimestamp: null}, {endTimestamp: {$gte: date}}]});
             }
             const where: {[key: string]: Object} = {};
             where['$and'] = mainAnd;
@@ -305,6 +331,26 @@ RoleSchema.static('searchByIdentity', (identityIdValue: string,
             reject(e);
         }
     });
+});
+
+/* tslint:disable:max-func-body-length */
+RoleSchema.static('findActiveByIdentityInDateRange', async(identityIdValue: string,
+                                                           roleType: string,
+                                                           date: Date) => {
+    const party = await PartyModel.findByIdentityIdValue(identityIdValue);
+    return this.RoleModel
+        .findOne({
+            party: party,
+            status: RoleStatus.Active.code,
+            startTimestamp: {$lte: date},
+            $or: [{endTimestamp: null}, {endTimestamp: {$gte: date}}]
+        })
+        .deepPopulate([
+            'roleType',
+            'party',
+            'attributes.attributeName'
+        ])
+        .exec();
 });
 
 // concrete model .....................................................................................................

@@ -332,8 +332,9 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
                 let href = this.services.model.getLinkHrefByType('role-list', identityRef.value);
                 const filterString = new FilterParams()
-                    .add('roleType', RAMConstants.RelationshipTypeCode.OSP)
+                    .add('roleType', RAMConstants.RoleTypeCode.OSP)
                     .add('status', RAMConstants.RoleStatusCode.ACTIVE)
+                    .add('inDateRange', true)
                     .encode();
 
                 this.services.rest.searchRolesByHref(href, filterString, 1).subscribe({
@@ -353,7 +354,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
 
     public onSearchOSPActiveRoles(results: ISearchResult<IHrefValue<IRole>>, party: IParty, abnIdentityRef: IHrefValue<IIdentity>) {
         for (let role of results.list) {
-            if (role.value.roleType.href.endsWith(RAMConstants.RelationshipTypeCode.OSP)) {
+            if (role.value.roleType.href.endsWith(RAMConstants.RoleTypeCode.OSP)) {
                 this.ospRoleRef = role;
                 this.delegateParty = party;
                 this.delegateIdentityRef = abnIdentityRef;

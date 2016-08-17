@@ -1475,7 +1475,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"clientABN\": \"00000000001\",\n    \"ssid\": \"mySSID-1234\",\n    \"agencyService\": \"EDUCATION\"\n}"
+							"raw": "{\n    \"clientABN\": \"00000000001\",\n    \"ssid\": \"mySSID-1234\",\n    \"agencyService\": \"USI\"\n}"
 						},
 						"description": ""
 					},
@@ -1500,7 +1500,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"clientABN\": \"00000000001\",\n    \"ssid\": \"mySSID-1234\",\n    \"agencyService\": \"EDUCATION\"\n}"
+							"raw": "{\n    \"clientABN\": \"00000000001\",\n    \"ssid\": \"mySSID-1234\",\n    \"agencyService\": \"USI\"\n}"
 						},
 						"description": ""
 					},
@@ -1535,7 +1535,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"clientABN\": \"00000000001\",\n    \"ssid\": \"mySSID-1234\",\n    \"agencyService\": \"EDUCATION\"\n}"
+							"raw": "{\n    \"clientABN\": \"00000000001\",\n    \"ssid\": \"mySSID-1234\",\n    \"agencyService\": \"USI\"\n}"
 						},
 						"description": ""
 					},
@@ -1570,77 +1570,7 @@
 						],
 						"body": {
 							"mode": "raw",
-							"raw": "{\n    \"clientABN\": \"00000000001\",\n    \"ssid\": \"mySSID-1234\",\n    \"agencyService\": \"EDUCATION\"\n}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "Transact (bad client abn)",
-					"request": {
-						"url": "{{host}}/api/v1/transact/allowed",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-RAM-AUTH-AUSKEY",
-								"value": "10000000001-DEVICE-2",
-								"description": ""
-							},
-							{
-								"key": "X-RAM-ABN",
-								"value": "10000000001",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"clientABN\": \"__bogus__\",\n    \"ssid\": \"mySSID-1234\",\n    \"agencyService\": \"EDUCATION\"\n}"
-						},
-						"description": ""
-					},
-					"response": []
-				},
-				{
-					"name": "Transact (bad ssid)",
-					"request": {
-						"url": "{{host}}/api/v1/transact/allowed",
-						"method": "POST",
-						"header": [
-							{
-								"key": "Accept",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "Content-Type",
-								"value": "application/json",
-								"description": ""
-							},
-							{
-								"key": "X-RAM-AUTH-AUSKEY",
-								"value": "10000000001-DEVICE-2",
-								"description": ""
-							},
-							{
-								"key": "X-RAM-ABN",
-								"value": "10000000001",
-								"description": ""
-							}
-						],
-						"body": {
-							"mode": "raw",
-							"raw": "{\n    \"clientABN\": \"00000000001\",\n    \"ssid\": \"__bogus__\",\n    \"agencyService\": \"EDUCATION\"\n}"
+							"raw": "{\n    \"clientABN\": \"00000000001\",\n    \"ssid\": \"mySSID-1234\",\n    \"agencyService\": \"USI\"\n}"
 						},
 						"description": ""
 					},
@@ -1676,6 +1606,76 @@
 						"body": {
 							"mode": "raw",
 							"raw": "{\n    \"clientABN\": \"00000000001\",\n    \"ssid\": \"mySSID-1234\",\n    \"agencyService\": \"__bogus__\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Transact (bad client abn)",
+					"request": {
+						"url": "{{host}}/api/v1/transact/allowed",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-AUTH-AUSKEY",
+								"value": "10000000001-DEVICE-2",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-ABN",
+								"value": "10000000001",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clientABN\": \"__bogus__\",\n    \"ssid\": \"mySSID-1234\",\n    \"agencyService\": \"USI\"\n}"
+						},
+						"description": ""
+					},
+					"response": []
+				},
+				{
+					"name": "Transact (bad ssid)",
+					"request": {
+						"url": "{{host}}/api/v1/transact/allowed",
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-AUTH-AUSKEY",
+								"value": "10000000001-DEVICE-2",
+								"description": ""
+							},
+							{
+								"key": "X-RAM-ABN",
+								"value": "10000000001",
+								"description": ""
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n    \"clientABN\": \"00000000001\",\n    \"ssid\": \"__bogus__\",\n    \"agencyService\": \"EDUCATION\"\n}"
 						},
 						"description": ""
 					},
