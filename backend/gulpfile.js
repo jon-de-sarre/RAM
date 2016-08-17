@@ -70,6 +70,22 @@ gulp.task('serve', ["copy:i18n", "ts:watch"], function () {
         });
 });
 
+gulp.task('servedebug', ["copy:i18n", "ts:watch"], function () {
+    nodemon({
+        script: 'dist/backend/typescript/server.js',
+        "verbose": false,
+        "delay": 1000,
+        "ignore": ["**/*.js.map", "**/*.spec.js", "**/*.log"],
+        "execMap": {
+            "js": "node --harmony --debug"
+        }
+    })
+        .on('restart', function () {
+            console.log('              [gulp] RAM Backend Server: restarted [OK]');
+            console.log('              [gulp] ..................................');
+        });
+});
+
 gulp.task('seed', ["ts:compile"], function (cb) {
     exec('node dist/backend/typescript/seeding/seeder.js --color', function (err, stdout, stderr) {
         if (stdout) {
