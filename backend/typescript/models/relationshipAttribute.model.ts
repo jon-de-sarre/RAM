@@ -33,14 +33,14 @@ const RelationshipAttributeSchema = new mongoose.Schema({
 // interfaces .........................................................................................................
 
 export interface IRelationshipAttribute extends mongoose.Document {
-    value?: [string];
+    value?: string[];
     attributeName: IRelationshipAttributeName;
     toDTO():Promise<DTO>;
 }
 
 /* tslint:disable:no-empty-interfaces */
 export interface IRelationshipAttributeModel extends mongoose.Model<IRelationshipAttribute> {
-    add:(value: [string], attributeName: IRelationshipAttributeName) => Promise<IRelationshipAttribute>;
+    add:(value: string[], attributeName: IRelationshipAttributeName) => Promise<IRelationshipAttribute>;
 }
 
 // instance methods ...................................................................................................
