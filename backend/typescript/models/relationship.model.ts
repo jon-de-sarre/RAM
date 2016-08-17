@@ -534,7 +534,8 @@ RelationshipSchema.method('modify', async function (dto: DTO) {
     const subjectIdentity = await IdentityModel.findByIdValue(subjectIdValue);
     Assert.assertNotNull(subjectIdentity, 'Subject identity not found', `Expected to find subject by id: ${this.id}`);
 
-    // allow SSID to be modified - future story to change the below to be configuration based and not hard coded
+    // future story to change the below to be configuration based and not hard coded
+    let attributes: IRelationshipAttribute[] = [];
     for (let attr of dto.attributes) {
         Assert.assertNotNull(attr.attributeName, 'Attribute did not have an attribute name');
         Assert.assertNotNull(attr.attributeName.href, 'Attribute did not have an attribute name href');
@@ -545,26 +546,20 @@ RelationshipSchema.method('modify', async function (dto: DTO) {
         const attributeName = await RelationshipAttributeNameModel.findByCodeIgnoringDateRange(attributeNameCode);
         Assert.assertNotNull(attributeName, 'Attribute name not found', `Expected to find attribuet name with code: ${attributeNameCode}`);
 
-        if (attributeName.code === 'SSID') {
-            for (let existingAttribute of this.attributes) {
-                if (existingAttribute.attributeName.code === attributeName.code) {
-                    existingAttribute.value = attr.value;
-                    await existingAttribute.save();
-                }
-            }
-            break;
-        }
+        let attribute: IRelationshipAttribute = await RelationshipAttributeModel.add(attr.value, attributeName);
+        attributes.push(attribute);
     }
 
     this.startTimestamp = dto.startTimestamp;
     this.endTimestamp = dto.endTimestamp;
+    this.attributes = attributes;
 
     this.startTimestamp.setHours(0, 0, 0);
     if (this.endTimestamp) {
         this.endTimestamp.setHours(0, 0, 0);
     }
 
-    this.save();
+    await this.save();
 
     return this;
 });

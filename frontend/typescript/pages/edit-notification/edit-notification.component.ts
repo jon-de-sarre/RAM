@@ -245,9 +245,11 @@ export class EditNotificationComponent extends AbstractPageComponent {
                 validationOk = false;
                 this.addGlobalMessage('Please specify valid software ids.');
             }
-            if (!agencyServiceCodes || agencyServiceCodes.length === 0) {
-                validationOk = false;
-                this.addGlobalMessage('Please specify at least one agency service.');
+            if (!this.relationshipHref) {
+                if (!agencyServiceCodes || agencyServiceCodes.length === 0) {
+                    validationOk = false;
+                    this.addGlobalMessage('Please specify at least one agency service.');
+                }
             }
             if (!accepted) {
                 validationOk = false;
