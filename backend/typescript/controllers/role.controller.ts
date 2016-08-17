@@ -148,8 +148,7 @@ export class RoleController {
                 return party;
             })
             .then((party:IParty) => {
-                const agencyUser = context.getAuthenticatedAgencyUser();
-                return party.modifyRole(req.body, agencyUser);
+                return party.modifyRole(req.body);
             })
             .then((model) => model ? model.toDTO() : null)
             .then(sendResource(res))
@@ -181,7 +180,7 @@ export class RoleController {
 
         router.post('/v1/role',
             context.begin,
-            context.isAuthenticated,
+            context.isAuthenticatedAsAgencyUser,
             this.create);
 
         router.put('/v1/role',

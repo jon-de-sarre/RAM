@@ -13,6 +13,7 @@ import {RAMServices} from '../../services/ram-services';
 
 import {
     IHrefValue,
+    HrefValue,
     FilterParams,
     ISearchResult,
     IPrincipal,
@@ -56,7 +57,7 @@ export class EditRoleComponent extends AbstractPageComponent {
     public roleTypeRefs: IHrefValue<IRoleType>[];
     public allAgencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[]; // all agency services
     public accessibleAgencyServiceRoleAttributeNameUsages: IRoleAttributeNameUsage[]; // agency services that the user can manage
-    public assignedAgencyAttributes: IRoleAttribute[]; // agency services assigned to the role
+    public assignedAgencyAttributes: IRoleAttribute[] = []; // agency services assigned to the role
     public form: FormGroup;
 
     public hasServiceBeenRemoved: boolean = false;
@@ -107,12 +108,6 @@ export class EditRoleComponent extends AbstractPageComponent {
             error: this.onServerError.bind(this)
         });
 
-        // identity in focus
-        this.services.rest.findIdentityByHref(this.identityHref).subscribe({
-            next: this.onFindIdentity.bind(this),
-            error: this.onServerError.bind(this)
-        });
-
         // role types
         this.services.rest.listRoleTypes().subscribe({
             next: (roleTypeRefs) => this.roleTypeRefs = roleTypeRefs,
@@ -143,6 +138,8 @@ export class EditRoleComponent extends AbstractPageComponent {
                 next: this.onFindRole.bind(this),
                 error: this.onServerError.bind(this)
             });
+        } else {
+            this.onNewRole();
         }
     }
 
@@ -154,7 +151,6 @@ export class EditRoleComponent extends AbstractPageComponent {
             // no modify access
             this.services.route.goToAccessDeniedPage();
         } else {
-
             // load relationship type
             this.services.rest.findRoleTypeByHref(role.roleType.href).subscribe({
                 next: (roleType) => {
@@ -164,26 +160,17 @@ export class EditRoleComponent extends AbstractPageComponent {
                 },
                 error: this.onServerError.bind(this)
             });
-
-            const preferredName = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(role, 'PREFERRED_NAME', 'OTHER'));
-            const deviceAusKeys = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(role, 'DEVICE_AUSKEYS', 'OTHER'));
-
-            (this.form.controls['preferredName'] as FormControl).updateValue(preferredName);
-            (this.form.controls['deviceAusKeys'] as FormControl).updateValue(deviceAusKeys);
-
-            this.assignedAgencyAttributes = this.services.model.getRoleAttributesByClassifier(role, 'AGENCY_SERVICE');
-            for (let attr of this.assignedAgencyAttributes) {
-                if (attr.value[0] === 'true') {
-                    this.onAgencyServiceChange(attr.attributeName.value.code);
-                }
-            }
-
         }
-
     }
 
     private onFindMe(me: IPrincipal) {
         this.me = me;
+
+        // identity in focus
+        this.services.rest.findIdentityByHref(this.identityHref).subscribe({
+            next: this.onFindIdentity.bind(this),
+            error: this.onServerError.bind(this)
+        });
     }
 
     public onRoleTypeChange(newRoleTypeCode: string) {
@@ -216,6 +203,9 @@ export class EditRoleComponent extends AbstractPageComponent {
                         if (searchResult.totalCount === 1) {
                             this.role = searchResult.list[0].value;
                             this.role.roleType = roleTypeRef;
+                            this.roleHref = this.services.model.getLinkHrefByType(RAMConstants.Link.SELF, this.role);
+
+                            this.setUpForm();
                         }
                         this._isLoading = false;
                     }, (err) => {
@@ -244,6 +234,44 @@ export class EditRoleComponent extends AbstractPageComponent {
 
     public onAusKeyChange(auskey: string) {
         this.toggleArrayValue(this.form.controls['deviceAusKeys'].value, auskey);
+    }
+
+    public onNewRole() {
+        this.role = new Role(
+            [],
+            null,
+            null,
+            new HrefValue(this.identity.party.href, null),
+            null,
+            null,
+            null,
+            null,
+            null,
+            []
+        )
+    }
+
+    private setUpForm() {
+        const preferredName = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(this.role, 'PREFERRED_NAME', 'OTHER'));
+        const deviceAusKeys = this.services.model.getRoleAttributeValue(this.services.model.getRoleAttribute(this.role, 'DEVICE_AUSKEYS', 'OTHER'));
+
+        (this.form.controls['preferredName'] as FormControl).updateValue(preferredName);
+        (this.form.controls['deviceAusKeys'] as FormControl).updateValue(deviceAusKeys);
+
+        this.updateAgencyServices();
+    }
+
+    private updateAgencyServices() {
+        this.form.controls['agencyServices'].updateValueAndValidity([]);
+
+        this.assignedAgencyAttributes = this.services.model.getRoleAttributesByClassifier(this.role, 'AGENCY_SERVICE');
+        if (this.assignedAgencyAttributes) {
+            for (let attr of this.assignedAgencyAttributes) {
+                if (attr.value[0] === 'true') {
+                    this.onAgencyServiceChange(attr.attributeName.value.code);
+                }
+            }
+        }
     }
 
     public isAusKeySelected(auskey: string) {
@@ -300,43 +328,65 @@ export class EditRoleComponent extends AbstractPageComponent {
 
     public save() {
         this.clearGlobalMessages();
+
+        let validationOk = true;
+
         const roleTypeCode = this.form.controls['roleType'].value;
         const agencyServiceCodes = this.form.controls['agencyServices'].value;
         const preferredName = this.form.controls['preferredName'].value;
         const deviceAusKeys = this.form.controls['deviceAusKeys'].value;
+
+        console.log("deviceAusKeys = " , deviceAusKeys );
         if (!roleTypeCode || roleTypeCode === '-') {
+            validationOk = false;
             this.addGlobalMessage('Please select a role type.');
-        } else if (!this.accessibleAgencyServiceRoleAttributeNameUsages || this.accessibleAgencyServiceRoleAttributeNameUsages.length === 0) {
-            this.addGlobalMessage('You do not have access to any government services.');
-        } else if (agencyServiceCodes.length === 0) {
-            this.addGlobalMessage('Please select at least one government agency service.');
-        } else {
-            let roleTypeRef: IHrefValue<IRoleType> = this.services.model.getRoleTypeRef(this.roleTypeRefs, roleTypeCode);
-            let attributes: RoleAttribute[] = [];
-            attributes.push(new RoleAttribute(preferredName, this.services.model.getRoleTypeAttributeNameRef(roleTypeRef, 'PREFERRED_NAME')));
-            attributes.push(new RoleAttribute(deviceAusKeys, this.services.model.getRoleTypeAttributeNameRef(roleTypeRef, 'DEVICE_AUSKEYS')));
-            for (let agencyServiceCode of agencyServiceCodes) {
-                attributes.push(new RoleAttribute('true', this.services.model.getRoleTypeAttributeNameRef(roleTypeRef, agencyServiceCode)));
-            }
-            const role = new Role(
-                [],
-                null,
-                roleTypeRef,
-                this.identity.party,
-                new Date(),
-                null,
-                null,
-                new Date(),
-                'ACTIVE',
-                attributes
-            );
-            // todo replace with href
-            this.services.rest.createRole(role).subscribe((role) => {
-                this.services.route.goToRolesPage(this.identityHref);
-            }, (err) => {
-                this.addGlobalErrorMessages(err);
-            });
         }
+        if (!this.accessibleAgencyServiceRoleAttributeNameUsages || this.accessibleAgencyServiceRoleAttributeNameUsages.length === 0) {
+            validationOk = false;
+            this.addGlobalMessage('You do not have access to any government services.');
+        }
+        if (agencyServiceCodes.length === 0) {
+            validationOk = false;
+            this.addGlobalMessage('Please select at least one government agency service.');
+        }
+
+        if (validationOk) {
+            // let roleTypeRef: IHrefValue<IRoleType> = this.services.model.getRoleTypeRef(this.roleTypeRefs, roleTypeCode);
+            let attributes: RoleAttribute[] = [];
+            attributes.push(new RoleAttribute(preferredName, this.services.model.getRoleTypeAttributeNameRef(this.role.roleType, 'PREFERRED_NAME')));
+            attributes.push(new RoleAttribute(deviceAusKeys, this.services.model.getRoleTypeAttributeNameRef(this.role.roleType, 'DEVICE_AUSKEYS')));
+            for (let agencyServiceCode of agencyServiceCodes) {
+                attributes.push(new RoleAttribute(['true'], this.services.model.getRoleTypeAttributeNameRef(this.role.roleType, agencyServiceCode)));
+            }
+
+            this.role.attributes = attributes;
+
+            // save
+            if(!this.roleHref) {
+
+                // insert
+
+                let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.ROLE_CREATE, this.identity);
+                this.services.rest.insertRoleByHref(saveHref+'/..', this.role).subscribe({
+                    next: this.onSave.bind(this),
+                    error: this.onServerError.bind(this)
+                });
+
+            } else {
+
+                // update
+
+                let saveHref = this.services.model.getLinkHrefByType(RAMConstants.Link.MODIFY, this.role);
+                this.services.rest.updateRoleByHref(saveHref+'/..', this.role).subscribe({
+                    next: this.onSave.bind(this),
+                    error: this.onServerError.bind(this)
+                });
+            }
+        }
+    }
+
+    public onSave() {
+        this.services.route.goToRolesPage(this.identityHref);
     }
 
 }
