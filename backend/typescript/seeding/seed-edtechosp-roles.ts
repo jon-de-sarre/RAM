@@ -22,7 +22,7 @@ export class EdTechOspRolesSeeder {
                 Seeder.edTech_osp_role = await Seeder.createRoleModel({
                     roleType: Seeder.osp_roleType,
                     party: Seeder.edtechosp_party,
-                    startTimestamp: new Date(),
+                    startTimestamp: Seeder.now,
                     status: RoleStatus.Active.code,
                     attributes: [
                         await Seeder.createRoleAttributeModel({

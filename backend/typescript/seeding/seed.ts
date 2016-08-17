@@ -108,6 +108,7 @@ import {TrungTrainingIdentitySeeder} from './seed-trungtraining-identity';
 import {TrungTrainingRelationshipsSeeder} from './seed-trungtraining-relationships';
 
 const now = new Date();
+now.setHours(0, 0, 0, 0);
 
 const truncateString = (input:String):String => {
     return input && input.length > 60 ? (input.substring(0, 60) + '...') : input;
@@ -118,6 +119,8 @@ const truncateString = (input:String):String => {
 /* tslint:disable:no-any */
 /* tslint:disable:max-func-body-length */
 export class Seeder {
+
+    public static now = now;
 
     private static verboseMode:boolean = true;
     private static exportLDIFMode:boolean = true;

@@ -36,7 +36,7 @@ export class JensCateringRelationshipsSeeder {
                     subjectNickName: Seeder.jenscatering_name,
                     delegate: Seeder.jennifermaxims_party,
                     delegateNickName: Seeder.jennifermaxims_name,
-                    startTimestamp: new Date(),
+                    startTimestamp: Seeder.now,
                     status: RelationshipStatus.Accepted.code,
                     initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
@@ -86,7 +86,7 @@ export class JensCateringRelationshipsSeeder {
                     subjectNickName: Seeder.jenscatering_name,
                     delegate: Seeder.edtechosp_party,
                     delegateNickName: Seeder.edtechosp_name,
-                    startTimestamp: new Date(),
+                    startTimestamp: Seeder.now,
                     status: RelationshipStatus.Accepted.code,
                     initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
@@ -128,7 +128,7 @@ export class JensCateringRelationshipsSeeder {
                     subjectNickName: Seeder.jenscatering_name,
                     delegate: Seeder.johnmaxims_party,
                     delegateNickName: Seeder.johnmaxims_name,
-                    startTimestamp: new Date(),
+                    startTimestamp: Seeder.now,
                     status: RelationshipStatus.Accepted.code,
                     initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
@@ -211,7 +211,7 @@ export class JensCateringRelationshipsSeeder {
                     subjectNickName: Seeder.jenscatering_name,
                     delegate: Seeder.robertsmith_party,
                     delegateNickName: Seeder.robertsmith_name,
-                    startTimestamp: new Date(),
+                    startTimestamp: Seeder.now,
                     status: RelationshipStatus.Pending.code,
                     initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
@@ -292,7 +292,7 @@ export class JensCateringRelationshipsSeeder {
                     subjectNickName: Seeder.jenscatering_name,
                     delegate: Seeder.fredjohnson_party,
                     delegateNickName: Seeder.fredjohnson_name,
-                    startTimestamp: new Date(),
+                    startTimestamp: Seeder.now,
                     status: RelationshipStatus.Pending.code,
                     initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
@@ -377,7 +377,7 @@ export class JensCateringRelationshipsSeeder {
                         subjectNickName: Seeder.jenscatering_name,
                         delegate: delegateParty,
                         delegateNickName: delegateName,
-                        startTimestamp: new Date(),
+                        startTimestamp: Seeder.now,
                         status: RelationshipStatus.Accepted.code,
                         initiatedBy: RelationshipInitiatedBy.Subject.code,
                         attributes: [

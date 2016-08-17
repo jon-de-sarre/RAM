@@ -2,8 +2,6 @@ import {Seeder} from './seed';
 
 // seeder .............................................................................................................
 
-const now = new Date();
-
 /* tslint:disable:no-any */
 /* tslint:disable:max-func-body-length */
 export class LegislativeProgramsSeeder {
@@ -17,7 +15,7 @@ export class LegislativeProgramsSeeder {
                 code: 'EDUCATION',
                 shortDecodeText: 'Education program',
                 longDecodeText: 'Education program',
-                startDate: now
+                startDate: Seeder.now
             } as any);
 
         } catch (e) {
