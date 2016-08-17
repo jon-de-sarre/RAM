@@ -201,8 +201,11 @@ RoleSchema.method('getAgencyServiceAttributesInDateRange', async function(date: 
     let agencyServiceAttributes: IRoleAttribute[] = [];
     this.attributes.forEach((attribute: IRoleAttribute) => {
         const attributeName = attribute.attributeName;
+        console.log('TESTING: ', attributeName.code, attributeName.classifier, attributeName.startDate, attributeName.endDate);
         if (attributeName.classifier === RoleAttributeNameClassifier.AgencyService.code) {
+            console.log(' aaa: passed');
             if (attributeName.startDate <= date && (attributeName.endDate === null || attributeName.endDate === undefined || attributeName.endDate >= date)) {
+                console.log(' bbb: passed');
                 agencyServiceAttributes.push(attribute);
             }
         }

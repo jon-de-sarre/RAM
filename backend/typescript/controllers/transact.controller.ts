@@ -56,6 +56,8 @@ export class TransactController {
                 }
                 const ospRole = opsRoles.list[0];
 
+                console.log('attributes =', ospRole.attributes);
+
                 // ensure client ABN
                 const clientIdentity = await this.identityModel.findByIdValue(Url.abnIdValue(request.clientABN));
                 if (!clientIdentity) {
@@ -65,6 +67,7 @@ export class TransactController {
                 // ensure agency service matches
                 let agencyServiceMatched = false;
                 const attributes = await ospRole.getAgencyServiceAttributesInDateRange(new Date());
+                console.log('filtered agency attributes =', attributes);
                 for (let attribute of attributes) {
                     if (attribute.attributeName.code === request.agencyService) {
                         agencyServiceMatched = true;
