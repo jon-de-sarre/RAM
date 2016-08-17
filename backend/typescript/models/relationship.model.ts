@@ -8,6 +8,7 @@ import {IRelationshipType, RelationshipTypeModel} from './relationshipType.model
 import {IRelationshipAttribute, RelationshipAttributeModel} from './relationshipAttribute.model';
 import {RelationshipAttributeNameModel} from './relationshipAttributeName.model';
 import {IdentityModel, IIdentity, IdentityType, IdentityInvitationCodeStatus} from './identity.model';
+import {context} from '../providers/context.provider';
 import {
     HrefValue,
     Relationship as DTO,
@@ -17,6 +18,7 @@ import {
 } from '../../../commons/RamAPI';
 // import {logger} from '../logger';
 import {IdentityPublicIdentifierScheme} from './identity.model';
+import {logger} from '../logger';
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
 
@@ -418,6 +420,25 @@ RelationshipSchema.method('claimPendingInvitation', async function (claimingDele
             //      acceptingDelegateIdentity.profile.getSharedSecret(DOB_SHARED_SECRET_TYPE_CODE)
             //     identity.profile.getSharedSecret(DOB_SHARED_SECRET_TYPE_CODE).matchesValue(),
             //     'Identity does not match');
+        }
+
+        // If we received ABN from headers (ie from AUSkey), check it against ABN in relationship
+        const abn = context.getAuthenticatedABN();
+        logger.info('abn is <' + abn + '>');
+        if (abn) {
+            logger.info('checking abn');
+            const allIdentities = await IdentityModel.listByPartyId(this.subject.id);
+            let found:boolean = false;
+            for (let identity:IIdentity of allIdentities) {
+                logger.info('abn for identity is ' + identity.rawIdValue);
+                if (identity.rawIdValue === abn) {
+                    found = true;
+                }
+            }
+            Assert.assertTrue(
+                found,
+                'You cannot accept an authorisation with an AUSkey from a different ABN. AUSkeys only have authorisation for the ABN they are issued under.'
+            );
         }
 
         // TODO credentials strengths (not spec'ed out yet)

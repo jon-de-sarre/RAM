@@ -40,10 +40,6 @@ export class TransactController {
         const ospIdentityIdValue = Url.abnIdValue(abn);
         const clientIdentityIdValue = Url.abnIdValue(request.clientABN);
 
-        console.log('request body =', request);
-
-        console.log('auskey =', auskey, ', abn =', abn);
-
         validateReqSchema(req, schema)
 
             .then(async(req: Request) => {
