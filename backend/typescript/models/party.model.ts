@@ -246,7 +246,7 @@ PartySchema.method('addOrModifyRole', async function (roleDTO: RoleDTO, agencyUs
                 }));
             } else {
                 const filteredRoleAttribute = filteredRoleAttributes[0];
-                filteredRoleAttribute.value = [value];
+                filteredRoleAttribute.value = value;
                 await filteredRoleAttribute.save();
                 roleAttributes.push(filteredRoleAttribute);
             }
