@@ -429,7 +429,7 @@ RelationshipSchema.method('claimPendingInvitation', async function (claimingDele
             logger.info('checking abn');
             const allIdentities = await IdentityModel.listByPartyId(this.subject.id);
             let found:boolean = false;
-            for (let identity:IIdentity of allIdentities) {
+            for (let identity of allIdentities) {
                 logger.info('abn for identity is ' + identity.rawIdValue);
                 if (identity.rawIdValue === abn) {
                     found = true;

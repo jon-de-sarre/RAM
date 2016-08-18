@@ -236,7 +236,7 @@ RoleSchema.method('findAttribute', async function (code: string, classifier: str
     }
 });
 
-RoleSchema.method('deleteAttribute', async function (code: string, classifier: string): void {
+RoleSchema.method('deleteAttribute', async function (code: string, classifier: string) {
     this.attributes.forEach((attribute: IRoleAttribute) => {
         if (attribute.attributeName.classifier === classifier && attribute.attributeName.code === code) {
             console.log("removing = ", attribute);
