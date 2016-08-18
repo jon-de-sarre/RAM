@@ -3,6 +3,7 @@ import * as mongooseAutoIncrement from 'mongoose-auto-increment';
 import {conf} from '../bootstrap';
 import * as Hashids from 'hashids';
 import {RAMEnum, IRAMObject, RAMSchema} from './base';
+import {Url} from './url';
 import {
     HrefValue,
     Identity as DTO,
@@ -323,13 +324,22 @@ IdentitySchema.method('linkIdSchemeEnum', function () {
 
 IdentitySchema.method('toHrefValue', async function (includeValue:boolean) {
     return new HrefValue(
-        '/api/v1/identity/' + encodeURIComponent(this.idValue),
+        await Url.forIdentity(this),
         includeValue ? await this.toDTO() : undefined
     );
 });
 
+// todo need to use security context to drive the links
 IdentitySchema.method('toDTO', async function () {
     return new DTO(
+        Url.links()
+            .push('self', Url.GET, await Url.forIdentity(this))
+            .push('relationship-list', Url.GET, await Url.forIdentityRelationshipList(this))
+            .push('relationship-create', Url.POST, await Url.forIdentityRelationshipCreate(this))
+            .push('role-list', Url.GET, await Url.forIdentityRoleList(this))
+            .push('role-create', Url.POST, await Url.forIdentityRoleCreate(this))
+            .push('auskey-list', Url.GET, await Url.forIdentityAUSkeyList(this), this.publicIdentifierScheme === 'ABN')
+            .toArray(),
         this.idValue,
         this.rawIdValue,
         this.identityType,

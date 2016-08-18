@@ -4,9 +4,8 @@ import {Request, Response} from 'express';
 import {Headers} from './headers';
 import {ErrorResponse, ICreateIdentityDTO} from '../../../commons/RamAPI';
 import {AgencyUser, IAgencyUserProgramRole, AgencyUserProgramRole} from '../models/agencyUser.model';
-import {IPrincipal, Principal} from '../models/principal.model';
+import {Principal} from '../models/principal.model';
 import {IIdentity, IdentityModel} from '../models/identity.model';
-import {IAgencyUser} from '../models/agencyUser.model';
 import {DOB_SHARED_SECRET_TYPE_CODE} from '../models/sharedSecretType.model';
 
 // todo determine if we need to base64 decode header values to be spec compliant?
@@ -115,9 +114,7 @@ class Security {
                         ));
                     }
                 }
-                res.locals[Headers.Principal] = new Principal(idValue, displayName, true);
-                res.locals[Headers.PrincipalIdValue] = idValue;
-                res.locals[Headers.AgencyUser] = new AgencyUser(
+                const agencyUser = new AgencyUser(
                     idValue,
                     givenName,
                     familyName,
@@ -125,6 +122,9 @@ class Security {
                     this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserAgency),
                     programRoles
                 );
+                res.locals[Headers.Principal] = new Principal(idValue, displayName, true, agencyUser, undefined);
+                res.locals[Headers.PrincipalIdValue] = idValue;
+                res.locals[Headers.AgencyUser] = agencyUser;
             }
         };
     }
@@ -133,7 +133,7 @@ class Security {
         return (identity?: IIdentity) => {
             logger.info('Identity context:', (identity ? colors.magenta(identity.idValue) : colors.red('[not found]')));
             if (identity) {
-                res.locals[Headers.Principal] = new Principal(identity.idValue, identity.profile.name._displayName, false);
+                res.locals[Headers.Principal] = new Principal(identity.idValue, identity.profile.name._displayName, false, undefined, identity);
                 res.locals[Headers.PrincipalIdValue] = identity.idValue;
                 res.locals[Headers.Identity] = identity;
                 res.locals[Headers.IdentityIdValue] = identity.idValue;
@@ -144,6 +144,10 @@ class Security {
                 for (let sharedSecret of identity.profile.sharedSecrets) {
                     res.locals[`${Headers.Prefix}-${sharedSecret.sharedSecretType.code}`.toLowerCase()] = sharedSecret.value;
                 }
+                if (req.header(Headers.ABN)) {
+                    logger.info('ABN header: ' + req.header(Headers.ABN));
+                    res.locals[Headers.ABN] = req.header(Headers.ABN);
+                }
             }
         };
     }
@@ -151,9 +155,9 @@ class Security {
     private prepareCommonResponseLocals(req: Request, res: Response, next: () => void) {
         return () => {
             for (let key of Object.keys(req.headers)) {
-                // headers should be lowercase, but lets make sure
+                // keys should be lowercase, but let's make sure
                 const keyLower = key.toLowerCase();
-                // if it's an application header, copy it to locals
+                // if it's an application key, copy it to locals
                 if (keyLower.startsWith(Headers.Prefix)) {
                     const value = req.get(key);
                     res.locals[keyLower] = value;
@@ -169,52 +173,6 @@ class Security {
             res.status(401);
             res.send(new ErrorResponse('Unable to look up identity.'));
         };
-    }
-
-    public getAuthenticatedIdentityIdValue(res: Response): string {
-        return res.locals[Headers.IdentityIdValue];
-    }
-
-    public getAuthenticatedIdentity(res: Response): IIdentity {
-        return res.locals[Headers.Identity];
-    }
-
-    public getAuthenticatedAgencyUserLoginId(res: Response): string {
-        return res.locals[Headers.AgencyUserLoginId];
-    }
-
-    public getAuthenticatedAgencyUser(res: Response): IAgencyUser {
-        return res.locals[Headers.AgencyUser];
-    }
-
-    public getAuthenticatedPrincipalIdValue(res: Response): string {
-        return res.locals[Headers.PrincipalIdValue];
-    }
-
-    public getAuthenticatedPrincipal(res: Response): IPrincipal {
-        return res.locals[Headers.Principal];
-    }
-
-    public isAuthenticated(req: Request, res: Response, next: () => void) {
-        const id = res.locals[Headers.PrincipalIdValue];
-        if (id) {
-            next();
-        } else {
-            logger.error('Unable to invoke route requiring authentication'.red);
-            res.status(401);
-            res.send(new ErrorResponse('Not authenticated.'));
-        }
-    }
-
-    public isAuthenticatedAsAgencyUser(req: Request, res: Response, next: () => void) {
-        const principal = res.locals[Headers.Principal];
-        if (principal && principal.agencyUserInd) {
-            next();
-        } else {
-            logger.error('Unable to invoke route requiring agency user'.red);
-            res.status(401);
-            res.send(new ErrorResponse('Not authenticated as agency user.'));
-        }
     }
 
     // private logHeaders(req:Request) {

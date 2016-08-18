@@ -1,29 +1,54 @@
-import { Injectable } from '@angular/core';
+export const RAMConstants = {
 
-@Injectable()
-export class RAMConstantsService {
+    GlobalMessage: {
+        DELEGATE_NOTIFIED: 'DELEGATE_NOTIFIED',
+        DECLINED_RELATIONSHIP: 'DECLINED_RELATIONSHIP',
+        ACCEPTED_RELATIONSHIP: 'ACCEPTED_RELATIONSHIP',
+        CANCEL_ACCEPT_RELATIONSHIP: 'CANCEL_ACCEPT_RELATIONSHIP',
+        INVALID_CODE: 'INVALID_CODE',
+        SAVED_NOTIFICATION: 'SAVED_NOTIFICATION'
+    },
 
-    public PageSizeOptions = [5, 10, 25, 100];
-    public DefaultPageSize = 5;
-    public PartyId = '5719bc5d65cae16c197e1ecd';
+    Link: {
+        'SELF': 'self',
+        'RELATIONSHIP_LIST': 'relationship-list',
+        'RELATIONSHIP_CREATE': 'relationship-create',
+        'ROLE_LIST': 'role-list',
+        'ROLE_CREATE': 'role-create',
+        'MODIFY': 'modify',
+        'DELETE': 'delete'
+    },
 
-    public RelationshipTypeCategory = {
+    AUSkey: {
+        DEVICE_TYPE: 'DEVICE'
+    },
+
+    RelationshipTypeCategory: {
         AUTHORISATION: 'AUTHORISATION',
         NOTIFICATION: 'NOTIFICATION'
-    };
+    },
 
-    public RelationshipInitiatedBy = {
+    RelationshipInitiatedBy: {
         SUBJECT: 'SUBJECT',
         DELEGATE: 'DELEGATE'
-    };
+    },
 
-    public RelationshipTypeCode = {
+    RelationshipTypeCode: {
         OSP: 'OSP'
-    };
+    },
 
-    public RelationshipTypeAttributeCode = {
+    RelationshipTypeAttributeCode: {
         SSID: 'SSID',
         SELECTED_GOVERNMENT_SERVICES_LIST: 'SELECTED_GOVERNMENT_SERVICES_LIST',
-    };
+        SUBJECT_RELATIONSHIP_TYPE_DECLARATION: 'SUBJECT_RELATIONSHIP_TYPE_DECLARATION'
+    },
 
-}
+    RoleStatusCode: {
+        ACTIVE: 'ACTIVE'
+    },
+
+    RoleTypeCode: {
+        OSP: 'OSP'
+    }
+
+};

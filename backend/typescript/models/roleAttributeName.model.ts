@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import {RAMEnum, ICodeDecode, CodeDecodeSchema} from './base';
+import {Url} from './url';
 import {HrefValue, RoleAttributeName as DTO} from '../../../commons/RamAPI';
 
 // enums, utilities, helpers ..........................................................................................
@@ -87,6 +88,7 @@ export interface IRoleAttributeName extends ICodeDecode {
     purposeText: string;
     permittedValues: string[];
     domainEnum(): RoleAttributeNameDomain;
+    isInDateRange(): boolean;
     toHrefValue(includeValue:boolean): Promise<HrefValue<DTO>>;
     toDTO(): Promise<DTO>;
 }
@@ -104,9 +106,14 @@ RoleAttributeNameSchema.method('domainEnum', function () {
     return RoleAttributeNameDomain.valueOf(this.domain);
 });
 
+RoleAttributeNameSchema.method('isInDateRange', function() {
+    const date = new Date();
+    return this.startDate <= date && (this.endDate === null || this.endDate === undefined || this.endDate >= date);
+});
+
 RoleAttributeNameSchema.method('toHrefValue', async function (includeValue:boolean) {
     return new HrefValue(
-        '/api/v1/roleAttributeName/' + encodeURIComponent(this.code),
+        await Url.forRoleAttributeName(this),
         includeValue ? await this.toDTO() : undefined
     );
 });

@@ -1,4 +1,5 @@
 import {Router, Request, Response} from 'express';
+import {context} from '../providers/context.provider';
 import {sendResource, sendList, sendError, sendNotFoundError, validateReqSchema} from './helpers';
 import {IProfileModel, ProfileProvider} from '../models/profile.model';
 
@@ -37,9 +38,11 @@ export class ProfileController {
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/profileProvider/:code',
+            context.begin,
             this.findProviderByCode);
 
         router.get('/v1/profileProviders',
+            context.begin,
             this.listProviders);
 
         return router;

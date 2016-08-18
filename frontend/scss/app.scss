@@ -197,6 +197,17 @@ select:-moz-focusring, select.form-control:-moz-focusring {
   text-shadow: 0 0 0 #000;
 }
 
+.ui-dialog > div.ui-dialog-titlebar {
+  padding: 0 0 1em 0;
+  margin: 1em 1em;
+  border-bottom: 2px solid #e5e5e5;
+}
+
+.ui-dialog > div > .ui-dialog-buttonpane {
+  margin-top: 25px;
+  padding-right: 0;
+}
+
 .padding-top-5 {
   padding-top: 5px;
 }
@@ -507,6 +518,20 @@ footer {
   font-weight: bold;
 }
 
+.table .radio, .table .checkbox {
+  margin: 0;
+  position: inherit;
+}
+
+.table .radio input[type="radio"], .table .radio-inline input[type="radio"], .table .checkbox input[type="checkbox"], .table .checkbox-inline input[type="checkbox"] {
+  margin-left: 0;
+  position: inherit;
+}
+
+div.checkbox.disabled > label, div.radio.disabled > label {
+  color: $text-muted;
+}
+
 .ui-calendar {
   display: inherit !important;
 }
@@ -531,4 +556,12 @@ footer {
 
 .has-error.form-control {
   border: 1px solid #FF0039;
+}
+
+.checkbox-table td:last-child {
+  width: 100px;
+}
+
+div.panel-body > table {
+  margin-bottom: 0;
 }

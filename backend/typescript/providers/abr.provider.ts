@@ -30,6 +30,10 @@
  * If the configuration item is empty, mock data is returned. The
  * provider does not access the Internet. The mock return is the
  * same data independent of name or abn provided.
+ *
+ * Sample ABNs
+ * 12586695715 34241177887 49093669660 33531321789 76093555992
+ * 53772093958 85832766990 56006580883 78345431247 48212321102
  */
 
 import * as request from 'superagent';
@@ -65,14 +69,25 @@ const extractName = (item:any) =>
   organisationName(item.otherTradingName) ||
   '';
 
+  const address = (mainBusinessPhysicalAddress:any) =>
+    mainBusinessPhysicalAddress
+      ? mainBusinessPhysicalAddress[0]
+      : { stateCode: [''], postcode: [''] };
+
 // build the static typed organisation details for the rest
 // of the system to use (client and server)
 const buildOrganisationEntry = (item:any):ABRentry => {
+    //console.log(JSON.stringify(item, null, 2));
+    const addressRecord = address(item.mainBusinessPhysicalAddress);
     return {
         abn:        item.ABN[0].identifierValue[0],
         name:       extractName(item),
-        state:      item.mainBusinessPhysicalAddress[0].stateCode[0],
-        postcode:   item.mainBusinessPhysicalAddress[0].postcode[0]
+        state:      addressRecord.stateCode[0],
+        postcode:   addressRecord.postcode[0],
+        type:       item.entityType[0].entityDescription[0],
+        status:     item.entityStatus[0].entityStatusCode[0],
+        from:       item.entityStatus[0].effectiveFrom[0],
+        to:         item.entityStatus[0].effectiveTo[0]
     };
 };
 
@@ -85,8 +100,8 @@ const extractOrganisations = (response:any):[ABRentry] => {
     if (list) {
         return list[0].searchResultsRecord
         // === does not work without toString(). What is xml2js returning?
-        .filter((item:any) =>
-            item.ABN[0].identifierStatus.toString() === 'Active')
+        // .filter((item:any) =>
+        //     item.ABN[0].identifierStatus.toString() === 'Active')
         .map(buildOrganisationEntry);
     } else {
         return undefined;

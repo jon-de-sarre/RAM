@@ -20,7 +20,8 @@ import {
 import {
     IRelationship,
     RelationshipModel,
-    RelationshipStatus, RelationshipInitiatedBy
+    RelationshipStatus,
+    RelationshipInitiatedBy
 } from '../models/relationship.model';
 import {IRelationshipType} from '../models/relationshipType.model';
 
@@ -142,7 +143,7 @@ describe('RAM Relationship', () => {
         }
     });
 
-    it('finds by identifier', async (done) => {
+    it('auto converts strings to dates', async (done) => {
         try {
 
             const retrievedInstance = await RelationshipModel.findByIdentifier(relationship1.id);
@@ -150,6 +151,14 @@ describe('RAM Relationship', () => {
             expect(retrievedInstance).not.toBeNull();
             expect(retrievedInstance.id).not.toBeNull();
             expect(retrievedInstance.id).toBe(relationship1.id);
+            expect(typeof retrievedInstance.startTimestamp).toBe('object');
+
+            const coerceStringAndDate = (input: string): Date|String => {
+                return input;
+            };
+
+            retrievedInstance.startTimestamp = coerceStringAndDate('2012-12-10') as Date;
+            expect(typeof retrievedInstance.startTimestamp).toBe('object');
 
             done();
 
@@ -189,7 +198,7 @@ describe('RAM Relationship', () => {
                 delegate: delegateParty1,
                 delegateNickName: delegateNickName1,
                 startTimestamp: new Date(),
-                status: RelationshipStatus.Active.code,
+                status: RelationshipStatus.Accepted.code,
                 initiatedBy: RelationshipInitiatedBy.Subject.code
             });
 
@@ -197,7 +206,7 @@ describe('RAM Relationship', () => {
             expect(instance.id).not.toBeNull();
             expect(instance.subject).not.toBeNull();
             expect(instance.status).not.toBeNull();
-            expect(instance.statusEnum()).toBe(RelationshipStatus.Active);
+            expect(instance.statusEnum()).toBe(RelationshipStatus.Accepted);
             expect(instance.endEventTimestamp).toBeFalsy();
             expect(instance._subjectNickNameString).not.toBeNull();
             expect(instance._delegateNickNameString).not.toBeNull();
@@ -221,7 +230,7 @@ describe('RAM Relationship', () => {
                 delegateNickName: delegateNickName1,
                 startTimestamp: new Date(),
                 endTimestamp: new Date(),
-                status: RelationshipStatus.Active.code,
+                status: RelationshipStatus.Accepted.code,
                 initiatedBy: RelationshipInitiatedBy.Subject.code
             });
 
@@ -229,7 +238,7 @@ describe('RAM Relationship', () => {
             expect(instance.id).not.toBeNull();
             expect(instance.subject).not.toBeNull();
             expect(instance.status).not.toBeNull();
-            expect(instance.statusEnum()).toBe(RelationshipStatus.Active);
+            expect(instance.statusEnum()).toBe(RelationshipStatus.Accepted);
             expect(instance.endEventTimestamp).not.toBeFalsy();
             expect(instance._subjectNickNameString).not.toBeNull();
             expect(instance._delegateNickNameString).not.toBeNull();
@@ -330,7 +339,7 @@ describe('RAM Relationship', () => {
 
             const retrievedAcceptedDelegateIdentity = await IdentityModel.findByIdValue(acceptingDelegateIdentity1.idValue);
 
-            expect(relationshipToAccept.statusEnum()).toBe(RelationshipStatus.Active);
+            expect(relationshipToAccept.statusEnum()).toBe(RelationshipStatus.Accepted);
             expect(acceptedInstance.statusEnum()).toBe(relationshipToAccept.statusEnum());
             expect(acceptedInstance.delegate.id).toBe(retrievedAcceptedDelegateIdentity.party.id);
             expect(retrievedAcceptedInstance.delegate.id).toBe(retrievedAcceptedDelegateIdentity.party.id);
@@ -375,7 +384,7 @@ describe('RAM Relationship', () => {
             });
 
             await relationship1.acceptPendingInvitation(acceptingDelegateIdentity1);
-            expect(relationship1.statusEnum()).toBe(RelationshipStatus.Active);
+            expect(relationship1.statusEnum()).toBe(RelationshipStatus.Accepted);
 
             await relationship1.acceptPendingInvitation(acceptingDelegateIdentity1);
             fail('should not have been able to accept a non-pending relationship');
@@ -419,7 +428,7 @@ describe('RAM Relationship', () => {
 
             const retrievedInstance = await RelationshipModel.findByIdentifier(relationshipToReject.id);
 
-            expect(relationshipToReject.statusEnum()).toBe(RelationshipStatus.Invalid);
+            expect(relationshipToReject.statusEnum()).toBe(RelationshipStatus.Declined);
             expect(retrievedInstance.statusEnum()).toBe(relationshipToReject.statusEnum());
 
             done();
@@ -434,7 +443,7 @@ describe('RAM Relationship', () => {
         try {
 
             await relationship1.rejectPendingInvitation(delegateIdentity1);
-            expect(relationship1.statusEnum()).toBe(RelationshipStatus.Invalid);
+            expect(relationship1.statusEnum()).toBe(RelationshipStatus.Declined);
 
             await relationship1.rejectPendingInvitation(delegateIdentity1);
             fail('should not have been able to reject a non-pending relationship');
@@ -512,7 +521,7 @@ describe('RAM Relationship', () => {
         try {
 
             const relationships = await RelationshipModel.searchByIdentity(subjectIdentity1.idValue,
-                null, null, null, null, null, null, null, 1, 10);
+                null, null, null, null, null, false, null, null, 1, 10);
             expect(relationships.totalCount).toBe(1);
             expect(relationships.list.length).toBe(1);
             expect(relationships.list[0].id).toBe(relationship1.id);
@@ -529,7 +538,7 @@ describe('RAM Relationship', () => {
         try {
 
             const relationships = await RelationshipModel.searchByIdentity(delegateIdentity1.idValue,
-                null, null, null, null, null, null, null, 1, 10);
+                null, null, null, null, null, false, null, null, 1, 10);
             expect(relationships.totalCount).toBe(1);
             expect(relationships.list.length).toBe(1);
             expect(relationships.list[0].id).toBe(relationship1.id);
@@ -546,7 +555,7 @@ describe('RAM Relationship', () => {
         try {
 
             const relationships = await RelationshipModel.searchByIdentity(subjectIdentity1.idValue,
-                PartyType.Individual.code, null, null, null, null, null, null, 1, 10);
+                PartyType.Individual.code, null, null, null, null, false, null, null, 1, 10);
             expect(relationships.totalCount).toBe(1);
             expect(relationships.list.length).toBe(1);
             expect(relationships.list[0].id).toBe(relationship1.id);
@@ -563,7 +572,7 @@ describe('RAM Relationship', () => {
         try {
 
             const relationships = await RelationshipModel.searchByIdentity(subjectIdentity1.idValue,
-                PartyType.ABN.code, null, null, null, null, null, null, 1, 10);
+                PartyType.ABN.code, null, null, null, null, false, null, null, 1, 10);
             expect(relationships.totalCount).toBe(0);
             expect(relationships.list.length).toBe(0);
 

@@ -1,4 +1,3 @@
-import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
 import {REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIRECTIVES} from '@angular/forms';
@@ -8,6 +7,7 @@ import {PageHeaderAuthComponent} from '../../components/page-header/page-header-
 import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
     from '../../components/search-result-pagination/search-result-pagination.component';
 import {RAMServices} from '../../services/ram-services';
+import {RAMConstants} from '../../services/ram-constants.service';
 
 import {
     IHrefValue,
@@ -33,10 +33,10 @@ import {
 
 export class RolesComponent extends AbstractPageComponent {
 
-    public idValue: string;
+    public identityHref: string;
     public page: number;
 
-    public roles$: Observable<ISearchResult<IHrefValue<IRole>>>;
+    public roleSearchResult: ISearchResult<IHrefValue<IRole>>;
 
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
     public agencyUser: IAgencyUser;
@@ -49,28 +49,38 @@ export class RolesComponent extends AbstractPageComponent {
 
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices,
-                private _fb: FormBuilder) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 
     public onInit(params: {path:Params, query:Params}) {
 
         // extract path and query parameters
-        this.idValue = decodeURIComponent(params.path['idValue']);
+        this.identityHref = params.path['identityHref'];
         this.page = params.query['page'] ? +params.query['page'] : 1;
 
         // agency user
-        this.services.rest.findMyAgencyUser().subscribe((me) => {
-            this.agencyUser = me;
+        this.services.rest.findMyPrincipal().subscribe((me) => {
+            this.agencyUser = me.agencyUser;
         });
 
         // identity in focus
-        this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
+        this.services.rest.findIdentityByHref(this.identityHref).subscribe((identity) => {
+
             this.identity = identity;
+
+            // roles
+            const rolesHref = this.services.model.getLinkHrefByType(RAMConstants.Link.ROLE_LIST, this.identity);
+            this.services.rest.searchRolesByHref(rolesHref, null, this.page)
+                .subscribe((searchResult) => {
+                    this.roleSearchResult = searchResult;
+                    this._isLoading = false;
+                }, (err) => {
+                    this.addGlobalErrorMessages(err);
+                    this._isLoading = false;
+                });
+
         });
 
         // role types
@@ -83,24 +93,15 @@ export class RolesComponent extends AbstractPageComponent {
             this.roleStatusRefs = roleStatusRefs;
         });
 
-        // roles
-        this.roles$ = this.services.rest.searchRolesByIdentity(this.idValue, this.page);
-        this.roles$.subscribe((searchResult) => {
-            this._isLoading = false;
-        }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
-            this._isLoading = false;
-        });
-
         // pagination delegate
         this.paginationDelegate = {
             goToPage: (page: number) => {
-                this.services.route.goToRolesPage(this.idValue, page);
+                this.services.route.goToRolesPage(this.identityHref, page);
             }
         } as SearchResultPaginationDelegate;
 
         // forms
-        this.form = this._fb.group({
+        this.form = this.fb.group({
         });
 
     }
@@ -110,18 +111,24 @@ export class RolesComponent extends AbstractPageComponent {
     }
 
     public goToAddRolePage() {
-        if (this.agencyUser) {
-            this.services.route.goToAddRolePage(this.idValue);
+        if (this.agencyUser && this.identity) {
+            this.services.route.goToAddRolePage(this.services.model.getLinkHrefByType(RAMConstants.Link.SELF, this.identity));
         }
     }
 
-    // todo not yet implemented
-    public goToRolePage(rolRef: IHrefValue<IRole>) {
-        alert('TODO: Not yet implemented');
+    public goToRolePage(roleRef: IHrefValue<IRole>) {
+        this.services.route.goToEditRolePage(
+            this.identityHref,
+            this.services.model.getLinkHrefByType('self', roleRef.value)
+        );
     }
 
     public isAddRoleEnabled() {
         return this.agencyUser !== null && this.agencyUser !== undefined;
+    }
+
+    public isEditRoleEnabled(roleRef: IHrefValue<IRole>) {
+        return this.services.model.hasLinkHrefByType(RAMConstants.Link.MODIFY, roleRef.value);
     }
 
 }

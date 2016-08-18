@@ -8,12 +8,12 @@ import {RAMRestService} from '../services/ram-rest.service';
 import {RAMModelService} from '../services/ram-model.service';
 import {RAMRouteService} from '../services/ram-route.service';
 import {RAMNavService} from '../services/ram-nav.service';
-import {RAMConstantsService} from '../services/ram-constants.service';
 
 import {BannerComponent} from '../components/banner/banner.component';
 import {BannerService} from '../components/banner/banner.service';
 import {ErrorComponent} from '../components/error/error.component';
 import {ErrorService} from '../components/error/error.service';
+import {TranslateService} from 'ng2-translate/ng2-translate';
 
 @Component({
     selector: 'ram-app',
@@ -26,11 +26,22 @@ import {ErrorService} from '../components/error/error.service';
         RAMModelService,
         RAMRouteService,
         RAMNavService,
-        RAMConstantsService,
         BannerService,
         ErrorService
     ]
 })
 
 export class AppComponent {
+
+    constructor(translate: TranslateService) {
+        let userLang = navigator.language.split('-')[0]; // use navigator lang if available
+        userLang = /(fr|en)/gi.test(userLang) ? userLang : 'en';
+        translate.setDefaultLang('en');
+        // the lang to use, if the lang isn't available, it will use the loader defined to get them
+        translate.use(userLang);
+        // uncomment these two lines to test that you're using translation - it will just display the key you're using instead of any translation
+        // translate.setDefaultLang('test');
+        // translate.use('test');
+    }
+
 }

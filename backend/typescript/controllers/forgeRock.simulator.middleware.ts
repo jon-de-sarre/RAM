@@ -54,6 +54,14 @@ class ForgeRockSimulator {
     }
 
     private resolveForIdentity(req: Request, res: Response, next: () => void) {
+        const abnFromHeaders = req.headers[Headers.ABN];
+        const abnFromCookie = req.cookies[Headers.ABN];
+        if (abnFromHeaders) {
+            res.locals[Headers.ABN] = abnFromHeaders;
+        } else if (abnFromCookie) {
+            res.locals[Headers.ABN] = abnFromCookie;
+            req.headers[Headers.ABN] = abnFromCookie;
+        }
         return (identity?: IIdentity) => {
             if (identity) {
                 logger.info(colors.red(`Setting ${Headers.IdentityIdValue}: ${identity.idValue}`));

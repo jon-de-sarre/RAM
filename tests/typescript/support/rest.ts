@@ -1,12 +1,13 @@
 import * as agent  from 'superagent';
 
 export class RestCalls {
-  private server: string;
-  private urlPrefix: string = '/api';
 
   //'X-RAM-Identity-IdValue': 'PUBLIC_IDENTIFIER:ABN:jenscatering_identity_1'
   private static headers = {};
-  
+
+  private server: string;
+  private urlPrefix: string = '/api';
+
   constructor(private serverAddress: string, private serverPort: number) {
     this.server = `${this.serverAddress}:${this.serverPort}`;
   }

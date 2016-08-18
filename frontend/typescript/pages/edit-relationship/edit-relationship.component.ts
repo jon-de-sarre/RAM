@@ -1,9 +1,11 @@
 import {Observable} from 'rxjs/Observable';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
+import {FormBuilder} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
+import {RAMConstants} from '../../services/ram-constants.service';
 import {RAMServices} from '../../services/ram-services';
 
 import {AccessPeriodComponent, AccessPeriodComponentData} from '../../components/access-period/access-period.component';
@@ -35,8 +37,8 @@ import {
 } from '../../../../commons/RamAPI';
 
 @Component({
-    selector: 'add-relationship',
-    templateUrl: 'add-relationship.component.html',
+    selector: 'edit-relationship',
+    templateUrl: 'edit-relationship.component.html',
     directives: [
         ROUTER_DIRECTIVES,
         AccessPeriodComponent,
@@ -49,9 +51,10 @@ import {
     ]
 })
 
-export class AddRelationshipComponent extends AbstractPageComponent {
+export class EditRelationshipComponent extends AbstractPageComponent {
 
     public idValue: string;
+    public key: string;
 
     public relationshipTypes$: Observable<IHrefValue<IRelationshipType>[]>;
     public relationshipTypeRefs: IHrefValue<IRelationshipType>[];
@@ -64,6 +67,7 @@ export class AddRelationshipComponent extends AbstractPageComponent {
 
     public newRelationship: AddRelationshipComponentData = {
         accessPeriod: {
+            startDateEnabled: true,
             startDate: new Date(),
             noEndDate: true,
             endDate: null
@@ -90,16 +94,15 @@ export class AddRelationshipComponent extends AbstractPageComponent {
         }
     };
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 
     public onInit(params: {path: Params, query: Params}) {
 
-        this.idValue = decodeURIComponent(params.path['idValue']);
+        this.idValue = params.path['idValue'];
+        this.key = params.path['key'];
 
         // identity in focus
         this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
@@ -111,7 +114,7 @@ export class AddRelationshipComponent extends AbstractPageComponent {
         this.relationshipTypes$.subscribe((relationshipTypeRefs) => {
             this.relationshipTypeRefs = relationshipTypeRefs.filter((relationshipType) => {
                 return relationshipType.value.managedExternallyInd === false
-                    && relationshipType.value.category === this.services.constants.RelationshipTypeCategory.AUTHORISATION;
+                    && relationshipType.value.category === RAMConstants.RelationshipTypeCategory.AUTHORISATION;
             });
         });
 
@@ -182,10 +185,10 @@ export class AddRelationshipComponent extends AbstractPageComponent {
                     identity.rawIdValue,
                     this.displayName(this.newRelationship.representativeDetails));
             }, (err) => {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this.addGlobalErrorMessages(err);
             });
         }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+            this.addGlobalErrorMessages(err);
         });
 
     };

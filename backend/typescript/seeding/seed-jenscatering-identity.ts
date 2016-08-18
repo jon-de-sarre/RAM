@@ -38,7 +38,7 @@ export class JensCateringIdentitySeeder {
                 Seeder.log('');
 
                 Seeder.jenscatering_identity_1 = await Seeder.createIdentityModel({
-                    rawIdValue: 'jenscateringABN',
+                    rawIdValue: '00000000001',
                     identityType: IdentityType.PublicIdentifier.code,
                     defaultInd: true,
                     publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.code,

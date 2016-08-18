@@ -8,18 +8,16 @@
             <th><h4>My software service subscriptions</h4></th>
             <th class="col-md-2"><h4>Status</h4></th>
             <th class="col-md-2"></th>
-            <th class="col-md-2"><a class="btn btn-primary align-center" [class.disabled]="!isAddNotificationEnabled()" (click)="goToAddNotificationPage()">Add Notification</a></th>
+            <th class="col-md-2"><a class="btn btn-primary align-center" (click)="goToAddNotificationPage()" *ngIf="isAddNotificationEnabled()">Add Notification</a></th>
         </tr>
     </thead>
     <tbody *ngIf="!isLoading">
-        <template ngFor let-item="$implicit" [ngForOf]="subjectGroupsWithRelationships">
-            <tr *ngFor="let relationshipRef of item.relationshipRefs">
-                <td>{{services.model.displayName(relationshipRef.value.delegateNickName)}}</td>
-                <td>{{services.model.relationshipStatusLabel(relationshipStatusRefs, relationshipRef.value.status)}}</td>
-                <td></td>
-                <td><a class="btn btn-sm btn-secondary align-center" (click)="goToNotificationPage(relationshipRef)">Manage <span class="caret"></span></a></td>
-            </tr>
-        </template>
+        <tr *ngFor="let relationshipRef of relationshipSearchResult?.list">
+            <td>{{services.model.displayName(relationshipRef.value.delegateNickName)}}</td>
+            <td>{{services.model.relationshipStatusLabel(relationshipStatusRefs, relationshipRef.value.status)}}</td>
+            <td></td>
+            <td><a class="btn btn-sm btn-secondary align-center" (click)="goToEditNotificationPage(relationshipRef)" *ngIf="isEditNotificationEnabled(relationshipRef)">Manage <span class="caret"></span></a></td>
+        </tr>
     </tbody>
     <tbody *ngIf="isLoading">
         <tr>
@@ -29,11 +27,11 @@
 </table>
 
 <search-result-pagination
-        [searchResult]="relationships$|async"
+        [searchResult]="relationshipSearchResult"
         [delegate]="paginationDelegate">
 </search-result-pagination>
 
-<div *ngIf="canReturnToDashboard">
+<div *ngIf="isDashboardEnabled()">
     <div id="action-button-bar">
         <div class="pull-left">
             <a class="btn btn-default align-center" (click)="goToBusinessesPage()">← Back</a>

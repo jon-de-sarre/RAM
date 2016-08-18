@@ -1,5 +1,12 @@
 import {OnInit, Input, Output, EventEmitter, Component} from '@angular/core';
-import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FormControl, FORM_DIRECTIVES } from '@angular/forms';
+import {
+    Validators,
+    REACTIVE_FORM_DIRECTIVES,
+    FormBuilder,
+    FormGroup,
+    FormControl,
+    FORM_DIRECTIVES
+} from '@angular/forms';
 import {Utils} from '../../../../commons/ram-utils';
 import {RAMNgValidators} from '../../commons/ram-ng-validators';
 import {Calendar} from 'primeng/primeng';
@@ -7,7 +14,7 @@ import {Calendar} from 'primeng/primeng';
 @Component({
     selector: 'access-period',
     templateUrl: 'access-period.component.html',
-    directives: [REACTIVE_FORM_DIRECTIVES,FORM_DIRECTIVES,Calendar]
+    directives: [REACTIVE_FORM_DIRECTIVES, FORM_DIRECTIVES, Calendar]
 })
 export class AccessPeriodComponent implements OnInit {
 
@@ -24,6 +31,7 @@ export class AccessPeriodComponent implements OnInit {
     }
 
     public ngOnInit() {
+
         const startDate = this.data.startDate;
         const endDate = this.data.endDate;
         const formattedStartDate: string = this.formatDate(startDate);
@@ -31,6 +39,7 @@ export class AccessPeriodComponent implements OnInit {
 
         this.form = this._fb.group(
             {
+                'startDateEnabled': [this.data.startDateEnabled],
                 'startDate': [formattedStartDate, Validators.compose([Validators.required, RAMNgValidators.dateFormatValidator])],
                 'endDate': [formattedEndDate, Validators.compose([RAMNgValidators.dateFormatValidator])],
                 'noEndDate': [this.data.noEndDate]
@@ -48,7 +57,10 @@ export class AccessPeriodComponent implements OnInit {
                 ( this.form.controls['endDate'] as FormControl).updateValue(null);
             }
         });
+
         this.form.valueChanges.subscribe((v: AccessPeriodComponentData) => {
+            v.startDate = Utils.parseDate(v.startDate);
+            v.endDate = Utils.parseDate(v.endDate);
             this.dataChanges.emit(v);
             this.isValid.emit(this.form.valid);
         });
@@ -64,17 +76,18 @@ export class AccessPeriodComponent implements OnInit {
         return (cg: FormGroup) => {
             let startDate = Utils.parseDate((cg.controls[startDateCtrlName] as FormControl).value);
             let endDate = Utils.parseDate((cg.controls[endDateCtrlName] as FormControl).value);
-
             return (startDate !== null && endDate !== null && startDate.getTime() > endDate.getTime()) ? {
                 isEndDateBeforeStartDate: {
                     valid: false
                 }
             } : null;
         };
-    }
+    };
+
 }
 
 export interface AccessPeriodComponentData {
+    startDateEnabled: boolean;
     startDate: Date;
     endDate?: Date;
     noEndDate: boolean;

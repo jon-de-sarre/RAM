@@ -1,21 +1,22 @@
-import {Observable} from 'rxjs/Rx';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
+import {FormBuilder} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderSPSComponent} from '../../components/page-header/page-header-sps.component';
 import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
     from '../../components/search-result-pagination/search-result-pagination.component';
+import {RAMConstants} from '../../services/ram-constants.service';
 import {RAMServices} from '../../services/ram-services';
 
 import {
     ISearchResult,
-    IParty,
     IIdentity,
     IRelationship,
     IRelationshipStatus,
     IHrefValue,
-    FilterParams
+    FilterParams,
+    IPrincipal, IParty
 } from '../../../../commons/RamAPI';
 
 @Component({
@@ -30,26 +31,23 @@ import {
 
 export class NotificationsComponent extends AbstractPageComponent {
 
-    public idValue: string;
+    public identityHref: string;
     public filter: FilterParams;
     public page: number;
 
-    public relationships$: Observable<ISearchResult<IHrefValue<IRelationship>>>;
+    public relationshipSearchResult: ISearchResult<IHrefValue<IRelationship>>;
     public relationshipStatusRefs: IHrefValue<IRelationshipStatus>[];
 
-    public canReturnToDashboard: boolean = false;
-
+    public me: IPrincipal;
     public identity: IIdentity;
-    public subjectGroupsWithRelationships: SubjectGroupWithRelationships[];
+    public subjectsTotalCount: number;
 
     public paginationDelegate: SearchResultPaginationDelegate;
 
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Software Provider Services');
     }
 
@@ -58,68 +56,80 @@ export class NotificationsComponent extends AbstractPageComponent {
         this._isLoading = true;
 
         // extract path and query parameters
-        this.idValue = decodeURIComponent(params.path['idValue']);
+        this.identityHref = params.path['identityHref'];
         this.filter = FilterParams.decode(params.query['filter']);
         this.page = params.query['page'] ? +params.query['page'] : 1;
 
         // restrict to notifications
-        this.filter.add('relationshipTypeCategory', this.services.constants.RelationshipTypeCategory.NOTIFICATION);
+        this.filter.add('relationshipTypeCategory', RAMConstants.RelationshipTypeCategory.NOTIFICATION);
 
         // message
         const msg = params.query['msg'];
-        if (msg === 'CREATED_RELATIONSHIP') {
-            this.addGlobalMessage('A notification has been created.');
+        if (msg === RAMConstants.GlobalMessage.SAVED_NOTIFICATION) {
+            this.addGlobalMessage('The notification has been saved successfully.');
         }
 
+        // me
+        this.services.rest.findMyPrincipal().subscribe({
+            next: this.onFindMe.bind(this),
+            error: this.onServerError.bind(this)
+        });
+
+        // all subjects
+        let allSubjectsFilterParams = new FilterParams()
+            .add('partyType', 'ABN')
+            .add('authorisationManagement', true);
+        this.services.rest.searchDistinctSubjectsForMe(allSubjectsFilterParams.encode(), 1).subscribe({
+            next: this.onListAllSubjects.bind(this),
+            error: this.onServerError.bind(this)
+        });
+
         // identity in focus
-        this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
-            this.identity = identity;
-        });
-
-        // if the user can see more than one business, they can see the dashboard
-        // this.services.rest.searchDistinctSubjectsForMe(null, 1).subscribe((partyRefs) => {
-        //     this.canReturnToDashboard = partyRefs.totalCount > 1;
-        // });
-        this.canReturnToDashboard = true; // TODO compute this properly
-
-        // relationship statuses
-        this.services.rest.listRelationshipStatuses().subscribe((relationshipStatusRefs) => {
-            this.relationshipStatusRefs = relationshipStatusRefs;
-        });
-
-        // relationships
-        this.subjectGroupsWithRelationships = [];
-        this.relationships$ = this.services.rest.searchRelationshipsByIdentity(this.idValue, this.filter.encode(), this.page);
-        this.relationships$.subscribe((relationshipRefs) => {
-            this._isLoading = false;
-            for (const relationshipRef of relationshipRefs.list) {
-                let subjectGroupWithRelationshipsToAddTo: SubjectGroupWithRelationships;
-                const subjectRef = relationshipRef.value.subject;
-                for (const subjectGroupWithRelationships of this.subjectGroupsWithRelationships) {
-                    if (subjectGroupWithRelationships.hasSameSubject(subjectRef)) {
-                        subjectGroupWithRelationshipsToAddTo = subjectGroupWithRelationships;
-                    }
-                }
-                if (!subjectGroupWithRelationshipsToAddTo) {
-                    subjectGroupWithRelationshipsToAddTo = new SubjectGroupWithRelationships();
-                    subjectGroupWithRelationshipsToAddTo.subjectRef = subjectRef;
-                    this.subjectGroupsWithRelationships.push(subjectGroupWithRelationshipsToAddTo);
-                }
-                subjectGroupWithRelationshipsToAddTo.relationshipRefs.push(relationshipRef);
-            }
-        }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
-            this._isLoading = false;
+        this.services.rest.findIdentityByHref(this.identityHref).subscribe({
+            next: this.onFindIdentity.bind(this),
+            error: this.onServerError.bind(this)
         });
 
         // pagination delegate
         this.paginationDelegate = {
             goToPage: (page: number) => {
-                // TODO
-                alert('NOT IMPLEMENTED');
-                // this.services.route.goToBusinessesPage(this.idValue, this.filter.encode(), page);
+                this.services.route.goToNotificationsPage(this.identityHref, page);
             }
         } as SearchResultPaginationDelegate;
+
+    }
+
+    private onFindMe(me: IPrincipal) {
+        this.me = me;
+    }
+
+    private onListAllSubjects(partySearchResults: ISearchResult<IHrefValue<IParty>>) {
+        this.subjectsTotalCount = partySearchResults.totalCount;
+    }
+
+    public onFindIdentity(identity: IIdentity) {
+
+        this.identity = identity;
+
+        // relationships
+        this.services.rest.searchRelationshipsByIdentity(this.identity.idValue, this.filter.encode(), this.page).subscribe({
+            next: (searchResult) => {
+                this.relationshipSearchResult = searchResult;
+                this._isLoading = false;
+            },
+            error: (err) => {
+                this.onServerError(err);
+                this._isLoading = false;
+            }
+        });
+
+        // relationship statuses
+        this.services.rest.listRelationshipStatuses().subscribe({
+            next: (relationshipStatusRefs) => {
+                this.relationshipStatusRefs = relationshipStatusRefs;
+            },
+            error: this.onServerError.bind(this)
+        });
 
     }
 
@@ -128,27 +138,26 @@ export class NotificationsComponent extends AbstractPageComponent {
     }
 
     public goToAddNotificationPage() {
-        this.services.route.goToAddNotificationPage(this.idValue);
+        this.services.route.goToAddNotificationPage(this.identityHref);
     }
 
-    // todo not yet implemented
-    public goToNotificationPage(relationshipRef: IHrefValue<IRelationship>) {
-        alert('TODO: Not yet implemented');
+    public goToEditNotificationPage(relationshipRef: IHrefValue<IRelationship>) {
+        this.services.route.goToEditNotificationPage(this.identityHref, relationshipRef.href);
     }
 
-    // todo what is the logic here?
-    public isAddNotificationEnabled() {
-        return true;
+    public isAddNotificationEnabled(): boolean {
+        if (this.identity) {
+            return this.services.model.hasLinkHrefByType(RAMConstants.Link.RELATIONSHIP_CREATE, this.identity);
+        }
+        return false;
     }
 
-}
-
-class SubjectGroupWithRelationships {
-
-    public subjectRef: IHrefValue<IParty>;
-    public relationshipRefs: IHrefValue<IRelationship>[] = [];
-
-    public hasSameSubject(aSubjectRef: IHrefValue<IParty>) {
-        return this.subjectRef.href === aSubjectRef.href;
+    public isEditNotificationEnabled(relationshipRef: IHrefValue<IRelationship>): boolean {
+        return this.services.model.hasLinkHrefByType(RAMConstants.Link.MODIFY, relationshipRef.value);
     }
+
+    public isDashboardEnabled(): boolean {
+        return this.subjectsTotalCount > 0;
+    }
+
 }

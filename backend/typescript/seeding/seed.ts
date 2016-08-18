@@ -106,8 +106,12 @@ import {TrevorTrainingIdentitySeeder} from './seed-trevortraining-identity';
 import {TrevorTrainingRelationshipsSeeder} from './seed-trevortraining-relationships';
 import {TrungTrainingIdentitySeeder} from './seed-trungtraining-identity';
 import {TrungTrainingRelationshipsSeeder} from './seed-trungtraining-relationships';
+import {PattyPeacefulIdentitySeeder} from './seed-pattypeaceful-identity';
+import {PeacefulGardenIdentitySeeder} from './seed-peacefulgarden-identity';
+import {PeacefulGardenRelationshipsSeeder} from './seed-peacefulgarden-relationships';
 
 const now = new Date();
+now.setHours(0, 0, 0, 0);
 
 const truncateString = (input:String):String => {
     return input && input.length > 60 ? (input.substring(0, 60) + '...') : input;
@@ -118,6 +122,8 @@ const truncateString = (input:String):String => {
 /* tslint:disable:no-any */
 /* tslint:disable:max-func-body-length */
 export class Seeder {
+
+    public static now = now;
 
     private static verboseMode:boolean = true;
     private static exportLDIFMode:boolean = true;
@@ -153,10 +159,11 @@ export class Seeder {
 
     // role attribute names (other)
     public static ssid_roleAttributeName:IRoleAttributeName;
-    public static notes_roleAttributeName:IRoleAttributeName;
+    public static preferredName_roleAttributeName:IRoleAttributeName;
     public static creatorId_roleAttributeName:IRoleAttributeName;
     public static creatorName_roleAttributeName:IRoleAttributeName;
     public static creatorAgency_roleAttributeName:IRoleAttributeName;
+    public static deviceAuskeys_roleAttributeName:IRoleAttributeName;
 
     // role attribute names (agency service)
     public static usi_roleAttributeName:IRoleAttributeName;
@@ -185,11 +192,24 @@ export class Seeder {
     public static edoaner_party:IParty;
     public static edoaner_identity_1:IIdentity;
 
+    // individual identity
+    public static pattypeaceful_name:IName;
+    public static pattypeaceful_dob:ISharedSecret;
+    public static pattypeaceful_profile:IProfile;
+    public static pattypeaceful_party:IParty;
+    public static pattypeaceful_identity_1:IIdentity;
+
     // ABN identity
     public static edtechosp_name:IName;
     public static edtechosp_profile:IProfile;
     public static edtechosp_party:IParty;
     public static edtechosp_identity_1:IIdentity;
+
+    // ABN identity
+    public static peacefulgarden_name:IName;
+    public static peacefulgarden_profile:IProfile;
+    public static peacefulgarden_party:IParty;
+    public static peacefulgarden_identity_1:IIdentity;
 
     // ABN identity
     public static trevortraining_name:IName;
@@ -258,11 +278,12 @@ export class Seeder {
     public static jenscatering_and_fredjohnson_relationship:IRelationship;
     public static jmfoodpackaging_and_jenscatering_relationship:IRelationship;
     public static edtechosp_and_edoaner_relationship:IRelationship;
+    public static peacefulgarden_and_pattypeaceful_relationship:IRelationship;
     public static trevortraining_and_edtech_relationship:IRelationship;
     public static trungtraining_and_edtech_relationship:IRelationship;
 
     // roles
-    public static edTech_osp_relationship:IRole;
+    public static edTech_osp_role:IRole;
 
     public static log(msg:String) {
         if(Seeder.verboseMode) {
@@ -532,7 +553,8 @@ export class Seeder {
         Seeder.log(`- ${values.roleType.code}`.magenta);
         if (values.attributes) {
             for (let attribute of values.attributes) {
-                const truncatedValue = truncateString(attribute.value);
+                let value:string[] = attribute.value;
+                const truncatedValue = truncateString(value.toString());
                 Seeder.log(`  - ${attribute.attributeName.code} (${truncatedValue})`.green);
             }
         }
@@ -792,15 +814,15 @@ export class Seeder {
                 purposeText: 'Standard Business Reporting (SBR) - ATO'
             } as any);
 
-            Seeder.notes_roleAttributeName = await Seeder.createRoleAttributeNameModel({
-                code: 'ADDITIONAL_NOTES',
-                shortDecodeText: 'Additional Notes',
-                longDecodeText: 'Additional Notes',
+            Seeder.preferredName_roleAttributeName = await Seeder.createRoleAttributeNameModel({
+                code: 'PREFERRED_NAME',
+                shortDecodeText: 'Preferred Name',
+                longDecodeText: 'Preferred Name',
                 startDate: now,
-                domain: RoleAttributeNameDomain.Markdown.code,
+                domain: RoleAttributeNameDomain.String.code,
                 classifier: RoleAttributeNameClassifier.Other.code,
                 category: null,
-                purposeText: 'Additional Notes (in markdown format)'
+                purposeText: 'Preferred Name'
             } as any);
 
             Seeder.creatorId_roleAttributeName = await Seeder.createRoleAttributeNameModel({
@@ -834,6 +856,17 @@ export class Seeder {
                 classifier: RoleAttributeNameClassifier.Other.code,
                 category: null,
                 purposeText: 'Creator Agency'
+            } as any);
+
+            Seeder.deviceAuskeys_roleAttributeName = await Seeder.createRoleAttributeNameModel({
+                code: 'DEVICE_AUSKEYS',
+                shortDecodeText: 'Device Auskeys',
+                longDecodeText: 'Device Auskeys',
+                startDate: now,
+                domain: RoleAttributeNameDomain.SelectMulti.code,
+                classifier: RoleAttributeNameClassifier.Other.code,
+                category: null,
+                purposeText: 'Device Auskeys'
             } as any);
 
         } catch (e) {
@@ -980,10 +1013,11 @@ export class Seeder {
                 {attribute: Seeder.ssid_roleAttributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.usi_roleAttributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.sbr_roleAttributeName, optionalInd: false, defaultValue: null},
-                {attribute: Seeder.notes_roleAttributeName, optionalInd: false, defaultValue: null},
+                {attribute: Seeder.preferredName_roleAttributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.creatorId_roleAttributeName, optionalInd: false, defaultValue: null},
                 {attribute: Seeder.creatorName_roleAttributeName, optionalInd: false, defaultValue: null},
-                {attribute: Seeder.creatorAgency_roleAttributeName, optionalInd: false, defaultValue: null}
+                {attribute: Seeder.creatorAgency_roleAttributeName, optionalInd: false, defaultValue: null},
+                {attribute: Seeder.deviceAuskeys_roleAttributeName, optionalInd: false, defaultValue: null}
             ]);
 
         } catch (e) {
@@ -1038,7 +1072,9 @@ export class Seeder {
             // identities
             .then(BobSmithIdentitySeeder.load)
             .then(EdOanerIdentitySeeder.load)
+            .then(PattyPeacefulIdentitySeeder.load)
             .then(EdTechOSPIdentitySeeder.load)
+            .then(PeacefulGardenIdentitySeeder.load)
             .then(CakeryBakeryIdentitySeeder.load)
             .then(JenniferMaximsIdentitySeeder.load)
             .then(JohnMaximsIdentitySeeder.load)
@@ -1052,6 +1088,7 @@ export class Seeder {
             .then(JensCateringRelationshipsSeeder.load)
             .then(JMFoodPackagingRelationshipsSeeder.load)
             .then(EdTechOspRelationshipsSeeder.load)
+            .then(PeacefulGardenRelationshipsSeeder.load)
             .then(TrevorTrainingRelationshipsSeeder.load)
             .then(TrungTrainingRelationshipsSeeder.load)
 

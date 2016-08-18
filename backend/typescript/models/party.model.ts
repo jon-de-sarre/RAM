@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import {RAMEnum, IRAMObject, RAMSchema, Assert} from './base';
+import {Url} from './url';
 import {IIdentity, IdentityModel} from './identity.model';
 import {RelationshipModel, IRelationship, RelationshipInitiatedBy} from './relationship.model';
 import {RelationshipTypeModel} from './relationshipType.model';
@@ -9,7 +10,8 @@ import {RoleTypeModel} from './roleType.model';
 import {IRole, RoleModel, RoleStatus} from './role.model';
 import {IRoleAttribute, RoleAttributeModel} from './roleAttribute.model';
 import {IAgencyUser} from './agencyUser.model';
-import {RoleAttributeNameModel} from './roleAttributeName.model';
+import {RoleAttributeNameModel, IRoleAttributeName} from './roleAttributeName.model';
+import {IPrincipal} from './principal.model';
 import {
     HrefValue,
     Party as DTO,
@@ -19,6 +21,8 @@ import {
     Role as RoleDTO,
     IRelationship as IRelationshipDTO
 } from '../../../commons/RamAPI';
+import {context} from '../providers/context.provider';
+import {logger} from "../logger";
 
 /* tslint:disable:no-unused-variable */
 const _RoleAttributeModel = RoleAttributeModel;
@@ -42,9 +46,9 @@ export class PartyType extends RAMEnum {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue: boolean): Promise<HrefValue<PartyTypeDTO>> {
+    public async toHrefValue(includeValue: boolean): Promise<HrefValue<PartyTypeDTO>> {
         return Promise.resolve(new HrefValue(
-            '/api/v1/partyType/' + this.code,
+            await Url.forPartyType(this),
             includeValue ? this.toDTO() : undefined
         ));
     }
@@ -74,13 +78,14 @@ export interface IParty extends IRAMObject {
     toDTO():Promise<DTO>;
     addRelationship(dto: IInvitationCodeRelationshipAddDTO):Promise<IRelationship>;
     addRelationship2(relationshipDTO: IRelationshipDTO):Promise<IRelationship>;
-    addRole(role: IRole, agencyUser: IAgencyUser):Promise<IRole>;
+    addOrModifyRole(role: IRole, agencyUser: IAgencyUser):Promise<IRole>;
+    modifyRole(role: IRole):Promise<IRole>;
 }
 
 /* tslint:disable:no-empty-interfaces */
 export interface IPartyModel extends mongoose.Model<IParty> {
     findByIdentityIdValue:(idValue: string) => Promise<IParty>;
-    hasAccess:(requestingParty: IParty, requestedIdValue: string) => Promise<boolean>;
+    hasAccess:(requestedIdValue: string, requestingPrincipal: IPrincipal, requestingIdentity: IIdentity) => Promise<boolean>;
 }
 
 // instance methods ...................................................................................................
@@ -90,20 +95,18 @@ PartySchema.method('partyTypeEnum', function () {
 });
 
 PartySchema.method('toHrefValue', async function (includeValue: boolean) {
-    const defaultIdentity = await IdentityModel.findDefaultByPartyId(this.id);
-    if (defaultIdentity) {
         return new HrefValue(
-            '/api/v1/party/identity/' + encodeURIComponent(defaultIdentity.idValue),
+            await Url.forParty(this),
             includeValue ? await this.toDTO() : undefined
         );
-    } else {
-        throw new Error('Default Identity not found');
-    }
 });
 
 PartySchema.method('toDTO', async function () {
     const identities = await IdentityModel.listByPartyId(this.id);
     return new DTO(
+        Url.links()
+            .push('self', Url.GET, await Url.forParty(this))
+            .toArray(),
         this.partyType,
         await Promise.all<HrefValue<IdentityDTO>>(identities.map(
             async (identity: IIdentity) => {
@@ -210,7 +213,7 @@ PartySchema.method('addRelationship2', async function (dto: IRelationshipDTO) {
 
 });
 
-PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAgencyUser) {
+PartySchema.method('addOrModifyRole', async function (roleDTO: RoleDTO, agencyUser: IAgencyUser) {
 
     const now = new Date();
     const roleTypeCode = roleDTO.roleType.value.code;
@@ -230,13 +233,14 @@ PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAge
 
     const roleAttributes: IRoleAttribute[] = [];
 
-    let processAttribute = async (code: string, value: string, roleAttributes: IRoleAttribute[], role: IRole) => {
+    let processAttribute = async (code: string, value: string[], roleAttributes: IRoleAttribute[], role: IRole) => {
         const roleAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(code);
         if (roleAttributeName) {
             const filteredRoleAttributes = role.attributes.filter((item) => {
                 return item.attributeName.code === code;
             });
-            if (filteredRoleAttributes.length === 0) {
+            const roleAttributeDoesNotExist = filteredRoleAttributes.length === 0;
+            if (roleAttributeDoesNotExist) {
                 roleAttributes.push(await RoleAttributeModel.create({
                     value: value,
                     attributeName: roleAttributeName
@@ -250,9 +254,9 @@ PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAge
         }
     };
 
-    await processAttribute('CREATOR_ID', agencyUser.id, roleAttributes, role);
-    await processAttribute('CREATOR_NAME', agencyUser.displayName, roleAttributes, role);
-    await processAttribute('CREATOR_AGENCY', agencyUser.agency, roleAttributes, role);
+    await processAttribute('CREATOR_ID', [agencyUser.id], roleAttributes, role);
+    await processAttribute('CREATOR_NAME', [agencyUser.displayName], roleAttributes, role);
+    await processAttribute('CREATOR_AGENCY', [agencyUser.agency], roleAttributes, role);
 
     for (let roleAttribute of roleDTO.attributes) {
         const roleAttributeValue = roleAttribute.value;
@@ -284,6 +288,103 @@ PartySchema.method('addRole', async function (roleDTO: RoleDTO, agencyUser: IAge
 
 });
 
+PartySchema.method('modifyRole', async function (roleDTO: RoleDTO) {
+    logger.info('about to modify role');
+    const principal = context.getAuthenticatedPrincipal();
+
+    const now = new Date();
+
+    const roleTypeCode = Url.lastPathElement(roleDTO.roleType.href);
+    Assert.assertNotNull(roleTypeCode, 'Role type code from href invalid');
+
+    const roleType = await RoleTypeModel.findByCodeInDateRange(roleTypeCode, now);
+    Assert.assertTrue(roleType !== null, 'Role type invalid');
+
+    const role = await RoleModel.findByRoleTypeAndParty(roleType, this);
+    Assert.assertNotNull(role, 'Party does not have role type');
+
+    const roleAttributes = role.attributes;
+
+    // todo move this into the role object
+    let updateOrCreateRoleAttributeIfExists = async(roleAttributeName: IRoleAttributeName, value: string[], role: IRole) => {
+        const existingAttribute = await role.findAttribute(roleAttributeName.code);
+        if (!existingAttribute) {
+            logger.debug(`Adding new RoleAttribute ${roleAttributeName.code}`);
+            roleAttributes.push(await RoleAttributeModel.create({
+                value: value,
+                attributeName: roleAttributeName
+            }));
+        } else {
+            logger.debug(`Updating existing RoleAttribute ${roleAttributeName.code}`);
+            existingAttribute.value = value;
+            await existingAttribute.save();
+        }
+    };
+
+    if (principal.agencyUserInd) {
+        await updateOrCreateRoleAttributeIfExists(await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_ID'), [principal.agencyUser.id], role);
+        await updateOrCreateRoleAttributeIfExists(await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_NAME'), [principal.agencyUser.displayName], role);
+        await updateOrCreateRoleAttributeIfExists(await RoleAttributeNameModel.findByCodeIgnoringDateRange('CREATOR_AGENCY'), [principal.agencyUser.agency], role);
+    }
+
+    for (let roleAttribute of roleDTO.attributes) {
+        const roleAttributeValue = roleAttribute.value;
+        const roleAttributeNameCode = roleAttribute.attributeName.value.code;
+        const roleAttributeNameCategory = roleAttribute.attributeName.value.category;
+
+        const existingAttributeName = await RoleAttributeNameModel.findByCodeIgnoringDateRange(roleAttributeNameCode);
+
+        if(existingAttributeName) {
+            logger.debug(`Processing ${existingAttributeName.code}`);
+            // add/update agency services that have been specified applying filtering by agency user role
+            if (principal.agencyUser && existingAttributeName.classifier === 'AGENCY_SERVICE') {
+                logger.debug(`Processing agency service ${existingAttributeName.code}`);
+                if (principal.agencyUser.hasRoleForProgram('ROLE_ADMIN', existingAttributeName.category)) {
+                    logger.debug(`Processing agency service for admin ${existingAttributeName.code}`);
+                    await updateOrCreateRoleAttributeIfExists(existingAttributeName, roleAttributeValue, role);
+                }
+            }
+
+            // add/update non agency services attributes
+            if (existingAttributeName.classifier !== 'AGENCY_SERVICE') {
+                await updateOrCreateRoleAttributeIfExists(existingAttributeName, roleAttributeValue, role);
+            }
+
+        }
+    }
+
+    // remove any agency services this user has access to but were not specified
+    if(principal.agencyUserInd) {
+        for (let attribute of role.attributes) {
+            logger.debug(`testing attribute ${attribute.attributeName.code}`);
+            // find services
+            if(attribute.attributeName.classifier === 'AGENCY_SERVICE') {
+                logger.debug(`testing agency service ${attribute.attributeName.code}`);
+                // if this user has ROLE_ADMIN for this category
+                if(principal.agencyUser.hasRoleForProgram('ROLE_ADMIN', attribute.attributeName.category)) {
+                    logger.debug(`has role admin ${attribute.attributeName.code}`);
+                    // then IF this service was NOT supplied it must be deleted
+                    let matchingAttributes = roleDTO.attributes.filter( (val) => {
+                        return val.attributeName.value.code === attribute.attributeName.code &&
+                            val.attributeName.value.category === attribute.attributeName.category &&
+                            val.attributeName.value.classifier === attribute.attributeName.classifier
+                    });
+
+                    if(matchingAttributes.length === 0) {
+                        logger.warn(`Delete ${attribute.attributeName.code}`);
+                        await role.deleteAttribute(attribute.attributeName.code, 'AGENCY_SERVICE');
+                    }
+                }
+            }
+        }
+    }
+
+    await role.saveAttributes();
+
+    return Promise.resolve(role);
+
+});
+
 // static methods .....................................................................................................
 
 PartySchema.static('findByIdentityIdValue', async (idValue: string) => {
@@ -291,18 +392,28 @@ PartySchema.static('findByIdentityIdValue', async (idValue: string) => {
     return identity ? identity.party : null;
 });
 
-PartySchema.static('hasAccess', async (requestingParty: IParty, requestedIdValue: string) => {
+PartySchema.static('hasAccess', async (requestedIdValue: string, requestingPrincipal: IPrincipal, requestingIdentity: IIdentity) => {
     const requestedIdentity = await IdentityModel.findByIdValue(requestedIdValue);
     if (requestedIdentity) {
-        const requestedParty = requestedIdentity.party;
-        if (requestingParty.id === requestedParty.id) {
+        // requested party exists
+        if (requestingPrincipal && requestingPrincipal.agencyUserInd) {
+            // agency users have implicit global access
             return true;
-        } else {
-            return await RelationshipModel.hasActiveInDateRange1stOr2ndLevelConnection(
-                requestingParty,
-                requestedIdValue,
-                new Date()
-            );
+        } else if (requestingIdentity) {
+            // regular users have explicit access
+            let requestingParty = requestingIdentity.party;
+            const requestedParty = requestedIdentity.party;
+            if (requestingParty.id === requestedParty.id) {
+                // requested and requester are the same
+                return true;
+            } else {
+                // check 1st and 2nd level relationships
+                return await RelationshipModel.hasActiveInDateRange1stOr2ndLevelConnection(
+                    requestingParty,
+                    requestedIdValue,
+                    new Date()
+                );
+            }
         }
     }
     return false;

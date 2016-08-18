@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import {ICodeDecode, CodeDecodeSchema} from './base';
+import {Url} from './url';
 import {RoleAttributeNameModel} from './roleAttributeName.model';
 import {IRoleAttributeNameUsage, RoleAttributeNameUsageModel} from './roleAttributeNameUsage.model';
 import {
@@ -46,7 +47,7 @@ export interface IRoleTypeModel extends mongoose.Model<IRoleType> {
 
 RoleTypeSchema.method('toHrefValue', async function (includeValue:boolean) {
     return new HrefValue(
-        '/api/v1/roleType/' + encodeURIComponent(this.code),
+        await Url.forRoleType(this),
         includeValue ? await this.toDTO() : undefined
     );
 });

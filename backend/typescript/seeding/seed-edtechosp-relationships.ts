@@ -25,8 +25,8 @@ export class EdTechOspRelationshipsSeeder {
                     subjectNickName: Seeder.edtechosp_name,
                     delegate: Seeder.edoaner_party,
                     delegateNickName: Seeder.edoaner_name,
-                    startTimestamp: new Date(),
-                    status: RelationshipStatus.Active.code,
+                    startTimestamp: Seeder.now,
+                    status: RelationshipStatus.Accepted.code,
                     initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({

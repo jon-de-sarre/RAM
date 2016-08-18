@@ -33,13 +33,14 @@ const RelationshipAttributeSchema = new mongoose.Schema({
 // interfaces .........................................................................................................
 
 export interface IRelationshipAttribute extends mongoose.Document {
-    value?: [string];
+    value?: string[];
     attributeName: IRelationshipAttributeName;
     toDTO():Promise<DTO>;
 }
 
 /* tslint:disable:no-empty-interfaces */
 export interface IRelationshipAttributeModel extends mongoose.Model<IRelationshipAttribute> {
+    add:(value: string[], attributeName: IRelationshipAttributeName) => Promise<IRelationshipAttribute>;
 }
 
 // instance methods ...................................................................................................
@@ -54,6 +55,13 @@ RelationshipAttributeSchema.method('toDTO', async function () {
 });
 
 // static methods .....................................................................................................
+
+RelationshipAttributeSchema.static('add', async (value: [string], attributeName: IRelationshipAttributeName) => {
+    return await this.RelationshipAttributeModel.create({
+        value: value,
+        attributeName: attributeName
+    });
+});
 
 // concrete model .....................................................................................................
 

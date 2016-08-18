@@ -15,6 +15,12 @@
 
     <style>
 
+        .list-group input[type="text"] {
+            border: 0;
+            background: #f0f0f0;
+            padding: 0 5px;
+        }
+
         #user-list {
             overflow: scroll;
         }
@@ -76,7 +82,7 @@
 
 <div class="container">
 
-    <h2 class="animated bounce">RAM Mock Login</h2>
+    <h2 class="animated bounce">RAM Developers Console</h2>
 
     <p>Please select a regular user or agency user from the list below to simulate logging in as that user:</p>
     <p>&nbsp;</p>
@@ -85,13 +91,23 @@
         <div class="col-md-6">
             <div id="user-list">
                 <ul class="list-group">
-                    <li class="list-group-item" data-id="">Log Out</li>
+                    <li class="list-group-item" data-id="">
+                        ABN header : <input id="abn" type="text"/>
+                        <span class="pull-right">
+                            <a href="#" onclick="removeABNCookie(); return false">Remove ABN cookie</a>
+                        </span>
+                    </ul>
                 </ul>
+                <div>
+                </div>
                 <ul class="list-group identities">
                 </ul>
             </div>
             <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newUser">
                 New Regular User
+            </button>
+            <button type="button" class="btn btn-primary" data-toggle="modal" data-target="#newTransactRequest">
+                New Transact Request
             </button>
         </div>
         <div id="user-detail" class="col-md-6">
@@ -102,7 +118,8 @@
                     <table class="table dont-break-out"></table>
                 </div>
                 <div class="panel-footer row">
-                    <a href="/" target="_blank" class="btn btn-primary" id="launch-ram-link">Launch RAM</a>
+                    <a href="/" target="_blank" class="btn btn-primary" id="launch">Launch RAM</a>
+                    <a href="#" class="btn btn-default" id="logout">Logout</a>
                 </div>
             </div>
         </div>
@@ -120,7 +137,7 @@
                     <p>Use this to simulate ANY user coming via an external authentication mechanism
                         and hitting RAM. For example, to create a new individual log in - with the correct
                         headers, the identity will be created in the RAM database.</p>
-                    <div id="headers-container"></div>
+                    <div class="headers-container"></div>
                 </div>
                 <div class="modal-footer">
                     <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
@@ -130,7 +147,63 @@
         </div>
     </div>
 
+    <!--New Transact Request-->
+    <div class="modal fade" id="newTransactRequest" tabindex="-1" role="dialog">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <button type="button" class="close" data-dismiss="modal" aria-label="Close"><span>&times;</span></button>
+                    <h4 class="modal-title">New User</h4>
+                </div>
+                <div class="modal-body">
+                    <p>Use this to simulate ANY transact request coming via an external relying software and hitting RAM.
+                        The request is expected to contain a mixture of headers and request body parameters.</p>
+                    <div class="headers-container">
+                        <div class="form-group form-group-sm">
+                            <label>OSP AUSkey</label>
+                            <input class="form-control input-sm" id="transact-auskey" value="10000000001-DEVICE-2"/>
+                        </div>
+                    </div>
+                    <div class="headers-container">
+                        <div class="form-group form-group-sm">
+                            <label>OSP ABN</label>
+                            <input class="form-control input-sm" id="transact-abn" value="10000000001"/>
+                        </div>
+                    </div>
+                    <div class="headers-container">
+                        <div class="form-group form-group-sm">
+                            <label>Client ABN</label>
+                            <input class="form-control input-sm" id="transact-clientabn" value="00000000001"/>
+                        </div>
+                    </div>
+                    <div class="headers-container">
+                        <div class="form-group form-group-sm">
+                            <label>Client SSID</label>
+                            <input class="form-control input-sm" id="transact-clientssid" value="mySSID-1234"/>
+                        </div>
+                    </div>
+                    <div class="headers-container">
+                        <div class="form-group form-group-sm">
+                            <label>Client Agency Service</label>
+                            <input class="form-control input-sm" id="transact-clientagencyservice" value="USI"/>
+                        </div>
+                    </div>
+                </div>
+                <div class="modal-footer">
+                    <button type="button" class="btn btn-default" data-dismiss="modal">Close</button>
+                    <button type="button" class="btn btn-primary" data-dismiss="modal" id="transact-send-button">Create</button>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <script>
+
+        function removeABNCookie() {
+            document.cookie = 'x-ram-abn=;path=/;expires=Thu, 01 Jan 1970 00:00:01 GMT;';
+            $('#abn').val('');
+            alert('Removed x-ram-abn cookie');
+        }
 
         $(function () {
 
@@ -145,6 +218,7 @@
                 'x-ram-dob': '31/01/2000',
 
                 'x-ram-profileprovider': 'MY_GOV',
+                'x-ram-abn': null,
 
                 'x-ram-agencyscheme': null,
                 'x-ram-agencytoken': null,
@@ -184,7 +258,7 @@
                     for (var i = 0; i < data.list.length; i++) {
                         // eg. <li class="list-group-item" data-id="LINK_ID:MY_GOV:jennifermaxims_identity_1">Jennifer Maxims</li>
                         var item = data.list[i];
-                        if (item.value.identityType === 'LINK_ID' && !item.value.rawIdValue.startsWith('zoezombie')) {
+                        if (item.value.identityType === 'LINK_ID' && item.value.rawIdValue.slice(0,9) !== 'zoezombie') {
                             var $li = $('<li></li>')
                                     .addClass('list-group-item')
                                     .addClass('regular-user')
@@ -237,10 +311,25 @@
 
             }
 
+            function logout() {
+                logIn(undefined);
+            }
+
             function logIn(credentials) {
                 log.debug('Logging in with credentials ', credentials);
-                $.post('/api/v1/simulators/authenticator/authenticate', {credentials: credentials}, function (data) {
-                }).always(function () {
+                var ajaxReq = {
+                    url: '/api/v1/simulators/authenticator/authenticate',
+                    type: 'post',
+                    data: {credentials: credentials}
+                };
+
+                var abn = $('#abn').val();
+                if (abn) {
+                    log.debug('Adding ABN as header x-ram-abn:', abn);
+                    ajaxReq.headers = {'x-ram-abn':abn};
+                }
+
+                $.ajax(ajaxReq).always(function () {
                     refreshPrincipalDetails();
                 });
             }
@@ -256,8 +345,10 @@
                 var $notLoggedIn = $('#not-logged-in');
 
                 $userDetail.removeClass(effect);
-
-                $.get('/api/v1/simulators/authenticator/locals', function (data) {
+                // spm: added dummy parameter to foil caching
+                $.get('/api/v1/simulators/authenticator/locals',
+                {"_": $.now()},
+                function (data) {
 
                     // clean up state
                     $userDetail.find('table tr').remove();
@@ -302,7 +393,7 @@
 
             // construct add new user form
             $.each(X_RAM_HEADERS_FOR_ADDING, function (key, value) {
-                $('#headers-container').append('<div class="form-group form-group-sm"><label>' +
+                $('#newUser .headers-container').append('<div class="form-group form-group-sm"><label>' +
                         key +
                         '</label><input  class="form-control input-sm" id="' +
                         key +
@@ -343,6 +434,36 @@
                         });
                     }, 1000);
                 });
+            });
+
+            // transact
+            $('#transact-send-button').click(function () {
+                var requestData = {
+                    clientABN: $('#transact-clientabn').val(),
+                    ssid: $('#transact-clientssid').val(),
+                    agencyService: $('#transact-clientagencyservice').val()
+                };
+                $.ajax({
+                    url: '/api/v1/transact/allowed',
+                    type: 'POST',
+                    data: requestData,
+                    beforeSend: function (request) {
+                        request.setRequestHeader('x-ram-auth-auskey', $('#transact-auskey').val());
+                        request.setRequestHeader('x-ram-abn', $('#transact-abn').val());
+                    }
+                })
+                        .done(function (data) {
+                            alert('Transact Result: ' + data.allowed);
+                        })
+                        .fail(function (jqXHR) {
+                            var data = jqXHR.responseJSON;
+                            alert(data.alert.messages[0]);
+                        });
+            });
+
+            // logout
+            $('#logout').click(function () {
+                logout();
             });
 
             refreshIdentitiesAndAgencyUsers();

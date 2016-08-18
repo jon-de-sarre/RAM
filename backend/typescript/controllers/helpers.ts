@@ -67,7 +67,8 @@ type ValidationError = {
 const errorMessages: {[key: string]: string} = {
     '401': 'Not logged in.',
     '403': 'Can\'t access the requested resource.',
-    '404': 'Can\'t find the requested resource.'
+    '404': 'Can\'t find the requested resource.',
+    '500': 'Internal Server Error.'
 };
 
 /* tslint:disable:max-func-body-length */
@@ -91,16 +92,28 @@ export function sendError<T>(res: Response) {
                 ));
                 break;
             case 'Error':
+                logger.error((error as Error).stack);
                 let message = (error as Error).message;
-                let status = parseInt(message);
-                if (isNaN(status)) {
+                if (!message) {
                     res.status(500);
-                    res.json(new ErrorResponse(message));
-                    logger.error((error as Error).stack);
+                    res.json(new ErrorResponse(errorMessages['500']));
                 } else {
+                    let status: number;
+                    let actualMessage: string;
+                    if (message.indexOf(':') !== -1) {
+                        status = parseInt(message.split(':')[0]);
+                        actualMessage = message.split(':')[1];
+                    } else {
+                        status = parseInt(message);
+                        if (isNaN(status)) {
+                            status = 500;
+                            actualMessage = message;
+                        } else {
+                            actualMessage = errorMessages[message];
+                        }
+                    }
                     res.status(status);
-                    res.json(new ErrorResponse(errorMessages[message]));
-                    logger.error((error as Error).stack);
+                    res.json(new ErrorResponse(actualMessage));
                 }
                 break;
             default:

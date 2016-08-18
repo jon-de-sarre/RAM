@@ -6,13 +6,13 @@
  */
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
+import {FormBuilder} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAgencyComponent} from '../../components/page-header/page-header-agency.component';
 import {RAMServices} from '../../services/ram-services';
 import { BusinessSelectComponent } from '../../components/business-select/business-select.component';
 import {ABRentry} from '../../../../commons/abr';
-import {RAMRestService} from '../../services/ram-rest.service';
 
 @Component({
     selector: 'agency-select-business',
@@ -36,11 +36,8 @@ export class AgencySelectBusinessComponent extends AbstractPageComponent {
      */
     public business:ABRentry = null;
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices,
-                private rest: RAMRestService) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
     }
 
     /* tslint:disable:max-func-body-length */
@@ -71,23 +68,16 @@ export class AgencySelectBusinessComponent extends AbstractPageComponent {
      * move to the next screen.
      */
     public acceptBusiness() {
-        this.rest.registerABRCompany(this.business).subscribe((data) => {
-            this.whereToNext(data.idValue);
+        this.services.rest.registerABRCompany(this.business).subscribe((identity) => {
+            if (this.dashboard === 'auth') {
+                this.services.route.goToRelationshipsPage(identity.idValue);
+            } else {
+                let href = this.services.model.getLinkHrefByType('self', identity);
+                this.services.route.goToNotificationsPage(href);
+            }
         },(err:any) => {
-            this.displayErrors(this.rest.extractErrorMessages(err));
+            this.addGlobalErrorMessages(err);
         });
-    }
-
-    /*
-     * This is called when all is well and we are ready to move in. The next
-     * page is dependent on the operator permissions.
-     */
-    public whereToNext(id:string) {
-        if (this.dashboard === 'auth') {
-            this.services.route.goToRelationshipsPage(id);
-        } else {
-            this.services.route.goToNotificationsPage(id);
-        }
     }
 
     /*

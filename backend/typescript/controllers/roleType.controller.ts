@@ -1,4 +1,5 @@
 import {Router, Request, Response} from 'express';
+import {context} from '../providers/context.provider';
 import {
     sendResource, sendList, sendError, sendNotFoundError, validateReqSchema
 } from './helpers';
@@ -40,9 +41,11 @@ export class RoleTypeController {
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/roleTypes',
+            context.begin,
             this.listIgnoringDateRange);
 
         router.get('/v1/roleType/:code',
+            context.begin,
             this.findByCodeIgnoringDateRange);
 
         return router;

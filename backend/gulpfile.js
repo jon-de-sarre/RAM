@@ -44,11 +44,17 @@ gulp.task("ts:compile", ["ts:lint"], function () {
         .pipe(gulp.dest("dist/"));
 });
 
-gulp.task("ts:watch", ["ts:compile"], function () {
-    gulp.watch(["typescript/**/*.ts", "../commons/**/*.ts", "typings/**/*.d.ts"], ["ts:compile"]);
+gulp.task("copy:i18n", function () {
+    return gulp.src(["i18n/{**,./}/*.json"], { base: "./" })
+            .pipe(gulp.dest("dist"));
 });
 
-gulp.task('serve', ["ts:watch"], function () {
+gulp.task("ts:watch", ["ts:compile"], function () {
+    gulp.watch(["typescript/**/*.ts", "../commons/**/*.ts", "typings/**/*.d.ts"], ["ts:compile"]);
+    gulp.watch(["i18n/*.*"], ["copy:i18n"]);
+});
+
+gulp.task('serve', ["copy:i18n", "ts:watch"], function () {
     nodemon({
         script: 'dist/backend/typescript/server.js',
         "verbose": false,
@@ -56,6 +62,22 @@ gulp.task('serve', ["ts:watch"], function () {
         "ignore": ["**/*.js.map", "**/*.spec.js", "**/*.log"],
         "execMap": {
             "js": "node --harmony"
+        }
+    })
+        .on('restart', function () {
+            console.log('              [gulp] RAM Backend Server: restarted [OK]');
+            console.log('              [gulp] ..................................');
+        });
+});
+
+gulp.task('servedebug', ["copy:i18n", "ts:watch"], function () {
+    nodemon({
+        script: 'dist/backend/typescript/server.js',
+        "verbose": false,
+        "delay": 1000,
+        "ignore": ["**/*.js.map", "**/*.spec.js", "**/*.log"],
+        "execMap": {
+            "js": "node --harmony --debug"
         }
     })
         .on('restart', function () {

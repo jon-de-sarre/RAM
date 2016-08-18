@@ -527,6 +527,53 @@ paths:
         500:
           $ref: '#/responses/500'
 
+  # AUSkey ............................................................................................................
+
+  /auskeys/identity/{idValue}:
+    get:
+      tags:
+        - Business - AUSkey
+      operationId: Auskey.listAusKeys
+      summary: Search AUSkeys for an identity
+      description: Search AUSkeys for an identity
+      parameters:
+        - $ref: "#/parameters/idValue"
+      responses:
+        200:
+          description: The AUSkeys returned
+          schema:
+            type: array
+            items:
+              $ref: "#/definitions/AusKeyListResponse"
+        400:
+          $ref: '#/responses/400'
+        500:
+          $ref: '#/responses/500'
+
+  /auskeys/{id}:
+    get:
+      tags:
+        - Business - AUSkey
+      operationId: Auskey.findAusKey
+      summary: Get the AUSkey by identifier
+      description: Get the AUSkey by identifier
+      parameters:
+        - name: id
+          type: string
+          in: path
+          required: true
+      responses:
+        200:
+          description: The relationship status returned
+          schema:
+            $ref: "#/definitions/AusKeyResourceReference"
+        400:
+          $ref: '#/responses/400'
+        404:
+          $ref: '#/responses/404'
+        500:
+          $ref: '#/responses/500'
+
   # -------------------------------------------------------------------------------------------------------------------
   # Reference End Points
   # -------------------------------------------------------------------------------------------------------------------
@@ -675,7 +722,7 @@ paths:
   /role:
     post:
       tags:
-        - Reference - Role
+        - Business - Role
       operationId: Role.createByIdentity
       summary: Create a role with an agency service
       description: Create a role with an agency service as an agency user
@@ -817,6 +864,10 @@ definitions:
       agencyUserInd:
         type: boolean
         description: Agency User indicator for this principal
+      agencyUser:
+        $ref: AgencyUser
+      identity:
+        $ref: Identity
 
   # Profile ...........................................................................................................
 
@@ -1089,6 +1140,9 @@ definitions:
     type: object
     required: ["status"]
     properties:
+      code:
+        type: string
+        description: Unique code
       # this has not yet been standardised to a role reference
       subjectPartyRoleURI:
         type: string
@@ -1354,6 +1408,9 @@ definitions:
     type: object
     description: Role
     properties:
+      code:
+        type: string
+        description: Unique code
       roleType:
         $ref: '#/definitions/RoleTypesResourceReference'
       party:
@@ -1512,6 +1569,43 @@ definitions:
         description: The content of this field is optional, it is the same content for a get request on the href
         schema:
           $ref: '#/definitions/RoleAttributeName'
+
+  AusKey:
+    type: object
+    required: ["id", "auskeyType"]
+    properties:
+      id:
+        type: string
+        description: The code or name
+      auskeyType:
+        type: string
+        description: The AUSkey types
+        enum: ['STANDARD', 'ADMINISTRATOR', 'DEVICE']
+
+  AusKeyResourceReference:
+    type: object
+    description: A reference to a AUSkey Resource
+    required: ["href"]
+    properties:
+      href:
+        type: string
+        description: URL that uniquely identifies this AUSkey
+      value:
+        description: The content of this field is optional, it is the same content for a get request on the href
+        schema:
+          $ref: '#/definitions/AusKey'
+
+  AusKeyListResponse:
+    allOf:
+    - $ref: '#/definitions/SearchResultResponse'
+    type: object
+    required: ["list"]
+    properties:
+      list:
+        type: array
+        items:
+          $ref: '#/definitions/AusKeyResourceReference'
+
 
   # -------------------------------------------------------------------------------------------------------------------
   # Base and System Models

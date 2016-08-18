@@ -1,12 +1,15 @@
 import {Observable} from 'rxjs/Observable';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
+import {FormBuilder} from '@angular/forms';
 import {DatePipe} from '@angular/common';
+import {Dialog} from 'primeng/primeng';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
 import {MarkdownComponent} from '../../components/ng2-markdown/ng2-markdown.component';
 import {RAMServices} from '../../services/ram-services';
+import {RAMConstants} from '../../services/ram-constants.service';
 
 import {
     IIdentity,
@@ -19,7 +22,7 @@ import {
 @Component({
     selector: 'accept-authorisation',
     templateUrl: 'accept-authorisation.component.html',
-    directives: [ROUTER_DIRECTIVES, PageHeaderAuthComponent, MarkdownComponent]
+    directives: [ROUTER_DIRECTIVES, PageHeaderAuthComponent, MarkdownComponent, Dialog]
 })
 
 export class AcceptAuthorisationComponent extends AbstractPageComponent {
@@ -36,10 +39,10 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
     public delegateManageAuthorisationAllowedIndAttribute: IRelationshipAttribute;
     public delegateRelationshipTypeDeclarationAttributeUsage: IRelationshipAttributeNameUsage;
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices) {
-        super(route, router, services);
+    public declineDisplay: boolean = false;
+
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 
@@ -47,8 +50,8 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
     public onInit(params: {path: Params, query: Params}) {
 
         // extract path and query parameters
-        this.idValue = decodeURIComponent(params.path['idValue']);
-        this.code = decodeURIComponent(params.path['invitationCode']);
+        this.idValue = params.path['idValue'];
+        this.code = params.path['invitationCode'];
 
         // identity in focus
         this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
@@ -76,34 +79,44 @@ export class AcceptAuthorisationComponent extends AbstractPageComponent {
             if (err.status === 404) {
                 this.goToEnterAuthorisationPage();
             } else {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this.addGlobalErrorMessages(err);
             }
         });
 
     }
 
-    public declineAuthorisation = () => {
+    public showDeclineConfirmation = () => {
+        this.declineDisplay = true;
+    };
+
+    public cancelDeclineConfirmation = () => {
+        this.declineDisplay = false;
+    };
+
+    public confirmDeclineAuthorisation = () => {
         this.services.rest.rejectPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
-            this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'DECLINED_RELATIONSHIP');
+            this.declineDisplay = false;
+            this.services.route.goToRelationshipsPage(this.idValue, null, 1, RAMConstants.GlobalMessage.DECLINED_RELATIONSHIP);
         }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+            this.declineDisplay = false;
+            this.addGlobalErrorMessages(err);
         });
     };
 
     public acceptAuthorisation = () => {
         this.services.rest.acceptPendingRelationshipByInvitationCode(this.relationship).subscribe(() => {
-            this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'ACCEPTED_RELATIONSHIP');
+            this.services.route.goToRelationshipsPage(this.idValue, null, 1, RAMConstants.GlobalMessage.ACCEPTED_RELATIONSHIP);
         }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+            this.addGlobalErrorMessages(err);
         });
     };
 
     public goToEnterAuthorisationPage = () => {
-        this.services.route.goToRelationshipEnterCodePage(this.idValue, 'INVALID_CODE');
+        this.services.route.goToRelationshipEnterCodePage(this.idValue, RAMConstants.GlobalMessage.INVALID_CODE);
     };
 
     public goToRelationshipsPage = () => {
-        this.services.route.goToRelationshipsPage(this.idValue, null, 1, 'CANCEL_ACCEPT_RELATIONSHIP');
+        this.services.route.goToRelationshipsPage(this.idValue, null, 1, RAMConstants.GlobalMessage.CANCEL_ACCEPT_RELATIONSHIP);
     };
 
     // TODO: not sure how to set the locale, Implement as a pipe
