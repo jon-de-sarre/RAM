@@ -2,11 +2,13 @@
 <html lang="en" data-framework="typescript">
 
 <head>
-    <base href=".">
-    <meta charset="utf-8">
 
+    <base href=".">
+
+    <meta charset="utf-8">
     <meta http-equiv="X-UA-Compatible" content="IE=edge,chrome=1">
     <meta name="viewport" content="width=device-width, initial-scale=1">
+
     <!-- The above 3 meta tags *must* come first in the head; any other head content must come *after* these tags -->
     <meta name="description" content="ATO Relationship Authorisation Manager - Frontend">
 
@@ -25,6 +27,7 @@
 </head>
 
 <body>
+
     <ram-app></ram-app>
 
     <script src="/js/lib/ie10-viewport-bug-workaround.js"></script>
@@ -34,6 +37,7 @@
    <script src="//cdn.rawgit.com/systemjs/systemjs/master/dist/system.js"></script>
     <!--<script src="jspm_packages/system.js"></script>-->
     <script src="system.config.js"></script>
+
     <!--
         system.config above is over-written by "jspm install" command.
         So, to tweak the config we need a separate script. If we are not
@@ -43,12 +47,12 @@
         /*
          * The browser looks for debug at the start of the search section
          * of the url, as in
-         * 
+         *
          * http://localhost:3000/?debug#/relationships/LINK_ID%3AMY_GOV%3Ajohnmaxims
-         * 
+         *
          * If ?debug is added to the url, app-specific Typescript debugging is
          * available. Otherwise you will only have the transpiled JavaScript.
-         * 
+         *
          * The ?debug disappears, but typescript debugging is available
          * until the browser is reloaded. Create a bookmark if necessary.
          */
@@ -60,6 +64,7 @@
             })
         }
     </script>
+
     <!--<script src="js/frontend/typescript/Boot.js"></script>-->
 
     <!--

@@ -1,15 +1,17 @@
 import {Router, Request, Response} from 'express';
 import {context} from '../providers/context.provider';
 import {sendResource, sendError, sendNotFoundError, validateReqSchema} from './helpers';
+import {Url} from '../models/url';
 import {ITransactRequest, TransactResponse} from '../../../commons/RamAPI';
 import {IRoleModel, RoleStatus} from '../models/role.model';
 import {IIdentityModel} from '../models/identity.model';
-import {Url} from '../models/url';
+import {IRelationshipModel, RelationshipStatus} from '../models/relationship.model';
 
 export class TransactController {
 
     constructor(private roleModel: IRoleModel,
-                private identityModel: IIdentityModel) {
+                private identityModel: IIdentityModel,
+                private relationshipModel: IRelationshipModel) {
     }
 
     private allowed = async(req: Request, res: Response) => {
@@ -35,10 +37,8 @@ export class TransactController {
         const auskey = context.getAuthenticatedAUSkey();
         const abn = context.getAuthenticatedABN();
         const request = req.body as ITransactRequest;
-
-        console.log('request body =', request);
-
-        console.log('auskey =', auskey, ', abn =', abn);
+        const ospIdentityIdValue = Url.abnIdValue(abn);
+        const clientIdentityIdValue = Url.abnIdValue(request.clientABN);
 
         validateReqSchema(req, schema)
 
@@ -50,38 +50,40 @@ export class TransactController {
                 }
 
                 // ensure OSP role
-                const opsRoles = await this.roleModel.searchByIdentity(Url.abnIdValue(abn), 'OSP', RoleStatus.Active.code, true, 1, 10);
-                if (opsRoles.list.length === 0) {
+                const ospRoles = await this.roleModel.searchByIdentity(ospIdentityIdValue, 'OSP', RoleStatus.Active.code, true, 1, 10);
+                if (ospRoles.list.length === 0) {
                     throw new Error('401:Organisation is not an Online Service Provider');
                 }
-                const ospRole = opsRoles.list[0];
+                const ospRole = ospRoles.list[0];
 
                 // ensure client ABN
-                const clientIdentity = await this.identityModel.findByIdValue(Url.abnIdValue(request.clientABN));
+                const clientIdentity = await this.identityModel.findByIdValue(clientIdentityIdValue);
                 if (!clientIdentity) {
-                    throw new Error('400:Client ABN does not match');
+                    throw new Error('400:Client ABN does not exist');
                 }
 
                 // ensure agency service matches
-                let agencyServiceMatched = false;
+                let roleAgencyServiceMatched = false;
                 const attributes = await ospRole.getAgencyServiceAttributesInDateRange(new Date());
                 for (let attribute of attributes) {
                     if (attribute.attributeName.code === request.agencyService) {
-                        agencyServiceMatched = true;
+                        roleAgencyServiceMatched = true;
                     }
                 }
-                if (!agencyServiceMatched) {
-                    throw new Error('401:Agency Service does not match');
+                if (!roleAgencyServiceMatched) {
+                    throw new Error('401:Role Agency Service does not match');
                 }
 
                 // ensure device AUSkey matches
                 let auskeyMatched = false;
                 for (let attribute of ospRole.attributes) {
                     if (attribute.attributeName.code === 'DEVICE_AUSKEYS') {
-                        for (let value of attribute.value) {
-                            if (value === auskey) {
-                                auskeyMatched = true;
-                                break;
+                        if (attribute.value) {
+                            for (let value of attribute.value) {
+                                if (value === auskey) {
+                                    auskeyMatched = true;
+                                    break;
+                                }
                             }
                         }
                     }
@@ -91,10 +93,49 @@ export class TransactController {
                 }
 
                 // ensure there is a valid OSP relationship between the two parties
-                // ensure the relationship has enabled the requested agency service
-                // ensure the relationship has the requested SSID
+                const acceptedOspRelationshipSearchResult = await this.relationshipModel.searchByIdentitiesInDateRange(clientIdentityIdValue, ospIdentityIdValue, 'OSP', RelationshipStatus.Accepted.code, new Date(), 1, 10);
+                if (acceptedOspRelationshipSearchResult.list.length === 0) {
+                    throw new Error('401:Relationship not found');
+                }
+                const acceptedOspRelationship = acceptedOspRelationshipSearchResult.list[0];
 
-                const allowed = true; // todo compute allowed flag
+                // ensure the relationship has enabled the requested agency service
+                let relationshipAgencyServiceMatched = false;
+                for (let attribute of acceptedOspRelationship.attributes) {
+                    if (attribute.attributeName.code === 'SELECTED_GOVERNMENT_SERVICES_LIST') {
+                        if (attribute.value) {
+                            for (let value of attribute.value) {
+                                if (value === request.agencyService) {
+                                    relationshipAgencyServiceMatched = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (!relationshipAgencyServiceMatched) {
+                    throw new Error('401:Relationship Agency Service does not match');
+                }
+
+                // ensure the relationship has the requested SSID
+                let relationshipSSIDMatched = false;
+                for (let attribute of acceptedOspRelationship.attributes) {
+                    if (attribute.attributeName.code === 'SSID') {
+                        if (attribute.value) {
+                            for (let value of attribute.value) {
+                                if (value === request.ssid) {
+                                    relationshipSSIDMatched = true;
+                                    break;
+                                }
+                            }
+                        }
+                    }
+                }
+                if (!relationshipSSIDMatched) {
+                    throw new Error('401:Relationship SSID does not match');
+                }
+
+                const allowed = true;
                 return new TransactResponse(request, allowed);
 
             })

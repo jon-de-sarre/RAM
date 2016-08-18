@@ -13,6 +13,7 @@ DEFAULT_CONF=$DIR/backend/conf/conf-localhost.js
 # (TESTING: push to test-1)
 
 #  test commit 5 on develop
+#
 
 export PATH=./node_modules/.bin:../node_modules/.bin:$PATH
 
@@ -215,6 +216,21 @@ case "$1" in
     echo ""
     ;;
 
+  'debug:backend')
+    echo ""
+    cd backend
+    if [ -z "$2" ]; then
+      echo "Starting backend with $DEFAULT_CONF"
+      echo ""
+      RAM_CONF=$DEFAULT_CONF gulp servedebug --no-lint
+    else
+      echo "Starting backend with $2"
+      echo ""
+      RAM_CONF="$2" gulp servedebug --no-lint
+    fi
+    echo ""
+    ;;
+
 # LINT
 
   'lint:frontend')
@@ -413,7 +429,7 @@ case "$1" in
     echo "$(tput setaf 3)    deps:frontend                        $(tput sgr0)      Downloads frontend dependencies"
     echo "$(tput setaf 3)    deps:backend                         $(tput sgr0)      Downloads backend dependencies"
     echo "$(tput setaf 3)    deps:test                            $(tput sgr0)      Downloads api test dependencies"
-    echo "$(tput setaf 3)    jspm                                 $(tput sgr0)      Build the jspm dist file"
+    echo "$(tput setaf 3)    jspm                                 $(tput sgr0)      Builds the jspm dist file"
     echo ""
     echo "$(tput setaf 3)    feature:start                        $(tput sgr0)      Creates local and remote feature branch"
     echo "$(tput setaf 3)    feature:checkout                     $(tput sgr0)      Fetches then checks out remote feature branch"
@@ -434,6 +450,8 @@ case "$1" in
     echo "$(tput setaf 3)    start:backend                        $(tput sgr0)      Starts local backend server"
     echo "$(tput setaf 3)    start:frontend-no-lint               $(tput sgr0)      Starts local frontend server without linting"
     echo "$(tput setaf 3)    start:backend-no-lint                $(tput sgr0)      Starts local backend server without linting"
+    echo ""
+    echo "$(tput setaf 3)    debug:backend                        $(tput sgr0)      Starts local backend server without linting and debug port open"
     echo ""
     echo "$(tput setaf 3)    db:seed                              $(tput sgr0)      Seeds local database"
     echo "$(tput setaf 3)    db:export                            $(tput sgr0)      Exports example data from local database"

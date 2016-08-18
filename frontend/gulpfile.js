@@ -20,7 +20,7 @@ var embedTemplates = require("gulp-angular-embed-templates");
 var merge = require('merge-stream');
 var args = require('yargs').argv;
 var filter = require('gulp-filter');
- 
+
 gulp.task("copy:font", function () {
     return gulp.src(["fonts/{**,./}/*.{eot,svg,ttf,woff,woff2}"], { base: "./" })
         .pipe(gulp.dest("dist/")); // move the fonts into dist folder
@@ -167,7 +167,7 @@ gulp.task("ts:lint", function () {
 });
 gulp.task("watch", ["scss:watch", "ts:watch", "html:watch", "data:watch", "i18n:watch"]);
 
-gulp.task("serve", ["copy:images", "scss:watch", "ts:watch", "html:watch", "data:watch", "i18n:watch", "copy:jslib", "build:app"], function () {
+gulp.task("serve", ["copy:i18n", "copy:images", "scss:watch", "ts:watch", "html:watch", "data:watch", "i18n:watch", "copy:jslib", "build:app"], function () {
     var proxyOptions = url.parse("http://localhost:3000/api");
     proxyOptions.route = "/api";
 

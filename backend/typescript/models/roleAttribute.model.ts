@@ -33,7 +33,7 @@ const RoleAttributeSchema = new mongoose.Schema({
 // interfaces .........................................................................................................
 
 export interface IRoleAttribute extends mongoose.Document {
-    value?: [string];
+    value?: string[];
     attributeName: IRoleAttributeName;
     toDTO():Promise<DTO>;
 }

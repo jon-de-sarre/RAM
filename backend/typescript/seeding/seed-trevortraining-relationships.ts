@@ -25,7 +25,7 @@ export class TrevorTrainingRelationshipsSeeder {
                     subjectNickName: Seeder.trevortraining_name,
                     delegate: Seeder.edtechosp_party,
                     delegateNickName: Seeder.edtechosp_name,
-                    startTimestamp: new Date(),
+                    startTimestamp: Seeder.now,
                     status: RelationshipStatus.Accepted.code,
                     initiatedBy: RelationshipInitiatedBy.Delegate.code,
                     attributes: [

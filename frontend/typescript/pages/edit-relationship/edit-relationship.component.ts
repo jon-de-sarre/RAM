@@ -67,6 +67,7 @@ export class EditRelationshipComponent extends AbstractPageComponent {
 
     public newRelationship: AddRelationshipComponentData = {
         accessPeriod: {
+            startDateEnabled: true,
             startDate: new Date(),
             noEndDate: true,
             endDate: null

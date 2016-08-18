@@ -14,7 +14,8 @@ class RepositoryValue {
 
 const repository: {[key: string]: RepositoryValue} = {
     '10000000001': new RepositoryValue(3, 3, 3),
-    '14126318518': new RepositoryValue(3, 3, 13)
+    '14126318518': new RepositoryValue(3, 3, 13),
+    '20612553456': new RepositoryValue(3, 3, 2)
 };
 
 export interface IAUSkeyProvider {
@@ -42,7 +43,9 @@ export class MockAUSkeyProvider implements IAUSkeyProvider {
         const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
         let abnScrubbed = abn.replace(/ /g, '');
         let values: any = repository[abnScrubbed];
+
         if (!values) {
+            values = {};
             values[type.code] = 0;
         }
         let auskeys: IAUSkey[] = [];

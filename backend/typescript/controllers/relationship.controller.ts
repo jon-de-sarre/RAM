@@ -10,7 +10,8 @@ import {
     REGULAR_CHARS
 } from './helpers';
 import {IPartyModel, PartyModel} from '../models/party.model';
-import {IRelationshipModel, RelationshipStatus} from '../models/relationship.model';
+import {IRelationshipModel, RelationshipStatus, RelationshipModel} from '../models/relationship.model';
+import {Url} from '../models/url';
 import {
     FilterParams,
     IInvitationCodeRelationshipAddDTO,
@@ -225,6 +226,7 @@ export class RelationshipController {
                 filterParams.get('relationshipTypeCategory'),
                 filterParams.get('profileProvider'),
                 filterParams.get('status'),
+                false,
                 filterParams.get('text'),
                 filterParams.get('sort'),
                 parseInt(req.query.page),
@@ -454,6 +456,69 @@ export class RelationshipController {
             .catch(sendError(res));
     };
 
+    private modify = async(req:Request, res:Response) => {
+        const schema = {
+            'identifier': {
+                in: 'params',
+                notEmpty: true,
+                errorMessage: 'Relationship identity value not valid'
+            },
+            'relationshipType.href': {
+                in: 'body',
+                matches: {
+                    options: ['^/api/v1/relationshipType/'],
+                    errorMessage: 'Relationship type is not valid'
+                }
+            },
+            'subject.href': {
+                in: 'body',
+                matches: {
+                    options: ['^/api/v1/party/identity/'],
+                    errorMessage: 'Subject identity id value not valid'
+                }
+            },
+            'delegate.href': {
+                in: 'body',
+                matches: {
+                    options: ['^/api/v1/party/identity/'],
+                    errorMessage: 'Delegate identity id value not valid'
+                }
+            },
+            'startTimestamp': {
+                in: 'body',
+                notEmpty: true,
+                // isDate: {
+                //     errorMessage: 'Start timestamp is not valid'
+                // },
+                // todo resolve issue
+                errorMessage: 'Start timestamp is not valid'
+            },
+            'endTimestamp': {
+                in: 'body'
+            }
+        };
+        const subjectIdValue = Url.lastPathElement(req.body.subject.href);
+        validateReqSchema(req, schema)
+            .then(async (req:Request) => {
+                const myPrincipal = context.getAuthenticatedPrincipal();
+                const myIdentity = context.getAuthenticatedIdentity();
+                const hasAccess = await this.partyModel.hasAccess(subjectIdValue, myPrincipal, myIdentity);
+                if (!hasAccess) {
+                    throw new Error('403');
+                }
+                return req;
+            })
+            .then(async (req: Request) => {
+                let relationship = await RelationshipModel.findByIdentifier(req.params.identifier);
+                Assert.assertNotNull(relationship, 'Relationship not found', 'Could not relationship by param');
+                return await relationship.modify(req.body);
+            })
+            .then((model) => model ? model.toDTO(null) : null)
+            .then(sendResource(res))
+            .then(sendNotFoundError(res))
+            .catch(sendError(res));
+    };
+
     private findStatusByCode = (req:Request, res:Response) => {
         const schema = {
             'code': {
@@ -537,6 +602,11 @@ export class RelationshipController {
             context.begin,
             context.isAuthenticated,
             this.create);
+
+        router.put('/v1/relationship/:identifier',
+            context.begin,
+            context.isAuthenticated,
+            this.modify);
 
         router.get('/v1/relationshipStatus/:code',
             context.begin,

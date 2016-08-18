@@ -14,7 +14,7 @@ export const RAMConstants = {
         'RELATIONSHIP_LIST': 'relationship-list',
         'RELATIONSHIP_CREATE': 'relationship-create',
         'ROLE_LIST': 'role-list',
-        'ROLE_CREATE': 'role-list',
+        'ROLE_CREATE': 'role-create',
         'MODIFY': 'modify',
         'DELETE': 'delete'
     },

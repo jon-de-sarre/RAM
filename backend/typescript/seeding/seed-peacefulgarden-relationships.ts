@@ -6,12 +6,12 @@ import {RelationshipStatus, RelationshipInitiatedBy} from '../models/relationshi
 
 /* tslint:disable:no-any */
 /* tslint:disable:max-func-body-length */
-export class JMFoodPackagingRelationshipsSeeder {
+export class PeacefulGardenRelationshipsSeeder {
 
-    private static async load_jenscatering_universal() {
+    private static async load_peacefulgarden_associate() {
         try {
 
-            Seeder.log('\nInserting Sample Relationship - J&M Food Packaging Pty Ltd / Jen\'s Catering Pty Ltd:\n'.underline);
+            Seeder.log('\nInserting Sample Relationship - Peaceful Gardens Organic Cooking School Ltd / Patty Peaceful:\n'.underline);
 
             if (!conf.devMode) {
 
@@ -19,12 +19,12 @@ export class JMFoodPackagingRelationshipsSeeder {
 
             } else {
 
-                Seeder.jmfoodpackaging_and_jenscatering_relationship = await Seeder.createRelationshipModel({
-                    relationshipType: Seeder.universal_delegate_relationshipType,
-                    subject: Seeder.jmfoodpackaging_party,
-                    subjectNickName: Seeder.jmfoodpackaging_name,
-                    delegate: Seeder.jenscatering_party,
-                    delegateNickName: Seeder.jenscatering_name,
+                Seeder.peacefulgarden_and_pattypeaceful_relationship = await Seeder.createRelationshipModel({
+                    relationshipType: Seeder.associate_delegate_relationshipType,
+                    subject: Seeder.peacefulgarden_party,
+                    subjectNickName: Seeder.peacefulgarden_name,
+                    delegate: Seeder.pattypeaceful_party,
+                    delegateNickName: Seeder.pattypeaceful_name,
                     startTimestamp: Seeder.now,
                     status: RelationshipStatus.Accepted.code,
                     initiatedBy: RelationshipInitiatedBy.Subject.code,
@@ -59,7 +59,7 @@ export class JMFoodPackagingRelationshipsSeeder {
     }
 
     public static async load() {
-        await JMFoodPackagingRelationshipsSeeder.load_jenscatering_universal();
+        await PeacefulGardenRelationshipsSeeder.load_peacefulgarden_associate();
     }
 
 }

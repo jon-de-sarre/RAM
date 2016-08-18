@@ -4,9 +4,11 @@ import {Url} from './url';
 import {DOB_SHARED_SECRET_TYPE_CODE} from './sharedSecretType.model';
 import {IParty, PartyModel} from './party.model';
 import {IName, NameModel} from './name.model';
-import {IRelationshipType} from './relationshipType.model';
+import {IRelationshipType, RelationshipTypeModel} from './relationshipType.model';
 import {IRelationshipAttribute, RelationshipAttributeModel} from './relationshipAttribute.model';
+import {RelationshipAttributeNameModel} from './relationshipAttributeName.model';
 import {IdentityModel, IIdentity, IdentityType, IdentityInvitationCodeStatus} from './identity.model';
+import {context} from '../providers/context.provider';
 import {
     HrefValue,
     Relationship as DTO,
@@ -16,6 +18,7 @@ import {
 } from '../../../commons/RamAPI';
 // import {logger} from '../logger';
 import {IdentityPublicIdentifierScheme} from './identity.model';
+import {logger} from '../logger';
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
 
@@ -27,6 +30,12 @@ const _NameModel = NameModel;
 
 /* tslint:disable:no-unused-variable */
 const _RelationshipAttributeModel = RelationshipAttributeModel;
+
+/* tslint:disable:no-unused-variable */
+const _RelationshipAttributeNameModel = RelationshipAttributeNameModel;
+
+/* tslint:disable:no-unused-variable */
+const _RelationshipTypeModel = RelationshipTypeModel;
 
 const MAX_PAGE_SIZE = 10;
 
@@ -270,6 +279,7 @@ export interface IRelationship extends IRAMObject {
     acceptPendingInvitation(acceptingDelegateIdentity: IIdentity):Promise<IRelationship>;
     rejectPendingInvitation(rejectingDelegateIdentity: IIdentity):Promise<IRelationship>;
     notifyDelegate(email: string, notifyingIdentity: IIdentity):Promise<IRelationship>;
+    modify(dto: DTO): Promise<IRelationship>;
 }
 
 export interface IRelationshipModel extends mongoose.Model<IRelationship> {
@@ -287,18 +297,26 @@ export interface IRelationshipModel extends mongoose.Model<IRelationship> {
     findByInvitationCode:(invitationCode: string) => Promise<IRelationship>;
     findPendingByInvitationCodeInDateRange:(invitationCode: string, date: Date) => Promise<IRelationship>;
     hasActiveInDateRange1stOr2ndLevelConnection:(requestingParty: IParty, requestedIdValue: string, date:Date) => Promise<boolean>;
-    search:(subjectIdentityIdValue: string, delegateIdentityIdValue: string, page: number, pageSize: number)
-        => Promise<SearchResult<IRelationship>>;
+    search:(subjectIdentityIdValue: string, delegateIdentityIdValue: string, page: number, pageSize: number) => Promise<SearchResult<IRelationship>>;
     searchByIdentity:(identityIdValue: string,
                       partyType: string,
                       relationshipType: string,
                       relationshipTypeCategory: string,
                       profileProvider: string,
                       status: string,
+                      inDateRange: boolean,
                       text: string,
                       sort: string,
-                      page: number, pageSize: number) => Promise<SearchResult<IRelationship>>;
-    searchDistinctSubjectsForMe:(requestingParty: IParty, partyType: string, authorisationManagement:string, text: string, sort: string,page: number, pageSize: number)
+                      page: number,
+                      pageSize: number) => Promise<SearchResult<IRelationship>>;
+    searchByIdentitiesInDateRange: (subjectIdValue: string,
+                                    delegateIdValue: string,
+                                    relationshipType: string,
+                                    status: string,
+                                    date: Date,
+                                    page: number,
+                                    pageSize: number) => Promise<SearchResult<IRelationship>>;
+    searchDistinctSubjectsForMe: (requestingParty: IParty, partyType: string, authorisationManagement:string, text: string, sort: string,page: number, pageSize: number)
         => Promise<SearchResult<IParty>>;
 }
 
@@ -404,6 +422,25 @@ RelationshipSchema.method('claimPendingInvitation', async function (claimingDele
             //     'Identity does not match');
         }
 
+        // If we received ABN from headers (ie from AUSkey), check it against ABN in relationship
+        const abn = context.getAuthenticatedABN();
+        logger.info('abn is <' + abn + '>');
+        if (abn) {
+            logger.info('checking abn');
+            const allIdentities = await IdentityModel.listByPartyId(this.subject.id);
+            let found:boolean = false;
+            for (let identity of allIdentities) {
+                logger.info('abn for identity is ' + identity.rawIdValue);
+                if (identity.rawIdValue === abn) {
+                    found = true;
+                }
+            }
+            Assert.assertTrue(
+                found,
+                'You cannot accept an authorisation with an AUSkey from a different ABN. AUSkeys only have authorisation for the ABN they are issued under.'
+            );
+        }
+
         // TODO credentials strengths (not spec'ed out yet)
 
         /* complete claim */
@@ -476,6 +513,55 @@ RelationshipSchema.method('notifyDelegate', async function (email: string, notif
 
     return Promise.resolve(this);
 
+});
+
+RelationshipSchema.method('modify', async function (dto: DTO) {
+    const relationshipTypeCode = decodeURIComponent(Url.lastPathElement(dto.relationshipType.href));
+    Assert.assertNotNull(relationshipTypeCode, 'Relationship type code was empty', `Expected relationshipType href last element to be the code: ${dto.relationshipType.href}`);
+
+    const relationshipType = await RelationshipTypeModel.findByCodeInDateRange(relationshipTypeCode, new Date());
+    Assert.assertNotNull(relationshipType, 'Relationship type not found', `Expected relationship type with code with valid date: ${relationshipTypeCode}`);
+
+    const delegateIdValue = decodeURIComponent(Url.lastPathElement(dto.delegate.href));
+    Assert.assertNotNull(delegateIdValue, 'Delegate identity id value was empty', `Expected delegate href last element to have an id value: ${dto.delegate.href}`);
+
+    const delegateIdentity = await IdentityModel.findByIdValue(delegateIdValue);
+    Assert.assertNotNull(delegateIdentity, 'Delegate identity not found', `Expected to find delegate by id value: ${delegateIdValue}`);
+
+    const subjectIdValue = decodeURIComponent(Url.lastPathElement(dto.subject.href));
+    Assert.assertNotNull(subjectIdValue, 'Subject identity id value was empty', `Expected subject href last element to have an id value: ${dto.subject.href}`);
+
+    const subjectIdentity = await IdentityModel.findByIdValue(subjectIdValue);
+    Assert.assertNotNull(subjectIdentity, 'Subject identity not found', `Expected to find subject by id: ${this.id}`);
+
+    // future story to change the below to be configuration based and not hard coded
+    let attributes: IRelationshipAttribute[] = [];
+    for (let attr of dto.attributes) {
+        Assert.assertNotNull(attr.attributeName, 'Attribute did not have an attribute name');
+        Assert.assertNotNull(attr.attributeName.href, 'Attribute did not have an attribute name href');
+
+        const attributeNameCode = decodeURIComponent(Url.lastPathElement(attr.attributeName.href));
+        Assert.assertNotNull(attributeNameCode, 'Attribute name code not found', `Unexpected attribute name href last element: ${attr.attributeName.href}`);
+
+        const attributeName = await RelationshipAttributeNameModel.findByCodeIgnoringDateRange(attributeNameCode);
+        Assert.assertNotNull(attributeName, 'Attribute name not found', `Expected to find attribuet name with code: ${attributeNameCode}`);
+
+        let attribute: IRelationshipAttribute = await RelationshipAttributeModel.add(attr.value, attributeName);
+        attributes.push(attribute);
+    }
+
+    this.startTimestamp = dto.startTimestamp;
+    this.endTimestamp = dto.endTimestamp;
+    this.attributes = attributes;
+
+    this.startTimestamp.setHours(0, 0, 0);
+    if (this.endTimestamp) {
+        this.endTimestamp.setHours(0, 0, 0);
+    }
+
+    await this.save();
+
+    return this;
 });
 
 // RelationshipSchema.method('identitiesByTypeAndStatus', async function (identityType:IdentityType, status:IdentityInvitationCodeStatus) {
@@ -710,6 +796,7 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                                                relationshipTypeCategory: string,
                                                profileProvider: string,
                                                status: string,
+                                               inDateRange: boolean,
                                                text: string,
                                                sort: string,
                                                page: number,
@@ -719,7 +806,12 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
         try {
             const party = await PartyModel.findByIdentityIdValue(identityIdValue);
             let mainAnd: {[key: string]: Object}[] = [];
-            mainAnd.push({'$or': [{subject: party}, {delegate: party}]});
+            mainAnd.push({
+                '$or': [
+                    {subject: party},
+                    {delegate: party}
+                ]
+            });
             if (partyType) {
                 mainAnd.push({
                     '$or': [
@@ -744,6 +836,11 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
             }
             if (status) {
                 mainAnd.push({'status': status});
+            }
+            if (inDateRange) {
+                const date = new Date();
+                mainAnd.push({'startTimestamp': {$lte: date}});
+                mainAnd.push({'$or': [{endTimestamp: null}, {endTimestamp: {$gte: date}}]});
             }
             if (text) {
                 mainAnd.push({
@@ -773,6 +870,60 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                 .sort({
                     '_subjectNickNameString': !sort || sort === 'asc' ? 1 : -1,
                     '_delegateNickNameString': !sort || sort === 'asc' ? 1 : -1
+                })
+                .skip((page - 1) * pageSize)
+                .limit(pageSize)
+                .exec();
+            resolve(new SearchResult<IRelationship>(page, count, pageSize, list));
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
+/* tslint:disable:max-func-body-length */
+RelationshipSchema.static('searchByIdentitiesInDateRange', (subjectIdValue: string,
+                                                            delegateIdValue: string,
+                                                            relationshipType: string,
+                                                            status: string,
+                                                            date: Date,
+                                                            page: number,
+                                                            reqPageSize: number) => {
+    return new Promise<SearchResult<IRelationship>>(async(resolve, reject) => {
+        const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
+        try {
+            const subject = await PartyModel.findByIdentityIdValue(subjectIdValue);
+            const delegate = await PartyModel.findByIdentityIdValue(delegateIdValue);
+            let mainAnd: {[key: string]: Object}[] = [];
+            mainAnd.push({'subject': subject});
+            mainAnd.push({'delegate': delegate});
+            if (relationshipType) {
+                mainAnd.push({'_relationshipTypeCode': relationshipType});
+            }
+            if (status) {
+                mainAnd.push({'status': status});
+            }
+            const date = new Date();
+            mainAnd.push({'startTimestamp': {$lte: date}});
+            mainAnd.push({'$or': [{endTimestamp: null}, {endTimestamp: {$gte: date}}]});
+            const where: {[key: string]: Object} = {};
+            where['$and'] = mainAnd;
+            const count = await this.RelationshipModel
+                .count(where)
+                .exec();
+            const list = await this.RelationshipModel
+                .find(where)
+                .deepPopulate([
+                    'relationshipType',
+                    'subject',
+                    'subjectNickName',
+                    'delegate',
+                    'delegateNickName',
+                    'attributes.attributeName'
+                ])
+                .sort({
+                    '_subjectNickNameString': 1,
+                    '_delegateNickNameString': 1
                 })
                 .skip((page - 1) * pageSize)
                 .limit(pageSize)

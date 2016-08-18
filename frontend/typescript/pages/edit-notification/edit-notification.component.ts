@@ -59,6 +59,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
     public delegateIdentityRef: IHrefValue<IIdentity>;
 
     public accessPeriod: AccessPeriodComponentData = {
+        startDateEnabled: true,
         startDate: new Date(),
         noEndDate: true,
         endDate: null
@@ -69,6 +70,7 @@ export class EditNotificationComponent extends AbstractPageComponent {
     public ospRelationshipTypeRef: IHrefValue<IRelationshipType>;
     public ospRoleRef: IHrefValue<IRole>;
     public ospServices: IRoleAttributeName[];
+    public originalStartDate: Date;
     public declarationText: string;
 
     public form: FormGroup;
@@ -160,9 +162,13 @@ export class EditNotificationComponent extends AbstractPageComponent {
             }
 
             // date
+            this.originalStartDate = relationship.startTimestamp;
             this.accessPeriod.startDate = relationship.startTimestamp;
             this.accessPeriod.endDate = relationship.endTimestamp;
             this.accessPeriod.noEndDate = relationship.endTimestamp === undefined || relationship.endTimestamp === null;
+            let todayMidnight = new Date();
+            todayMidnight.setHours(0, 0, 0, 0);
+            this.accessPeriod.startDateEnabled = this.originalStartDate > todayMidnight;
 
             // agency services
             let agencyServicesAttribute = this.services.model.getRelationshipAttribute(relationship, RAMConstants.RelationshipTypeAttributeCode.SELECTED_GOVERNMENT_SERVICES_LIST, null);
@@ -176,6 +182,8 @@ export class EditNotificationComponent extends AbstractPageComponent {
     }
 
     public onNewRelationship() {
+
+        // relationship
         this.relationship = new Relationship(
             [],
             null,
@@ -190,6 +198,11 @@ export class EditNotificationComponent extends AbstractPageComponent {
             RAMConstants.RelationshipInitiatedBy.DELEGATE,
             []
         );
+
+        // date
+        this.originalStartDate = this.accessPeriod.startDate;
+        this.accessPeriod.startDateEnabled = true;
+
     }
 
     public back() {
@@ -222,17 +235,21 @@ export class EditNotificationComponent extends AbstractPageComponent {
                 validationOk = false;
                 this.addGlobalMessage('Please specify an end date.');
             }
-            if (this.accessPeriod.startDate && this.accessPeriod.startDate < todayMidnight) {
-                validationOk = false;
-                this.addGlobalMessage('Please specify a start date from today to the future.');
+            if (this.relationshipHref) {
+                if (this.accessPeriod.startDate && this.accessPeriod.startDate < todayMidnight) {
+                    validationOk = false;
+                    this.addGlobalMessage('Please specify a start date from today to the future.');
+                }
             }
             if (!ssids || ssids.length === 0 || !ssids.every(notEmpty)) {
                 validationOk = false;
                 this.addGlobalMessage('Please specify valid software ids.');
             }
-            if (!agencyServiceCodes || agencyServiceCodes.length === 0) {
-                validationOk = false;
-                this.addGlobalMessage('Please specify at least one agency service.');
+            if (!this.relationshipHref) {
+                if (!agencyServiceCodes || agencyServiceCodes.length === 0) {
+                    validationOk = false;
+                    this.addGlobalMessage('Please specify at least one agency service.');
+                }
             }
             if (!accepted) {
                 validationOk = false;
@@ -274,7 +291,6 @@ export class EditNotificationComponent extends AbstractPageComponent {
             } else {
 
                 // update relationship
-
                 this.relationship.startTimestamp = this.accessPeriod.startDate;
                 this.relationship.endTimestamp = this.accessPeriod.endDate;
                 this.relationship.attributes = attributes;
