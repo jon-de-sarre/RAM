@@ -1,21 +1,24 @@
 import * as mongoose from 'mongoose';
 import {RAMEnum, IRAMObject, RAMSchema, Query, Assert} from './base';
+import {Url} from './url';
 import {DOB_SHARED_SECRET_TYPE_CODE} from './sharedSecretType.model';
 import {IParty, PartyModel} from './party.model';
 import {IName, NameModel} from './name.model';
-import {IRelationshipType} from './relationshipType.model';
+import {IRelationshipType, RelationshipTypeModel} from './relationshipType.model';
 import {IRelationshipAttribute, RelationshipAttributeModel} from './relationshipAttribute.model';
+import {RelationshipAttributeNameModel} from './relationshipAttributeName.model';
 import {IdentityModel, IIdentity, IdentityType, IdentityInvitationCodeStatus} from './identity.model';
+import {context} from '../providers/context.provider';
 import {
-    Link,
     HrefValue,
     Relationship as DTO,
     RelationshipStatus as RelationshipStatusDTO,
     RelationshipAttribute as RelationshipAttributeDTO,
     SearchResult
 } from '../../../commons/RamAPI';
-import {logger} from '../logger';
+// import {logger} from '../logger';
 import {IdentityPublicIdentifierScheme} from './identity.model';
+import {logger} from '../logger';
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
 
@@ -28,39 +31,64 @@ const _NameModel = NameModel;
 /* tslint:disable:no-unused-variable */
 const _RelationshipAttributeModel = RelationshipAttributeModel;
 
+/* tslint:disable:no-unused-variable */
+const _RelationshipAttributeNameModel = RelationshipAttributeNameModel;
+
+/* tslint:disable:no-unused-variable */
+const _RelationshipTypeModel = RelationshipTypeModel;
+
 const MAX_PAGE_SIZE = 10;
 
 // enums, utilities, helpers ..........................................................................................
 
 export class RelationshipStatus extends RAMEnum {
 
-    public static Active = new RelationshipStatus('ACTIVE', 'Active');
+    public static Accepted = new RelationshipStatus('ACCEPTED', 'Accepted');
     public static Cancelled = new RelationshipStatus('CANCELLED', 'Cancelled');
+    public static Declined = new RelationshipStatus('DECLINED', 'Declined');
     public static Deleted = new RelationshipStatus('DELETED', 'Deleted');
-    public static Invalid = new RelationshipStatus('INVALID', 'Invalid');
     public static Pending = new RelationshipStatus('PENDING', 'Pending');
+    public static Revoked = new RelationshipStatus('REVOKED', 'Revoked');
+    public static Suspended = new RelationshipStatus('SUSPENDED', 'Suspended');
 
     protected static AllValues = [
-        RelationshipStatus.Active,
+        RelationshipStatus.Accepted,
         RelationshipStatus.Cancelled,
+        RelationshipStatus.Declined,
         RelationshipStatus.Deleted,
-        RelationshipStatus.Invalid,
-        RelationshipStatus.Pending
+        RelationshipStatus.Pending,
+        RelationshipStatus.Revoked,
+        RelationshipStatus.Suspended
     ];
 
     constructor(code: string, shortDecodeText: string) {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue: boolean): HrefValue<RelationshipStatusDTO> {
-        return new HrefValue(
-            '/api/v1/relationshipStatus/' + this.code,
+    public async toHrefValue(includeValue: boolean): Promise<HrefValue<RelationshipStatusDTO>> {
+        return Promise.resolve(new HrefValue(
+            await Url.forRelationshipStatus(this),
             includeValue ? this.toDTO() : undefined
-        );
+        ));
     }
 
     public toDTO(): RelationshipStatusDTO {
         return new RelationshipStatusDTO(this.code, this.shortDecodeText);
+    }
+}
+
+export class RelationshipInitiatedBy extends RAMEnum {
+
+    public static Subject = new RelationshipInitiatedBy('SUBJECT', 'Subject');
+    public static Delegate = new RelationshipInitiatedBy('DELEGATE', 'Delegate');
+
+    protected static AllValues = [
+        RelationshipInitiatedBy.Subject,
+        RelationshipInitiatedBy.Delegate
+    ];
+
+    constructor(code: string, shortDecodeText: string) {
+        super(code, shortDecodeText);
     }
 }
 
@@ -121,6 +149,12 @@ const RelationshipSchema = RAMSchema({
         trim: true,
         enum: RelationshipStatus.valueStrings()
     },
+    initiatedBy: {
+        type: String,
+        required: [true, 'Initiated by is required'],
+        trim: true,
+        enum: RelationshipInitiatedBy.valueStrings()
+    },
     attributes: [{
         type: mongoose.Schema.Types.ObjectId,
         ref: 'RelationshipAttribute'
@@ -130,6 +164,11 @@ const RelationshipSchema = RAMSchema({
         required: [true, 'Relationship Type Code is required'],
         trim: true
     },
+    _relationshipTypeCategory: {
+         type: String,
+         required: [true, 'Relationship Type Category is required'],
+         trim: true
+     },
     _subjectNickNameString: {
         type: String,
         required: [true, 'Subject Nick Name String is required'],
@@ -169,6 +208,9 @@ const RelationshipSchema = RAMSchema({
 RelationshipSchema.pre('validate', function (next: () => void) {
     if (this.relationshipType) {
         this._relationshipTypeCode = this.relationshipType.code;
+    }
+    if (this.relationshipType) {
+        this._relationshipTypeCategory = this.relationshipType.category;
     }
     if (this.subjectNickName) {
         this._subjectNickNameString = this.subjectNickName._displayName;
@@ -219,6 +261,7 @@ export interface IRelationship extends IRAMObject {
     endTimestamp?:Date;
     endEventTimestamp?:Date;
     status:string;
+    initiatedBy:string;
     attributes:IRelationshipAttribute[];
     _subjectNickNameString:string;
     _delegateNickNameString:string;
@@ -236,31 +279,44 @@ export interface IRelationship extends IRAMObject {
     acceptPendingInvitation(acceptingDelegateIdentity: IIdentity):Promise<IRelationship>;
     rejectPendingInvitation(rejectingDelegateIdentity: IIdentity):Promise<IRelationship>;
     notifyDelegate(email: string, notifyingIdentity: IIdentity):Promise<IRelationship>;
+    modify(dto: DTO): Promise<IRelationship>;
 }
 
 export interface IRelationshipModel extends mongoose.Model<IRelationship> {
-    add:(relationshipType: IRelationshipType,
-         subject: IParty,
-         subjectNickName: IName,
-         invitationCodeIdentity: IIdentity,
-         startTimestamp: Date,
-         endTimestamp: Date,
-         attributes: IRelationshipAttribute[]) => Promise<IRelationship>;
+    add2:(relationshipType: IRelationshipType,
+          subject: IParty,
+          subjectNickName: IName,
+          delegate: IParty,
+          delegateNickName: IName,
+          startTimestamp: Date,
+          endTimestamp: Date,
+          initiatedBy: RelationshipInitiatedBy,
+          invitationIdentity: IIdentity,
+          attributes: IRelationshipAttribute[]) => Promise<IRelationship>;
     findByIdentifier:(id: string) => Promise<IRelationship>;
     findByInvitationCode:(invitationCode: string) => Promise<IRelationship>;
     findPendingByInvitationCodeInDateRange:(invitationCode: string, date: Date) => Promise<IRelationship>;
     hasActiveInDateRange1stOr2ndLevelConnection:(requestingParty: IParty, requestedIdValue: string, date:Date) => Promise<boolean>;
-    search:(subjectIdentityIdValue: string, delegateIdentityIdValue: string, page: number, pageSize: number)
-        => Promise<SearchResult<IRelationship>>;
+    search:(subjectIdentityIdValue: string, delegateIdentityIdValue: string, page: number, pageSize: number) => Promise<SearchResult<IRelationship>>;
     searchByIdentity:(identityIdValue: string,
                       partyType: string,
                       relationshipType: string,
+                      relationshipTypeCategory: string,
                       profileProvider: string,
                       status: string,
+                      inDateRange: boolean,
                       text: string,
                       sort: string,
-                      page: number, pageSize: number) => Promise<SearchResult<IRelationship>>;
-    searchDistinctSubjectsForMe:(requestingParty: IParty, partyType: string, authorisationManagement:string, text: string, sort: string,page: number, pageSize: number)
+                      page: number,
+                      pageSize: number) => Promise<SearchResult<IRelationship>>;
+    searchByIdentitiesInDateRange: (subjectIdValue: string,
+                                    delegateIdValue: string,
+                                    relationshipType: string,
+                                    status: string,
+                                    date: Date,
+                                    page: number,
+                                    pageSize: number) => Promise<SearchResult<IRelationship>>;
+    searchDistinctSubjectsForMe: (requestingParty: IParty, partyType: string, authorisationManagement:string, text: string, sort: string,page: number, pageSize: number)
         => Promise<SearchResult<IParty>>;
 }
 
@@ -270,27 +326,25 @@ RelationshipSchema.method('statusEnum', function () {
     return RelationshipStatus.valueOf(this.status);
 });
 
+// todo what is the href we use here?
 RelationshipSchema.method('toHrefValue', async function (includeValue: boolean) {
-    const relationshipId: string = this._id.toString();
     return new HrefValue(
-        '/api/v1/relationship/' + encodeURIComponent(relationshipId),
+        await Url.forRelationship(this),
         includeValue ? await this.toDTO(null) : undefined
     );
 });
 
+// todo need to use security context to drive the links
 RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
-    const links: Link[] = [];
-    // links.push(new Link('self', `/api/v1/relationship/${this.id}`));
-
-    // TODO what other logic around when to add links?
-    if (invitationCode && this.statusEnum() === RelationshipStatus.Pending) {
-        links.push(new Link('accept', `/api/v1/relationship/invitationCode/${invitationCode}/accept`));
-        links.push(new Link('reject', `/api/v1/relationship/invitationCode/${invitationCode}/reject`));
-        links.push(new Link('notifyDelegate', `/api/v1/relationship/invitationCode/${invitationCode}/notifyDelegate`));
-    }
-
+    const pendingWithInvitationCode = invitationCode && this.statusEnum() === RelationshipStatus.Pending;
     return new DTO(
-        links,
+        Url.links()
+            .push('self', Url.GET, await Url.forRelationship(this))
+            .push('accept', Url.POST, await Url.forRelationshipAccept(invitationCode), pendingWithInvitationCode)
+            .push('reject', Url.POST, await Url.forRelationshipReject(invitationCode), pendingWithInvitationCode)
+            .push('notifyDelegate', Url.POST, await Url.forRelationshipNotifyDelegate(invitationCode), pendingWithInvitationCode)
+            .push('modify', Url.PUT, await Url.forRelationship(this))
+            .toArray(),
         await this.relationshipType.toHrefValue(false),
         await this.subject.toHrefValue(true),
         await this.subjectNickName.toDTO(),
@@ -300,6 +354,7 @@ RelationshipSchema.method('toDTO', async function (invitationCode?: string) {
         this.endTimestamp,
         this.endEventTimestamp,
         this.status,
+        this.initiatedBy,
         await Promise.all<RelationshipAttributeDTO>(this.attributes.map(
             async (attribute: IRelationshipAttribute) => {
                 return await attribute.toDTO();
@@ -367,6 +422,25 @@ RelationshipSchema.method('claimPendingInvitation', async function (claimingDele
             //     'Identity does not match');
         }
 
+        // If we received ABN from headers (ie from AUSkey), check it against ABN in relationship
+        const abn = context.getAuthenticatedABN();
+        logger.info('abn is <' + abn + '>');
+        if (abn) {
+            logger.info('checking abn');
+            const allIdentities = await IdentityModel.listByPartyId(this.subject.id);
+            let found:boolean = false;
+            for (let identity of allIdentities) {
+                logger.info('abn for identity is ' + identity.rawIdValue);
+                if (identity.rawIdValue === abn) {
+                    found = true;
+                }
+            }
+            Assert.assertTrue(
+                found,
+                'You cannot accept an authorisation with an AUSkey from a different ABN. AUSkeys only have authorisation for the ABN they are issued under.'
+            );
+        }
+
         // TODO credentials strengths (not spec'ed out yet)
 
         /* complete claim */
@@ -387,7 +461,7 @@ RelationshipSchema.method('claimPendingInvitation', async function (claimingDele
 
 RelationshipSchema.method('acceptPendingInvitation', async function (acceptingDelegateIdentity: IIdentity) {
 
-    logger.debug('Attempting to accept relationship by ', acceptingDelegateIdentity.idValue);
+    //logger.debug('Attempting to accept relationship by ', acceptingDelegateIdentity.idValue);
 
     Assert.assertTrue(this.statusEnum() === RelationshipStatus.Pending, 'Unable to accept a non-pending relationship');
 
@@ -395,7 +469,7 @@ RelationshipSchema.method('acceptPendingInvitation', async function (acceptingDe
     Assert.assertTrue(acceptingDelegateIdentity.party.id === this.delegate.id, 'Not allowed');
 
     // mark relationship as active
-    this.status = RelationshipStatus.Active.code;
+    this.status = RelationshipStatus.Accepted.code;
     await this.save();
 
     // TODO notify relevant parties
@@ -411,7 +485,7 @@ RelationshipSchema.method('rejectPendingInvitation', async function (rejectingDe
     Assert.assertTrue(rejectingDelegateIdentity.party.id === this.delegate.id, 'Not allowed');
 
     // mark relationship as invalid
-    this.status = RelationshipStatus.Invalid.code;
+    this.status = RelationshipStatus.Declined.code;
     await this.save();
 
     // TODO notify relevant parties
@@ -435,10 +509,59 @@ RelationshipSchema.method('notifyDelegate', async function (email: string, notif
     await identity.save();
 
     // TODO notify relevant parties
-    logger.debug(`TODO Send notification to ${email}`);
+    //logger.debug(`TODO Send notification to ${email}`);
 
     return Promise.resolve(this);
 
+});
+
+RelationshipSchema.method('modify', async function (dto: DTO) {
+    const relationshipTypeCode = decodeURIComponent(Url.lastPathElement(dto.relationshipType.href));
+    Assert.assertNotNull(relationshipTypeCode, 'Relationship type code was empty', `Expected relationshipType href last element to be the code: ${dto.relationshipType.href}`);
+
+    const relationshipType = await RelationshipTypeModel.findByCodeInDateRange(relationshipTypeCode, new Date());
+    Assert.assertNotNull(relationshipType, 'Relationship type not found', `Expected relationship type with code with valid date: ${relationshipTypeCode}`);
+
+    const delegateIdValue = decodeURIComponent(Url.lastPathElement(dto.delegate.href));
+    Assert.assertNotNull(delegateIdValue, 'Delegate identity id value was empty', `Expected delegate href last element to have an id value: ${dto.delegate.href}`);
+
+    const delegateIdentity = await IdentityModel.findByIdValue(delegateIdValue);
+    Assert.assertNotNull(delegateIdentity, 'Delegate identity not found', `Expected to find delegate by id value: ${delegateIdValue}`);
+
+    const subjectIdValue = decodeURIComponent(Url.lastPathElement(dto.subject.href));
+    Assert.assertNotNull(subjectIdValue, 'Subject identity id value was empty', `Expected subject href last element to have an id value: ${dto.subject.href}`);
+
+    const subjectIdentity = await IdentityModel.findByIdValue(subjectIdValue);
+    Assert.assertNotNull(subjectIdentity, 'Subject identity not found', `Expected to find subject by id: ${this.id}`);
+
+    // future story to change the below to be configuration based and not hard coded
+    let attributes: IRelationshipAttribute[] = [];
+    for (let attr of dto.attributes) {
+        Assert.assertNotNull(attr.attributeName, 'Attribute did not have an attribute name');
+        Assert.assertNotNull(attr.attributeName.href, 'Attribute did not have an attribute name href');
+
+        const attributeNameCode = decodeURIComponent(Url.lastPathElement(attr.attributeName.href));
+        Assert.assertNotNull(attributeNameCode, 'Attribute name code not found', `Unexpected attribute name href last element: ${attr.attributeName.href}`);
+
+        const attributeName = await RelationshipAttributeNameModel.findByCodeIgnoringDateRange(attributeNameCode);
+        Assert.assertNotNull(attributeName, 'Attribute name not found', `Expected to find attribuet name with code: ${attributeNameCode}`);
+
+        let attribute: IRelationshipAttribute = await RelationshipAttributeModel.add(attr.value, attributeName);
+        attributes.push(attribute);
+    }
+
+    this.startTimestamp = dto.startTimestamp;
+    this.endTimestamp = dto.endTimestamp;
+    this.attributes = attributes;
+
+    this.startTimestamp.setHours(0, 0, 0);
+    if (this.endTimestamp) {
+        this.endTimestamp.setHours(0, 0, 0);
+    }
+
+    await this.save();
+
+    return this;
 });
 
 // RelationshipSchema.method('identitiesByTypeAndStatus', async function (identityType:IdentityType, status:IdentityInvitationCodeStatus) {
@@ -449,23 +572,40 @@ RelationshipSchema.method('notifyDelegate', async function (email: string, notif
 
 // static methods .....................................................................................................
 
-RelationshipSchema.static('add', async (relationshipType: IRelationshipType,
+RelationshipSchema.static('add2', async (relationshipType: IRelationshipType,
                                         subject: IParty,
                                         subjectNickName: IName,
-                                        invitationCodeIdentity: IIdentity,
+                                        delegate: IParty,
+                                        delegateNickName: IName,
                                         startTimestamp: Date,
                                         endTimestamp: Date,
+                                        initiatedBy: RelationshipInitiatedBy,
+                                        invitationIdentity: IIdentity,
                                         attributes: IRelationshipAttribute[]) => {
+
+    let status = RelationshipStatus.Pending;
+
+    // check subject
+    if (initiatedBy === RelationshipInitiatedBy.Subject && relationshipType.autoAcceptIfInitiatedFromSubject) {
+        status = RelationshipStatus.Accepted;
+    }
+
+    // check delegate
+    if (initiatedBy === RelationshipInitiatedBy.Delegate && relationshipType.autoAcceptIfInitiatedFromDelegate) {
+        status = RelationshipStatus.Accepted;
+    }
+
     return await this.RelationshipModel.create({
         relationshipType: relationshipType,
         subject: subject,
         subjectNickName: subjectNickName,
-        delegate: invitationCodeIdentity.party,
-        delegateNickName: invitationCodeIdentity.profile.name,
-        invitationIdentity: invitationCodeIdentity,
+        delegate: delegate,
+        delegateNickName: delegateNickName,
         startTimestamp: startTimestamp,
         endTimestamp: endTimestamp,
-        status: RelationshipStatus.Pending.code,
+        status: status.code,
+        initiatedBy: initiatedBy.code,
+        invitationIdentity: invitationIdentity,
         attributes: attributes
     });
 });
@@ -532,6 +672,7 @@ RelationshipSchema.static('findPendingByInvitationCodeInDateRange', async (invit
     return null;
 });
 
+// todo what about start date?
 RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (requestingParty: IParty,
                                                                                 requestedIdValue: string,
                                                                                 date:Date) => {
@@ -549,8 +690,9 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
             .findOne({
                 subject: requestedParty,
                 delegate: requestingParty,
-                status: RelationshipStatus.Active.code,
-                $or: [{endDate: null}, {endDate: {$gte: date}}]
+                status: RelationshipStatus.Accepted.code,
+                startTimestamp: {$lte: date},
+                $or: [{endTimestamp: null}, {endTimestamp: {$gte: date}}]
             })
             .exec();
 
@@ -566,8 +708,9 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
                         '$match': {
                             '$and': [
                                 {'subject': new mongoose.Types.ObjectId(requestedParty.id)},
-                                {'status': RelationshipStatus.Active.code},
-                                {'$or': [{endDate: null}, {endDate: {$gte: date}}]}
+                                {'status': RelationshipStatus.Accepted.code},
+                                {'startTimestamp': {$lte: date}},
+                                {'$or': [{endTimestamp: null}, {endTimestamp: {$gte: date}}]}
                             ]
                         }
                     },
@@ -581,8 +724,9 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
                         '$match': {
                             '$and': [
                                 {'delegate': new mongoose.Types.ObjectId(requestingParty.id)},
-                                {'status': RelationshipStatus.Active.code},
-                                {'$or': [{endDate: null}, {endDate: {$gte: date}}]}
+                                {'status': RelationshipStatus.Accepted.code},
+                                {'startTimestamp': {$lte: date}},
+                                {'$or': [{endTimestamp: null}, {endTimestamp: {$gte: date}}]}
                             ]
                         }
                     },
@@ -591,11 +735,11 @@ RelationshipSchema.static('hasActiveInDateRange1stOr2ndLevelConnection', async (
                 .exec();
 
             let arrays = [
-                listOfDelegateIds.map((obj) => obj['_id'].toString()),
-                listOfSubjectIds.map((obj) => obj['_id'].toString())
+                listOfDelegateIds.map((obj: {_id: string}): string => obj['_id'].toString()),
+                listOfSubjectIds.map((obj: {_id: string}) => obj['_id'].toString())
             ];
 
-            const listOfIntersectingPartyIds = arrays.shift().filter(function (v) {
+            const listOfIntersectingPartyIds = arrays.shift().filter(function (v: string) {
                 return arrays.every(function (a) {
                     return a.indexOf(v) !== -1;
                 });
@@ -649,8 +793,10 @@ RelationshipSchema.static('search', (subjectIdentityIdValue: string,
 RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                                                partyType: string,
                                                relationshipType: string,
+                                               relationshipTypeCategory: string,
                                                profileProvider: string,
                                                status: string,
+                                               inDateRange: boolean,
                                                text: string,
                                                sort: string,
                                                page: number,
@@ -659,11 +805,15 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
         const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
         try {
             const party = await PartyModel.findByIdentityIdValue(identityIdValue);
-            const where: Object = {};
-            where['$and'] = [];
-            where['$and'].push({'$or': [{subject: party}, {delegate: party}]});
+            let mainAnd: {[key: string]: Object}[] = [];
+            mainAnd.push({
+                '$or': [
+                    {subject: party},
+                    {delegate: party}
+                ]
+            });
             if (partyType) {
-                where['$and'].push({
+                mainAnd.push({
                     '$or': [
                         {'_delegatePartyTypeCode': partyType},
                         {'_subjectPartyTypeCode': partyType}
@@ -671,10 +821,13 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                 });
             }
             if (relationshipType) {
-                where['$and'].push({'_relationshipTypeCode': relationshipType});
+                mainAnd.push({'_relationshipTypeCode': relationshipType});
+            }
+            if (relationshipTypeCategory) {
+                mainAnd.push({'_relationshipTypeCategory': relationshipTypeCategory});
             }
             if (profileProvider) {
-                where['$and'].push({
+                mainAnd.push({
                     '$or': [
                         {'_delegateProfileProviderCodes': profileProvider},
                         {'_subjectProfileProviderCodes': profileProvider}
@@ -682,10 +835,15 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                 });
             }
             if (status) {
-                where['$and'].push({'status': status});
+                mainAnd.push({'status': status});
+            }
+            if (inDateRange) {
+                const date = new Date();
+                mainAnd.push({'startTimestamp': {$lte: date}});
+                mainAnd.push({'$or': [{endTimestamp: null}, {endTimestamp: {$gte: date}}]});
             }
             if (text) {
-                where['$and'].push({
+                mainAnd.push({
                     '$or': [
                         {'_subjectNickNameString': new RegExp(text, 'i')},
                         {'_delegateNickNameString': new RegExp(text, 'i')},
@@ -694,6 +852,8 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
                     ]
                 });
             }
+            const where: {[key: string]: Object} = {};
+            where['$and'] = mainAnd;
             const count = await this.RelationshipModel
                 .count(where)
                 .exec();
@@ -721,12 +881,64 @@ RelationshipSchema.static('searchByIdentity', (identityIdValue: string,
     });
 });
 
+/* tslint:disable:max-func-body-length */
+RelationshipSchema.static('searchByIdentitiesInDateRange', (subjectIdValue: string,
+                                                            delegateIdValue: string,
+                                                            relationshipType: string,
+                                                            status: string,
+                                                            date: Date,
+                                                            page: number,
+                                                            reqPageSize: number) => {
+    return new Promise<SearchResult<IRelationship>>(async(resolve, reject) => {
+        const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
+        try {
+            const subject = await PartyModel.findByIdentityIdValue(subjectIdValue);
+            const delegate = await PartyModel.findByIdentityIdValue(delegateIdValue);
+            let mainAnd: {[key: string]: Object}[] = [];
+            mainAnd.push({'subject': subject});
+            mainAnd.push({'delegate': delegate});
+            if (relationshipType) {
+                mainAnd.push({'_relationshipTypeCode': relationshipType});
+            }
+            if (status) {
+                mainAnd.push({'status': status});
+            }
+            const date = new Date();
+            mainAnd.push({'startTimestamp': {$lte: date}});
+            mainAnd.push({'$or': [{endTimestamp: null}, {endTimestamp: {$gte: date}}]});
+            const where: {[key: string]: Object} = {};
+            where['$and'] = mainAnd;
+            const count = await this.RelationshipModel
+                .count(where)
+                .exec();
+            const list = await this.RelationshipModel
+                .find(where)
+                .deepPopulate([
+                    'relationshipType',
+                    'subject',
+                    'subjectNickName',
+                    'delegate',
+                    'delegateNickName',
+                    'attributes.attributeName'
+                ])
+                .sort({
+                    '_subjectNickNameString': 1,
+                    '_delegateNickNameString': 1
+                })
+                .skip((page - 1) * pageSize)
+                .limit(pageSize)
+                .exec();
+            resolve(new SearchResult<IRelationship>(page, count, pageSize, list));
+        } catch (e) {
+            reject(e);
+        }
+    });
+});
+
 /**
- * Returns a paginated list of distinct subjects for relationships which have a subject or delegate matching the one supplied.
+ * Returns a paginated list of distinct subjects for relationships which have a delegate matching the one supplied.
  *
- * todo need to optional filters (term, relationship type, status)
- * todo need to add sorting
- * todo this search might no longer be useful after SS2 spike
+ * todo need to optional filters (authorisation management)
  */
 /* tslint:disable:max-func-body-length */
 RelationshipSchema.static('searchDistinctSubjectsForMe',
@@ -740,7 +952,7 @@ RelationshipSchema.static('searchDistinctSubjectsForMe',
         return new Promise<SearchResult<IParty>>(async (resolve, reject) => {
             const pageSize: number = reqPageSize ? Math.min(reqPageSize, MAX_PAGE_SIZE) : MAX_PAGE_SIZE;
             try {
-                const where: Object =  {
+                const where: {[key: string]: Object} =  {
                     '$match': {
                         '$and': [ { 'delegate': new mongoose.Types.ObjectId(requestingParty.id) } ]
                     }
@@ -748,7 +960,7 @@ RelationshipSchema.static('searchDistinctSubjectsForMe',
                 if (partyType) {
                     where['$match']['$and'].push({ '_subjectPartyTypeCode': partyType });
                 }
-                // todo authorisation management 
+                // todo authorisation management
                 if (text) {
                     where['$match']['$and'].push({
                         '$or': [

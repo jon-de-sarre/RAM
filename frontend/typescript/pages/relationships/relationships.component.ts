@@ -8,6 +8,7 @@ import {PageHeaderAuthComponent} from '../../components/page-header/page-header-
 import {SearchResultPaginationComponent, SearchResultPaginationDelegate}
     from '../../components/search-result-pagination/search-result-pagination.component';
 import {RAMServices} from '../../services/ram-services';
+import {RAMConstants} from '../../services/ram-constants.service';
 
 import {
     ISearchResult,
@@ -20,7 +21,7 @@ import {
     IRelationshipStatus,
     IHrefValue,
     FilterParams
-} from '../../../../commons/RamAPI2';
+} from '../../../../commons/RamAPI';
 
 @Component({
     selector: 'list-relationships',
@@ -55,11 +56,8 @@ export class RelationshipsComponent extends AbstractPageComponent {
 
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices,
-                private _fb: FormBuilder) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 
@@ -70,19 +68,22 @@ export class RelationshipsComponent extends AbstractPageComponent {
         this._isLoading = true;
 
         // extract path and query parameters
-        this.idValue = decodeURIComponent(params.path['idValue']);
+        this.idValue = params.path['idValue'];
         this.filter = FilterParams.decode(params.query['filter']);
         this.page = params.query['page'] ? +params.query['page'] : 1;
 
+        // restrict to authorisations
+        this.filter.add('relationshipTypeCategory', RAMConstants.RelationshipTypeCategory.AUTHORISATION);
+
         // message
         const msg = params.query['msg'];
-        if (msg === 'DELEGATE_NOTIFIED') {
+        if (msg === RAMConstants.GlobalMessage.DELEGATE_NOTIFIED) {
             this.addGlobalMessage('A notification has been sent to the delegate.');
-        } else if (msg === 'DECLINED_RELATIONSHIP') {
+        } else if (msg === RAMConstants.GlobalMessage.DECLINED_RELATIONSHIP) {
             this.addGlobalMessage('You have declined the relationship.');
-        } else if (msg === 'ACCEPTED_RELATIONSHIP') {
+        } else if (msg === RAMConstants.GlobalMessage.ACCEPTED_RELATIONSHIP) {
             this.addGlobalMessage('You have accepted the relationship.');
-        } else if (msg === 'CANCEL_ACCEPT_RELATIONSHIP') {
+        } else if (msg === RAMConstants.GlobalMessage.CANCEL_ACCEPT_RELATIONSHIP) {
             this.addGlobalMessage('You cancelled without accepting or declining the relationship');
         }
 
@@ -108,7 +109,9 @@ export class RelationshipsComponent extends AbstractPageComponent {
 
         // relationship types
         this.services.rest.listRelationshipTypes().subscribe((relationshipTypeRefs) => {
-            this.relationshipTypeRefs = relationshipTypeRefs;
+            this.relationshipTypeRefs = relationshipTypeRefs.filter((relationshipType) => {
+                return relationshipType.value.category === RAMConstants.RelationshipTypeCategory.AUTHORISATION;
+            });
         });
 
         // relationships
@@ -132,7 +135,7 @@ export class RelationshipsComponent extends AbstractPageComponent {
                 subjectGroupWithRelationshipsToAddTo.relationshipRefs.push(relationshipRef);
             }
         }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+            this.addGlobalErrorMessages(err);
             this._isLoading = false;
         });
 
@@ -144,7 +147,7 @@ export class RelationshipsComponent extends AbstractPageComponent {
         } as SearchResultPaginationDelegate;
 
         // forms
-        this.form = this._fb.group({
+        this.form = this.fb.group({
             partyType: this.filter.get('partyType', '-'),
             relationshipType: this.filter.get('relationshipType', '-'),
             profileProvider: this.filter.get('profileProvider', '-'),
@@ -190,7 +193,7 @@ export class RelationshipsComponent extends AbstractPageComponent {
     }
 
     public goToRelationshipAddPage() {
-        this.services.route.goToRelationshipAddPage(this.idValue);
+        this.services.route.goToAddRelationshipPage(this.idValue);
     };
 
     public goToRelationshipEnterCodePage() {

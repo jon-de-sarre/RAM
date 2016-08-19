@@ -3,17 +3,18 @@ import * as mongooseAutoIncrement from 'mongoose-auto-increment';
 import {conf} from '../bootstrap';
 import * as Hashids from 'hashids';
 import {RAMEnum, IRAMObject, RAMSchema} from './base';
+import {Url} from './url';
 import {
     HrefValue,
     Identity as DTO,
-    CreateIdentityDTO,
-    SearchResult
+    SearchResult,
+    ICreateIdentityDTO
 } from '../../../commons/RamAPI';
 import {NameModel} from './name.model';
 import {SharedSecretModel} from './sharedSecret.model';
 import {IProfile, ProfileModel, ProfileProvider} from './profile.model';
-import {IParty, PartyModel} from './party.model';
-import {SharedSecretTypeModel} from './sharedSecretType.model';
+import {IParty, PartyModel, PartyType} from './party.model';
+import {SharedSecretTypeModel, DOB_SHARED_SECRET_TYPE_CODE} from './sharedSecretType.model';
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
 
@@ -25,6 +26,16 @@ const _PartyModel = PartyModel;
 
 const MAX_PAGE_SIZE = 100;
 const NEW_INVITATION_CODE_EXPIRY_DAYS = 7;
+
+/*
+ * It is always possible that the name returned by the ABR is different to the
+ * company name already recorded in RAM. Add an additional identity to overcome
+ * this limitation.
+ */
+const addCompanyNameIfNeeded = async (identity:IIdentity, name:string):Promise<IIdentity> => {
+    // TODO: implement if we want a total merge - not urgent
+    return identity;
+};
 
 // enums, utilities, helpers ..........................................................................................
 
@@ -278,8 +289,9 @@ export interface IIdentity extends IRAMObject {
 }
 
 export interface IIdentityModel extends mongoose.Model<IIdentity> {
-    createFromDTO:(dto:CreateIdentityDTO) => Promise<IIdentity>;
+    createFromDTO:(dto:ICreateIdentityDTO) => Promise<IIdentity>;
     createInvitationCodeIdentity:(givenName:string, familyName:string, dateOfBirth:string) => Promise<IIdentity>;
+    addCompany:(abn:string,name:string) => Promise<IIdentity>;
     findByIdValue:(idValue:string) => Promise<IIdentity>;
     findByInvitationCode:(invitationCode:string) => Promise<IIdentity>;
     findPendingByInvitationCodeInDateRange:(invitationCode:string, date:Date) => Promise<IIdentity>;
@@ -312,13 +324,22 @@ IdentitySchema.method('linkIdSchemeEnum', function () {
 
 IdentitySchema.method('toHrefValue', async function (includeValue:boolean) {
     return new HrefValue(
-        '/api/v1/identity/' + encodeURIComponent(this.idValue),
+        await Url.forIdentity(this),
         includeValue ? await this.toDTO() : undefined
     );
 });
 
+// todo need to use security context to drive the links
 IdentitySchema.method('toDTO', async function () {
     return new DTO(
+        Url.links()
+            .push('self', Url.GET, await Url.forIdentity(this))
+            .push('relationship-list', Url.GET, await Url.forIdentityRelationshipList(this))
+            .push('relationship-create', Url.POST, await Url.forIdentityRelationshipCreate(this))
+            .push('role-list', Url.GET, await Url.forIdentityRoleList(this))
+            .push('role-create', Url.POST, await Url.forIdentityRoleCreate(this))
+            .push('auskey-list', Url.GET, await Url.forIdentityAUSkeyList(this), this.publicIdentifierScheme === 'ABN')
+            .toArray(),
         this.idValue,
         this.rawIdValue,
         this.identityType,
@@ -347,7 +368,8 @@ IdentitySchema.static('findByIdValue', (idValue:string) => {
         .deepPopulate([
             'profile.name',
             'profile.sharedSecrets.sharedSecretType',
-            'party'
+            'party',
+            'partyType'
         ])
         .exec();
 });
@@ -438,26 +460,57 @@ IdentitySchema.static('searchLinkIds', (page:number, reqPageSize:number) => {
     });
 });
 
+/*
+ * Used when looking for a company in the ABR. If the ABN already exists in RAM
+ * then only the name needs be checked and/or added (TBD). Otherwise a new identity and associated party are created. In either case the party idValue is returned (PUBLIC_IDENTIFIER:ABN:nnnnnnnnnnn).
+ */
+IdentitySchema.static('addCompany', async (abn: string, name: string):Promise<IIdentity> => {
+    const identity = await this.IdentityModel.findByIdValue(abn);
+    if (identity) {
+        return addCompanyNameIfNeeded(identity, name);
+    } else {
+        const identity = (await this.IdentityModel.createFromDTO({
+            rawIdValue: abn,
+            partyType: PartyType.ABN.code,
+            givenName: undefined,
+            familyName: undefined,
+            unstructuredName: name,
+            // fun - company has to have a date of birth!!!
+            sharedSecretTypeCode: DOB_SHARED_SECRET_TYPE_CODE,
+            sharedSecretValue: '01/07/1984',
+            identityType: IdentityType.PublicIdentifier.code,
+            agencyScheme: undefined,
+            agencyToken: undefined,
+            linkIdScheme: undefined,
+            linkIdConsumer: undefined,
+            publicIdentifierScheme: IdentityPublicIdentifierScheme.ABN.code,
+            profileProvider: ProfileProvider.ABR.code
+        }));
+        return identity;
+    }
+});
+
 IdentitySchema.static('createInvitationCodeIdentity',
     async (givenName:string, familyName:string, dateOfBirth:string):Promise<IIdentity> => {
 
         return await this.IdentityModel.createFromDTO(
-        new CreateIdentityDTO(
-            undefined, // TODO should this be a UUID?
-            'INDIVIDUAL',
-            givenName,
-            familyName,
-            undefined,
-            'DATE_OF_BIRTH',
-            dateOfBirth,
-            IdentityType.InvitationCode.code,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            undefined,
-            ProfileProvider.Invitation.code
-        ));
+            {
+                rawIdValue: undefined,
+                partyType: PartyType.Individual.code,
+                givenName: givenName,
+                familyName: familyName,
+                unstructuredName: undefined,
+                sharedSecretTypeCode: DOB_SHARED_SECRET_TYPE_CODE,
+                sharedSecretValue: dateOfBirth,
+                identityType: IdentityType.InvitationCode.code,
+                agencyScheme: undefined,
+                agencyToken: undefined,
+                linkIdScheme: undefined,
+                linkIdConsumer: undefined,
+                publicIdentifierScheme: undefined,
+                profileProvider: ProfileProvider.Invitation.code
+            }
+        );
 });
 
 /**
@@ -466,7 +519,7 @@ IdentitySchema.static('createInvitationCodeIdentity',
  * transferred to the authorised identity.
  */
 /* tslint:disable:max-func-body-length */
-IdentitySchema.static('createFromDTO', async(dto:CreateIdentityDTO):Promise<IIdentity> => {
+IdentitySchema.static('createFromDTO', async(dto:ICreateIdentityDTO):Promise<IIdentity> => {
 
     const name = await NameModel.create({
         givenName: dto.givenName,

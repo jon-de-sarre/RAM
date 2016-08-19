@@ -1,62 +1,63 @@
 <page-header tab="MANAGE_NOTIFICATIONS"
              [messages]="globalMessages"
-             [showContent]="hasParties()"></page-header>
+             [showContent]="hasAccess"></page-header>
 
-<form [formGroup]=form>
-    <div class="panel panel-default container-fluid">
-        <div class="panel-heading row">
-            <div class="form-group col-md-8">
-                <h4><b>Search by:</b></h4>
-                <input type="text" class="form-control" placeholder="Your text" [formControl]="form.controls['text']"/>
-            </div>
-            <div class="form-group col-md-2">
-                <h4><b>Sort by:</b></h4>
-                <select class="form-control" [formControl]="form.controls['sort']">
-                    <option value="-">Sort</option>
-                    <option value="ASC">Name (Alphabetical)</option>
-                </select>
-            </div>
-            <div class="form-group col-md-2">
-                <h4><b>&nbsp;</b></h4>
-                <button (click)="search()" class="btn btn-primary">Search</button>
+<div *ngIf="hasAccess">
+
+    <form [formGroup]=form>
+        <div class="panel panel-default container-fluid">
+            <div class="panel-heading row">
+                <div class="form-group col-md-8">
+                    <h4><b>Search by:</b></h4>
+                    <input type="text" class="form-control" placeholder="Your text" [formControl]="form.controls['text']"/>
+                </div>
+                <div class="form-group col-md-2">
+                    <h4><b>Sort by:</b></h4>
+                    <select class="form-control" [formControl]="form.controls['sort']">
+                        <option value="-">Sort</option>
+                        <option value="ASC">Name (Alphabetical)</option>
+                    </select>
+                </div>
+                <div class="form-group col-md-2">
+                    <h4><b>&nbsp;</b></h4>
+                    <button (click)="search()" class="btn btn-primary">Search</button>
+                </div>
             </div>
         </div>
-    </div>
-</form>
+    </form>
 
-<br/>
+    <br/>
 
-<table class="table">
-
-    <tbody *ngIf="!isLoading">
-    <template ngFor let-item="$implicit" [ngForOf]="partyRefs">
-        <tr class="relationship-subject-heading">
-            <td colspan="5">
-                <div (click)="goToNotificationsContext(item)" class="clickable">
-                    <h4>{{services.model.displayNameForParty(item.value)}}</h4>
-                    <h5>{{services.model.abnLabelForParty(item.value)}} /
-                        {{services.model.partyTypeLabelForParty(item.value)}}</h5>
-                </div>
-            </td>
+    <table class="table no-thead">
+        <tbody *ngIf="!isLoading">
+        <template ngFor let-item="$implicit" [ngForOf]="partyRefs">
+            <tr class="relationship-subject-heading">
+                <td colspan="5">
+                    <div (click)="goToNotificationsContext(item)" class="clickable">
+                        <h4>{{services.model.displayNameForParty(item.value)}}</h4>
+                        <h5>{{services.model.abnLabelForParty(item.value)}} /
+                            {{services.model.partyTypeLabelForParty(item.value)}}</h5>
+                    </div>
+                </td>
+            </tr>
+        </template>
+        </tbody>
+        <tbody *ngIf="isLoading">
+        <tr>
+            <td colspan="5" class="text-center"><h3>Loading ...</h3></td>
         </tr>
-    </template>
-    </tbody>
-    <tbody *ngIf="isLoading">
-    <tr>
-        <td colspan="5" class="text-center"><h3>Loading ...</h3></td>
-    </tr>
-    </tbody>
-</table>
+        </tbody>
+    </table>
 
-<search-result-pagination *ngIf="hasParties()"
-        [searchResult]="parties$|async"
-        [delegate]="paginationDelegate">
-</search-result-pagination>
+    <search-result-pagination
+            [searchResult]="parties$|async"
+            [delegate]="paginationDelegate">
+    </search-result-pagination>
 
+</div>
 
-<div class="clearfix"></div>
-<div class="padding-btn-20"></div>
-<a class="btn btn-default col-md-3 align-center" (click)="goToHomePage()"> ← Return </a>
-<div class="clearfix"></div>
-<div class="padding-btn-20"></div>
-<div class="padding-btn-20"></div>
+<div id="action-button-bar">
+    <div class="pull-left">
+        <a class="btn btn-default align-center" (click)="goToHomePage()">← Back</a>
+    </div>
+</div>

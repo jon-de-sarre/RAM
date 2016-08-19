@@ -1,30 +1,25 @@
-<div class="panel panel-default">
-    <div class="panel-heading">
-        <h4><span class="badge square">3</span> Set access period</h4></div>
-    <div class="panel-body">
-        <form [formGroup]='form' >
-            <div class="form-group col-md-4" [class.has-error]="!form.controls['startDate'].valid">
-                <h4>Start date*</h4>
-                <p-calendar
-                        placeholder="Start date ..."
-                        inputStyleClass="form-control"
-                        [formControl]="form.controls['startDate']"
-                        dateFormat="yy-mm-dd"></p-calendar>
-            </div>
-            <div class="form-group col-md-4"
-            [class.has-error]="!form.controls['endDate'].valid || form.hasError('isEndDateBeforeStartDate')">
-                <h4>End date</h4>
-                <p-calendar
-                        placeholder="End date ..."
-                        inputStyleClass="form-control"
-                        [disabled]='form.controls["noEndDate"].value'
-                        [formControl]="form.controls['endDate']"
-                        dateFormat="yy-mm-dd"></p-calendar>
-            </div>
-            <div class="form-group col-md-4">
-                <h4>No end date</h4>
-                <input [formControl]='form.controls["noEndDate"]' class="big-checkbox" type="checkbox" name="noEndDate" value="false">
-            </div>
-        </form>
+<form [formGroup]='form'>
+    <div class="form-group col-md-4" [class.has-error]="!form.controls['startDate'].valid">
+        <h4>{{'addRelationship.accessPeriod.startDate' | translate}}*</h4>
+        <p-calendar
+                placeholder="{{'date.placeholder' | translate}}"
+                inputStyleClass="form-control"
+                [disabled]='!form.controls["startDateEnabled"].value'
+                [formControl]="form.controls['startDate']"
+                dateFormat="{{dateFormat}}"></p-calendar>
     </div>
-</div>
+    <div class="form-group col-md-4"
+         [class.has-error]="!form.controls['endDate'].valid || form.hasError('isEndDateBeforeStartDate')">
+        <h4>{{'addRelationship.accessPeriod.endDate' | translate}}</h4>
+        <p-calendar
+                placeholder="{{'date.placeholder' | translate}}"
+                inputStyleClass="form-control"
+                [disabled]='form.controls["noEndDate"].value'
+                [formControl]="form.controls['endDate']"
+                dateFormat="{{dateFormat}}"></p-calendar>
+    </div>
+    <div class="form-group col-md-4">
+        <h4>{{'addRelationship.accessPeriod.noEndDate' | translate}}</h4>
+        <input [formControl]='form.controls["noEndDate"]' class="big-checkbox" type="checkbox" name="noEndDate" value="false">
+    </div>
+</form>

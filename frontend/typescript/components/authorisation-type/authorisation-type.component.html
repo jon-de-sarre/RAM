@@ -1,26 +1,26 @@
 <div class="panel panel-default">
     <div class="panel-heading">
-        <h4><span class="badge square">2</span> Set authorisation type</h4>
+        <h4><span class="badge square">2</span> {{'addRelationship.authType.heading' | translate}}</h4>
     </div>
     <div class="panel-body">
         <div class="form-group">
             <form [formGroup]="form">
                 <div class="col-md-12" [class.has-error]="!form.controls['authType'].valid">
-                    <h4 class="padding-btn-30">What type of authorisation do you want this representative to have?</h4>
-                    <h4>Authorisation type*</h4>
-                    <select class="form-control" [formControl]="form.controls['authType']">
-                        <option value="choose" disabled hidden>Please Choose...</option>
-                        <option value="UNIVERSAL_REPRESENTATIVE">Universal Representative</option>
-                        <!--option value="CUSTOM_REPRESENTATIVE">Custom Representative</option-->
+                    <h4 class="padding-btn-30">{{'addRelationship.authType.whatType' | translate}}</h4>
+
+                    <h4>{{'addRelationship.authType' | translate}}*</h4>
+                    <select class="form-control" [formControl]="form.controls['authType']" #t (change)="onAuthTypeChange(t.value)">
+                        <option value="-" disabled>{{'pleaseChoose' | translate}}</option>
+                        <option *ngFor="let item of options" value={{item.value.code}}>{{item.value.shortDecodeText}}</option>
                     </select>
-                    <dl class="padding-top-10">
-                        <dt *ngIf="form.controls['authType'].value==='UNIVERSAL_REPRESENTATIVE'" >Universal Representative</dt>
-                        <dd *ngIf="form.controls['authType'].value==='UNIVERSAL_REPRESENTATIVE'">The same level of authorisation as an Associate of the organisation (e.g., Owner, Director).<br/>All permissions
-                            will be defaulted to maximum access.</dd>
-                        <dt *ngIf="form.controls['authType'].value==='CUSTOM_REPRESENTATIVE'">Custom Representative</dt>
-                        <dd *ngIf="form.controls['authType'].value==='CUSTOM_REPRESENTATIVE'">Select the representative authorisation type if you want to customise access.<br/> Select which permissions this
-                            representative will have, including restricting access to some services.</dd>
-                    </dl>
+                    <br/>
+                    <div *ngIf="selectedAuthType">
+                        <h4>{{'addRelationship.authType.notes' | translate}}</h4>
+                        <p><strong>{{selectedAuthType.value.shortDecodeText}}</strong></p>
+                        <p>{{selectedAuthType.value.longDecodeText}}</p>
+                        <br/>
+                    </div>
+
                 </div>
             </form>
         </div>

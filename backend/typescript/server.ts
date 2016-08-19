@@ -7,19 +7,21 @@ import * as methodOverride from 'method-override';
 import * as mongoose from 'mongoose';
 import {conf} from './bootstrap';
 import {logStream, logger} from './logger';
-import * as cApi from '../../commons/RamAPI';
 // import {continueOnlyIfJWTisValid} from './security'
 import expressValidator = require('express-validator');
+import {sendNotFoundError} from './controllers/helpers';
 
 import {forgeRockSimulator} from './controllers/forgeRock.simulator.middleware';
 import {security} from './controllers/security.middleware';
+import {Translator} from './ram/translator';
 
-// DEVELOPMENT RESOURCES
+// DEVELOPMENT CONTROLLERS
 import {AuthenticatorSimulatorController} from './controllers/authenticator.simulator.controller';
 import {AgencyUserController} from './controllers/agencyUser.controller';
 import {ResetController} from './controllers/reset.server.controller';
 
-// PRODUCTION RESOURCES
+// PRODUCTION CONTROLLERS
+import {SystemController} from './controllers/system.controller';
 import {PrincipalController} from './controllers/principal.controller';
 import {PartyController} from './controllers/party.controller';
 import {ProfileController} from './controllers/profile.controller';
@@ -27,6 +29,11 @@ import {IdentityController} from './controllers/identity.controller';
 import {RelationshipController} from './controllers/relationship.controller';
 import {RelationshipTypeController} from './controllers/relationshipType.controller';
 import {RelationshipAttributeNameController} from './controllers/relationshipAttributeName.controller';
+import {RoleController} from './controllers/role.controller';
+import {RoleTypeController} from './controllers/roleType.controller';
+import {BusinessController} from './controllers/business.controller';
+import {AuskeyController} from './controllers/auskey.controller';
+import {TransactController} from './controllers/transact.controller';
 
 import {IdentityModel} from './models/identity.model';
 import {PartyModel} from './models/party.model';
@@ -34,12 +41,22 @@ import {ProfileModel} from './models/profile.model';
 import {RelationshipModel} from './models/relationship.model';
 import {RelationshipTypeModel} from './models/relationshipType.model';
 import {RelationshipAttributeNameModel} from './models/relationshipAttributeName.model';
+import {RoleModel} from './models/role.model';
+import {RoleTypeModel} from './models/roleType.model';
+import {AUSkeyProvider} from './providers/auskey.provider';
+import {context} from './providers/context.provider';
 
 // connect to the database ............................................................................................
+
+mongoose.Promise = Promise as any;
 
 mongoose.connect(conf.mongoURL, {}, () => {
     logger.info(`Connected to db: ${conf.mongoURL}\n`);
 });
+
+// configure execution context ........................................................................................
+
+context.init();
 
 // configure express ..................................................................................................
 
@@ -58,11 +75,13 @@ switch (conf.devMode) {
 
 server.use(cookieParser());
 server.use(bodyParser.json());
-server.use(bodyParser.urlencoded({ extended: true }));
+server.use(bodyParser.urlencoded({extended: true}));
 server.use(expressValidator());
 server.use(methodOverride());
 server.use(express.static(path.join(__dirname, conf.frontendDir)));
 server.use(express.static('swagger'));
+
+Translator.initialise();
 
 // server.use(continueOnlyIfJWTisValid(conf.jwtSecretKey,true));
 
@@ -88,6 +107,10 @@ server.use('/api/reset',
     new ResetController().assignRoutes(express.Router()));
 
 // setup route handlers (production) ..................................................................................
+
+server.use('/system',
+    new SystemController()
+        .assignRoutes(express.Router()));
 
 server.use('/api/',
     new PrincipalController()
@@ -117,12 +140,31 @@ server.use('/api/',
     new RelationshipController(RelationshipModel, PartyModel)
         .assignRoutes(express.Router()));
 
+server.use('/api/',
+    new RoleController(RoleModel, PartyModel)
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new RoleTypeController(RoleTypeModel, PartyModel)
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new BusinessController()
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new AuskeyController(AUSkeyProvider, PartyModel, IdentityModel)
+        .assignRoutes(express.Router()));
+
+server.use('/api/',
+    new TransactController(RoleModel, IdentityModel, RelationshipModel)
+        .assignRoutes(express.Router()));
+
 // setup error handlers ...............................................................................................
 
 // catch 404 and forward to error handler
 server.use((req: express.Request, res: express.Response) => {
-    const err = new cApi.ErrorResponse('Request Not Found');
-    res.send(err);
+    sendNotFoundError(res)(null);
 });
 
 // start server .......................................................................................................

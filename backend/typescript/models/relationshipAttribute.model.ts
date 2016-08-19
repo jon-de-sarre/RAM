@@ -2,7 +2,7 @@ import * as mongoose from 'mongoose';
 import {RelationshipModel} from './relationship.model';
 import {IRelationshipAttributeName, RelationshipAttributeNameModel} from './relationshipAttributeName.model';
 import {
-    RelationshipAttribute as DTO
+    IRelationshipAttribute as DTO
 } from '../../../commons/RamAPI';
 
 // force schema to load first (see https://github.com/atogov/RAM/pull/220#discussion_r65115456)
@@ -19,7 +19,7 @@ const _RelationshipAttributeNameModel = RelationshipAttributeNameModel;
 
 const RelationshipAttributeSchema = new mongoose.Schema({
     value: {
-      type: String,
+      type: [String],
       required: false,
       trim: true
     },
@@ -33,25 +33,35 @@ const RelationshipAttributeSchema = new mongoose.Schema({
 // interfaces .........................................................................................................
 
 export interface IRelationshipAttribute extends mongoose.Document {
-    value?: string;
+    value?: string[];
     attributeName: IRelationshipAttributeName;
     toDTO():Promise<DTO>;
 }
 
 /* tslint:disable:no-empty-interfaces */
 export interface IRelationshipAttributeModel extends mongoose.Model<IRelationshipAttribute> {
+    add:(value: string[], attributeName: IRelationshipAttributeName) => Promise<IRelationshipAttribute>;
 }
 
 // instance methods ...................................................................................................
 
 RelationshipAttributeSchema.method('toDTO', async function () {
-    return new DTO(
-        this.value,
-        await this.attributeName.toHrefValue(true)
-    );
+    const dto: DTO = {
+        value: this.value,
+        attributeName: await this.attributeName.toHrefValue(true)
+    };
+
+    return dto;
 });
 
 // static methods .....................................................................................................
+
+RelationshipAttributeSchema.static('add', async (value: [string], attributeName: IRelationshipAttributeName) => {
+    return await this.RelationshipAttributeModel.create({
+        value: value,
+        attributeName: attributeName
+    });
+});
 
 // concrete model .....................................................................................................
 

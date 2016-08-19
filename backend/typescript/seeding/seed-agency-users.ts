@@ -9,6 +9,7 @@ const users: IAgencyUser[] = [
         'Ted',
         'Agent',
         'Ted Agent',
+        'Department of Education',
         [
             new AgencyUserProgramRole('EDUCATION', 'ROLE_ADMIN')
         ]
@@ -19,7 +20,20 @@ const users: IAgencyUser[] = [
         'Max',
         'Agent',
         'Max Agent',
+        'Australian Tax Office',
         [
+            new AgencyUserProgramRole('TAX', 'ROLE_ADMIN')
+        ]
+    ),
+
+    new AgencyUser(
+        'all_agent',
+        'All',
+        'Agent',
+        'All Agent',
+        'The Government',
+        [
+            new AgencyUserProgramRole('EDUCATION', 'ROLE_ADMIN'),
             new AgencyUserProgramRole('TAX', 'ROLE_ADMIN')
         ]
     )
@@ -31,7 +45,6 @@ export class AgencyUsersSeeder {
     public static findById(id: string): IAgencyUser {
         for (let i = 0; i < users.length; i = i + 1) {
             let user = users[i];
-            console.log('Checking: ' + JSON.stringify(user, null, 4));
             if (user.id === id) {
                 return user;
             }

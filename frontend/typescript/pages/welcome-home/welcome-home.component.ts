@@ -1,10 +1,11 @@
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, ActivatedRoute, Router, Params} from '@angular/router';
+import {FormBuilder} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {RAMServices} from '../../services/ram-services';
 
-import {IPrincipal} from '../../../../commons/RamAPI2';
+import {IPrincipal} from '../../../../commons/RamAPI';
 
 @Component({
     selector: 'landing-home',
@@ -15,12 +16,11 @@ import {IPrincipal} from '../../../../commons/RamAPI2';
 export class WelcomeHomeComponent extends AbstractPageComponent {
 
     private me: IPrincipal = null;
+    private _isLoading = true;
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices) {
-        super(route, router, services);
-        this.setBannerTitle('Relationship Access Manager');
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
+        this.setBannerTitle('Relationship Authorisation Manager');
     }
 
     public onInit(params: {path: Params, query: Params}) {
@@ -32,12 +32,16 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
 
             this.me = principal;
 
-            if (dashboard === 'auth') {
-                this.goToAuthorisationsPage();
-            } else if (dashboard === 'sps') {
+            if (dashboard === 'sps') {
                 this.goToSoftwareProviderServicesPage();
+            } else if (dashboard === 'auth' || !this.me.agencyUserInd) {
+                this.goToAuthorisationsPage();
+            } else {
+                this._isLoading = false;
             }
 
+        }, (err) => {
+            this._isLoading = false;
         });
 
     }
@@ -74,6 +78,10 @@ export class WelcomeHomeComponent extends AbstractPageComponent {
 
     private isAgencyUser() {
         return this.me.agencyUserInd;
+    }
+
+    public get isLoading() {
+        return this._isLoading;
     }
 
 }

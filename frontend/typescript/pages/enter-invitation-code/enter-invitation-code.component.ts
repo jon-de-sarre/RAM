@@ -5,8 +5,9 @@ import {Validators, REACTIVE_FORM_DIRECTIVES, FormBuilder, FormGroup, FORM_DIREC
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
 import {RAMServices} from '../../services/ram-services';
+import {RAMConstants} from '../../services/ram-constants.service';
 
-import {IIdentity} from '../../../../commons/RamAPI2';
+import {IIdentity} from '../../../../commons/RamAPI';
 
 @Component({
     selector: 'enter-invitation-code',
@@ -23,22 +24,19 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
 
     public form: FormGroup;
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices,
-                private _fb: FormBuilder) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 
     public onInit(params: {path:Params, query:Params}) {
 
         // extract path and query parameters
-        this.idValue = decodeURIComponent(params.path['idValue']);
+        this.idValue = params.path['idValue'];
 
         // message
         const msg = params.query['msg'];
-        if (msg === 'INVALID_CODE') {
+        if (msg === RAMConstants.GlobalMessage.INVALID_CODE) {
             this.addGlobalMessage('The code you have entered does not exist or is invalid.');
         }
 
@@ -48,7 +46,7 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
         });
 
         // forms
-        this.form = this._fb.group({
+        this.form = this.fb.group({
             'relationshipCode': ['', Validators.compose([Validators.required])]
         });
 
@@ -67,7 +65,7 @@ export class EnterInvitationCodeComponent extends AbstractPageComponent {
                 if (status === 404) {
                     this.addGlobalMessage('The code you have entered does not exist or is invalid.');
                 } else {
-                    this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                    this.addGlobalErrorMessages(err);
                 }
             });
 

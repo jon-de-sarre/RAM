@@ -1,5 +1,6 @@
 import * as mongoose from 'mongoose';
 import {RAMEnum, IRAMObject, RAMSchema} from './base';
+import {Url} from './url';
 import {IName, NameModel} from './name.model';
 import {ISharedSecret, SharedSecretModel} from './sharedSecret.model';
 import {
@@ -40,11 +41,11 @@ export class ProfileProvider extends RAMEnum {
         super(code, shortDecodeText);
     }
 
-    public toHrefValue(includeValue:boolean): HrefValue<ProfileProviderDTO> {
-        return new HrefValue(
-            '/api/v1/profileProvider/' + this.code,
+    public async toHrefValue(includeValue:boolean): Promise<HrefValue<ProfileProviderDTO>> {
+        return Promise.resolve(new HrefValue(
+            await Url.forProfileProvider(this),
             includeValue ? this.toDTO() : undefined
-        );
+        ));
     }
 
     public toDTO(): ProfileProviderDTO {

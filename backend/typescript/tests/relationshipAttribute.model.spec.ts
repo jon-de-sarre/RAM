@@ -19,7 +19,8 @@ import {
 import {
     IRelationship,
     RelationshipModel,
-    RelationshipStatus
+    RelationshipStatus,
+    RelationshipInitiatedBy
 } from '../models/relationship.model';
 import {
     IRelationshipAttribute,
@@ -94,7 +95,7 @@ describe('RAM Relationship Attribute', () => {
 
                     relationshipAttribute1 = await RelationshipAttributeModel.create({
                         value: 'true',
-                        attributeName: Seeder.delegateManageAuthorisationAllowedInd_attributeName
+                        attributeName: Seeder.delegateManageAuthorisationAllowedInd_relAttributeName
                     });
 
                     relationship1 = await RelationshipModel.create({
@@ -105,6 +106,7 @@ describe('RAM Relationship Attribute', () => {
                         delegateNickName: delegateNickName1,
                         startTimestamp: new Date(),
                         status: RelationshipStatus.Pending.code,
+                        initiatedBy: RelationshipInitiatedBy.Subject.code,
                         attributes: [relationshipAttribute1]
                     });
 
@@ -129,7 +131,7 @@ describe('RAM Relationship Attribute', () => {
             expect(retrievedInstance.attributes).not.toBeNull();
             expect(retrievedInstance.attributes.length).toBe(1);
             expect(retrievedInstance.attributes[0].id).toBe(relationshipAttribute1.id);
-            expect(retrievedInstance.attributes[0].value).toBe(relationshipAttribute1.value);
+            expect(retrievedInstance.attributes[0].value[0]).toBe(relationshipAttribute1.value[0]);
 
             done();
 
@@ -143,7 +145,7 @@ describe('RAM Relationship Attribute', () => {
         try {
 
             const value = 'true';
-            const attributeName = Seeder.delegateManageAuthorisationAllowedInd_attributeName;
+            const attributeName = Seeder.delegateManageAuthorisationAllowedInd_relAttributeName;
 
             const instance = await RelationshipAttributeModel.create({
                 value: value,
@@ -152,7 +154,7 @@ describe('RAM Relationship Attribute', () => {
 
             expect(instance).not.toBeNull();
             expect(instance.id).not.toBeNull();
-            expect(instance.value).toBe(value);
+            expect(instance.value[0]).toBe(value);
             expect(instance.attributeName.id).toBe(attributeName.id);
 
             done();

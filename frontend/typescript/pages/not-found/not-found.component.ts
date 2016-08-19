@@ -1,5 +1,6 @@
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute} from '@angular/router';
+import {FormBuilder} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {RAMServices} from '../../services/ram-services';
@@ -14,11 +15,9 @@ import {RAMServices} from '../../services/ram-services';
 
 export class NotFoundComponent extends AbstractPageComponent {
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices) {
-        super(route, router, services);
-        this.setBannerTitle('Not Found');
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
+        this.setBannerTitle('Relationship Authorisation Manager');
     }
 
 }

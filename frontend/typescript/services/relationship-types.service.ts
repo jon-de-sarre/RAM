@@ -1,8 +1,10 @@
 import { Injectable }           from '@angular/core';
 import { RAMRestService }       from './ram-rest.service';
 import { Observable }           from 'rxjs/Rx';
-import { IRelationshipType, IRelationshipAttributeNameUsage }
-from '../../../commons/RamAPI2';
+import {
+    IRelationshipType,
+    IRelationshipAttributeNameUsage
+} from '../../../commons/RamAPI';
 
 // TODO: remove listRelatiohsipTypes from relationships.component.
 
@@ -24,7 +26,7 @@ from '../../../commons/RamAPI2';
             });
             return data;
         });
-    }
+    };
 
     constructor(private rest: RAMRestService) {}
 

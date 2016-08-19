@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 
 import {RAMServices} from '../../services/ram-services';
 
-import {IIdentity} from '../../../../commons/RamAPI2';
+import {IIdentity} from '../../../../commons/RamAPI';
 
 @Component({
     selector: 'page-header',
@@ -11,6 +11,7 @@ import {IIdentity} from '../../../../commons/RamAPI2';
     directives: []
 })
 
+// todo refactor this to use hrefs
 export class PageHeaderAuthComponent {
 
     @Input() public identity: IIdentity;
@@ -30,6 +31,13 @@ export class PageHeaderAuthComponent {
         return this.identity ? this.services.model.displayNameForIdentity(this.identity) : 'Loading ...';
     }
 
+    public getIdentityHref(): string {
+        if (this.identity) {
+            return this.services.model.getLinkHrefByType('self', this.identity);
+        }
+        return undefined;
+    }
+
     public goToRelationshipsPage() {
         if (this.identity) {
             this.services.route.goToRelationshipsPage(this.identity.idValue);
@@ -39,7 +47,7 @@ export class PageHeaderAuthComponent {
     public goToGiveAuthorisationPage() {
         if (this.isGiveAuthorisationsPageEnabled()) {
             if (this.identity) {
-                this.services.route.goToRelationshipAddPage(this.identity.idValue);
+                this.services.route.goToAddRelationshipPage(this.identity.idValue);
             }
         }
     };
@@ -52,20 +60,23 @@ export class PageHeaderAuthComponent {
 
     // todo logins page
     public goToLoginsPage() {
-        if (this.isLoginsPageEnabled()) {
-            alert('TODO: MANAGE LOGINS');
+        if (this.identity) {
+            if (this.isLoginsPageEnabled()) {
+                alert('TODO: MANAGE LOGINS');
+            }
         }
     };
 
-    // todo roles page
     public goToRolesPage() {
-        if (this.isRolesPageEnabled()) {
-            alert('TODO: MANAGE ROLES');
+        if (this.identity) {
+            if (this.isRolesPageEnabled()) {
+                this.services.route.goToRolesPage(this.getIdentityHref());
+            }
         }
     };
 
     public isGiveAuthorisationsPageEnabled() {
-        return this.giveAuthorisationsEnabled;
+        return this.identity !== null && this.identity !== undefined && this.giveAuthorisationsEnabled;
     }
 
     // todo logins page
@@ -73,9 +84,11 @@ export class PageHeaderAuthComponent {
         return false;
     }
 
-    // todo roles page
+    // todo verify logic
     public isRolesPageEnabled() {
-        return false;
+        return this.identity !== null &&
+            this.identity !== undefined &&
+            !this.services.model.isIndividual(this.identity);
     }
 
 }

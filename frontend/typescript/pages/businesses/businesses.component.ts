@@ -12,7 +12,7 @@ import {
     IParty,
     IHrefValue,
     FilterParams
-} from '../../../../commons/RamAPI2';
+} from '../../../../commons/RamAPI';
 import {
     SearchResultPaginationDelegate,
     SearchResultPaginationComponent
@@ -30,7 +30,11 @@ import {
     ]
 })
 
+// todo this component needs to be rewritten to be compliant with project standards
+// todo this component doesn't seem to render with search text via a browser reload
+// todo this component shouldn't have parties$ (template shouldn't use |async)
 export class BusinessesComponent extends AbstractPageComponent {
+
     public filter: FilterParams;
     public page: number;
 
@@ -39,13 +43,12 @@ export class BusinessesComponent extends AbstractPageComponent {
     public paginationDelegate: SearchResultPaginationDelegate;
     public form: FormGroup;
 
+    public hasAccess:boolean = false;
+
     private _isLoading = false; // set to true when you want the UI indicate something is getting loaded.
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices,
-                private _fb: FormBuilder) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Software Provider Services');
     }
 
@@ -53,9 +56,10 @@ export class BusinessesComponent extends AbstractPageComponent {
     public onInit(params: {path: Params, query: Params}) {
 
         this._isLoading = true;
-        this.filter = FilterParams.decode(params.query['filter']);
-        this.filter.add('partyType', 'ABN');
-        this.filter.add('authorisationManagement', true);
+
+        this.filter = FilterParams.decode(params.query['filter'])
+            .add('partyType', 'ABN')
+            .add('authorisationManagement', true);
 
         // extract path and query parameters
         this.page = params.query['page'] ? +params.query['page'] : 1;
@@ -67,15 +71,25 @@ export class BusinessesComponent extends AbstractPageComponent {
             this._isLoading = false;
             this.partyRefs = partyRefs.list;
 
-            // automatically focus business if there is only one
-            if (partyRefs.totalCount === 1) {
-                this.goToNotificationsContext(this.partyRefs[0]);
-            } else if (partyRefs.totalCount === 0) {
-                this.addGlobalMessage('You do not have authorisation administrator access to any businesses - see your administrator');
+            // if results are not being filtered
+            if(!this.filter.get('text')) {
+                // automatically focus business if there is only one
+                if (partyRefs.totalCount === 1) {
+                    this.goToNotificationsContext(this.partyRefs[0]);
+                } else if (partyRefs.totalCount === 0) {
+                    this.addGlobalMessage('You do not have authorisation administrator access to any businesses - see your administrator');
+                    this.hasAccess = false;
+                } else {
+                    this.hasAccess = true;
+                }
             }
         }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
-            this._isLoading = false;
+            if (err.status === 403) {
+                this.services.route.goToAccessDeniedPage();
+            } else {
+                this.addGlobalErrorMessages(err);
+                this._isLoading = false;
+            }
         });
 
         // pagination delegate
@@ -86,7 +100,7 @@ export class BusinessesComponent extends AbstractPageComponent {
         } as SearchResultPaginationDelegate;
 
         // forms
-        this.form = this._fb.group({
+        this.form = this.fb.group({
             text: this.filter.get('text', ''),
             sort: this.filter.get('sort', '-')
         });
@@ -97,7 +111,6 @@ export class BusinessesComponent extends AbstractPageComponent {
             .add('text', this.form.controls['text'].value)
             .add('sort', this.form.controls['sort'].value)
             .encode();
-        console.log('here');
         this.services.route.goToBusinessesPage(filterString);
     }
 
@@ -106,22 +119,22 @@ export class BusinessesComponent extends AbstractPageComponent {
     }
 
     public hasParties() {
-        return this.partyRefs && this.partyRefs.length > 0;
+        return (this.partyRefs && this.partyRefs.length > 0) || !this.filter.get('text');
     }
 
-    public goToNotificationsContext(partyResource: IHrefValue<IParty>) {
-        const defaultIdentityResource = this.services.model.getDefaultIdentityResource(partyResource.value);
-        if (defaultIdentityResource) {
-            const identityIdValue = defaultIdentityResource.value.idValue;
-            this.goToNotificationsPage(identityIdValue);
+    public goToNotificationsContext(partyRef: IHrefValue<IParty>) {
+        const defaultIdentityRef = this.services.model.getDefaultIdentityResource(partyRef.value);
+        if (defaultIdentityRef) {
+            this.goToNotificationsPage(defaultIdentityRef.href);
         }
     }
 
-    public goToNotificationsPage(idValue: string) {
-        this.services.route.goToNotificationsPage(idValue);
+    public goToNotificationsPage(identityHref: string) {
+        this.services.route.goToNotificationsPage(identityHref);
     };
 
     public goToHomePage() {
         this.services.route.goToHomePage();
     };
+
 }

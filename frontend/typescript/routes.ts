@@ -6,14 +6,16 @@ import {NotFoundComponent} from './pages/not-found/not-found.component';
 import {WelcomeHomeComponent} from './pages/welcome-home/welcome-home.component';
 
 import {RelationshipsComponent} from './pages/relationships/relationships.component';
-import {AddRelationshipComponent} from './pages/add-relationship/add-relationship.component';
+import {EditRelationshipComponent} from './pages/edit-relationship/edit-relationship.component';
 import {AddRelationshipCompleteComponent} from './pages/add-relationship-complete/add-relationship-complete.component';
 import {EnterInvitationCodeComponent} from './pages/enter-invitation-code/enter-invitation-code.component';
 import {AcceptAuthorisationComponent} from './pages/accept-authorisation/accept-authorisation.component';
+import {RolesComponent} from './pages/roles/roles.component';
+import {EditRoleComponent} from './pages/edit-role/edit-role.component';
 
 import {BusinessesComponent} from './pages/businesses/businesses.component';
 import {NotificationsComponent} from './pages/notifications/notifications.component';
-import {AddNotificationComponent} from './pages/add-notification/add-notification.component';
+import {EditNotificationComponent} from './pages/edit-notification/edit-notification.component';
 import {AgencySelectBusinessComponent} from './pages/agency-select-business/agency-select-business.component';
 
 export const routes: RouterConfig = [
@@ -40,7 +42,11 @@ export const routes: RouterConfig = [
     },
     {
         path: 'relationships/add/:idValue',
-        component: AddRelationshipComponent
+        component: EditRelationshipComponent
+    },
+    {
+        path: 'relationships/edit/:idValue/:key',
+        component: EditRelationshipComponent
     },
     {
         path: 'relationships/add/complete/:idValue/:invitationCode/:displayName',
@@ -55,23 +61,39 @@ export const routes: RouterConfig = [
         component: AcceptAuthorisationComponent
     },
     {
+        path: 'roles/:identityHref',
+        component: RolesComponent
+    },
+    {
+        path: 'roles/add/:identityHref',
+        component: EditRoleComponent
+    },
+    {
+        path: 'roles/edit/:identityHref/:roleHref',
+        component: EditRoleComponent
+    },
+    {
         path: 'businesses',
         component: BusinessesComponent
     },
     {
-        path: 'notifications/:idValue',
+        path: 'notifications/:identityHref',
         component: NotificationsComponent
     },
     {
-        path: 'notifications/add/:idValue',
-        component: AddNotificationComponent
+        path: 'notifications/add/:identityHref',
+        component: EditNotificationComponent
+    },
+    {
+        path: 'notifications/edit/:identityHref/:relationshipHref',
+        component: EditNotificationComponent
     },
     {
         path: 'agency/selectBusiness/:dashboard',
         component: AgencySelectBusinessComponent
     },
     {
-        path: '401',
+        path: '403',
         component: AccessDeniedComponent
     },
     {

@@ -1,14 +1,14 @@
 <form [formGroup]="form">
     <div class="form-group">
         <div class="col-md-12">
-            <h4>ABN*</h4>
+            <h4>{{'addRelationship.abn.label' | translate}}ABN*</h4>
         </div>
         <div class="col-md-4"
         [class.has-error]="!form.controls['abn'].valid">
             <input class="form-control" type="number"
             minlength=11 maxlength=14 [disabled]='isCompanyNameSet()'
             [formControl]="form.controls['abn']"
-            placeholder="Type ABN here ...">
+            placeholder="{{'addRelationship.abn.placeholder' | translate}}">
         </div>
         <div class="col-md-4">
             <h4>{{organisationName}}</h4>
@@ -17,10 +17,10 @@
             <span *ngIf='!isCompanyNameSet()'>
                 <button class="col-md-12 btn btn-primary"
                 [disabled]="!form.controls['abn'].valid" (click)='validateOrganisationName(form.controls["abn"].value)' >
-                    Check ABN</a>
+                    {{'addRelationship.checkABN' | translate}}</button>
             </span><span *ngIf='isCompanyNameSet()'>
                 <button class="col-md-12 btn btn-default"
-                (click)="clearOrganisationABN()" >Change ABN</a>
+                (click)="clearOrganisationABN()" >{{'addRelationship.changeABN' | translate}}</button>
             </span>
         </div>
     </div>

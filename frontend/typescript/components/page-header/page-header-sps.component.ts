@@ -3,7 +3,7 @@ import {Router} from '@angular/router';
 
 import {RAMServices} from '../../services/ram-services';
 
-import {IIdentity} from '../../../../commons/RamAPI2';
+import {IIdentity} from '../../../../commons/RamAPI';
 
 @Component({
     selector: 'page-header',
@@ -36,17 +36,6 @@ export class PageHeaderSPSComponent {
             this.services.route.goToNotificationsPage(this.identity.idValue);
         }
     };
-
-    public goToAddNotificationPage() {
-        if (this.isAddNotificationPageEnabled()) {
-            this.services.route.goToAddNotificationPage(this.identity.idValue);
-        }
-    };
-
-    // todo do we need to check access permissions?
-    public isAddNotificationPageEnabled() {
-        return this.isIdentityValid();
-    }
 
     private isIdentityValid() {
         return this.identity !== null && this.identity !== undefined;

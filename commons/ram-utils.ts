@@ -14,19 +14,23 @@ export class Utils {
         }
     }
 
-    public static parseDate(dateString: string): Date {
-        if (dateString === null) {
+    public static parseDate(date: string | Date): Date {
+        if (date === null) {
+            return null;
+        }
+        if (date instanceof Date) {
+            return date;
+        }
+
+        const dateString = <string>date;
+        if (!/^\d{1,2}\/\d{1,2}\/\d{4}$/.test(dateString)) {
             return null;
         }
 
-        if (!/^\d{4}\-\d{1,2}\-\d{1,2}$/.test(dateString)) {
-            return null;
-        }
-
-        let parts = dateString.split('-');
-        let day = parseInt(parts[2], 10);
+        let parts = dateString.split('/');
+        let day = parseInt(parts[0], 10);
         let month = parseInt(parts[1], 10);
-        let year = parseInt(parts[0], 10);
+        let year = parseInt(parts[2], 10);
 
         if (year < 1000 || year > 3000 || month === 0 || month > 12) {
             return null;
@@ -39,8 +43,9 @@ export class Utils {
         }
 
         // Check the range of the day
-        if (day > 0 && day <= monthLength[month - 1]) {
-            return new Date(year, month, day);
+        const jsMonth = month - 1;
+        if (day > 0 && day <= monthLength[jsMonth]) {
+            return new Date(year, jsMonth, day);
         }
         return null;
     };

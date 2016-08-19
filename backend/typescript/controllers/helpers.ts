@@ -1,6 +1,6 @@
 import {logger} from '../logger';
 import {Response, Request} from 'express';
-import {IResponse, ErrorResponse, SearchResult, HrefValue} from '../../../commons/RamAPI';
+import {ErrorResponse, SearchResult, HrefValue} from '../../../commons/RamAPI';
 import * as _ from 'lodash';
 
 export const REGULAR_CHARS = '^([A-Za-z0-9 +&\'\*\-]+)?$';
@@ -17,7 +17,7 @@ export function sendResource<T>(res: Response) {
     };
 }
 
-export function sendList<T extends HrefValue<U>, U>(res: Response) {
+export function sendList<T extends HrefValue<U>|U, U>(res: Response) {
     'use strict';
     return async (results: Promise<T>[]): Promise<T[]> => {
         const resolvedResults = await Promise.all<T>(results);
@@ -31,7 +31,7 @@ export function sendList<T extends HrefValue<U>, U>(res: Response) {
 export function sendSearchResult<T extends HrefValue<U>, U>(res: Response) {
     'use strict';
     return async (results: SearchResult<Promise<T>>): Promise<SearchResult<T>> => {
-        const resolvedResults = new SearchResult(
+        const resolvedResults = new SearchResult<T>(
             results.page,
             results.totalCount,
             results.pageSize,
@@ -41,21 +41,6 @@ export function sendSearchResult<T extends HrefValue<U>, U>(res: Response) {
         res.setHeader('Content-Type', 'application/json');
         res.send(JSON.stringify(resolvedResults, null, 4));
         return resolvedResults;
-    };
-}
-
-// @deprecated
-export function sendDocument<T>(res: Response) {
-    'use strict';
-    return (doc: T): T => {
-        if (doc) {
-            const response: IResponse<T> = {
-                data: doc
-            };
-            res.status(200);
-            res.json(response);
-        }
-        return doc;
     };
 }
 
@@ -78,6 +63,14 @@ type ValidationError = {
     message: string;
 }
 
+// todo move this to message bundle
+const errorMessages: {[key: string]: string} = {
+    '401': 'Not logged in.',
+    '403': 'Can\'t access the requested resource.',
+    '404': 'Can\'t find the requested resource.',
+    '500': 'Internal Server Error.'
+};
+
 /* tslint:disable:max-func-body-length */
 export function sendError<T>(res: Response) {
     'use strict';
@@ -99,15 +92,36 @@ export function sendError<T>(res: Response) {
                 ));
                 break;
             case 'Error':
-                res.status(500);
-                res.json(new ErrorResponse((error as Error).message));
                 logger.error((error as Error).stack);
+                let message = (error as Error).message;
+                if (!message) {
+                    res.status(500);
+                    res.json(new ErrorResponse(errorMessages['500']));
+                } else {
+                    let status: number;
+                    let actualMessage: string;
+                    if (message.indexOf(':') !== -1) {
+                        status = parseInt(message.split(':')[0]);
+                        actualMessage = message.split(':')[1];
+                    } else {
+                        status = parseInt(message);
+                        if (isNaN(status)) {
+                            status = 500;
+                            actualMessage = message;
+                        } else {
+                            actualMessage = errorMessages[message];
+                        }
+                    }
+                    res.status(status);
+                    res.json(new ErrorResponse(actualMessage));
+                }
                 break;
             default:
                 res.status(500);
                 res.json(new ErrorResponse(error.toString()));
                 break;
         }
+        console.error(new Error().stack);
     };
 }
 
@@ -116,7 +130,7 @@ export function sendNotFoundError<T>(res: Response) {
     return (doc: T): T => {
         if (!doc) {
             res.status(404);
-            res.json(new ErrorResponse('Can\'t find the requested resource.'));
+            res.json(new ErrorResponse(errorMessages['404']));
         }
         return doc;
     };

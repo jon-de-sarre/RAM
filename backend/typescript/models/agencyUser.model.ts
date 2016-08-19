@@ -9,7 +9,9 @@ export interface IAgencyUser {
     givenName: string;
     familyName: string;
     displayName: string;
+    agency: string;
     programRoles: IAgencyUserProgramRole[];
+    hasRoleForProgram(role: string, program: string): boolean;
     toHrefValue(includeValue: boolean): Promise<HrefValue<AgencyUserDTO>>;
     toDTO(): Promise<AgencyUserDTO>;
 }
@@ -26,7 +28,17 @@ export class AgencyUser implements IAgencyUser {
                 public givenName: string,
                 public familyName: string,
                 public displayName: string,
+                public agency: string,
                 public programRoles: IAgencyUserProgramRole[]) {
+    }
+
+    public hasRoleForProgram(role: string, program: string): boolean {
+        for(let programRole of this.programRoles) {
+            if(programRole.program === program && programRole.role === role) {
+                return true;
+            }
+        }
+        return false;
     }
 
     public async toHrefValue(includeValue: boolean): Promise<HrefValue<AgencyUserDTO>> {
@@ -42,6 +54,7 @@ export class AgencyUser implements IAgencyUser {
             this.givenName,
             this.familyName,
             this.displayName,
+            this.agency,
             await Promise.all<AgencyUserProgramRoleDTO>(this.programRoles.map(
                 async (programRole:IAgencyUserProgramRole) => {
                     return programRole.toDTO();

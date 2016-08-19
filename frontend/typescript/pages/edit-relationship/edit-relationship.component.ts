@@ -1,9 +1,11 @@
 import {Observable} from 'rxjs/Observable';
 import {Component} from '@angular/core';
 import {ROUTER_DIRECTIVES, Router, ActivatedRoute, Params} from '@angular/router';
+import {FormBuilder} from '@angular/forms';
 
 import {AbstractPageComponent} from '../abstract-page/abstract-page.component';
 import {PageHeaderAuthComponent} from '../../components/page-header/page-header-auth.component';
+import {RAMConstants} from '../../services/ram-constants.service';
 import {RAMServices} from '../../services/ram-services';
 
 import {AccessPeriodComponent, AccessPeriodComponentData} from '../../components/access-period/access-period.component';
@@ -28,15 +30,15 @@ import {
     IAttributeDTO,
     IIdentity,
     ICreateIdentityDTO,
-    IRelationshipAddDTO,
+    IInvitationCodeRelationshipAddDTO,
     IRelationshipAttributeNameUsage,
     IRelationshipType,
     IHrefValue
-} from '../../../../commons/RamAPI2';
+} from '../../../../commons/RamAPI';
 
 @Component({
-    selector: 'add-relationship',
-    templateUrl: 'add-relationship.component.html',
+    selector: 'edit-relationship',
+    templateUrl: 'edit-relationship.component.html',
     directives: [
         ROUTER_DIRECTIVES,
         AccessPeriodComponent,
@@ -49,19 +51,24 @@ import {
     ]
 })
 
-export class AddRelationshipComponent extends AbstractPageComponent {
+export class EditRelationshipComponent extends AbstractPageComponent {
 
     public idValue: string;
+    public key: string;
 
     public relationshipTypes$: Observable<IHrefValue<IRelationshipType>[]>;
+    public relationshipTypeRefs: IHrefValue<IRelationshipType>[];
 
     public giveAuthorisationsEnabled: boolean = true; // todo need to set this
     public identity: IIdentity;
     public manageAuthAttribute: IRelationshipAttributeNameUsage;
 
+    public authType: string = 'choose';
+
     public newRelationship: AddRelationshipComponentData = {
         accessPeriod: {
-            startDate: null,
+            startDateEnabled: true,
+            startDate: new Date(),
             noEndDate: true,
             endDate: null
         },
@@ -81,21 +88,21 @@ export class AddRelationshipComponent extends AbstractPageComponent {
         authorisationManagement: {
             value: ''
         },
-        decalaration: {
-            accepted: false
+        declaration: {
+            accepted: false,
+            markdown: 'TODO'
         }
     };
 
-    constructor(route: ActivatedRoute,
-                router: Router,
-                services: RAMServices) {
-        super(route, router, services);
+    constructor(route: ActivatedRoute, router: Router, fb: FormBuilder, services: RAMServices) {
+        super(route, router, fb, services);
         this.setBannerTitle('Authorisations');
     }
 
     public onInit(params: {path: Params, query: Params}) {
 
-        this.idValue = decodeURIComponent(params.path['idValue']);
+        this.idValue = params.path['idValue'];
+        this.key = params.path['key'];
 
         // identity in focus
         this.services.rest.findIdentityByValue(this.idValue).subscribe((identity) => {
@@ -104,6 +111,12 @@ export class AddRelationshipComponent extends AbstractPageComponent {
 
         // relationship types
         this.relationshipTypes$ = this.services.rest.listRelationshipTypes();
+        this.relationshipTypes$.subscribe((relationshipTypeRefs) => {
+            this.relationshipTypeRefs = relationshipTypeRefs.filter((relationshipType) => {
+                return relationshipType.value.managedExternallyInd === false
+                    && relationshipType.value.category === RAMConstants.RelationshipTypeCategory.AUTHORISATION;
+            });
+        });
 
         // delegate managed attribute
         this.resolveManageAuthAttribute('UNIVERSAL_REPRESENTATIVE', 'DELEGATE_MANAGE_AUTHORISATION_ALLOWED_IND');
@@ -152,7 +165,7 @@ export class AddRelationshipComponent extends AbstractPageComponent {
             value: this.newRelationship.authorisationManagement.value
         };
 
-        const relationship: IRelationshipAddDTO = {
+        const relationship: IInvitationCodeRelationshipAddDTO = {
             relationshipType: this.newRelationship.authType.authType,
             subjectIdValue: this.idValue,
             delegate: delegate,
@@ -172,10 +185,10 @@ export class AddRelationshipComponent extends AbstractPageComponent {
                     identity.rawIdValue,
                     this.displayName(this.newRelationship.representativeDetails));
             }, (err) => {
-                this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+                this.addGlobalErrorMessages(err);
             });
         }, (err) => {
-            this.addGlobalMessages(this.services.rest.extractErrorMessages(err));
+            this.addGlobalErrorMessages(err);
         });
 
     };
@@ -205,6 +218,11 @@ export class AddRelationshipComponent extends AbstractPageComponent {
         }
     }
 
+    public authTypeChange = (data:AuthorisationTypeComponentData) => {
+        // TODO calculate declaration markdown based on relationship type and services selected
+        // TODO update declaration component to show new text
+        this.newRelationship.declaration.markdown = 'TODO '+data.authType;
+    }
 }
 
 export interface AddRelationshipComponentData {
@@ -212,5 +230,5 @@ export interface AddRelationshipComponentData {
     authType: AuthorisationTypeComponentData;
     representativeDetails: RepresentativeDetailsComponentData;
     authorisationManagement: AuthorisationManagementComponentData;
-    decalaration: DeclarationComponentData;
+    declaration: DeclarationComponentData;
 }

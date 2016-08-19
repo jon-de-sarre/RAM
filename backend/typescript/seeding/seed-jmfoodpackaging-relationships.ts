@@ -1,6 +1,6 @@
 import {conf} from '../bootstrap';
 import {Seeder} from './seed';
-import {RelationshipStatus} from '../models/relationship.model';
+import {RelationshipStatus, RelationshipInitiatedBy} from '../models/relationship.model';
 
 // seeder .............................................................................................................
 
@@ -25,24 +25,25 @@ export class JMFoodPackagingRelationshipsSeeder {
                     subjectNickName: Seeder.jmfoodpackaging_name,
                     delegate: Seeder.jenscatering_party,
                     delegateNickName: Seeder.jenscatering_name,
-                    startTimestamp: new Date(),
-                    status: RelationshipStatus.Active.code,
+                    startTimestamp: Seeder.now,
+                    status: RelationshipStatus.Accepted.code,
+                    initiatedBy: RelationshipInitiatedBy.Subject.code,
                     attributes: [
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.permissionCustomisationAllowedInd_attributeName
+                            attributeName: Seeder.permissionCustomisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_attributeName
+                            attributeName: Seeder.delegateManageAuthorisationAllowedInd_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.delegateRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.delegateRelationshipTypeDeclaration_relAttributeName
                         } as any),
                         await Seeder.createRelationshipAttributeModel({
                             value: true,
-                            attributeName: Seeder.subjectRelationshipTypeDeclaration_attributeName
+                            attributeName: Seeder.subjectRelationshipTypeDeclaration_relAttributeName
                         } as any)
                     ]
                 } as any);

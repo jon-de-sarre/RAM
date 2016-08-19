@@ -1,5 +1,5 @@
 import {Component, Input} from '@angular/core';
-import {ISearchResult} from '../../../../commons/RamAPI2';
+import {ISearchResult} from '../../../../commons/RamAPI';
 
 @Component({
     selector: 'search-result-pagination',
@@ -85,6 +85,10 @@ export class SearchResultPaginationComponent {
             return upperPage <= totalPages - 1;
         }
         return false;
+    }
+
+    public isNotEmpty(): boolean {
+        return this.searchResult && this.searchResult.totalCount > 0;
     }
 
     public goToPage(page: number): void {

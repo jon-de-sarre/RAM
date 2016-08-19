@@ -2,10 +2,9 @@ import {logger} from '../logger';
 import * as colors from 'colors';
 import {Request, Response} from 'express';
 import {Headers} from './headers';
-import {ErrorResponse} from '../../../commons/RamAPI';
-import {CreateIdentityDTO} from '../../../commons/RamAPI';
+import {ErrorResponse, ICreateIdentityDTO} from '../../../commons/RamAPI';
 import {AgencyUser, IAgencyUserProgramRole, AgencyUserProgramRole} from '../models/agencyUser.model';
-import {IPrincipal, Principal} from '../models/principal.model';
+import {Principal} from '../models/principal.model';
 import {IIdentity, IdentityModel} from '../models/identity.model';
 import {DOB_SHARED_SECRET_TYPE_CODE} from '../models/sharedSecretType.model';
 
@@ -18,6 +17,8 @@ class Security {
             //this.logHeaders(req);
             const agencyUserLoginIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserLoginId);
             const identityIdValue = this.getValueFromHeaderLocalsOrCookie(req, res, Headers.IdentityIdValue);
+            //console.log('agencyUserLoginIdValue=', agencyUserLoginIdValue);
+            //console.log('identityIdValue=', identityIdValue);
             if (agencyUserLoginIdValue) {
                 // agency login supplied, carry on
                 Promise.resolve(agencyUserLoginIdValue)
@@ -71,24 +72,23 @@ class Security {
                 logger.info('Identity context: Unable to create identity as raw id value was not supplied ...'.red);
                 return Promise.resolve(null);
             } else {
-                const dto = new CreateIdentityDTO(
-                    rawIdValue,
-                    req.get(Headers.PartyType),
-                    req.get(Headers.GivenName),
-                    req.get(Headers.FamilyName),
-                    req.get(Headers.UnstructuredName),
-                    DOB_SHARED_SECRET_TYPE_CODE,
-                    req.get(Headers.DOB),
-                    req.get(Headers.IdentityType),
-                    req.get(Headers.AgencyScheme),
-                    req.get(Headers.AgencyToken),
-                    req.get(Headers.LinkIdScheme),
-                    req.get(Headers.LinkIdConsumer),
-                    req.get(Headers.PublicIdentifierScheme),
-                    req.get(Headers.ProfileProvider)
-                );
+                const dto: ICreateIdentityDTO = {
+                    rawIdValue: rawIdValue,
+                    partyType: req.get(Headers.PartyType),
+                    givenName: req.get(Headers.GivenName),
+                    familyName: req.get(Headers.FamilyName),
+                    unstructuredName: req.get(Headers.UnstructuredName),
+                    sharedSecretTypeCode: DOB_SHARED_SECRET_TYPE_CODE,
+                    sharedSecretValue: req.get(Headers.DOB),
+                    identityType: req.get(Headers.IdentityType),
+                    agencyScheme: req.get(Headers.AgencyScheme),
+                    agencyToken: req.get(Headers.AgencyToken),
+                    linkIdScheme: req.get(Headers.LinkIdScheme),
+                    linkIdConsumer: req.get(Headers.LinkIdConsumer),
+                    publicIdentifierScheme: req.get(Headers.PublicIdentifierScheme),
+                    profileProvider: req.get(Headers.ProfileProvider)
+                };
                 logger.info('Identity context: Creating new identity ... ');
-                console.log(dto);
                 return IdentityModel.createFromDTO(dto);
             }
         };
@@ -114,15 +114,17 @@ class Security {
                         ));
                     }
                 }
-                res.locals[Headers.Principal] = new Principal(idValue, displayName, true);
-                res.locals[Headers.PrincipalIdValue] = idValue;
-                res.locals[Headers.AgencyUser] = new AgencyUser(
+                const agencyUser = new AgencyUser(
                     idValue,
                     givenName,
                     familyName,
                     displayName,
+                    this.getValueFromHeaderLocalsOrCookie(req, res, Headers.AgencyUserAgency),
                     programRoles
                 );
+                res.locals[Headers.Principal] = new Principal(idValue, displayName, true, agencyUser, undefined);
+                res.locals[Headers.PrincipalIdValue] = idValue;
+                res.locals[Headers.AgencyUser] = agencyUser;
             }
         };
     }
@@ -131,7 +133,7 @@ class Security {
         return (identity?: IIdentity) => {
             logger.info('Identity context:', (identity ? colors.magenta(identity.idValue) : colors.red('[not found]')));
             if (identity) {
-                res.locals[Headers.Principal] = new Principal(identity.idValue, identity.profile.name._displayName, false);
+                res.locals[Headers.Principal] = new Principal(identity.idValue, identity.profile.name._displayName, false, undefined, identity);
                 res.locals[Headers.PrincipalIdValue] = identity.idValue;
                 res.locals[Headers.Identity] = identity;
                 res.locals[Headers.IdentityIdValue] = identity.idValue;
@@ -142,6 +144,10 @@ class Security {
                 for (let sharedSecret of identity.profile.sharedSecrets) {
                     res.locals[`${Headers.Prefix}-${sharedSecret.sharedSecretType.code}`.toLowerCase()] = sharedSecret.value;
                 }
+                if (req.header(Headers.ABN)) {
+                    logger.info('ABN header: ' + req.header(Headers.ABN));
+                    res.locals[Headers.ABN] = req.header(Headers.ABN);
+                }
             }
         };
     }
@@ -149,9 +155,9 @@ class Security {
     private prepareCommonResponseLocals(req: Request, res: Response, next: () => void) {
         return () => {
             for (let key of Object.keys(req.headers)) {
-                // headers should be lowercase, but lets make sure
+                // keys should be lowercase, but let's make sure
                 const keyLower = key.toLowerCase();
-                // if it's an application header, copy it to locals
+                // if it's an application key, copy it to locals
                 if (keyLower.startsWith(Headers.Prefix)) {
                     const value = req.get(key);
                     res.locals[keyLower] = value;
@@ -167,44 +173,6 @@ class Security {
             res.status(401);
             res.send(new ErrorResponse('Unable to look up identity.'));
         };
-    }
-
-    public getAuthenticatedIdentityIdValue(res: Response): string {
-        return res.locals[Headers.IdentityIdValue];
-    }
-
-    public getAuthenticatedIdentity(res: Response): IIdentity {
-        return res.locals[Headers.Identity];
-    }
-
-    public getAuthenticatedPrincipalIdValue(res: Response): string {
-        return res.locals[Headers.PrincipalIdValue];
-    }
-
-    public getAuthenticatedPrincipal(res: Response): IPrincipal {
-        return res.locals[Headers.Principal];
-    }
-
-    public isAuthenticated(req: Request, res: Response, next: () => void) {
-        const id = res.locals[Headers.PrincipalIdValue];
-        if (id) {
-            next();
-        } else {
-            logger.error('Unable to invoke route requiring authentication'.red);
-            res.status(401);
-            res.send(new ErrorResponse('Not authenticated.'));
-        }
-    }
-
-    public isAuthenticatedAsAgencyUser(req: Request, res: Response, next: () => void) {
-        const principal = res.locals[Headers.Principal];
-        if (principal && principal.agencyUserInd) {
-            next();
-        } else {
-            logger.error('Unable to invoke route requiring agency user'.red);
-            res.status(401);
-            res.send(new ErrorResponse('Not authenticated as agency user.'));
-        }
     }
 
     // private logHeaders(req:Request) {

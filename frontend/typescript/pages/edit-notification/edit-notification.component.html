@@ -1,0 +1,132 @@
+<page-header [identity]="identity"
+             tab="MANAGE_NOTIFICATIONS"
+             [messages]="globalMessages"></page-header>
+
+<form [formGroup]="form">
+
+    <div class="panel panel-default">
+        <div class="panel-heading">
+            <h4>Add notification</h4>
+        </div>
+        <div class="panel-body">
+            <div class="col-md-12">
+                <h4>Enter the ABN of the software provider:</h4>
+            </div>
+            <div *ngIf="!delegateParty" class="form-group">
+                <div class="col-md-12">
+                    <h4>ABN*</h4>
+                    <div class="row">
+                        <div class="col-md-4">
+                            <input type="text"
+                                   class="form-control col-md-4"
+                                   [class.has-error]="!form.controls['abn'].valid"
+                                   [formControl]="form.controls['abn']"/>
+                        </div>
+                        <div class="col-md-4">
+                            <button class="btn btn-secondary align-center" (click)="findByABN()">Check</button>
+                        </div>
+                    </div>
+                    <br/>
+                </div>
+            </div>
+            <div *ngIf="delegateParty && delegateIdentityRef">
+                <div class="col-md-12 padding-btn-20">
+                    <div class="row">
+                        <div class="col-md-4">
+                            <h4>ABN:</h4>
+                            {{delegateIdentityRef.value.rawIdValue}}
+                        </div>
+                        <div class="col-md-4">
+                            <h4>Business name:</h4>
+                            {{delegateIdentityRef.value.profile.name.unstructuredName}}
+                        </div>
+                    </div>
+                    <div *ngIf="!relationship">
+                        <br/>
+                        <button class="btn btn-secondary align-center" (click)="resetDelegate()">Change ABN</button>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <div *ngIf="delegateParty && delegateIdentityRef">
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Notification Details</h4>
+            </div>
+            <div class="panel-body">
+                <div class="col-md-12">
+                    <h4>Software Serial Number*</h4>
+                    <div class="row" *ngFor="let ssid of form.controls['ssids'].controls; let i = index">
+                        <div class="col-md-4 padding-btn-10">
+                            <input type="text"
+                                   class="form-control"
+                                   [class.has-error]="!ssid.valid"
+                                   [formControl]="ssid"/>
+                        </div>
+                    </div>
+                    <button class="btn btn-link align-center" (click)="addAnotherSSID()">+ Add another</button>
+                    <button *ngIf="form.controls['ssids'].controls.length > 1"
+                            class="btn btn-link align-center"
+                            (click)="removeSSID()">Remove</button>
+                </div>
+                <div>
+                    <access-period [(data)]='accessPeriod' (isValid)='accessPeriodIsValid=$event'>
+                    </access-period>
+                </div>
+                <br style="clear: both"/>
+                <hr/>
+                <div class="col-md-12">
+                    <h4>Set the agencies to notify:</h4>
+                    <table class="table table-hover checkbox-table">
+                        <tbody>
+                        <tr *ngFor="let attributeName of ospServices"
+                            (click)="onAgencyServiceChange(attributeName.code)"
+                            class="clickable">
+                            <td>
+                                <div>
+                                    {{attributeName.shortDecodeText}}
+                                </div>
+                            </td>
+                            <td>
+                                <div class="checkbox">
+                                    <input type="checkbox"
+                                           [checked]="isAgencyServiceSelected(attributeName.code)">
+                                </div>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+
+        <div class="panel panel-default">
+            <div class="panel-heading">
+                <h4>Declaration</h4>
+            </div>
+            <div class="panel-body">
+                <div class="col-md-12">
+                    <ng2-markdown [markdown]="declarationText"></ng2-markdown>
+                    <div class="checkbox ">
+                        <label><input type="checkbox" [formControl]='form.controls["accepted"]'> <strong>I agree to this declaration</strong></label>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+
+</form>
+
+<br/>
+<br/>
+
+<div id="action-button-bar">
+    <div class="pull-left">
+        <a class="btn btn-default align-center" (click)="back()">← Back</a>
+    </div>
+    <div class="pull-right">
+        <a class="btn btn-primary align-center" (click)="save()">Save →</a>
+    </div>
+</div>

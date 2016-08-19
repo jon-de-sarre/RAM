@@ -12,7 +12,7 @@
     "no-delete-expression": true,
     "no-duplicate-parameter-names": true,
     "no-duplicate-case": true,
-    "no-empty-interfaces": true,
+    "no-empty-interfaces": false,
     "no-exec-script": true,
     "no-function-constructor-with-string-args": true,
     "no-function-expression": true,
@@ -41,7 +41,7 @@
     ],
     "max-line-length": [
       true,
-      140
+      300
     ],
     "member-ordering": [
       true,
@@ -52,7 +52,7 @@
     "no-construct": true,
     "no-duplicate-key": true,
     "no-duplicate-variable": true,
-    "no-empty": true,
+    "no-empty": false,
     "no-eval": true,
     "no-trailing-whitespace": true,
     "no-unused-expression": true,
@@ -82,7 +82,7 @@
     "no-switch-case-fall-through": true,
     "no-var-keyword": true,
     "no-var-requires": true,
-    "no-any": true,
+    "no-any": false,
     "no-consecutive-blank-lines": true,
     "component-selector-name": [
       true,

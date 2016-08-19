@@ -1,4 +1,5 @@
 import {Router, Request, Response} from 'express';
+import {context} from '../providers/context.provider';
 import {sendResource, sendList, sendError, sendNotFoundError, validateReqSchema} from './helpers';
 import {IProfileModel, ProfileProvider} from '../models/profile.model';
 
@@ -16,7 +17,7 @@ export class ProfileController {
             }
         };
         validateReqSchema(req, schema)
-            .then((req:Request) => ProfileProvider.valueOf(req.params.code))
+            .then((req:Request) => ProfileProvider.valueOf(req.params.code) as ProfileProvider)
             .then((model) => model ? model.toDTO() : null)
             .then(sendResource(res))
             .then(sendNotFoundError(res))
@@ -27,7 +28,7 @@ export class ProfileController {
         const schema = {
         };
         validateReqSchema(req, schema)
-            .then((req:Request) => ProfileProvider.values())
+            .then((req:Request) => ProfileProvider.values() as ProfileProvider[])
             .then((results) => results ? results.map((model) => model.toHrefValue(true)) : null)
             .then(sendList(res))
             .then(sendNotFoundError(res))
@@ -37,9 +38,11 @@ export class ProfileController {
     public assignRoutes = (router:Router) => {
 
         router.get('/v1/profileProvider/:code',
+            context.begin,
             this.findProviderByCode);
 
         router.get('/v1/profileProviders',
+            context.begin,
             this.listProviders);
 
         return router;

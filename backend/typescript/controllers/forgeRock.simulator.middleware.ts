@@ -14,11 +14,11 @@ class ForgeRockSimulator {
         return (req: Request, res: Response, next: () => void) => {
             const idFromAuthenticationSimulator = req.body.credentials;
             const idFromCookie = SecurityHelper.getValueFromCookies(req, Headers.AuthToken);
+            //console.log('idFromAuthenticationSimulator=', idFromAuthenticationSimulator);
+            //console.log('idFromCookie=', idFromCookie);
             const id = idFromAuthenticationSimulator ? idFromAuthenticationSimulator : idFromCookie;
-            console.log('Id=', id);
             if (id) {
                 const agencyUser = AgencyUsersSeeder.findById(id);
-                console.log('Agency User=', agencyUser);
                 if (agencyUser) {
                     Promise.resolve(agencyUser)
                         .then(self.resolveForAgencyUser(req, res, next))
@@ -39,13 +39,14 @@ class ForgeRockSimulator {
             if (agencyUser) {
                 logger.info(colors.red(`Setting ${Headers.AgencyUserLoginId}: ${agencyUser.id}`));
                 let programRolesString = '';
-                for (let i = 0; i < agencyUser.programRoles; i = i + 1) {
+                for (let i = 0; i < agencyUser.programRoles.length; i = i + 1) {
                     let programRole = agencyUser.programRoles[i];
                     programRolesString += (i > 0 ? ',' : '') + programRole.program + ':' + programRole.role;
                 }
                 res.locals[Headers.AgencyUserLoginId] = agencyUser.id;
                 res.locals[Headers.GivenName] = agencyUser.givenName;
                 res.locals[Headers.FamilyName] = agencyUser.familyName;
+                res.locals[Headers.AgencyUserAgency] = agencyUser.agency;
                 res.locals[Headers.AgencyUserProgramRoles] = programRolesString;
             }
             next();
@@ -53,6 +54,14 @@ class ForgeRockSimulator {
     }
 
     private resolveForIdentity(req: Request, res: Response, next: () => void) {
+        const abnFromHeaders = req.headers[Headers.ABN];
+        const abnFromCookie = req.cookies[Headers.ABN];
+        if (abnFromHeaders) {
+            res.locals[Headers.ABN] = abnFromHeaders;
+        } else if (abnFromCookie) {
+            res.locals[Headers.ABN] = abnFromCookie;
+            req.headers[Headers.ABN] = abnFromCookie;
+        }
         return (identity?: IIdentity) => {
             if (identity) {
                 logger.info(colors.red(`Setting ${Headers.IdentityIdValue}: ${identity.idValue}`));

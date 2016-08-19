@@ -5,6 +5,10 @@ export class Headers {
     public static AuthToken = `${Headers.Prefix}-auth-token`;
     public static AuthTokenDecoded = `${Headers.Prefix}-auth-token-decoded`;
 
+    public static AuthAUSkey = `${Headers.Prefix}-auth-auskey`;
+
+    public static ClientAuth = `${Headers.Prefix}-clientauth`;
+
     public static Principal = `${Headers.Prefix}-principal`;
     public static PrincipalIdValue = `${Headers.Prefix}-principal-idvalue`;
 
@@ -17,9 +21,12 @@ export class Headers {
     public static AgencyUser = `${Headers.Prefix}-agencyuser`;
     public static AgencyUserLoginId = `${Headers.Prefix}-agencyuser-loginid`;
     public static AgencyUserProgramRoles = `${Headers.Prefix}-agencyuser-programroles`;
+    public static AgencyUserAgency = `${Headers.Prefix}-agencyuser-agency`;
 
     public static CredentialType = `${Headers.Prefix}-credentialtype`;
     public static CredentialStrength = `${Headers.Prefix}-credentialstrength`;
+
+    public static ABN = `${Headers.Prefix}-abn`;
 
     public static PartyType = `${Headers.Prefix}-partytype`;
 

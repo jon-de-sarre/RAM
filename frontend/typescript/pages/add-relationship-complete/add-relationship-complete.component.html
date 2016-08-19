@@ -7,8 +7,8 @@
     <h3><strong>Option 1</strong></h3>
 </div>
 <p class="lead">
-    <h4><strong>{{displayName}}</strong> must accept this authorisation before it is active. Instructions are included in a document
-        for you to <a href="">open a print friendly version </a> and provide to {{displayName}}.</h4>
+    <h4><strong>{{displayName}}</strong> {{'addRelationship.complete.printOption1' | translate}}
+    <a href="">{{'addRelationship.complete.printOption2' | translate}} </a> {{'addRelationship.complete.printOption3' | translate}} {{displayName}}.</h4>
 </p>
 
 <br/>
@@ -66,9 +66,8 @@
 <br/>
 <br/>
 
-<div class="clearfix"></div>
-<div class="padding-btn-20"></div>
-<a class="btn btn-default col-md-3 pull-left" (click)="goToRelationshipsPage()"> ← Go to relationships </a>
-<div class="clearfix"></div>
-<div class="padding-btn-20"></div>
-<div class="padding-btn-20"></div>
+<div id="action-button-bar">
+    <div class="pull-left">
+        <a class="btn btn-default align-center" (click)="goToRelationshipsPage()">← Go to relationships</a>
+    </div>
+</div>

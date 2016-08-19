@@ -12,7 +12,7 @@
 ![Data Model](https://raw.githubusercontent.com/atogov/RAM/develop/docs/images/data-model.png)
 
 # Rest API - Work in progress - [here](https://raw.githubusercontent.com/atogov/RAM/develop/docs/data-types.ts)
- 
+
 # Useful resources:
  1. [Development Environment](docs/environment.md)
  1. [Git Usage](docs/git-usage.md)
@@ -56,15 +56,36 @@
 
 ## Windows Manual installation - Windows 7
  * Download and install latest version of MongoDB
- * Install python 2.7 and make sure it is also on the PATH 
- * Install NodeJs 6.x.x 
+ * Install python 2.7 and make sure it is also on the PATH
+ * Install NodeJs 6.x.x
  * npm config set python python2.7 --global
  * npm config set msvs_version 2015 --global
  * Install VC++ Build Tools Technical Preview from http://go.microsoft.com/fwlink/?LinkId=691132, choose Custom Install, and select both Windows 8.1 and Windows 10 SDKs.
  * npm install typescript tslint eslint gulp-cli jasmine jspm -g
  * cd backend; npm install
  * cd frontend; npm install; jspm install
- 
+
+## Some further notes - getting it running on Windows 10
+
+Rather than running the ram-dev-win.sh file above, I did things manually
+  * Installed git as per usual and cloned project
+  * Installed MongoDB
+    * from https://www.mongodb.com/download-center?jmp=nav#community
+    * downloaded `Windows Server 2008 R2 64-bit and later, with SSL support`
+    * created `c:\data\db`
+    * opened up a command line to `C:\Program Files\MongoDB\Server\3.2\bin` and ran `mongod`
+    * Installed RoboMongo to check it was working
+  * Installed NodeJs latest 6.x.x from https://nodejs.org/en/ (not the recommended 4.x.x)
+  * Installed Python 2.7 (not 3.x)
+  * Ran `npm install --global --production windows-build-tools`
+    * note bash shell has to be running as administrator
+  * Set `RAM_CONF` as a user environment variable
+    * `Win-Break > Change settings > Advanced > Environment variables > New`
+    * Variable name: `RAM_CONF`
+    * Variable value: `Q:\<path to code>\RAM\backend\conf\conf-localhost.js`
+    * (and make sure to restart your shell)
+  * Ran `./ram deps:backend`, `./ram deps:frontend`, `./ram db:seed` etc as per usual
+
 ## AWS Install
 
 * Each server requires its own configuration file. Template configuration file at _conf/conf.js_. You must set an environment variable called *RAM_CONF* pointing to the absolute path of your configuration file.
@@ -179,5 +200,31 @@ While working on the travis configuration file you can validate it using the fol
 - `gem install travis`
 - `travis lint`
 
-## favicon.ico
-Credit for creation of icon to [Alexandr Cherkinsky](https://thenounproject.com/cherkinskiy/)
+## Credits
+
+Creation of favicon to [Alexandr Cherkinsky](https://thenounproject.com/cherkinskiy/).
+
+Cross browser testing using [BrowserStack](https://www.browserstack.com/).
+
+## Technology documentation
+
+https://angular.io/docs/ts/latest/
+
+https://xgrommx.github.io/rx-book/
+
+## Intellij IDEA/Webstorm configuration
+
+* Install plugins for Angular 2...
+* Exclude folders:
+    * dist
+    * node_modules
+    * frontend/bower_components
+    * frontend/node_modules
+    * backend/dist
+    * backend/node_modules
+* Add folders to Preferences > Language & Frameworks > Javascript > Libraries so that IDEA can find the resources:
+    * frontend/dist
+    * frontend/node_modules
+    * backend/dist
+    * backend/node_modules
+
