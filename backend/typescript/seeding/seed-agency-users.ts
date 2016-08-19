@@ -24,6 +24,18 @@ const users: IAgencyUser[] = [
         [
             new AgencyUserProgramRole('TAX', 'ROLE_ADMIN')
         ]
+    ),
+
+    new AgencyUser(
+        'all_agent',
+        'All',
+        'Agent',
+        'All Agent',
+        'The Government',
+        [
+            new AgencyUserProgramRole('EDUCATION', 'ROLE_ADMIN'),
+            new AgencyUserProgramRole('TAX', 'ROLE_ADMIN')
+        ]
     )
 
 ];
